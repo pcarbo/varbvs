@@ -139,7 +139,6 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
     
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute the lower bound to the marginal log-likelihood.
-    % *** FIX THIS ***
     lnZ = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
 	  + intgamma(logodds,alpha) ...
 	  + intklbeta(alpha,mu,s,sigma*sa);

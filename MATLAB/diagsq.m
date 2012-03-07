@@ -1,5 +1,8 @@
 % DIAGSQ(X) is the same as DIAG(X'*X), but the computation is done more
-% efficiently. DIAGSQ(X,A) efficiently computes DIAG(X'*DIAG(A)*X).
+% efficiently, and without having to store an intermediate matrix of the
+% same size as X. 
+%
+% DIAGSQ(X,A) efficiently computes DIAG(X'*DIAG(A)*X).
 function y = diagsq (X, a)
 
   if ~exist('a')
