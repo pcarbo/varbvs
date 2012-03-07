@@ -1,12 +1,14 @@
 #ifndef INCLUDE_COMMON
 #define INCLUDE_COMMON
 
+// This include file has a bunch of definitions to interface C++
+// routines to MATLAB.
 #include "matrix.h"
 
 // Function declarations.
 // -----------------------------------------------------------------
 // Computes log(1 + exp(x)) in a numerically stable manner.
-double logplusexp (double x);
+double logpexp (double x);
 
 // Returns the sigmoid function at x.
 double sigmoid (double x);

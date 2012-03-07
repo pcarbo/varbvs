@@ -2,8 +2,7 @@
 
 // Function definitions.
 // -----------------------------------------------------------------
-// Get information about a dense, single-precision matrix from a
-// MATLAB array.
+// Get information about a dense, single precision matrix from MATLAB.
 singlematrix getsinglematrix (const mxArray* ptr) {
   singlematrix result;  // The return value.
   result.nr    = mxGetM(ptr);

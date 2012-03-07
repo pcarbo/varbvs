@@ -1,6 +1,8 @@
 #ifndef INCLUDE_SINGLEMATRIX
 #define INCLUDE_SINGLEMATRIX
 
+// These include files have a bunch of definitions to interface C++
+// routines to MATLAB.
 #include "mex.h"
 #include "matrix.h"
 #include "doublevector.h"
@@ -16,8 +18,7 @@ typedef struct SingleMatrix {
 
 // Function declarations.
 // -----------------------------------------------------------------
-// Get information about a dense, single-precision matrix from a
-// MATLAB array.
+// Get information about a dense, single precision matrix from MATLAB.
 singlematrix getsinglematrix (const mxArray* ptr);
 
 // Copy the jth column of matrix X into vector y.

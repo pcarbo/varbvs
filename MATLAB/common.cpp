@@ -4,7 +4,7 @@
 // Function definitions.
 // -----------------------------------------------------------------
 // Computes log(1 + exp(x)) in a numerically stable manner.
-double logplusexp (double x) {
+double logpexp (double x) {
   return (x >= 8) * x + (x < 8) * log(1 + exp(x));
 }
 
@@ -16,7 +16,7 @@ double sigmoid (double x) {
 // Returns the logarithm of the sigmoid function at x. Computation is
 // performed in a numerically stable manner.
 double logsigmoid (double x) {
-  return -logplusexp(-x);
+  return -logpexp(-x);
 }
 
 // Return the sum of the n elements in array x.
