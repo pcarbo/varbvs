@@ -1,7 +1,6 @@
 _Note: this project is currently in development._
 
-#Variational inference for Bayesian variable selection
-#A library for MATLAB and R
+#Variational inference for Bayesian variable selection implemented in MATLAB and R
 
 ###Introduction
 
@@ -12,7 +11,10 @@ variational inference for Bayesian variable selection in regression,
 and its accuracy in genetic association
 studies](http://ba.stat.cmu.edu/journal/2012/vol07/issue01/carbonetto.pdf).
 This software has been used to implement Bayesian variable selection
-for large problems with over a million variables.
+for large problems with over a million variables and thousands of samples.
+
+_A few details about implementation of the MATLAB and R functions, in
+particular what platform they were tested on, go here._
 
 ###License
 
@@ -27,19 +29,19 @@ License](http://creativecommons.org/licenses/by-sa/3.0/).
 
 ###Quick start for MATLAB
 
-Instructions go here.
+_Instructions go here._
 
 ###Quick start for R
 
-Instructions go here.
+_Instructions go here._
 
 ###Overview of MATLAB functions 
 
-Details about main functions go here.
+_Details about main functions go here._
 
 ###Overview of R functions
 
-Details about main functions go here.
+_Details about main functions go here._
 
 ###Who
 
