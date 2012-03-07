@@ -1,7 +1,7 @@
-_Note: this project is in development._
+_Note: this project is currently in development._
 
-#Variational inference for Bayesian variable selection---a library 
-for MATLAB and R
+#Variational inference for Bayesian variable selection
+#A library for MATLAB and R
 
 ###Introduction
 
@@ -33,10 +33,17 @@ Instructions go here.
 
 Instructions go here.
 
+###Overview of MATLAB functions 
+
+Details about main functions go here.
+
+###Overview of R functions
+
+Details about main functions go here.
+
 ###Who
 
-[Peter Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo) created the
-MATLAB and R code for this project<br>
+[Peter Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo)<br>
 Dept. of Human Genetics<br>
 University of Chicago<br>
 March 2012
