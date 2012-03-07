@@ -12,11 +12,6 @@ and its accuracy in genetic association studies.* This software has
 been used to implement Bayesian variable selection for large problems
 with over a million variables.
 
-Peter Carbonetto, Ph.D.
-Dept. of Human Genetics
-University of Chicago
-March 2012
-
 ###License
 
 ![Creative Commons License][cclicense]
@@ -27,3 +22,8 @@ Carbonetto](http://www.cs.ubc.ca/spider/pcarbo) is licensed under a
 License](http://creativecommons.org/licenses/by-sa/3.0/).
 
 [cclicense]: http://i.creativecommons.org/l/by-sa/3.0/88x31.png "Creative Commons License"
+
+###Who
+
+Created by [Peter Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo), Ph.D.
+(Dept. of Human Genetics, University of Chicago, March 2012)
