@@ -1,7 +1,6 @@
 _Note: this project is in development._
 
-##Variational inference for Bayesian variable selection 
-in MATLAB and R
+##Variational inference for Bayesian variable selection in MATLAB and R
 
 ###Introduction
 
@@ -20,7 +19,11 @@ March 2012
 
 ###License
 
+![Creative Commons License][cclicense]
+
 Variational inference for Bayesian variable selection by [Peter
 Carbonetto](http://www.cs.ubc.ca/spider/pcarbo) is licensed under a
 [Creative Commons Attribution-ShareAlike 3.0 Unported
 License](http://creativecommons.org/licenses/by-sa/3.0/).
+
+[cclicense]: http://i.creativecommons.org/l/by-sa/3.0/88x31.png "Creative Commons License"
