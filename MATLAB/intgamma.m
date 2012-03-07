@@ -1,14 +1,10 @@
-% INTGAMMA(LOGODDS,A) computes the expectation of the prior on the indicator
-% variables, where the expectation is taken with respect to the
-% fully-factorized variational approximation. 
-%
-% Input LOGODDS is either a scalar, or a vector, specifying the prior
-% log-odds. LOGODDS is equal to LOG(Q./(1-Q)), where Q is the prior
-% probability that each SNP is included in the linear model of Y. 
-%
-% Input A specifies the mixture weights for the variational approximation;
-% the Kth regression coefficient is normal with probability A(K), and zero
-% with probability 1 - A(K).
+% INTGAMMA(LOGODDS,ALPHA) computes an integral that appears in the
+% variational lower bound of the marginal log-likelihood. This integral is
+% the expectation on the prior inclusion probabilities taken with respect to
+% the variational approximation. Input LOGODDS may either be a scalar, or a
+% vector, specifying the prior log-odds. Input ALPHA specifies the mixture
+% weights for the variational approximation. See function VARBVS for details
+% on these inputs.
 function I = intgamma (logodds, alpha)
 
   % This is the same as 

@@ -37,8 +37,9 @@
 % off reporting the algorithm's progress.
 function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
 
-  % *** ADD COMMENTS HERE ***
-  % Convergence criterion for coordinate ascent.
+  % Convergence is reached when the maximum relative distance between
+  % successive updates of the variational parameters is less than this
+  % quantity.
   tolerance = 1e-4;  
 
   % CHECK INPUTS.
@@ -130,11 +131,11 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
     % Run a forward or backward pass of the coordinate ascent updates.
     % *** FIX THIS ***
     if isodd(iter)
-      snps = 1:p;
+      I = 1:p;
     else
-      snps = p:-1:1;
+      I = p:-1:1;
     end
-    [alpha mu Xr] = varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,snps);
+    [alpha mu Xr] = varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,I);
     
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute the lower bound to the marginal log-likelihood.
@@ -159,7 +160,7 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
     if lnZ < lnZ0
       alpha = alpha0;
       mu    = mu0;
-      lnZ   = lnZold;
+      lnZ   = lnZ0;
       break
     elseif max(err) < tolerance
       break

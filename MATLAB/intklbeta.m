@@ -1,14 +1,11 @@
-% INTKLBETA(A,MU,S,SB) computes the negative Kullback-Leibler divergence
-% between the variational approximation and the prior on the regression
-% coefficients. Input SB specifies the prior variance of the regression
-% coefficients times the residual variance (for binary traits, set the
-% residual variance to 1). 
-%
-% Inputs A, MU and S are each vectors of the same length specifying the
-% variational approximation; the Kth regression coefficient is normal with
-% probability A(K), and zero with probability 1 - A(K). MU(K) and S(K) are
-% the mean and variance of the normal mixture component. 
-function I = intklbeta (alpha, mu, s, sb)
-  I = (sum(alpha) + alpha'*log(s/sb) - alpha'*(s + mu.^2)/sb)/2 ...
+% INTKLBETA(ALPHA,MU,S,SA) computes an integral that appears in the
+% variational lower bound of the marginal log-likelihood. This integral is
+% the negative Kullback-Leibler divergence between the approximating
+% distribution and the prior of the coefficients. Input SA specifies the
+% prior variance of the coefficients. (This SA is not the same as the SA
+% used as an input to VARBVS.) See VARBVS for details on the inputs to this
+% function.
+function I = intklbeta (alpha, mu, s, sa)
+  I = (sum(alpha) + alpha'*log(s/sa) - alpha'*(s + mu.^2)/sb)/2 ...
       - alpha'*log(alpha + eps) - (1 - alpha)'*log(1 - alpha + eps);
   
