@@ -128,6 +128,7 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
 
     % UPDATE VARIATIONAL APPROXIMATION.
     % Run a forward or backward pass of the coordinate ascent updates.
+    % *** FIX THIS ***
     if isodd(iter)
       snps = 1:p;
     else
@@ -136,24 +137,26 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
     [alpha mu Xr] = varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,snps);
     
     % COMPUTE VARIATIONAL LOWER BOUND.
-    % Compute variational lower bound to the marginal log-likelihood.
+    % Compute the lower bound to the marginal log-likelihood.
+    % *** FIX THIS ***
     lnZ = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
 	  + intgamma(logodds,alpha) ...
 	  + intklbeta(alpha,mu,s,sigma*sa);
     
+    % CHECK CONVERGENCE.
     % Print the status of the algorithm and check the convergence criterion.
     % Convergence is reached when the maximum relative difference between
     % the parameters at two successive iterations is less than the specified
     % tolerance, or when the variational lower bound has decreased. I ignore
     % parameters that are very small.
     params = [ alpha; alpha .* mu ];
-    is     = find(abs(params) > 1e-6);
-    err    = relerr(params(is),params0(is));
+    I      = find(abs(params) > 1e-6);
+    err    = relerr(params(I),params0(I));
     if verbose
       fprintf('%4d %+13.6e %0.1e %4d %0.3f\n',iter,lnZ,max(err),...
 	      round(sum(alpha)),max(abs(alpha.*mu)));
     end
-    if lnZ < lnZold
+    if lnZ < lnZ0
       alpha = alpha0;
       mu    = mu0;
       lnZ   = lnZold;
