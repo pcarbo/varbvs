@@ -1,3 +1,5 @@
+% *** FIX THIS ***
+%
 % [A,MU,XR] = MULTISNPUPDATE(X,SIGMA,SB,LOGODDS,XY,D,A0,MU0,XR0,SNPS) runs a
 % single iteration of the coordinate ascent algorithm for optimizing the
 % variational lower bound of the variable selection model for a quantitative

@@ -1,20 +1,23 @@
-// For a description of this C++ code, see varorthoupdate.m.
-#include "mex.h"
-#include "matrix.h"
+// For a description of this C++ code, see varbvsupdate.m.
 #include "common.h"
 #include "doublevector.h"
 #include "singlematrix.h"
 #include <string.h>
 #include <math.h>
 
+// These include files have a bunch of definitions to interface C++
+// routines to MATLAB.
+#include "mex.h"
+#include "matrix.h"
+
 // Function declarations.
 // -----------------------------------------------------------------
 // Execute a single iteration of the coordinate ascent updates.
-void multisnpupdate (const singlematrix& X, const double* xy, 
-		     const double* d, double sigma, double sb, 
-		     const double* logodds, doublevector& alpha, 
-		     doublevector& mu, doublevector& Xr, mwSize m, 
-		     const double* snps);
+void varbvsupdate (const singlematrix& X, const double* xy, 
+		   const double* d, double sigma, double sb, 
+		   const double* logodds, doublevector& alpha, 
+		   doublevector& mu, doublevector& Xr, mwSize m, 
+		   const double* snps);
 
 // -----------------------------------------------------------------
 // MEX-file gateway routine.
