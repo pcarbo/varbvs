@@ -57,7 +57,7 @@ Kristján Jónasson.
 
 ###Who
 
-Variational inference for Bayesian variable selection was developed by:
+Variational inference for Bayesian variable selection was developed by:<br>
 [Peter Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo)<br>
 Dept. of Human Genetics<br>
 University of Chicago<br> 

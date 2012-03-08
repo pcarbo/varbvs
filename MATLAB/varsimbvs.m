@@ -50,7 +50,20 @@ function [w, alpha, mu] = varsimbvs (X, y, sigma, sa, log10q, a, b, c)
   % Get the number of samples (n), the number of variables (p), and the
   % number of combinations of the hyperparameters (ns).
   [n p] = size(X);
-  ns    = numel(sa);
+  ns    = numel(sigma);
+
+  % Inputs A, B and C must be double scalars.
+  a = double(a);
+  b = double(b);
+  c = double(c);
+  if ~(isscalar(a) & isscalar(b) & isscalar(c))
+    error('Inputs A, B and C must be scalars');
+  end
+ 
+  % Inputs SIGMA, SA and LOG10Q must have the same number of elements.
+  if numel(sa) ~= ns | numel(log10q) ~= ns
+    error('Inputs SIGMA, SA and LOG10Q must be the same size');
+  end
   
   % Get the sum of the sample variances.
   sx = sum(var1(X));
