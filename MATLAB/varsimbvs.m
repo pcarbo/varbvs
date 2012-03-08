@@ -1,47 +1,43 @@
-% *** FIX THESE COMMENTS ***
-% 
-% [W,ALPHA,MU] = VARSIMBVS(X,Y,SIGMA,SB,LOG10Q,A,B,C) runs the full
-% variational inference procedure for Bayesian variable selection in linear
-% regression (for a quantitative trait). This is a special implementation of
-% the variational inference procedure used in the two simulation studies for
-% the Bayesian Analysis paper. The main distinguishing feature of this
-% procedure is the choice of priors for the hyperparameters of the variable
-% selection model. In addition, we also avoid erratic behaviour in the
-% approximation by first searching for a good initialization of the
-% variational parameters.
-% 
-% This inference procedure involves an inner loop and an outer loop. The
-% inner loop consists of running a coordinate ascent algorithm to tighten
-% the variational lower bound given a setting of the hyperparameters. The
-% outer loop computes importance weights for all combinations of the
-% hyperparameters.
+% [W,ALPHA,MU] = VARSIMBVS(X,Y,SIGMA,SA,LOG10Q,A,B,C) runs the full
+% inference procedure for Bayesian variable selection in linear
+% regression. This is a special implementation of the variational inference
+% procedure used in the two simulation studies for the Bayesian Analysis
+% paper. The main distinguishing feature of this procedure is the choice of
+% priors for the hyperparameters of the variable selection model. In
+% addition, we also avoid erratic behaviour in the approximation by first
+% searching for a good initialization of the variational parameters. This
+% inference procedure involves an inner loop and an outer loop. The inner
+% loop consists of running a coordinate ascent algorithm to tighten the
+% variational lower bound given a setting of the hyperparameters (this inner
+% loop is implemented in function VARBVS). The outer loop computes
+% importance weights for all combinations of the hyperparameters.
 %
-% Input X is the genotype data. It is an N x P matrix, where N is the number
-% of samples (individuals), and P is the number of variables (genetic loci,
-% or SNPs). Y is the vector of quantitative trait data; it is a vector of
-% length N. Crucially, this algorithm will only work correctly if Y and X
-% are centered so that vector Y and each column of X has a mean of zero.
+% Input X is an N x P matrix of observations about the variables (or
+% features), where N is the number of samples, and P is the number of
+% variables. Y is the vector of observations about the outcome; it is a
+% vector of length N. Crucially, Y and X must be centered beforehand so that
+% Y and each column of X has a mean of zero.
 %
-% Inputs SIGMA, SB and LOG10Q specify the hyperparameter settings: SIGMA is
-% the residual variance, SB is the prior variance of the additive effects,
-% and LOG10Q is the (base 10) logarithm of the prior probability of
-% inclusion. These inputs must be arrays of the same size. For each
-% combination of the hyperparameters, we compute an importance weight, and
-% store the result in output W.
+% Inputs SIGMA, SA and LOG10Q specify the hyperparameter settings. These
+% inputs must be arrays of the same size. For each combination of the
+% hyperparameters, we compute an importance weight, and store the result in
+% output W. SIGMA is the residual variance, SIGMA.*SA is the prior variance
+% of the additive effects, and LOG10Q is the (base 10) logarithm of the
+% prior inclusion probability.
 %
 % Inputs A, B and C are positive scalars. A and B are the prior sample sizes
-% for the Beta prior on the prior probability of inclusion Q. We assume a
-% uniform prior on the proportion of variance explained, except that we
-% replace the prior probability of inclusion Q in the proportion of variance
-% explained by a constant, C. This is done purely for convenience, so that
-% hyperparameter SB does not depend on Q a priori, making it easier to
-% implement the Markov chain Monte Carlo algorithm. And we assume the
-% standard noninformative prior on the residual variance parameter SIGMA.
+% for the Beta prior on the prior inclusion probability. We assume a uniform
+% prior on the proportion of variance explained, except that we replace the
+% prior inclusion probability the proportion of variance explained by a
+% constant, C. This is done purely for convenience, so that hyperparameter
+% SA does not depend on the prior inclusion probability a priori, making it
+% easier to implement the Markov chain Monte Carlo (MCMC) method. We assume
+% the standard noninformative prior on the residual variance SIGMA.
 %
 % Outputs ALPHA and MU are variational estimates of the posterior inclusion
-% probabilities and posterior mean additive effects (given that the variable
-% is included in the model) averaged over the settings of the
-% hyperparameters.
+% probabilities and posterior mean of the coefficients (given that the
+% variable is included in the model). These variational estimates are
+% averaged over the settings of the hyperparameters.
 function [w, alpha, mu] = varsimbvs (X, y, sigma, sa, log10q, a, b, c)
   
   % These two parameters specify the inverse gamma prior on the variance of
@@ -76,14 +72,14 @@ function [w, alpha, mu] = varsimbvs (X, y, sigma, sa, log10q, a, b, c)
   fprintf('Finding best initialization for %d combinations ',ns);
   fprintf('of hyperparameters.\n');
   for i = 1:ns
-    % fprintf('(%03d) sigma = %4.1f, sa = %0.3f, q = %0.2e',...
-    % 	    i,sigma(i),sa(i),q(i));
-    % fprintf(repmat('\b',1,44));
+    fprintf('(%03d) sigma = %4.1f, sa = %0.3f, q = %0.2e',...
+	    i,sigma(i),sa(i),q(i));
+    fprintf(repmat('\b',1,44));
   
     % Randomly initialize the variational parameters.
     alpha0  = rand(p,1);
     alpha0  = alpha0 / sum(alpha0);
-    options = struct('alpha',alpha0,'mu',randn(p,1),'verbose',true);
+    options = struct('alpha',alpha0,'mu',randn(p,1),'verbose',false);
 
     % Run the coordinate ascent algorithm.
     [lnZ(i) alpha(:,i) mu(:,i)] = ...

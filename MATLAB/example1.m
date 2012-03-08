@@ -24,7 +24,6 @@ se = 9;
 a = 0.02;
 b = 1;
 
-% *** FIX THIS COMMENT ***
 % This parameter specifies the prior on the variance of the regression
 % coefficients (sa). For more information on this prior, see MULTISNPSIM.
 c = 0.02;
@@ -53,7 +52,6 @@ sz = var(X*beta,1);
 fprintf('Proportion of variance explained is %0.3f.\n',sz/(sz + se));
 
 % COMPUTE VARIATIONAL ESTIMATES.
-% *** FIX THIS ***
 fprintf('Computing variational estimates.\n');
 [sigma sa log10q] = ndgrid(sigma,sa,log10q);
 [w alpha mu] = varsimbvs(X,y,sigma,sa,log10q,a,b,c);
