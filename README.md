@@ -35,7 +35,9 @@ This project includes several MATLAB functions created by James
 P. LeSage as part of the [Econometrics
 Toolbox](http://www.spatial-econometrics.com/) (March 2010 revision),
 which is also distributed under the GNU General Public License. None
-of MATLAB code from this toolbox has been modified.
+of MATLAB code from this toolbox has been modified. Also included
+(without modification) is the MATLAB function `rgb.m` written by
+Kristján Jónasson.
 
 ###Quick start for MATLAB
 
@@ -55,6 +57,7 @@ of MATLAB code from this toolbox has been modified.
 
 ###Who
 
-Stacks was developed by [Peter
-Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo)<br> in the Dept. of
-Human Genetics<br> at the University of Chicago<br> (March 2012)
+Variational inference for Bayesian variable selection was developed by
+[Peter Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo)<br> in the
+Dept. of Human Genetics<br> at the University of Chicago<br> (March
+2012)
