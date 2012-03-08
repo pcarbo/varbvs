@@ -58,10 +58,10 @@ fprintf('Computing variational estimates.\n');
 
 return
 
-% (3.) COMPUTE MCMC ESTIMATES.
+% COMPUTE MCMC ESTIMATES.
 fprintf('Computing MCMC estimates: ');
 sx = sum(var1(X));
-[ss sbs qs PIP] = vsmcmc(X,y,a,b,@(x) logpve(c*sx,x),m0,ns);
+[ss sas qs PIP] = vsmcmc(X,y,a,b,@(x) logpve(c*sx,x),m0,ns);
 fprintf('\n');
 
 % (4.) SHOW ERRORS IN MEAN ESTIMATES.

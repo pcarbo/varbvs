@@ -19,14 +19,17 @@ particular what platform they were tested on, go here._
 
 ###License
 
-![Creative Commons License][cclicense]
-
 Variational inference for Bayesian variable selection by [Peter
-Carbonetto](http://www.cs.ubc.ca/spider/pcarbo) is licensed under the
-[Creative Commons Attribution-ShareAlike 3.0 Unported
-License](http://creativecommons.org/licenses/by-sa/3.0/).
+Carbonetto](http://www.cs.ubc.ca/spider/pcarbo) is free software: you
+can redistribute it under the terms of the [GNU General Public
+License](http://www.gnu.org/licenses/gpl.html). All the files in this
+project are part of Variational inference for Bayesian variable
+selection. This project is distributed in the hope that it will be
+useful, but *without any warranty*; without even the implied warranty
+of *merchantability or fitness for a particular purpose*. See the file
+LICENSE for more details.
 
-[cclicense]: http://i.creativecommons.org/l/by-sa/3.0/88x31.png "Creative Commons License"
+Copyright 2012 Peter Carbonetto.
 
 ###Quick start for MATLAB
 
@@ -46,7 +49,6 @@ _Details about main functions go here._
 
 ###Who
 
-[Peter Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo)<br>
-Dept. of Human Genetics<br>
-University of Chicago<br>
-March 2012
+Stacks was developed by [Peter
+Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo)<br> in the Dept. of
+Human Genetics<br> at the University of Chicago<br> (March 2012)
