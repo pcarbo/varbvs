@@ -33,7 +33,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
 
   // (1.) GET INPUTS.
   // Get the input matrix X.
-  if (!mxIsSingle(ptr))
+  if (mxGetClassID(ptr) != mxSINGLE_CLASS)
     mexErrMsgTxt("Input argument X must be SINGLE");
   const singlematrix X = getsinglematrix(ptr);
 

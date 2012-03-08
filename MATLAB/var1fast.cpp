@@ -26,7 +26,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
     mexErrMsgTxt("Incorrect number of output arguments");
 
   // Get the input matrix X.
-  if (!mxIsSingle(ptr))
+  if (mxGetClassID(ptr) != mxSINGLE_CLASS)
     mexErrMsgTxt("Input argument X must be SINGLE");
   const singlematrix X = getsinglematrix(ptr);
 
