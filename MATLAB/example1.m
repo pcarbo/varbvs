@@ -56,12 +56,10 @@ fprintf('Computing variational estimates.\n');
 [sigma sa log10q] = ndgrid(sigma,sa,log10q);
 [w alpha mu] = varsimbvs(X,y,sigma,sa,log10q,a,b,c);
 
-return
-
 % COMPUTE MCMC ESTIMATES.
 fprintf('Computing MCMC estimates: ');
 sx = sum(var1(X));
-[ss sas qs PIP] = vsmcmc(X,y,a,b,@(x) logpve(c*sx,x),m0,ns);
+[ss sas qs PIP] = bvsmcmc(X,y,a,b,@(x) logpve(c*sx,x),m0,ns);
 fprintf('\n');
 
 % (4.) SHOW ERRORS IN MEAN ESTIMATES.
@@ -72,23 +70,23 @@ x = dot(w(:),log10(sigma(:)));
 y = mean(log10(ss));
 fprintf('log10(sigma) %7.4f %7.4f %+0.4f\n',x,mean(y),x-y);
 
-% Show posterior mean estimates of the prior variance (sb).
-x = dot(w(:),log10(sb(:)));
-y = mean(log10(sbs));
-fprintf('log10(sb)    %7.4f %7.4f %+0.4f\n',x,mean(y),x-y);
+% Show posterior mean estimates of the prior variance (sa).
+x = dot(w(:),log10(sa(:)));
+y = mean(log10(sas));
+fprintf('log10(sa)    %7.4f %7.4f %+0.4f\n',x,mean(y),x-y);
 
 % Show posterior mean estimates of the prior inclusion probability (q).
 x = dot(w(:),log10q(:));
 y = mean(log10(qs));
 fprintf('log10(q)     %7.4f %7.4f %+0.4f\n',x,mean(y),x-y);
 
-% Show estimates of the correlation between the prior variance (sb) and
+% Show estimates of the correlation between the prior variance (sa) and
 % the prior inclusion probability (q).
-x = corrcoefw(log10(sb),log10q,w);
-y = corrcoef(log10(sbs),log10(qs));
+x = corrcoefw(log10(sa),log10q,w);
+y = corrcoef(log10(sas),log10(qs));
 y = y(2);
 fprintf('                                               Var   MCMC\n');
-fprintf('Correlation between log10(sb) and log10(q): %+0.3f %+0.3f\n',x,y);
+fprintf('Correlation between log10(sa) and log10(q): %+0.3f %+0.3f\n',x,y);
 
 % (5.) DISPLAY OTHER RESULTS.
 clf
@@ -124,8 +122,8 @@ xlabel('\sigma^2');
 ylabel('posterior');
 title('MCMC');
 
-% Plot the variational estimate of the prior variance (sb).
-x = ndop(@mean,sb,2);
+% Plot the variational estimate of the prior variance (sa).
+x = ndop(@mean,sa,2);
 N = ndsum(w,2);
 x = (x(1:2:end) + x(2:2:end))/2;
 N = N(1:2:end) + N(2:2:end);
@@ -139,10 +137,10 @@ xlabel('\sigma_{\beta}^2');
 ylabel('posterior');
 title('Variational');
 
-% Plot the MCMC estimate of the prior variance (sb).
+% Plot the MCMC estimate of the prior variance (sa).
 dx    = x(2) - x(1);
 edges = [ x(1)-dx/2; x+dx/2];
-N     = histc(sbs,edges)/ns;
+N     = histc(sas,edges)/ns;
 N     = N(1:end-1);
 subplot(3,3,5);
 bar(x,N,1,'LineStyle','none','FaceColor',rgb('dodgerblue'));
