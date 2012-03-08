@@ -15,6 +15,6 @@ function y = diagsq (X, a)
     X = single(X);
   end
   
-  % Compute the result.
+  % Compute the result using the C++ routine.
   y = diagsqfast(X,a);
   

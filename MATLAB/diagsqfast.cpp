@@ -1,8 +1,11 @@
 // For a description of this C++ code, see diagsqfast.m.
-#include "mex.h"
-#include "matrix.h"
 #include "doublevector.h"
 #include "singlematrix.h"
+
+// These include files have a bunch of definitions to interface C++
+// routines to MATLAB.
+#include "mex.h"
+#include "matrix.h"
 
 // Macros.
 // ---------------------------------------------------------------
@@ -28,7 +31,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
 
   // (1.) GET INPUTS.
   // Get the input matrix X.
-  if (!mxIsSingle(ptr))
+  if (mxGetClassID(ptr) != mxSINGLE_CLASS)
     mexErrMsgTxt("Input argument X must be SINGLE");
   const singlematrix X = getsinglematrix(ptr);
 

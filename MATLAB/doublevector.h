@@ -1,6 +1,8 @@
 #ifndef INCLUDE_DOUBLEVECTOR
 #define INCLUDE_DOUBLEVECTOR
 
+// These include files have a bunch of definitions to interface C++
+// routines to MATLAB.
 #include "mex.h"
 #include "matrix.h"
 
