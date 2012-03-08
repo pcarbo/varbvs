@@ -14,10 +14,10 @@
 // -----------------------------------------------------------------
 // Execute a single iteration of the coordinate ascent updates.
 void varbvsupdate (const singlematrix& X, const double* xy, 
-		   const double* d, double sigma, double sb, 
+		   const double* d, double sigma, double sa, 
 		   const double* logodds, doublevector& alpha, 
 		   doublevector& mu, doublevector& Xr, mwSize m, 
-		   const double* snps);
+		   const double* I);
 
 // -----------------------------------------------------------------
 // MEX-file gateway routine.
@@ -37,7 +37,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
     mexErrMsgTxt("Input argument X must be SINGLE");
   const singlematrix X = getsinglematrix(ptr);
 
-  // Get the size of the data set (n) and the number of SNPs (p).
+  // Get the number of samples (n) and the number of variables (p).
   const int n = X.nr;
   const int p = X.nc;
 
@@ -47,11 +47,11 @@ void mexFunction (int nlhs, mxArray* plhs[],
     mexErrMsgTxt("Input argument SIGMA must be a double precision scalar");
   const double sigma = *mxGetPr(ptr);
 
-  // Get input scalar sb.
+  // Get input scalar sa.
   ptr = prhs[2];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != 1)
-    mexErrMsgTxt("Input argument SB must be a double precision scalar");
-  const double sb = *mxGetPr(ptr);
+    mexErrMsgTxt("Input argument SA must be a double precision scalar");
+  const double sa = *mxGetPr(ptr);
 
   // Get input vector logodds.
   ptr = prhs[3];
@@ -77,7 +77,7 @@ of length P");
   // Get input vector alpha0.
   ptr = prhs[6];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != p)
-    mexErrMsgTxt("Input argument A0 must be a double precision \
+    mexErrMsgTxt("Input argument ALPHA0 must be a double precision \
 vector of length P");  
   const doublevector alpha0 = getdoublevector(ptr);
 
@@ -98,8 +98,8 @@ of length N");
   // Get input vector snps.
   ptr = prhs[9];
   if (!mxIsDouble(ptr))
-    mexErrMsgTxt("Input argument KS must be a double precision vector.");
-  const doublevector snps = getdoublevector(ptr);
+    mexErrMsgTxt("Input argument I must be a double precision vector.");
+  const doublevector I = getdoublevector(ptr);
 
   // Get the number of coordinate ascent updates.
   mwSize m = mxGetNumberOfElements(ptr);
@@ -114,23 +114,23 @@ of length N");
   copy(Xr0,Xr);
 
   // (4.) RUN COORDINATE ASCENT UPDATES.
-  multisnpupdate(X,xy.elems,d.elems,sigma,sb,logodds.elems,alpha,mu,
-		 Xr,m,snps.elems);
+  varbvsupdate(X,xy.elems,d.elems,sigma,sa,logodds.elems,
+	       alpha,mu,Xr,m,I.elems);
 }
 
 // Execute a single iteration of the coordinate ascent updates.
-void multisnpupdate (const singlematrix& X, const double* xy, 
-		     const double* d, double sigma, double sb, 
-		     const double* logodds, doublevector& alpha, 
-		     doublevector& mu, doublevector& Xr, mwSize m, 
-		     const double* snps) {
+void varbvsupdate (const singlematrix& X, const double* xy, 
+		   const double* d, double sigma, double sa, 
+		   const double* logodds, doublevector& alpha, 
+		   doublevector& mu, doublevector& Xr, mwSize m, 
+		   const double* I) {
 
   // These variables store some temporary results.
   double  alphak, muk, rk, sk;
   double  SSR;
   mwIndex k;
 
-  // Get the size of the data set (n) and the number of SNPs (p).
+  // Get the number of samples (n) and the number of variables (p).
   const mwSize n = X.nr;
   const mwSize p = X.nc;
 
@@ -140,9 +140,11 @@ void multisnpupdate (const singlematrix& X, const double* xy,
   // Repeat for each coordinate ascent update.
   for (mwIndex j = 0; j < m; j++) {
 
-    // We need to subtract 1 from the SNP index here because Matlab
+    // We need to subtract 1 from the SNP index here because MATLAB
     // arrays start at one, but C++ arrays start at zero.
-    k = (mwIndex) snps[j] - 1;
+    k = (mwIndex) I[j] - 1;
+    if (k < 0 || k >= p)
+      mexErrMsgTxt("Input I contains an invalid index");
 
     // Get the current variational parameters.
     alphak = alpha.elems[k];
@@ -152,20 +154,21 @@ void multisnpupdate (const singlematrix& X, const double* xy,
     // Get the kth column of genotype matrix X.
     getcolumn(X,xk,k);
 
-    // Compute variational parameter S.
-    sk = sb*sigma/(sb*d[k] + 1);
+    // Compute the variational estimate of the posterior variance.
+    sk = sa*sigma/(sa*d[k] + 1);
 
-    // Update variational parameter MU.
+    // Update the variational estimate of the posterior mean.
     muk = sk/sigma * (xy[k] + d[k]*rk - dot(xk,Xr));
 
-    // Update variational parameter ALPHA.
+    // Update the variational estimate of the posterior inclusion
+    // probability.
     SSR    = muk*muk/sk;
-    alphak = sigmoid(logodds[k] + (log(sk/(sb*sigma)) + SSR)/2);
+    alphak = sigmoid(logodds[k] + (log(sk/(sa*sigma)) + SSR)/2);
     
     // Update Xr = X*r.
     add(Xr,alphak*muk - rk,xk);
 
-    // Store the updated parameters.
+    // Store the updated variational parameters.
     alpha.elems[k] = alphak;
     mu.elems[k]    = muk;
   }

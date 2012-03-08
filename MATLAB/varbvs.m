@@ -22,14 +22,16 @@
 % variables have the same prior inclusion probability, or it may be a vector
 % of length P.
 %
-% There are four outputs. Output LNZ is the variational estimate of the
-% marginal log-likelihood given the hyperparameters SIGMA, SA and LOGODDS.
+% There are four outputs. Output scalar LNZ is the variational estimate of
+% the marginal log-likelihood given the hyperparameters SIGMA, SA and
+% LOGODDS.
 %
 % Outputs ALPHA, MU and S are the parameters of the variational
 % approximation, and the variational estimates of posterior quantites: under
-% the variational approximation, the Kth regression coefficient is normal
-% with probability ALPHA(K), and MU(K) and S(K) are the mean and variance of
-% the coefficient given that it is included in the model.
+% the variational approximation, the ith regression coefficient is normal
+% with probability ALPHA(i), and MU(i) and S(i) are the mean and variance of
+% the coefficient given that it is included in the model. Outputs ALPHA,
+% MU and S are column vectors of length P.
 %
 % VARBVS(...,OPTIONS) overrides the default behaviour of the algorithm. Set
 % OPTIONS.ALPHA and OPTIONS.MU to override the random initialization of
@@ -54,14 +56,14 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
   % Y must be a double precision column vector of length N.
   y = double(y(:));
   if length(y) ~= n
-    error('Data X and Y do not match.');
+    error('Data X and Y do not match');
   end
 
   % SIGMA and SA must be double scalars.
   sigma = double(sigma);
   sa    = double(sa); 
   if ~(isscalar(sigma) & isscalar(sa))
-    error('Inputs SIGMA and SA must be scalars.');
+    error('Inputs SIGMA and SA must be scalars');
   end
 
   % LOGODDS must be a double precision column vector of length P.
@@ -70,7 +72,7 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
   end
   logodds = double(logodds(:));
   if length(logodds) ~= p
-    error(['LOGODDS must be a scalar or a vector of the same length as Y.');
+    error('LOGODDS must be a scalar or a vector of the same length as Y');
   end
 
   % TAKE CARE OF OPTIONAL INPUTS.
@@ -129,7 +131,6 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
 
     % UPDATE VARIATIONAL APPROXIMATION.
     % Run a forward or backward pass of the coordinate ascent updates.
-    % *** FIX THIS ***
     if isodd(iter)
       I = 1:p;
     else
