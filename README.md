@@ -27,9 +27,15 @@ project are part of Variational inference for Bayesian variable
 selection. This project is distributed in the hope that it will be
 useful, but **without any warranty**; without even the implied
 warranty of **merchantability or fitness for a particular
-purpose**. See the file LICENSE for more details.
+purpose**. See file LICENSE for the full text of the license.
 
 Copyright 2012 Peter Carbonetto.
+
+This project includes several MATLAB functions created by James
+P. LeSage as part of the [Econometrics
+Toolbox](http://www.spatial-econometrics.com/) (March 2010 revision),
+which is also distributed under the GNU General Public License. None
+of MATLAB code from this toolbox has been modified.
 
 ###Quick start for MATLAB
 

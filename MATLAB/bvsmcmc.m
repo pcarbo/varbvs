@@ -83,7 +83,7 @@ function [SIGMA, SA, Q, PIP, mu] = vsmcmc (X, y, a, b, logp, m0, ns)
     % Store the samples of the hyperparameters.
     SIGMA(i) = sigma;
     SA(i)    = sa;
-    Q(i)     = betarnd(a+m,b+p-m);
+    Q(i)     = beta_rnd(1,a+m,b+p-m);
   end
   fprintf('\n');
 
@@ -114,7 +114,9 @@ function y = ratiosumexp (a, b)
 % 1/X from the gamma distribution with shape A and scale 1/B.
 function sigma = samplesigma (n, S, xy, yy, as, bs)
   SSR   = dot(xy,S*xy);
-  sigma = 1/gamrnd((as + n)/2,2/(bs + yy - SSR));
+  a     = (as + n)/2;         % The shape parameter.
+  b     = 2/(bs + yy - SSR);  % The scale parameter.
+  sigma = 1/(b*gamm_rnd(1,a));
 
 % ------------------------------------------------------------------
 % Sample the prior variance (sa) given the residual variance (sigma) and
