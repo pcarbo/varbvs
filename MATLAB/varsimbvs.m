@@ -56,16 +56,18 @@ function [w, alpha, mu] = varsimbvs (X, y, sigma, sa, log10q, a, b, c)
   [n p] = size(X);
   ns    = numel(sa);
   
-  % Get the sum of the sample genetic variances.
+  % Get the sum of the sample variances.
   sx = sum(var1(X));
   
-  % Get the settings for the prior proportion of included variables.
+  % Get the settings for the prior inclusion probabilities.
   q = 10.^log10q;
 
-  % Initialize storage for the importance weights (logw), variational
-  % estimates of the posterior probabilities (alpha), and variational
-  % estimates of the mean additive effects (mu).
-  logw  = zeros(size(sb));
+  % Initialize storage for the marginal log-likelihoods (lnZ), the
+  % log-importance weights (logw), variational estimates of the posterior
+  % inclusion probabilities (alpha), and variational estimates of the mean
+  % additive effects (mu).
+  lnZ   = zeros(size(sa));
+  logw  = zeros(size(sa));
   alpha = zeros(p,ns);
   mu    = zeros(p,ns);
   
@@ -74,47 +76,48 @@ function [w, alpha, mu] = varsimbvs (X, y, sigma, sa, log10q, a, b, c)
   fprintf('Finding best initialization for %d combinations ',ns);
   fprintf('of hyperparameters.\n');
   for i = 1:ns
-    fprintf('(%03d) sigma = %4.1f, sb = %0.3f, q = %0.2e',i,...
-	    sigma(i),sb(i),q(i));
-    fprintf(repmat('\b',1,44));
+    % fprintf('(%03d) sigma = %4.1f, sa = %0.3f, q = %0.2e',...
+    % 	    i,sigma(i),sa(i),q(i));
+    % fprintf(repmat('\b',1,44));
   
-    % Initialize the variational parameters.
+    % Randomly initialize the variational parameters.
     alpha0  = rand(p,1);
     alpha0  = alpha0 / sum(alpha0);
-    options = struct('alpha',alpha0,'mu',randn(p,1),'verbose',false);
+    options = struct('alpha',alpha0,'mu',randn(p,1),'verbose',true);
 
     % Run the coordinate ascent algorithm.
-    [ logw(i) alpha(:,i) mu(:,i) ] = ...
-	multisnp(X,y,sigma(i),sb(i),logit(q(i)),options);
+    [lnZ(i) alpha(:,i) mu(:,i)] = ...
+	varbvs(X,y,sigma(i),sa(i),logit(q(i)),options);
   end
   fprintf('\n');
   
   % Choose an initialization common to all the runs of the coordinate ascent
   % algorithm. This is chosen from the hyperparameters with the highest
   % marginal likelihood.
-  [ans i] = max(logw(:));
+  [ans i] = max(lnZ(:));
   options = struct('alpha',alpha(:,i),'mu',mu(:,i),'verbose',false);
   
   % Repeat for each combination of the hyperparameters.
   fprintf('Computing importance weights for %d combinations ',ns);
   fprintf('of hyperparameters.\n');
   for i = 1:ns
-    fprintf('(%03d) sigma = %4.1f, sb = %0.3f, q = %0.2e',i,...
-	    sigma(i),sb(i),q(i));
+    fprintf('(%03d) sigma = %4.1f, sa = %0.3f, q = %0.2e',...
+	    i,sigma(i),sa(i),q(i));
     fprintf(repmat('\b',1,44));
   
     % Run the coordinate ascent algorithm.
-    [lnZ alpha(:,i) mu(:,i)] = ...
-	multisnp(X,y,sigma(i),sb(i),logit(q(i)),options);
+    [lnZ(i) alpha(:,i) mu(:,i)] = ...
+	varbvs(X,y,sigma(i),sa(i),logit(q(i)),options);
 
     % Compute the log-importance weight. Note that if X ~ p(x), then the
     % probability density of Y = log(X) is proportional to x*p(x). This is
     % useful for calculating the prior for the logarithm of the prior
-    % inclusion probability.
-    logw(i) = lnZ ...                                % Marginal likelihood.
-	      + loginvgamma(sigma(i),as/2,bs/2) ...  % Prior on sigma.
-	      + logpve(c*sx,sb(i)) ...               % Prior on sb.
-	      + logbeta(q(i),a + 1,b);               % Prior on log10(q).
+    % inclusion probability, since we want to calculate the posterior
+    % distribution for log10(q), not q.
+    logw(i) = lnZ(i) ...                            % Marginal likelihood.
+	      + loginvgamma(sigma(i),as/2,bs/2) ... % Prior on sigma.
+	      + logpve(c*sx,sa(i)) ...              % Prior on sa.
+	      + logbeta(q(i),a+1,b);                % Prior on log10q.
   end
   fprintf('\n');
   

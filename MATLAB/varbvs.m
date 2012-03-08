@@ -4,7 +4,7 @@
 % approximation to the posterior distribution of the coefficients in a
 % linear regression model of a continuous outcome (quantitiative trait),
 % with spike and slab priors on the coefficients. By "best", we mean the
-% approximating distribution that (locally) minimizes the Kullback-Leibler
+% approximating distribution that locally minimizes the Kullback-Leibler
 % divergence between the approximating distribution and the exact posterior.
 %
 % The required inputs are as follows. Input X is an N x P matrix of
@@ -15,23 +15,23 @@
 %
 % Inputs SIGMA, SA and LOGODDS are the hyperparameters. SIGMA and SA are
 % scalars. SIGMA specifies the variance of the residual, and SA*SIGMA is the
-% prior variance of the additive effects. LOGODDS is the prior log-odds of
+% prior variance of the coefficients. LOGODDS is the prior log-odds of
 % inclusion for each variable. It is equal to LOGODDS = LOG(Q./(1-Q)), where
 % Q is the prior probability that each variable is included in the linear
-% model of Y. LOGODDS may either be a scalar, in which case all the
-% variables have the same prior inclusion probability, or it may be a vector
-% of length P.
+% model of Y (i.e. the prior probability that its coefficient is not zero).
+% LOGODDS may either be a scalar, in which case all the variables have the
+% same prior inclusion probability, or it may be a vector of length P.
 %
 % There are four outputs. Output scalar LNZ is the variational estimate of
 % the marginal log-likelihood given the hyperparameters SIGMA, SA and
 % LOGODDS.
 %
 % Outputs ALPHA, MU and S are the parameters of the variational
-% approximation, and the variational estimates of posterior quantites: under
-% the variational approximation, the ith regression coefficient is normal
-% with probability ALPHA(i), and MU(i) and S(i) are the mean and variance of
-% the coefficient given that it is included in the model. Outputs ALPHA,
-% MU and S are column vectors of length P.
+% approximation and, equivalently, variational estimates of posterior
+% quantites: under the variational approximation, the ith regression
+% coefficient is normal with probability ALPHA(i); MU(i) and S(i) are the
+% mean and variance of the coefficient given that it is included in the
+% model. Outputs ALPHA, MU and S are all column vectors of length P.
 %
 % VARBVS(...,OPTIONS) overrides the default behaviour of the algorithm. Set
 % OPTIONS.ALPHA and OPTIONS.MU to override the random initialization of
@@ -112,11 +112,11 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
   s = sa*sigma./(sa*d + 1);
   
   % Repeat until convergence criterion is met.
-  % *** FIX OUTPUTING OF PROGRESS ***
   lnZ  = -Inf;
   iter = 0;
   if verbose
-    fprintf('iter           lnZ max chg #snp  beta\n');
+    fprintf('       variational    max. incl max.\n');
+    fprintf('iter   lower bound  change vars E[b]\n');
   end
   while true
 
@@ -154,7 +154,7 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
     I      = find(abs(params) > 1e-6);
     err    = relerr(params(I),params0(I));
     if verbose
-      fprintf('%4d %+13.6e %0.1e %4d %0.3f\n',iter,lnZ,max(err),...
+      fprintf('%4d %+13.6e %0.1e %4d %0.2f\n',iter,lnZ,max(err),...
 	      round(sum(alpha)),max(abs(alpha.*mu)));
     end
     if lnZ < lnZ0

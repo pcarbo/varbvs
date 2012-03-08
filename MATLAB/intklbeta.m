@@ -6,6 +6,6 @@
 % used as an input to VARBVS.) See VARBVS for details on the inputs to this
 % function.
 function I = intklbeta (alpha, mu, s, sa)
-  I = (sum(alpha) + alpha'*log(s/sa) - alpha'*(s + mu.^2)/sb)/2 ...
+  I = (sum(alpha) + alpha'*log(s/sa) - alpha'*(s + mu.^2)/sa)/2 ...
       - alpha'*log(alpha + eps) - (1 - alpha)'*log(1 - alpha + eps);
   

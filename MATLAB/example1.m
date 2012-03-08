@@ -56,7 +56,7 @@ fprintf('Proportion of variance explained is %0.3f.\n',sz/(sz + se));
 % *** FIX THIS ***
 fprintf('Computing variational estimates.\n');
 [sigma sa log10q] = ndgrid(sigma,sa,log10q);
-[w alpha mu] = varsimbvs(X,y,sigma,sb,log10q,a,b,c);
+[w alpha mu] = varsimbvs(X,y,sigma,sa,log10q,a,b,c);
 
 return
 

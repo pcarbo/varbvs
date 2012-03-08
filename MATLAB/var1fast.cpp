@@ -1,9 +1,12 @@
 // For a description of this C++ code, see var1fast.m
-#include "mex.h"
-#include "matrix.h"
 #include "common.h"
 #include "doublevector.h"
 #include "singlematrix.h"
+
+// These include files have a bunch of definitions to interface C++
+// routines to MATLAB.
+#include "mex.h"
+#include "matrix.h"
 
 // Function declarations.
 // -----------------------------------------------------------------
