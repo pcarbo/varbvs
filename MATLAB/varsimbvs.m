@@ -29,8 +29,8 @@
 % inputs must be arrays of the same size. For each combination of the
 % hyperparameters, we compute an importance weight, and store the result in
 % output W. SIGMA is the residual variance, SIGMA.*SA is the prior variance
-% of the additive effects, and LOG10Q is the (base 10) logarithm of the
-% prior inclusion probability.
+% of the regression coefficients, and LOG10Q is the (base 10) logarithm of
+% the prior inclusion probability.
 %
 % Inputs A, B and C are positive scalars. A and B are the prior sample sizes
 % for the Beta prior on the prior inclusion probability. We assume a uniform
@@ -80,8 +80,8 @@ function [w, alpha, mu] = varsimbvs (X, y, sigma, sa, log10q, a, b, c)
 
   % Initialize storage for the marginal log-likelihoods (lnZ), the
   % log-importance weights (logw), variational estimates of the posterior
-  % inclusion probabilities (alpha), and variational estimates of the mean
-  % additive effects (mu).
+  % inclusion probabilities (alpha), and variational estimates of the
+  % posterior mean coefficients (mu).
   lnZ   = zeros(size(sa));
   logw  = zeros(size(sa));
   alpha = zeros(p,ns);

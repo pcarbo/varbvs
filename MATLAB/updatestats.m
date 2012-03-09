@@ -1,18 +1,13 @@
 % [U,YHAT,XY,XU,D] = UPDATESTATS(X,Y,ETA) calculates useful quantities for
-% the posterior distribution of the additive genetic effects at each locus,
-% under a variational approximation to the nonlinear terms in the logistic
-% function. ETA is the vector of parameters for the variational lower bound
-% to the logistic regression. It is a vector of length N.  This function
-% should be called whenever the variational parameters (ETA) are updated.
+% updating the variational approximation to the logistic regression factors.
+% Inputs X and Y specify the data (see VARBVSBIN), and ETA is the vector of
+% free parameters. It is a column vector of length equal to the number of
+% samples. This function should be called whenever the free parameters
+% are modified.
 %
-% Input X is the genotype data. It is an N x P matrix, where N is the number
-% of samples (individuals), and P is the number of variables ( SNPs). Y is
-% the vector of quantitative trait data; it is a vector of length N. X and
-% Y should not be centered.
-%
-% Outputs XY and XU are defined as XY = X'*YHAT and XU = X'*U. Output D is
-% the diagonal of matrix UHAT; that is, D = diag(UHAT). For a definition of
-% vectors U, YHAT and matrix UHAT, see the Bayesian Analysis journal paper.
+% Outputs XY, XU and D are defined as XY = X'*YHAT, XU = X'*U and D =
+% DIAG(UHAT), where U = SLOPE(U). For a definition of vectors YHAT and
+% matrix UHAT, see the Bayesian Analysis paper.
 %
 % The outputs may also be returned as a STRUCT.
 function varargout = updatestats (X, y, eta)

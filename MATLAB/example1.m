@@ -29,7 +29,7 @@ b = 1;
 c = 0.02;
 
 % Candidate values of the variance of the residual (sigma), the prior
-% variance of the additive effects (sa), and logarithm of the prior
+% variance of the regression coefficients (sa), and logarithm of the prior
 % inclusion probability (log10q).
 sigma  = (8:13)';
 sa     = (0.025:0.025:0.4)';

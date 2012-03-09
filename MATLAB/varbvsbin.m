@@ -168,8 +168,7 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
     else
       I = p:-1:1;
     end
-    % *** FIX THIS ***
-    [alpha mu Xr] = multisnpbinupdate(X,sa,logodds,stats,alpha,mu,Xr,snps);
+    [alpha mu Xr] = varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,I);
 
     % Recalculate the posterior variance of the coefficients.
     s = sb./(sb*stats.d + 1);  
@@ -177,7 +176,6 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
     % UPDATE ETA.
     % Update the free parameters specifying the variational approximation
     % to the logistic regression factors.
-    % *** FIX THIS ***
     if ~fixed_eta
       eta   = updateeta(X,y,betavar(alpha,mu,s),Xr,stats.u);
       stats = updatestats(X,y,eta);
@@ -185,7 +183,6 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
 
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute variational lower bound to marginal log-likelihood.
-    % *** FIX THIS ***
     lnZ = intlogit(y,stats,alpha,mu,s,Xr,eta) ...
 	  + intgamma(logodds,alpha) ...
 	  + intklbeta(alpha,mu,s,sa);

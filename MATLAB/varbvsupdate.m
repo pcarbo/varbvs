@@ -8,13 +8,13 @@
 %
 % All inputs to this function are required. Input X is an N x P matrix of
 % observations about the variables (or features), where N is the number of
-% samples, and P is the number of variables. X must be a SINGLE matrix.
-% Input XY = X'*Y, where Y is the vector of observations about the outcome.
-% Crucially, to account for an intercept, Y and X must be centered
-% beforehand so that Y and each column of X has a mean of zero.
+% samples, and P is the number of variables. Input XY = X'*Y, where Y is the
+% vector of observations about the outcome. Crucially, to account for an
+% intercept, Y and X must be centered beforehand so that Y and each column
+% of X has a mean of zero.
 %
-% Note that this routine is implemented with the assumption that the data X
-% is single floating-point precision (type HELP SINGLE), as opposed to the
+% This routine is implemented with the assumption that X is a single
+% floating-point precision matrix (type HELP SINGLE), as opposed to the
 % MATLAB default of double precision. This is useful for large data sets,
 % because single precision requires half of the number of bits as double
 % floating-point precision. If X is provided in another numerical
@@ -22,10 +22,10 @@
 %
 % Inputs SIGMA, SA and LOGODDS specify the hyperparameters. SIGMA and SA are
 % scalars. SIGMA specifies the variance of the residual, and SA*SIGMA is the
-% prior variance of the additive effects. LOGODDS is the prior log-odds of
-% inclusion for each variable. It is equal to LOGODDS = LOG(Q./(1-Q)), where
-% Q is the prior probability that each variable is included in the linear
-% model of Y. LOGODDS is a vector of length P.
+% prior variance of the regression coefficients. LOGODDS is the prior
+% log-odds of inclusion for each variable. It is equal to LOGODDS =
+% LOG(Q./(1-Q)), where Q is the prior probability that each variable is
+% included in the linear model of Y. LOGODDS is a vector of length P.
 %
 % Inputs ALPHA0, MU0 are the current parameters of the variational
 % approximation; under the variational approximation, the ith regression
