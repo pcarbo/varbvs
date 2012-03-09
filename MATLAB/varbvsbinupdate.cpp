@@ -1,21 +1,24 @@
-// For a description of this C++ code, see multisnpbinupdate.m.
-#include "mex.h"
-#include "matrix.h"
+// For a description of this C++ code, see varbvsbinupdate.m.
 #include "common.h"
 #include "doublevector.h"
 #include "singlematrix.h"
 #include <string.h>
 #include <math.h>
 
+// These include files have a bunch of definitions to interface C++
+// routines to MATLAB.
+#include "mex.h"
+#include "matrix.h"
+
 // Function declarations.
 // -----------------------------------------------------------------
 // Execute a single iteration of the coordinate ascent updates.
-void multisnpbinupdate (const singlematrix& X, const double* xy, 
-			const double* xu, const double* d, 
-			const doublevector& u, double sb, 
-			const double* logodds, doublevector& alpha, 
-			doublevector& mu, doublevector& Xr, 
-			mwSize m, const double* snps);
+void varbvsbinupdate (const singlematrix& X, const double* xy, 
+		      const double* xu, const double* d, 
+		      const doublevector& u, double sa, 
+		      const double* logodds, doublevector& alpha, 
+		      doublevector& mu, doublevector& Xr, 
+		      mwSize m, const double* I);
 
 // Function definitions.
 // -----------------------------------------------------------------
@@ -36,21 +39,20 @@ void mexFunction (int nlhs, mxArray* plhs[],
     mexErrMsgTxt("Input argument X must be SINGLE");
   const singlematrix X = getsinglematrix(ptr);
 
-  // Get the size of the data set (n) and the number of SNPs (p).
+  // Get the number of samples (n) and number of variables (p).
   const mwSize n = X.nr;
   const mwSize p = X.nc;
 
-  // Get input scalar sb.
+  // Get input scalar sa.
   ptr = prhs[1];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != 1)
-    mexErrMsgTxt("Input argument SB must be a double precision scalar");
-  const double sb = *mxGetPr(ptr);
+    mexErrMsgTxt("Input argument SA must be a double precision scalar");
+  const double sa = *mxGetPr(ptr);
 
   // Get input vector logodds.
   ptr = prhs[2];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != p)
-    mexErrMsgTxt("Input argument LOGODDS must be a double precision \
-vector of length P");
+    mexErrMsgTxt("LOGODDS must be a double precision vector of length P");
   const doublevector logodds = getdoublevector(ptr);
 
   // Get the sufficient statistics.
@@ -63,57 +65,56 @@ vector of length P");
   if (!field)
     mexErrMsgTxt("Field U in structure STATS does not exist");
   if (!mxIsDouble(field) || mxGetNumberOfElements(field) != n)
-    mexErrMsgTxt("Input argument STATS.U must be a double precision \
-vector of length N");
+    mexErrMsgTxt("STATS.U must be a double precision vector of length N");
   const doublevector u = getdoublevector(field);
 
   // Get input vector xy.
   field = mxGetField(ptr,0,"xy");
+  if (!field)
+    mexErrMsgTxt("Field XY in structure STATS does not exist");
   if (!mxIsDouble(field) || mxGetNumberOfElements(field) != p)
-    mexErrMsgTxt("Input argument STATS.XY must be a double precision vector \
-of length P");
+    mexErrMsgTxt("STATS.XY must be a double precision vector of length P");
   const doublevector xy = getdoublevector(field);
 
   // Get input vector xu.
   field = mxGetField(ptr,0,"xu");
+  if (!field)
+    mexErrMsgTxt("Field XU in structure STATS does not exist");
   if (!mxIsDouble(field) || mxGetNumberOfElements(field) != p)
-    mexErrMsgTxt("Input argument STATS.XU must be a double precision vector \
-of length P");
+    mexErrMsgTxt("STATS.XU must be a double precision vector of length P");
   const doublevector xu = getdoublevector(field);  
 
   // Get input vector d.
   field = mxGetField(ptr,0,"d");
+  if (!field)
+    mexErrMsgTxt("Field D in structure STATS does not exist");
   if (!mxIsDouble(field) || mxGetNumberOfElements(field) != p)
-    mexErrMsgTxt("Input argument STATS.D must be a double precision vector \
-of length P");
+    mexErrMsgTxt("STATS.D must be a double precision vector of length P");
   const doublevector d = getdoublevector(field);
 
   // Get input vector alpha0.
   ptr = prhs[4];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != p)
-    mexErrMsgTxt("Input argument ALPHA0 must be a double precision \
-vector of length P");  
+    mexErrMsgTxt("ALPHA0 must be a double precision vector of length P");  
   const doublevector alpha0 = getdoublevector(ptr);
 
   // Get input vector mu0.
   ptr = prhs[5];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != p)
-    mexErrMsgTxt("Input argument MU0 must be a double precision vector \
-of length P");  
+    mexErrMsgTxt("Input MU0 must be a double precision vector of length P");  
   const doublevector mu0 = getdoublevector(ptr);
 
   // Get the input vector Xr0.
   ptr = prhs[6];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != n)
-    mexErrMsgTxt("Input argument XR0 must be a double precision vector \
-of length N");
+    mexErrMsgTxt("Input XR0 must be a double precision vector of length N");
   const doublevector Xr0 = getdoublevector(ptr);
 
-  // Get input vector snps.
+  // Get input vector I.
   ptr = prhs[7];
   if (!mxIsDouble(ptr))
-    mexErrMsgTxt("Input argument KS must be a double precision vector.");
-  const doublevector snps = getdoublevector(ptr);
+    mexErrMsgTxt("Input I must be a double precision vector.");
+  const doublevector I = getdoublevector(ptr);
 
   // Get the number of coordinate ascent updates.
   mwSize m = mxGetNumberOfElements(ptr);
@@ -128,24 +129,24 @@ of length N");
   copy(Xr0,Xr);
 
   // (3.) RUN COORDINATE ASCENT UPDATES.
-  multisnpbinupdate(X,xy.elems,xu.elems,d.elems,u,sb,logodds.elems,
-		    alpha,mu,Xr,m,snps.elems);
+  varbvsbinupdate(X,xy.elems,xu.elems,d.elems,u,sa,logodds.elems,
+		  alpha,mu,Xr,m,I.elems);
 }
 
 // Execute a single iteration of the coordinate ascent updates.
-void multisnpbinupdate (const singlematrix& X, const double* xy, 
-			const double* xu, const double* d, 
-			const doublevector& u, double sb, 
-			const double* logodds, doublevector& alpha, 
-			doublevector& mu, doublevector& Xr, 
-			mwSize m, const double* snps) {
+void varbvsbinupdate (const singlematrix& X, const double* xy, 
+		      const double* xu, const double* d, 
+		      const doublevector& u, double sa, 
+		      const double* logodds, doublevector& alpha, 
+		      doublevector& mu, doublevector& Xr, 
+		      mwSize m, const double* I) {
 
   // These variables store some temporary results.
   double  alphak, muk, rk, sk;
   double  SSR;
   mwIndex k;
 
-  // Get the size of the data set (n) and the number of SNPs (p).
+  // Get the number of samples (n) and the number of variables (p).
   const mwSize n = X.nr;
   const mwSize p = X.nc;
 
@@ -158,9 +159,11 @@ void multisnpbinupdate (const singlematrix& X, const double* xy,
   // Repeat for each coordinate ascent update.
   for (mwIndex j = 0; j < m; j++) {
 
-    // We need to subtract 1 from the SNP index here because Matlab
-    // arrays start at one, but C++ arrays start at zero.
-    k = (mwIndex) snps[j] - 1;
+    // We need to subtract 1 from the index here because Matlab arrays
+    // start at one, but C++ arrays start at zero.
+    k = (mwIndex) I[j] - 1;
+    if (k < 0 || k >= p)
+      mexErrMsgTxt("Input I contains an invalid index");
 
     // Get the current variational parameters.
     alphak = alpha.elems[k];
@@ -170,20 +173,21 @@ void multisnpbinupdate (const singlematrix& X, const double* xy,
     // Get the kth column of genotype matrix X.
     getcolumn(X,xk,k);
     
-    // Compute variational parameter S.
-    sk = sb/(sb*d[k] + 1);      
+    // Compute the variational estimate of the posterior variance.
+    sk = sa/(sa*d[k] + 1);      
 
-    // Update variational parameter MU.
+    // Update the variational estimate of the posterior mean.
     muk = sk * (xy[k] - dot(xk,Xr,u) + xu[k]*dot(u,Xr)/ubar + d[k]*rk);
     
-    // Update variational parameter ALPHA.
+    // Update the variational estimate of the posterior inclusion
+    // probability.
     SSR    = muk*muk/sk;
-    alphak = sigmoid(logodds[k] + (log(sk/sb) + SSR)/2);
+    alphak = sigmoid(logodds[k] + (log(sk/sa) + SSR)/2);
     
     // Update Xr = X*r.
     add(Xr,alphak*muk - rk,xk);
 
-    // Store the updated parameters.
+    // Store the updated variational parameters.
     alpha.elems[k] = alphak;
     mu.elems[k]    = muk;
   }

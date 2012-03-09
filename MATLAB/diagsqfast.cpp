@@ -35,7 +35,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
     mexErrMsgTxt("Input argument X must be SINGLE");
   const singlematrix X = getsinglematrix(ptr);
 
-  // Get the size of the data set (n) and the number of SNPs (p).
+  // Get the dimensions of X.
   const mwSize n = X.nr;
   const mwSize p = X.nc;
 

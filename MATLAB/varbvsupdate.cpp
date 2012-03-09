@@ -89,7 +89,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
     mexErrMsgTxt("Input XR0 must be a double precision vector of length N");
   const doublevector Xr0 = getdoublevector(ptr);
 
-  // Get input vector snps.
+  // Get input vector I.
   ptr = prhs[9];
   if (!mxIsDouble(ptr))
     mexErrMsgTxt("Input argument I must be a double precision vector");
@@ -107,7 +107,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
   copy(mu0,mu);
   copy(Xr0,Xr);
 
-  // (4.) RUN COORDINATE ASCENT UPDATES.
+  // (3.) RUN COORDINATE ASCENT UPDATES.
   varbvsupdate(X,xy.elems,d.elems,sigma,sa,logodds.elems,
 	       alpha,mu,Xr,m,I.elems);
 }
@@ -134,8 +134,8 @@ void varbvsupdate (const singlematrix& X, const double* xy,
   // Repeat for each coordinate ascent update.
   for (mwIndex j = 0; j < m; j++) {
 
-    // We need to subtract 1 from the SNP index here because MATLAB
-    // arrays start at one, but C++ arrays start at zero.
+    // We need to subtract 1 from the index here because MATLAB arrays
+    // start at one, but C++ arrays start at zero.
     k = (mwIndex) I[j] - 1;
     if (k < 0 || k >= p)
       mexErrMsgTxt("Input I contains an invalid index");
