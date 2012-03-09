@@ -20,7 +20,8 @@ function varargout = updatestats (X, y, eta)
   % Compute the slope of the conjugate.
   u = slope(eta);
 
-  % See the journal paper for a definition of BETA0 and YHAT.
+  % Compute BETA0 and YHAT. See the journal paper for an explanation of
+  % these two variables.
   beta0 = sum(y - 0.5)/sum(u);
   yhat  = y - 0.5 - beta0*u;
 

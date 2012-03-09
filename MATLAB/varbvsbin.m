@@ -15,6 +15,13 @@
 % VARBVS, Y and X must *not* be centered. Instead, we will account for the
 % intercept as we update the variational approximation.
 %
+% Note that this routine is implemented with the assumption that the data X
+% is single floating-point precision (type HELP SINGLE), as opposed to the
+% MATLAB default of double precision. This is useful for large data sets,
+% because single precision requires half of the number of bits as double
+% floating-point precision. If X is provided in another numerical
+% representation, it is immediately converted to SINGLE.
+%
 % Inputs SA and LOGODDS are the hyperparameters. Scalar SA is the prior
 % variance of the coefficients. LOGODDS is the prior log-odds of inclusion
 % for each variable. It is equal to LOGODDS = LOG(Q./(1-Q)), where Q is the

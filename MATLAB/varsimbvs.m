@@ -18,6 +18,13 @@
 % vector of length N. To account for an intercept, Y and X must be centered
 % beforehand so that Y and each column of X has a mean of zero.
 %
+% Note that this routine is implemented with the assumption that the data X
+% is single floating-point precision (type HELP SINGLE), as opposed to the
+% MATLAB default of double precision. This is useful for large data sets,
+% because single precision requires half of the number of bits as double
+% floating-point precision. If X is provided in another numerical
+% representation, it is immediately converted to SINGLE.
+%
 % Inputs SIGMA, SA and LOG10Q specify the hyperparameter settings. These
 % inputs must be arrays of the same size. For each combination of the
 % hyperparameters, we compute an importance weight, and store the result in
