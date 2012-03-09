@@ -32,5 +32,5 @@ function eta = updateeta (X, y, v, Xr, u)
   c = -a*xu.*v;
   
   % This is the M-step update for the free parameters.
-  eta = sqrt((mu0 + Xr).^2 + s0 + diagsq2(X,v) + 2*double(X*c));
+  eta = sqrt((mu0 + Xr).^2 + s0 + diagsqt(X,v) + 2*double(X*c));
   

@@ -96,11 +96,11 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
 
   % Set initial estimates of sufficient statistics.
   if isfield(options,'alpha') & isfield(options,'mu')
+    alpha = double(options.alpha(:));
+    mu    = double(options.mu(:));
     if length(alpha) ~= p || length(mu) ~= p
       error('OPTIONS.ALPHA and OPTIONS.MU must be vectors of length P');
     end
-    alpha = double(options.alpha(:));
-    mu    = double(options.mu(:));
   else
     
     % The variational parameters are initialized randomly so that exactly
@@ -171,7 +171,7 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
     [alpha mu Xr] = varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,I);
 
     % Recalculate the posterior variance of the coefficients.
-    s = sb./(sb*stats.d + 1);  
+    s = sa./(sa*stats.d + 1);  
 
     % UPDATE ETA.
     % Update the free parameters specifying the variational approximation

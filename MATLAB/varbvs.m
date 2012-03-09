@@ -90,11 +90,11 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
 
   % Set initial estimates of variational parameters.
   if isfield(options,'alpha') & isfield(options,'mu')
+    alpha = double(options.alpha(:));
+    mu    = double(options.mu(:));
     if length(alpha) ~= p || length(mu) ~= p
       error('OPTIONS.ALPHA and OPTIONS.MU must be vectors of length P');
     end
-    alpha = double(options.alpha(:));
-    mu    = double(options.mu(:));
   else
     
     % The variational parameters are initialized randomly so that exactly
