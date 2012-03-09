@@ -10,8 +10,9 @@
 % The required inputs are as follows. Input X is an N x P matrix of
 % observations about the variables (or features), where N is the number of
 % samples, and P is the number of variables. Y is the vector of observations
-% about the outcome; it is a vector of length N. Crucially, Y and X must be
-% centered beforehand so that Y and each column of X has a mean of zero.
+% about the outcome; it is a vector of length N. To account for an
+% intercept, Y and X must be centered beforehand so that Y and each column
+% of X has a mean of zero.
 %
 % Inputs SIGMA, SA and LOGODDS are the hyperparameters. SIGMA and SA are
 % scalars. SIGMA specifies the variance of the residual, and SA*SIGMA is the
@@ -82,8 +83,11 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
 
   % Set initial estimates of variational parameters.
   if isfield(options,'alpha') & isfield(options,'mu')
-    alpha = options.alpha;
-    mu    = options.mu;
+    if length(alpha) ~= p || length(mu) ~= p
+      error('OPTIONS.ALPHA and OPTIONS.MU must be vectors of length P');
+    end
+    alpha = double(options.alpha(:));
+    mu    = double(options.mu(:));
   else
     
     % The variational parameters are initialized randomly so that exactly

@@ -56,49 +56,43 @@ void mexFunction (int nlhs, mxArray* plhs[],
   // Get input vector logodds.
   ptr = prhs[3];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != p)
-    mexErrMsgTxt("Input argument LOGODDS must be a double precision \
-vector of length P");
+    mexErrMsgTxt("LOGODDS must be a double precision vector of length P");
   const doublevector logodds = getdoublevector(ptr);
 
   // Get input vector xy.
   ptr = prhs[4];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != p)
-    mexErrMsgTxt("Input argument XY must be a double precision vector \
-of length P");
+    mexErrMsgTxt("Input XY must be a double precision vector of length P");
   const doublevector xy = getdoublevector(ptr);
 
   // Get input vector d.
   ptr = prhs[5];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != p)
-    mexErrMsgTxt("Input argument D must be a double precision vector \
-of length P");
+    mexErrMsgTxt("Input D must be a double precision vector of length P");
   const doublevector d = getdoublevector(ptr);
 
   // Get input vector alpha0.
   ptr = prhs[6];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != p)
-    mexErrMsgTxt("Input argument ALPHA0 must be a double precision \
-vector of length P");  
+    mexErrMsgTxt("ALPHA0 must be a double precision vector of length P");  
   const doublevector alpha0 = getdoublevector(ptr);
 
   // Get input vector mu0.
   ptr = prhs[7];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != p)
-    mexErrMsgTxt("Input argument MU0 must be a double precision vector \
-of length P");  
+    mexErrMsgTxt("Input MU0 must be a double precision vector of length P");  
   const doublevector mu0 = getdoublevector(ptr);
 
   // Get the input vector Xr0.
   ptr = prhs[8];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != n)
-    mexErrMsgTxt("Input argument XR0 must be a double precision vector \
-of length N");
+    mexErrMsgTxt("Input XR0 must be a double precision vector of length N");
   const doublevector Xr0 = getdoublevector(ptr);
 
   // Get input vector snps.
   ptr = prhs[9];
   if (!mxIsDouble(ptr))
-    mexErrMsgTxt("Input argument I must be a double precision vector.");
+    mexErrMsgTxt("Input argument I must be a double precision vector");
   const doublevector I = getdoublevector(ptr);
 
   // Get the number of coordinate ascent updates.

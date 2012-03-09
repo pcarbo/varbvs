@@ -10,8 +10,8 @@
 % observations about the variables (or features), where N is the number of
 % samples, and P is the number of variables. X must be a SINGLE matrix.
 % Input XY = X'*Y, where Y is the vector of observations about the outcome.
-% Crucially, Y and X must be centered beforehand so that Y and each column
-% of X has a mean of zero.
+% Crucially, to account for an intercept, Y and X must be centered
+% beforehand so that Y and each column of X has a mean of zero.
 %
 % Inputs SIGMA, SA and LOGODDS specify the hyperparameters. SIGMA and SA are
 % scalars. SIGMA specifies the variance of the residual, and SA*SIGMA is the

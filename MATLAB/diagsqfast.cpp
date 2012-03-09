@@ -42,8 +42,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
   // Get the input vector a.
   ptr = prhs[1];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != n)
-    mexErrMsgTxt("Input argument A must be a double precision vector \
-of length N");
+    mexErrMsgTxt("Input A must be a double precision vector of length N");
   const doublevector a = getdoublevector(ptr);
   
   // (2.) INITIALIZE OUTPUT.

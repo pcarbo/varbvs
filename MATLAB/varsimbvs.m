@@ -15,8 +15,8 @@
 % Input X is an N x P matrix of observations about the variables (or
 % features), where N is the number of samples, and P is the number of
 % variables. Y is the vector of observations about the outcome; it is a
-% vector of length N. Crucially, Y and X must be centered beforehand so that
-% Y and each column of X has a mean of zero.
+% vector of length N. To account for an intercept, Y and X must be centered
+% beforehand so that Y and each column of X has a mean of zero.
 %
 % Inputs SIGMA, SA and LOG10Q specify the hyperparameter settings. These
 % inputs must be arrays of the same size. For each combination of the

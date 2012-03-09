@@ -1,8 +1,11 @@
-// For a description of this C++ code, see diagsqfast2.m.
-#include "mex.h"
-#include "matrix.h"
+// For a description of this C++ code, see diagsqtfast.m.
 #include "doublevector.h"
 #include "singlematrix.h"
+
+// These include files have a bunch of definitions to interface C++
+// routines to MATLAB.
+#include "mex.h"
+#include "matrix.h"
 
 // Macros.
 // ---------------------------------------------------------------
@@ -12,7 +15,8 @@
 // Function declarations.
 // -----------------------------------------------------------------
 // Compute X.^2*A and store the result in Y.
-void diagsq2 (const singlematrix& X, const doublevector& a, doublevector& y);
+void diagsqt (const singlematrix& X, const doublevector& a, 
+	      doublevector& y);
 
 // -----------------------------------------------------------------
 // MEX-file gateway routine.
@@ -39,19 +43,19 @@ void mexFunction (int nlhs, mxArray* plhs[],
   // Get the input vector a.
   ptr = prhs[1];
   if (!mxIsDouble(ptr) || mxGetNumberOfElements(ptr) != p)
-    mexErrMsgTxt("Input argument A must be a double precision vector \
-of length P");
+    mexErrMsgTxt("Input A must be a double precision vector of length P");
   const doublevector a = getdoublevector(ptr);
     
   // (2.) INITIALIZE OUTPUT.
   doublevector y = creatematlabvector(n,plhs[0]);
   
   // (3.) COMPUTE Y = X.^2*A.
-  diagsq2(X,a,y);    
+  diagsqt(X,a,y);    
 }
 
 // Compute X.^2*A and store the result in Y.
-void diagsq2 (const singlematrix& X, const doublevector& a, doublevector& y) {
+void diagsqt (const singlematrix& X, const doublevector& a, 
+	      doublevector& y) {
   mwSize  m = X.nr;  // Size of left-hand vector.
   mwSize  n = X.nc;  // Size of right-hand vector.
   mwIndex i;         // Row of X.

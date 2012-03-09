@@ -1,3 +1,5 @@
+% *** FIX COMMENTS ***
+% 
 % INTLOGIT(Y,STATS,ALPHA,MU,S,XR,ETA) returns the variational lower bound on
 % the expectation of the log-likelihood for the logistic regression model of
 % a binary trait, where the expectation is taken with respect to the
