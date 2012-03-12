@@ -68,13 +68,13 @@ manually.
 To build the necessary MEX files, run the **install.m** script in
 MATLAB.
 
-It is recommended that you start by running the script **example1.m**
-to see how the variational method is use to compute posterior
+Start by running the script **example1.m**. This script demonstrates
+how the variational inference algorithm is used to compute posterior
 probabilities for a small linear regression example in which only a
 small subset of the variables (single nucleotide polymorphisms, or
-SNPs) and a real effect on the outcome (a simulated quantitative
-trait). In this small example, the variational estimates of the
-posterior probabilities are compared with estimates obtained by MCMC
+SNPs) has affects the outcome (a simulated quantitative trait). In
+this small example, the variational estimates of the posterior
+probabilities are compared with estimates obtained by MCMC
 simulation. Notice that it takes a considerable amount of time to
 simulate the Markov chain.
 
@@ -87,17 +87,19 @@ simulate the Markov chain.
 The MATLAB subdirectory contains over 40 functions. Here are the most
 important ones:
 
-+ **varbvs** runs variational inference (the "inner loop") given
-  values for the hyperparameters of the model. This is for variable
-  selection in linear regression. We call this function "multisnp"
-  because we used it for joint analysis of single nucleotide
-  polymorphisms (SNPs) in a genome-wide association study, but it
-  suitable for any problem framed as variable selection in linear
-  regression.
++ **varbvs** returns variational estimates of the posterior statistics
+for the linear regression model with spike and slab priors, given
+choices for the hyperparameters. It computes the posterior statistics
+by running the coordinate ascent updates until that converge at a
+local minimum of the Kullback-Leibler divergence (which corresponds to
+a local maximum of the variational lower bound to the marginal
+log-likelihood). This function implements the "inner loop" in the
+*Bayesian Analysis* paper.
 
-+ **varbvsbin** is the same as multisnp, except that it is meant for
-  variable selection in logistic regression. This is useful for
-  modeling a binary-valued outcome, such as case-control status.
++ **varbvsbin** is the same as **varbvs**, except that it is meant for
+  logistic regression instead of linear regression. This is useful for
+  modeling a binary-valued outcome, such as disease status in a
+  case-control study.
 
 + **varsimbvs** demonstrates how to run the full variational
   inference procedure for Bayesian variable selection in linear
