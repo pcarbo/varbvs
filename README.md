@@ -1,21 +1,23 @@
-*Note: this project is currently in development.*
+*Note: the implementation for R is still under development.*
 
 #Variational inference for Bayesian variable selection implemented in MATLAB and R
 
 ###Introduction
 
-This software package is a MATLAB implementation of the variational
+This software package includes
+[MATLAB](http://www.mathworks.com/products/matlab/) and
+[R](http://www.r-project.org) implementations of the variational
 inference procedure for Bayesian variable selection, as described in
 the [Bayesian Analysis](http://ba.stat.cmu.edu/) paper [Scalable
 variational inference for Bayesian variable selection in regression,
 and its accuracy in genetic association
 studies](http://ba.stat.cmu.edu/journal/2012/vol07/issue01/carbonetto.pdf)
-(Bayesian Analysis 7, March 2012, pages 73-108).  This
-software has been used to implement Bayesian variable selection for
-large problems with over a million variables and thousands of samples.
+(*Bayesian Analysis* 7, March 2012, pages 73-108). This software has
+been used to implement Bayesian variable selection for large problems
+with over a million variables and thousands of samples.
 
-*A few details about implementation of the MATLAB and R functions, in
-particular what platform they were tested on, go here.*
+The MATLAB implementation has been tested in version 7.10 (R2010a) of
+MATLAB for 64-bit Linux. An implementation for R is forthcoming.
 
 ###License
 
