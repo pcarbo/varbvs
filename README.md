@@ -43,7 +43,28 @@ Kristján Jónasson.
 
 ###Quick start for MATLAB
 
-*Instructions go here.*
+Start by downloading the github repository for this project. The
+simplest way is to download the repository as a ZIP archive. Once you
+have extracted the files from the compressed archive, you will see
+that the project directory contains two subdirectories for the MATLAB
+and R code.
+
+Next you will need to compile the C++ code into MATLAB executable
+("MEX") files. To do this, you will need to have a [C++ compiler
+supported by
+MATLAB](http://www.mathworks.com/support/compilers/current_release/),
+and you will need to configure MATLAB to build MEX files. See [this
+webpage](http://www.mathworks.com/support/tech-notes/1600/1605.html)
+for details. When you follow this step, it is important that you
+configure MATLAB so that it uses the version of the C++ compiler that
+is compatible with MATLAB. Otherwise, you will encounter errors, or
+MATLAB may crash when attempting to run the code. If you run into
+these problems, you may have to run the mex command with the -v flag
+to check what compiler is being used, and you may have to edit the MEX
+configuration file manually.
+
+To build the necessary MEX files, run the **install.m** script in
+MATLAB.
 
 ###Quick start for R
 
