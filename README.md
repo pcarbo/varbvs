@@ -87,30 +87,32 @@ simulate the Markov chain.
 The MATLAB subdirectory contains over 40 functions. Here are the most
 important ones:
 
-+ **varbvs** returns variational estimates of the posterior statistics
++ **varbvs.m** returns variational estimates of the posterior statistics
 for the linear regression model with spike and slab priors, given
 choices for the hyperparameters. It computes the posterior statistics
-by running the coordinate ascent updates until that converge at a
-local minimum of the Kullback-Leibler divergence (which corresponds to
-a local maximum of the variational lower bound to the marginal
-log-likelihood). This function implements the "inner loop" in the
-*Bayesian Analysis* paper.
+by running the coordinate ascent updates until they converge at a
+local minimum of the Kullback-Leibler divergence objective (which
+corresponds to a local maximum of the variational lower bound to the
+marginal log-likelihood). This function implements the "inner loop" in
+the *Bayesian Analysis* paper.
 
-+ **varbvsbin** is the same as **varbvs**, except that it is meant for
-  logistic regression instead of linear regression. This is useful for
-  modeling a binary-valued outcome, such as disease status in a
-  case-control study.
++ **varbvsbin.m** is the same as **varbvs.m**, except that it is meant
+  for a logistic regression model instead of a linear regression
+  model. This is useful for modeling a binary-valued outcome, such as
+  disease status in a case-control study.
 
-+ **varsimbvs** demonstrates how to run the full variational
++ **varsimbvs.m** demonstrates how to run the full variational
   inference procedure for Bayesian variable selection in linear
-  regression. It runs both the "inner" and "outer" loops of the
-  inference algorithm, where the inner loop executes the coordinate
-  ascent updates for a given value of the hyperparameters, and the
-  outer loop runs importance sampling for the hyperparameters. This is
-  the variational inference procedure used in the two simulation
-  studies for the Bayesian Analysis paper. This function assumes
-  specific choices for priors on the hyperparameters, as described in
-  the paper.
+  regression, in which we fit both the regression coefficients and the
+  hyperparameters to the data. It runs both the "inner" and "outer"
+  loops of the inference algorithm, where the inner loop executes the
+  coordinate ascent updates for a given value of the hyperparameters,
+  and the outer loop runs importance sampling to estimate the
+  posterior of the hyperparameters. This is precisely the variational
+  inference procedure used in the two simulation studies presented in
+  the *Bayesian Analysis* paper. This function assumes specific
+  choices for priors on the hyperparameters, as described in the
+  paper and in the comments at the top of the file.
 
 ###Overview of R functions
 
