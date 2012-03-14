@@ -1,6 +1,7 @@
 # In this small example, we explore the posterior distribution of the
 # coefficients in a linear regression, with spike and slab priors. In this
 # idealized case, the variables are independent.
+source("varbvs.R")
 
 # SCRIPT PARAMETERS.
 p  <- 1e3  # The number of variables (SNPs).
@@ -34,8 +35,5 @@ set.seed(1);
 # CREATE THE DATA.
 # Note that X and y are centered.
 print(noquote("Creating data."))
-out  <- createsnps(p,na);
-maf  <- out[[1]]
-beta <- out[[2]]
-
-# [X y]      = createdata(maf,beta,se,n);
+snps <- create.snps(p,na)
+data <- create.data(snps,se,n)
