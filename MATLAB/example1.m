@@ -25,7 +25,8 @@ a = 0.02;
 b = 1;
 
 % This parameter specifies the prior on the variance of the regression
-% coefficients (sa). For more information on this prior, see MULTISNPSIM.
+% coefficients (sa). For more information on this prior, see VARSIMBVS
+% and BVSMCMC.
 c = 0.02;
 
 % Candidate values of the variance of the residual (sigma), the prior
