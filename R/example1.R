@@ -34,6 +34,17 @@ set.seed(1);
 
 # CREATE THE DATA.
 # Note that X and y are centered.
-print(noquote("Creating data."))
+cat("Creating data.\n")
 snps <- create.snps(p,na)
 data <- create.data(snps,se,n)
+
+# Calculate the proportion of variance explained. Here, SZ is the sample
+# genetic variance.
+sz <- var(c(data$X %*% snps$beta))
+cat("Proportion of variance explained:",sz/(sz + se),"\n")
+
+# COMPUTE VARIATIONAL ESTIMATES.
+cat("Computing variational estimates.\n")
+grid        <- grid3d(sigma,sa,log10q)
+names(grid) <- c("sigma","sa","log10q")
+# [w alpha mu] = varsimbvs(X,y,sigma,sa,log10q,a,b,c);
