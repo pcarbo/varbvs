@@ -1,7 +1,8 @@
 // For a description of this C code, see varbvsupdate.m.
+#include "types.h"
+#include "vectorops.h"
 #include "doublevectormatlab.h"
 #include "singlematrixmatlab.h"
-#include "vectorops.h"
 #include "varbvs.h"
 
 // These include files have a bunch of definitions to interface C
@@ -9,7 +10,6 @@
 #include "mex.h"
 #include "matrix.h"
 
-// -----------------------------------------------------------------
 // MEX-file gateway routine. Note that varbvsupdate.m checks the
 // inputs, so we do not have to do it here.
 void mexFunction (int nlhs, mxArray* plhs[], 
@@ -62,13 +62,10 @@ void mexFunction (int nlhs, mxArray* plhs[],
   // RUN COORDINATE ASCENT UPDATES.
   // Repeat for each coordinate ascent update.
   for (Index j = 0; j < m; j++) {
-
-    // We need to subtract 1 from the index here because MATLAB arrays
-    // start at one, but C arrays start at zero.
-    Index k = (Index) I.elems[j] - 1;
+    Index k = (Index) I.elems[j];
 
     // Get the kth column of matrix X.
-    getColumn(X.elems,x,k,X.nr);
+    getColumn(X.elems,x,k,n);
 
     // Perform the update.
     varbvsupdate(x,xy.elems[k],d.elems[k],sigma,sa,logodds.elems[k],

@@ -1,12 +1,17 @@
-# This is the description of the MATLAB version of this function:
-#
-# [MAF,BETA] = CREATESNPS(P,N) generates minor allele frequencies (MAF) and
-# additive effects (BETA) for P genetic loci (specifically, these are single
-# nucleotide polymorphisms, or SNPs for short). Additive effects are
-# generated from the standard normal. Minor allele frequencies are uniform
-# between 0.05 and 0.5. Input argument N specifies the number of causal
-# SNPs (SNPs that have a nonzero additive effect on the trait).
 create.snps <- function (p, n) {
+  # Generates minor allele frequencies and additive effects for
+  # genetic loci (specifically, these are single nucleotide
+  # polymorphisms, or SNPs for short). Additive effects are generated
+  # from the standard normal, and minor allele frequencies are uniform
+  # between 0.05 and 0.5.
+  #
+  # Args:
+  #   p  Number of SNPs. 
+  #   n  Number of causal SNPs.
+  #
+  # Returns a list containing two components:
+  #   maf   Vector with minor allele frequencies of SNPs.
+  #   beta  Vector with additive effects of SNPs.
   
   # Generate additive effects for the SNPs, such that N of them have a
   # nonzero effect on the trait.
@@ -23,20 +28,24 @@ create.snps <- function (p, n) {
   return(snps)
 }
 
-# This is the description of the MATLAB version of this function:
-#
-# [X,Y] = CREATEDATA(MAF,BETA,SIGMA,N) generates N samples of the genotypes
-# and the quantitative trait (the continuous outcome Y), according to SNP
-# minor allele frequencies MAF, and additive effects BETA. Inputs MAF and
-# BETA are vectors of length P. The genotype data X is an N x P matrix, and
-# the quantitative trait data Y is a column vector of length N. Both X and Y
-# are centered so that Y and each column of X has a mean of zero.
-#
-# Genotypes are generated from a binomial distribution with success rates
-# given by the minor allele frequencies. Observations about the quantitative
-# trait are generated according to Y = X*BETA + E, where the residual E is
-# normal with mean zero and covariance sigma*I.
 create.data <- function (snps, sigma, n) {
+  # Generates samples of the genotypes and quantitative trait (the
+  # continuous outcome Y) according to the specified SNP minor allele
+  # frequencies and additive effects. Genotypes are generated from a
+  # binomial distribution with success rates given by the minor allele
+  # frequencies. Observations about the quantitative trait are
+  # generated according to y = X*beta + e, where the residual e is
+  # normal with mean zero and covariance sigma*I.
+  #
+  # Args:
+  #   snps$maf   Minor allele frequencies of the SNPs.
+  #   snps$beta  Additive effects of the SNPs.
+  #   sigma      Variance of residual.
+  #   n          Number of samples to generate.
+  #
+  # Returns a list containing two components:
+  #   X  Matrix of genotype data with centered columns.
+  #   y  Vector of quantitative trait data (centered so that mean is 0).
 
   # The the information about the SNPs.
   maf  <- snps$maf
@@ -126,8 +135,7 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha, mu, verbose = TRUE) {
   # CHECK INPUTS.
   if (!is.double(X))
     X <- double(X)
-  X = single(X);
-  # 
+  X = single(X)
   
   # Get the number of samples (n) and variables (p).
   n <- nrows(X)
@@ -222,8 +230,6 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha, mu, verbose = TRUE) {
 ##     end
 ##   end
 
-# This is the description of the MATLAB version of this function:
-#
 # [ALPHA,MU,XR] = VARBVSUPDATE(X,SIGMA,SA,LOGODDS,XY,D,ALPHA0,MU0,XR0,I)
 # runs a single iteration of the coordinate ascent updates to maximize the
 # variational lower bound for Bayesian variable selection in linear
@@ -266,21 +272,85 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha, mu, verbose = TRUE) {
 # There are three outputs. Output vectors ALPHA and MU are the updated
 # variational parameters, and XR = X*(ALPHA.*MU). The computational
 # complexity of VARBVSUPDATE is O(N*LENGTH(I)).
+varbvsupdate <- function (X, sigma, sa, logodds, xy,
+                          d, alpha0, mu0, Xr0, I) {
+  # *** DESCRIPTION OF FUNCTION GOES HERE ***
+  
+  # CHECK THE INPUTS.
+  # Check input X.
+  if (!is.double(X) || !is.matrix(X))
+    stop("Input argument X must be a double-precision matrix")
+  
+  # Get the number of samples (n) and variables (p).
+  n <- nrows(X)
+  p <- ncols(X)
 
-# This replicates the REPMAT function from MATLAB.
-repmat <- function (X,m,n) { return(kronecker(matrix(1,m,n),X)) }
+  # Check inputs sigma and sa.
+  if (!is.scalar(sigma) || !is.scalar(sa))
+    stop("Input arguments sigma and sa must be scalars")
 
-# Center the columns of matrix X so that the entries in each column of
-# X add up to zero.
+  # Check input logodds.
+  if (is.scalar(logodds))
+    logodds <- rep(logodds,p)
+  if (length(logodds) != p)
+    stop("Input logodds must be a scalar or a vector of length p")
+
+  # Check inputs xy and d.
+  if (length(xy) != p || length(d) != p)
+    stop("Inputs xy and d must be vectors of length p")
+
+  # Check inputs alpha0 and mu0.
+  if (length(alpha0) != p || length(mu0) != p)
+    stop("Inputs alpha0 and mu0 must be vectors of length p")
+
+  # Check input Xr0.
+  if (length(Xr0) != n)
+    stop("Input Xr0 must be a vector of length n")
+
+  # Check input I.
+  if (sum(I < 1 | I > p) > 0)
+      stop("Input I contains invalid variable indices")
+
+  # Execute the C routine, and return the results.
+  result <- .C("varbvsupdateR",
+               n       = as.integer(n),
+               p       = as.integer(p),
+               m       = as.integer(length(I)),
+               X       = X,
+               sigma   = as.double(sigma),
+               sa      = as.double(sa),
+               logodds = as.double(logodds),
+               xy      = as.double(xy),
+               d       = as.double(d),
+               alpha0  = as.double(alpha0),
+               mu0     = as.double(mu0),
+               Xr0     = as.double(Xr0),
+               I       = as.integer(I),
+               alpha   = as.double(alpha0),
+               mu      = as.double(mu0),
+               Xr      = as.double(Xr0),
+               x       = double(n),DUP = FALSE)
+  return(list(alpha = result$alpha,
+              mu    = result$mu,
+              Xr    = result$Xr))
+}
+
+repmat <- function (A,m,n) {
+  # Does the same thing as REPMAT(A,m,n) in MATLAB.
+  return(kronecker(matrix(1,m,n),A))
+}
+
 center.columns <- function (X) {
+  # Centers the columns of X so that the entries in each column of X
+  # add up to zero.
   mu <- matrix(colMeans(X),1,ncol(X))
   mu <- repmat(mu,nrow(X),1)
   X  <- X - mu
   return(X)
 }
 
-# This replicates the NDGRID in MATLAB with three inputs.
 grid3d <- function (x,y,z) {
+  # Does the same thing as NDGRID(x,y,z) in MATLAB.
 
   # Get the number of entries in each of the inputs.
   nx <- length(x)
@@ -301,7 +371,11 @@ grid3d <- function (x,y,z) {
         Z[i,j,k] <- z[k]
       }
   
-  grid <- list(X=X,Y=Y,Z=Z)
+  grid <- list(X = X,Y = Y,Z = Z)
   return(grid)
 }
 
+is.scalar <- function (x) {
+  # Returns TRUE if and only if x is a scalar.
+  return(length(x) == 1)
+}

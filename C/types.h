@@ -7,10 +7,16 @@
 // routines to MATLAB.
 #include "matrix.h"
 
+// These definitions are used to build the C routines for MATLAB.
 typedef mwSize  Size;
 typedef mwIndex Index;
 typedef float   MatrixElem;
 
-#endif
+#else
+
+// These definitions are used to build the C routines for R.
+typedef int    Size;
+typedef int    Index;
+typedef double MatrixElem;
 
 #endif

@@ -66,7 +66,10 @@ being used, and you may have to edit the MEX configuration file
 manually.
 
 To build the necessary MEX files, run the **install.m** script in
-MATLAB.
+MATLAB. 
+
+*Make note about including flag -DMATLAB_MEX_FILE when building MEX
+ files.*
 
 Start by running the script **example1.m**. This script demonstrates
 how the variational inference algorithm is used to compute posterior
