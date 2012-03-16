@@ -11,7 +11,7 @@ clear
 p  = 1e3;  % The number of variables (SNPs).
 n  = 500;  % The number of samples.
 na = 20;   % Number of variables that effect the outcome ("causal" SNPs).
-ns = 1e5;  % Length of Markov chain.
+ns = 1e4; % 1e5;  % Length of Markov chain.
 m0 = 100;  % Upper limit on number of selected variables in Markov chain.
 
 % The level of residual noise is set so that the proportion of variance

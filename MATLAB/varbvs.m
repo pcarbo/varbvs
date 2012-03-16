@@ -53,7 +53,7 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
   tolerance = 1e-4;  
 
   % CHECK INPUTS.
-  % Get the number of samples and variables.
+  % Get the number of samples (n) and variables (p).
   [n p] = size(X);
 
   % X must be single precision.
@@ -80,7 +80,7 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
   end
   logodds = double(logodds(:));
   if length(logodds) ~= p
-    error('LOGODDS must be a scalar or a vector of the same length as Y');
+    error('LOGODDS must be a scalar or a vector of length P');
   end
 
   % TAKE CARE OF OPTIONAL INPUTS.
