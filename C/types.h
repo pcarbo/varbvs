@@ -18,5 +18,6 @@ typedef float   MatrixElem;
 typedef int    Size;
 typedef int    Index;
 typedef double MatrixElem;
+#endif
 
 #endif

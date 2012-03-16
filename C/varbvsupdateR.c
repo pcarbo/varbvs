@@ -8,17 +8,16 @@
 #include <R.h>
 #include <Rinternals.h>
 
-void varbvsupdateR (const int* np, const int* pp, const int* mp, 
-		    const const double* X, const double* sigmap,
-		    const double* sap, const double* logodds,
-		    const double* xy, const double* d, const double* alpha0,
-		    const double* my0, const double* Xr0, const int* I,
+void varbvsupdateR (const int* np, const int* mp, const const double* X, 
+		    const double* sigmap, const double* sap, 
+		    const double* logodds, const double* xy, 
+		    const double* d, const double* alpha0, 
+		    const double* my0, const double* Xr0, const int* I, 
 		    double* alpha, double* mu, double* Xr, double* x) {
 
-  // Get the number of samples (n), the number of variables (p), and
-  // the number of coordinate ascent updates (m).
+  // Get the number of samples (n) and the number of coordinate ascent
+  // updates (m).
   const int n = *np;
-  const int p = *pp;
   const int m = *mp;
 
   // Get input scalars sigma and sa.

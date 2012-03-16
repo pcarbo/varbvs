@@ -314,7 +314,6 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy,
   # Execute the C routine, and return the results.
   result <- .C("varbvsupdateR",
                n       = as.integer(n),
-               p       = as.integer(p),
                m       = as.integer(length(I)),
                X       = X,
                sigma   = as.double(sigma),
