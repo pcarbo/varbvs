@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// These include files have a bunch of definitions to interface C++
+// These include files have a bunch of definitions to interface C
 // routines to MATLAB.
 #include "mex.h"
 #include "matrix.h"
