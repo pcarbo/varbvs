@@ -22,6 +22,6 @@ function y = diagsq (X, a)
     X = single(X);
   end
   
-  % Compute the result using the efficient C++ routine.
-  y = diagsqfast(X,a);
+  % Compute the result using the efficient C routine.
+  y = diagsqmatlab(X,a);
   

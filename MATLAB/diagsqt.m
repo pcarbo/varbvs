@@ -22,7 +22,7 @@ function y = diagsqt (X, a)
     X = single(X);
   end
   
-  % Compute the result using the efficient C++ routine.
+  % Compute the result using the efficient C routine.
   y = diagsqtfast(X,a);
 
   
