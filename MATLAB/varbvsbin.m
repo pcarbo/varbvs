@@ -142,6 +142,7 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
   Xr    = double(X*(alpha.*mu));
   stats = updatestats(X,y,eta);
 
+  % MAIN LOOP.
   % Repeat until convergence criterion is met.
   lnZ  = -Inf;
   iter = 0;

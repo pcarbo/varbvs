@@ -122,6 +122,7 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
   % Calculate the variance of the coefficients.
   s = sa*sigma./(sa*d + 1);
   
+  % MAIN LOOP.
   % Repeat until convergence criterion is met.
   lnZ  = -Inf;
   iter = 0;

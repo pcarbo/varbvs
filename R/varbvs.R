@@ -157,72 +157,77 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha = NULL, mu = NULL,
   # INITIAL STEPS.
   # Compute a few useful quantities.
   xy <- y %*% X
-# d  <- diagsq(X)
+  d  <- diagsq(X)
   Xr <- X %*% (alpha*mu)
 
   # Calculate the variance of the coefficients.
   s <- sa*sigma/(sa*d + 1)
+
+  # MAIN LOOP.
+  # Repeat until convergence criterion is met.
+  lnZ  <- -Inf
+  iter <- 0
+  if (verbose) {
+    cat("       variational    max. incl max.\n")
+    cat("iter   lower bound  change vars E[b]\n")
+  }
+  while (TRUE) {
+
+    # Go to the next iteration.
+    iter <- iter + 1
+
+    # Save the current variational parameters and lower bound.
+    alpha0  <- alpha
+    mu0     <- mu
+    lnZ0    <- lnZ
+    params0 <- c(alpha,alpha*mu)
+
+    # UPDATE VARIATIONAL APPROXIMATION.
+    # Run a forward or backward pass of the coordinate ascent updates.
+    if (is.odd(iter))
+      S <- seq(1,p)
+    else
+      S <- seq(p,1,-1)
+    result <- varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,S)
+    alpha  <- result$alpha
+    mu     <- result$mu
+    Xr     <- result$Xr
+
+    # COMPUTE VARIATIONAL LOWER BOUND.
+    # Compute the lower bound to the marginal log-likelihood.
+    ## lnZ = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
+    ## 	     + intgamma(logodds,alpha) ...
+    ## 	     + intklbeta(alpha,mu,s,sigma*sa);
+
+    # CHECK CONVERGENCE.
+    # Print the status of the algorithm and check the convergence
+    # criterion.  Convergence is reached when the maximum relative
+    # difference between the parameters at two successive iterations
+    # is less than the specified tolerance, or when the variational
+    # lower bound has decreased. I ignore parameters that are very
+    # small.
+    params <- c(alpha,alpha*mu)
+    S      <- which(abs(params) > 1e-6)
+    err    <- relerr(params[S],params0[S])
+    if (verbose)
+      # fprintf('%4d %+13.6e %0.1e %4d %0.2f\n',iter,lnZ,max(err),...
+      #   round(sum(alpha)),max(abs(alpha.*mu)));
+      cat("")
+    if (lnZ < lnZ0) {
+      alpha <- alpha0
+      mu    <- mu0
+      lnZ   <- lnZ0
+      break
+    }
+    else if (max(err) < tolerance)
+      break
+  }
+
+  # Return the variational estimates.
+  return(list(alpha=alpha,mu=mu,s=s,lnZ=lnZ))
 }
   
-  
-  
-##   % Repeat until convergence criterion is met.
-##   lnZ  = -Inf;
-##   iter = 0;
-##   if verbose
-##     fprintf('       variational    max. incl max.\n');
-##     fprintf('iter   lower bound  change vars E[b]\n');
-##   end
-##   while true
-
-##     % Go to the next iteration.
-##     iter = iter + 1;
-    
-##     % Save the current variational parameters and lower bound.
-##     alpha0  = alpha;
-##     mu0     = mu;
-##     lnZ0    = lnZ;
-##     params0 = [ alpha; alpha .* mu ];
-
-##     % UPDATE VARIATIONAL APPROXIMATION.
-##     % Run a forward or backward pass of the coordinate ascent updates.
-##     if isodd(iter)
-##       I = 1:p;
-##     else
-##       I = p:-1:1;
-##     end
-##     [alpha mu Xr] = varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,I);
-    
-##     % COMPUTE VARIATIONAL LOWER BOUND.
-##     % Compute the lower bound to the marginal log-likelihood.
-##     lnZ = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
-## 	  + intgamma(logodds,alpha) ...
-## 	  + intklbeta(alpha,mu,s,sigma*sa);
-    
-##     % CHECK CONVERGENCE.
-##     % Print the status of the algorithm and check the convergence criterion.
-##     % Convergence is reached when the maximum relative difference between
-##     % the parameters at two successive iterations is less than the specified
-##     % tolerance, or when the variational lower bound has decreased. I ignore
-##     % parameters that are very small.
-##     params = [ alpha; alpha .* mu ];
-##     I      = find(abs(params) > 1e-6);
-##     err    = relerr(params(I),params0(I));
-##     if verbose
-##       fprintf('%4d %+13.6e %0.1e %4d %0.2f\n',iter,lnZ,max(err),...
-## 	      round(sum(alpha)),max(abs(alpha.*mu)));
-##     end
-##     if lnZ < lnZ0
-##       alpha = alpha0;
-##       mu    = mu0;
-##       lnZ   = lnZ0;
-##       break
-##     elseif max(err) < tolerance
-##       break
-##     end
-##   end
-
-varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, I) {
+varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S) {
   # Runs a single iteration of the coordinate ascent updates to
   # maximize the variational lower bound for Bayesian variable
   # selection in linear regression. It adjusts the fully-factorized
@@ -252,8 +257,8 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, I) {
   #   mu0      Current variational estimates of the posterior mean
   #            coefficients. It is a vector of length p.
   #   Xr0      Equal to X*(alpha0*mu0).
-  #   I        Order in which the coordinates are updated. It is a
-  #            vector of any length. Each entry of I must be an
+  #   S        Order in which the coordinates are updated. It is a
+  #            vector of any length. Each entry of S must be an
   #            integer between 1 and p.
   #
   # Returns a list containing three components:
@@ -265,7 +270,7 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, I) {
   #
   # Note: to account for an intercept, y and X must be centered
   # beforehand so that y and each column of X has a mean of zero. The
-  # computational complexity of this algorithm is O(n*length(I)).
+  # computational complexity of this algorithm is O(n*length(S)).
   
   # CHECK THE INPUTS.
   # Check input X.
@@ -276,7 +281,7 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, I) {
   # the number of updates to execute (m).
   n <- nrow(X)
   p <- ncol(X)
-  m <- length(I)
+  m <- length(S)
 
   # Check inputs sigma and sa.
   if (!is.scalar(sigma) || !is.scalar(sa))
@@ -300,9 +305,9 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, I) {
   if (length(Xr0) != n)
     stop("Input Xr0 must be a vector of length n")
 
-  # Check input I.
-  if (sum(I < 1 | I > p) > 0)
-      stop("Input I contains invalid variable indices")
+  # Check input S.
+  if (sum(S < 1 | S > p) > 0)
+      stop("Input S contains invalid variable indices")
 
   # Execute the C routine, and return the results in a list object.
   # The only components of the list that change are alpha, mu and Xr.
@@ -323,11 +328,31 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, I) {
                alpha   = as.double(alpha0),  # Posterior inclusion prob's.
                mu      = as.double(mu0),     # Posterior mean coefficients.
                Xr      = as.double(Xr0),     # Xr = X*r.
-               I       = as.integer(I-1),    # Updates to perform.
+               S       = as.integer(S-1),    # Updates to perform.
                DUP     = FALSE)
   return(list(alpha = result$alpha,
               mu    = result$mu,
               Xr    = result$Xr))
+}
+
+diagsq <- function (X, a = NULL) {
+  # diagsq(X) returns diag(X'*X).
+  # diagsq(X,a) returns diag(X'*diag(a)*X).
+  if (is.null(a)) {
+    n <- nrow(X)
+    a <- rep(1,n)
+  }
+  y <- a %*% X^2
+  return(y)
+}
+
+relerr <- function (x1, x2) {
+  # Returns the absolute relative error.
+  if (length(x1) == 0 || length(x2) == 0)
+    y <- 0
+  else
+    y <- abs(x1 - x2) / (abs(x1) + abs(x2) + eps())
+  return(y)
 }
 
 repmat <- function (A,m,n) {
@@ -373,4 +398,14 @@ grid3d <- function (x,y,z) {
 is.scalar <- function (x) {
   # Returns TRUE if and only if x is a scalar.
   return(length(x) == 1)
+}
+
+is.odd <- function (x) {
+  # Returns TRUE if and only if x is odd.
+  return(x %% 2)
+}
+
+eps <- function () {
+  # Return machine epsilon.
+  return(.Machine$double.eps)
 }

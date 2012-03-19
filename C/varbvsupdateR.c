@@ -12,7 +12,7 @@ void varbvsupdateR (const int* np, const int* mp, const double* X,
 		    const double* sigmap, const double* sap, 
 		    const double* logodds, const double* xy, 
 		    const double* d, double* alpha, double* mu, 
-		    double* Xr, const int* I) {
+		    double* Xr, const int* S) {
 
   // Get the number of samples (n) and the number of coordinate ascent
   // updates (m).
@@ -25,7 +25,7 @@ void varbvsupdateR (const int* np, const int* mp, const double* X,
 
   // Run the coordinate ascent updates.
   for (int j = 0; j < m; j++) {
-    int k = I[j];
+    int k = S[j];
 
     // Get the kth column of matrix X.
     const double* xk = getColumn(X,k,n);
