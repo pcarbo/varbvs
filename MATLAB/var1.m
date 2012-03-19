@@ -7,4 +7,4 @@ function y = var1 (X)
   end
   
   % Compute the sum of the variances.
-  y = var1fast(X);
+  y = var1matlab(X);
