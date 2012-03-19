@@ -89,19 +89,19 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
   end
 
   % Set initial estimates of variational parameters.
-  if isfield(options,'alpha') & isfield(options,'mu')
+  if isfield(options,'alpha')
     alpha = double(options.alpha(:));
-    mu    = double(options.mu(:));
-    if length(alpha) ~= p || length(mu) ~= p
-      error('OPTIONS.ALPHA and OPTIONS.MU must be vectors of length P');
-    end
   else
-    
-    % The variational parameters are initialized randomly so that exactly
-    % one variable explains the outcome.
     alpha = rand(p,1);
     alpha = alpha / sum(alpha);
-    mu    = randn(p,1);
+  end
+  if isfield(options,'mu')
+    mu = double(options.mu(:));
+  else
+    mu = randn(p,1);
+  end
+  if length(alpha) ~= p || length(mu) ~= p
+    error('OPTIONS.ALPHA and OPTIONS.MU must be vectors of length P');
   end
 
   % Determine whether to display the algorithm's progress.

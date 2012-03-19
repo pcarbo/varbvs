@@ -8,9 +8,16 @@ void copy (const double* source, double* dest, Size n) {
   memcpy(dest,source,sizeof(double)*n);
 }
 
+// Get a pointer to column j of matrix X. The entries of the matrix
+// are assumed to be stored so that the entries in a single column are
+// consecutive. Input n is the number of rows in the matrix.
+const MatrixElem* getColumn (const MatrixElem* X, Index j, Size n) {
+  return X + n*j;
+}
+
 // Copy column j of matrix X.
-void getColumn (const MatrixElem* X, double* y, Index j, Size n) {
-  const MatrixElem* xij = X + n*j;  // Pointer to (i,j) entry of X.
+void copyColumn (const MatrixElem* X, double* y, Index j, Size n) {
+  const MatrixElem* xij = getColumn(X,j,n);
   for (Index i = 0; i < n; i++, xij++, y++)
     *y = (double) *xij;
 }

@@ -8,12 +8,11 @@
 #include <R.h>
 #include <Rinternals.h>
 
-void varbvsupdateR (const int* np, const int* mp, const const double* X, 
+void varbvsupdateR (const int* np, const int* mp, const double* X, 
 		    const double* sigmap, const double* sap, 
 		    const double* logodds, const double* xy, 
-		    const double* d, const double* alpha0, 
-		    const double* my0, const double* Xr0, const int* I, 
-		    double* alpha, double* mu, double* Xr, double* x) {
+		    const double* d, double* alpha, double* mu, 
+		    double* Xr, const int* I) {
 
   // Get the number of samples (n) and the number of coordinate ascent
   // updates (m).
@@ -29,9 +28,9 @@ void varbvsupdateR (const int* np, const int* mp, const const double* X,
     int k = I[j];
 
     // Get the kth column of matrix X.
-    getColumn(X,x,k,n);
+    const double* xk = getColumn(X,k,n);
 
     // Perform the update.
-    varbvsupdate(x,xy[k],d[k],sigma,sa,logodds[k],alpha+k,mu+k,Xr,n);
+    varbvsupdate(xk,xy[k],d[k],sigma,sa,logodds[k],alpha+k,mu+k,Xr,n);
   }
 }

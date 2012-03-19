@@ -64,8 +64,8 @@ void mexFunction (int nlhs, mxArray* plhs[],
   for (Index j = 0; j < m; j++) {
     Index k = (Index) I.elems[j];
 
-    // Get the kth column of matrix X.
-    getColumn(X.elems,x,k,n);
+    // Copy the kth column of matrix X.
+    copyColumn(X.elems,x,k,n);
 
     // Perform the update.
     varbvsupdate(x,xy.elems[k],d.elems[k],sigma,sa,logodds.elems[k],

@@ -1,7 +1,6 @@
 # In this small example, we explore the posterior distribution of the
 # coefficients in a linear regression, with spike and slab priors. In this
 # idealized case, the variables are independent.
-source("varbvs.R")
 
 # SCRIPT PARAMETERS.
 p  <- 1e3  # The number of variables (SNPs).
@@ -32,6 +31,10 @@ log10q <- seq(-2.5,-1,0.25)
 # Set the random number generator seed.
 set.seed(1);
 
+# Load the R and C function definitions.
+source("varbvs.R")
+dyn.load("varbvsupdateR.so")
+
 # CREATE THE DATA.
 # Note that X and y are centered.
 cat("Creating data.\n")
@@ -48,3 +51,13 @@ cat("Computing variational estimates.\n")
 grid        <- grid3d(sigma,sa,log10q)
 names(grid) <- c("sigma","sa","log10q")
 # [w alpha mu] = varsimbvs(X,y,sigma,sa,log10q,a,b,c);
+
+xy <- t(data$X) %*% data$y
+d  <- diag(t(data$X) %*% data$X)
+
+alpha0 <- runif(p)
+alpha0 <- alpha0 / sum(alpha0)
+mu0    <- rnorm(p)
+Xr0    <- data$X %*% (alpha0*mu0)
+
+result <- varbvsupdate(data$X,9,0.1,-4,xy,d,alpha0,mu0,Xr0,1:p)

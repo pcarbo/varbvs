@@ -1,3 +1,5 @@
+# *** DESCRIBE CONTENTS OF FILE HERE ***
+
 create.snps <- function (p, n) {
   # Generates minor allele frequencies and additive effects for
   # genetic loci (specifically, these are single nucleotide
@@ -125,7 +127,8 @@ create.data <- function (snps, sigma, n) {
 # OPTIONS.ALPHA and OPTIONS.MU to override the random initialization of
 # variational parameters ALPHA and MU. Set OPTIONS.VERBOSE = FALSE to turn
 # off reporting the algorithm's progress.
-varbvs <- function (X, y, sigma, sa, logodds, alpha, mu, verbose = TRUE) {
+varbvs <- function (X, y, sigma, sa, logodds, alpha = NULL, mu = NULL,
+                    verbose = TRUE) {
 
   # Convergence is reached when the maximum relative distance between
   # successive updates of the variational parameters is less than this
@@ -135,7 +138,6 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha, mu, verbose = TRUE) {
   # CHECK INPUTS.
   if (!is.double(X))
     X <- double(X)
-  X = single(X)
   
   # Get the number of samples (n) and variables (p).
   n <- nrows(X)
@@ -147,32 +149,22 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha, mu, verbose = TRUE) {
     alpha <- runif(p)
     alpha <- alpha / sum(alpha)
   }
-  if (length(alpha) != p)
-    stop("ALPHA and MU must be vectors of length P")
   if (is.null(mu))
     mu <- rnorm(p)    
-  if (length(mu) != p)
-    stop("MU must be a vector of length P")
+  if (length(alpha) != p || length(mu) != p)
+    stop("alpha and mu must be vectors of length p")
+
+  # INITIAL STEPS.
+  # Compute a few useful quantities.
+  xy <- y %*% X
+# d  <- diagsq(X)
+  Xr <- X %*% (alpha*mu)
+
+  # Calculate the variance of the coefficients.
+  s <- sa*sigma/(sa*d + 1)
 }
-
-  # Determine whether to display the algorithm's progress.
-
-##   if isfield(options,'verbose')
-##     verbose = options.verbose;
-##   else
-##     verbose = true;
-##   end
-##   clear options
   
-##   % INITIAL STEPS.
-##   % Compute a few useful quantities. Here I calculate X'*Y as (Y'*X)' to
-##   % avoid storing the transpose of X, since X may be large.
-##   xy = double(y'*X)';
-##   d  = diagsq(X);
-##   Xr = double(X*(alpha.*mu));
   
-##   % Calculate the variance of the coefficients.
-##   s = sa*sigma./(sa*d + 1);
   
 ##   % Repeat until convergence criterion is met.
 ##   lnZ  = -Inf;
@@ -230,60 +222,61 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha, mu, verbose = TRUE) {
 ##     end
 ##   end
 
-# [ALPHA,MU,XR] = VARBVSUPDATE(X,SIGMA,SA,LOGODDS,XY,D,ALPHA0,MU0,XR0,I)
-# runs a single iteration of the coordinate ascent updates to maximize the
-# variational lower bound for Bayesian variable selection in linear
-# regression. It adjusts the fully-factorized variational approximation to
-# the posterior distribution of the coefficients in a linear regression
-# model of a continuous outcome (quantitiative trait), with spike and slab
-# priors on the coefficients.
-#
-# All inputs to this function are required. Input X is an N x P matrix of
-# observations about the variables (or features), where N is the number of
-# samples, and P is the number of variables. Input XY = X'*Y, where Y is the
-# vector of observations about the outcome. Crucially, to account for an
-# intercept, Y and X must be centered beforehand so that Y and each column
-# of X has a mean of zero.
-#
-# This routine is implemented with the assumption that X is a single
-# floating-point precision matrix (type HELP SINGLE), as opposed to the
-# MATLAB default of double precision. This is useful for large data sets,
-# because single precision requires half of the number of bits as double
-# floating-point precision. If X is provided in another numerical
-# representation, an error is reported.
-#
-# Inputs SIGMA, SA and LOGODDS specify the hyperparameters. SIGMA and SA are
-# scalars. SIGMA specifies the variance of the residual, and SA*SIGMA is the
-# prior variance of the regression coefficients. LOGODDS is the prior
-# log-odds of inclusion for each variable. It is equal to LOGODDS =
-# LOG(Q./(1-Q)), where Q is the prior probability that each variable is
-# included in the linear model of Y. LOGODDS is a vector of length P.
-#
-# Inputs ALPHA0, MU0 are the current parameters of the variational
-# approximation; under the variational approximation, the ith regression
-# coefficient is normal with probability ALPHA0(i), and MU0(i) is the mean
-# of the coefficient given that it is included in the model. Inputs XR0 and
-# D must be XR0 = X*(ALPHA0.*MU0) and D = DIAG(X'*X).
-#
-# Input I specifies the order in which the coordinates are updated. It may
-# be a vector of any length. Each entry of I must be an integer between 1
-# and P.
-#
-# There are three outputs. Output vectors ALPHA and MU are the updated
-# variational parameters, and XR = X*(ALPHA.*MU). The computational
-# complexity of VARBVSUPDATE is O(N*LENGTH(I)).
-varbvsupdate <- function (X, sigma, sa, logodds, xy,
-                          d, alpha0, mu0, Xr0, I) {
-  # *** DESCRIPTION OF FUNCTION GOES HERE ***
+varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, I) {
+  # Runs a single iteration of the coordinate ascent updates to
+  # maximize the variational lower bound for Bayesian variable
+  # selection in linear regression. It adjusts the fully-factorized
+  # variational approximation to the posterior distribution of the
+  # coefficients in a linear regression model of a continuous outcome
+  # (quantitiative trait), with spike and slab priors on the
+  # coefficients.
+  #
+  # Args:
+  #   X        n x p matrix of observations about the variables (or
+  #            features), where n is the number of samples, and p is
+  #            the number of variables. X must be a double-precision
+  #            matrix. (Unlike MATLAB, there are no single-precision
+  #            floating-point numbers in R.) 
+  #   sigma    Variance of the residual (a scalar).
+  #   sa       sa*sigma is the prior variance of the regression 
+  #            coefficients (also a scalar).
+  #   logodds  Prior log-odds of inclusion for each variable. It is equal
+  #            to logodds = log(q./(1-q)), where q is the prior
+  #            probability that each variable is included in the linear
+  #            model of Y. It is a vector of length p.
+  #   xy       Equal to X'*y, where y is the vector of observations
+  #            about the outcome.
+  #   d        Equal to diag(X'*X).
+  #   alpha0   Current variational estimates of the posterior inclusion
+  #            probabilities. It is a vector of length p.
+  #   mu0      Current variational estimates of the posterior mean
+  #            coefficients. It is a vector of length p.
+  #   Xr0      Equal to X*(alpha0*mu0).
+  #   I        Order in which the coordinates are updated. It is a
+  #            vector of any length. Each entry of I must be an
+  #            integer between 1 and p.
+  #
+  # Returns a list containing three components:
+  #   alpha    Updated variational estimates of the posterior inclusion
+  #            probabilities. 
+  #   mu       Updated variational estimates of the posterior mean
+  #            coefficients.
+  #   Xr       Equal to X*(alpha*mu).
+  #
+  # Note: to account for an intercept, y and X must be centered
+  # beforehand so that y and each column of X has a mean of zero. The
+  # computational complexity of this algorithm is O(n*length(I)).
   
   # CHECK THE INPUTS.
   # Check input X.
   if (!is.double(X) || !is.matrix(X))
     stop("Input argument X must be a double-precision matrix")
   
-  # Get the number of samples (n) and variables (p).
-  n <- nrows(X)
-  p <- ncols(X)
+  # Get the number of samples (n), the number of variables (p), and
+  # the number of updates to execute (m).
+  n <- nrow(X)
+  p <- ncol(X)
+  m <- length(I)
 
   # Check inputs sigma and sa.
   if (!is.scalar(sigma) || !is.scalar(sa))
@@ -311,24 +304,27 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy,
   if (sum(I < 1 | I > p) > 0)
       stop("Input I contains invalid variable indices")
 
-  # Execute the C routine, and return the results.
+  # Execute the C routine, and return the results in a list object.
+  # The only components of the list that change are alpha, mu and Xr.
+  # We need to subtract 1 from the indices because R vector start at
+  # 1, but C arrays start at 0. Note that I do not attempt to coerce X
+  # here; if X is large, it could use a lot of memory to duplicate
+  # this matrix. For this same reason, I set DUP = FALSE so that the
+  # input arguments are not duplicated.
   result <- .C("varbvsupdateR",
-               n       = as.integer(n),
-               m       = as.integer(length(I)),
-               X       = X,
-               sigma   = as.double(sigma),
-               sa      = as.double(sa),
-               logodds = as.double(logodds),
-               xy      = as.double(xy),
-               d       = as.double(d),
-               alpha0  = as.double(alpha0),
-               mu0     = as.double(mu0),
-               Xr0     = as.double(Xr0),
-               I       = as.integer(I),
-               alpha   = as.double(alpha0),
-               mu      = as.double(mu0),
-               Xr      = as.double(Xr0),
-               x       = double(n),DUP = FALSE)
+               n       = as.integer(n),      # Number of samples.
+               m       = as.integer(m),      # Number of updates.
+               X       = X,                  # Matrix of samples.
+               sigma   = as.double(sigma),   # Residual variance.
+               sa      = as.double(sa),      # Prior variance of coefficients.
+               logodds = as.double(logodds), # Prior log-odds.
+               xy      = as.double(xy),      # xy = X'*y.
+               d       = as.double(d),       # d = diag(X'*X).
+               alpha   = as.double(alpha0),  # Posterior inclusion prob's.
+               mu      = as.double(mu0),     # Posterior mean coefficients.
+               Xr      = as.double(Xr0),     # Xr = X*r.
+               I       = as.integer(I-1),    # Updates to perform.
+               DUP     = FALSE)
   return(list(alpha = result$alpha,
               mu    = result$mu,
               Xr    = result$Xr))
