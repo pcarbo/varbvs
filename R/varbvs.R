@@ -1,5 +1,9 @@
 # *** DESCRIBE CONTENTS OF FILE HERE ***
 
+# CONSTANTS.
+eps <- .Machine$double.eps
+
+# FUNCTION DEFINITIONS.
 create.snps <- function (p, n) {
   # Generates minor allele frequencies and additive effects for
   # genetic loci (specifically, these are single nucleotide
@@ -78,57 +82,57 @@ create.data <- function (snps, sigma, n) {
   return(data)
 }
 
-# This is the description of the MATLAB version of this function:
-#
-# [LNZ,ALPHA,MU,S] = VARBVS(X,Y,SIGMA,SA,LOGODDS) implements the
-# fully-factorized variational approximation for Bayesian variable selection
-# in linear regression. It finds the "best" fully-factorized variational
-# approximation to the posterior distribution of the coefficients in a
-# linear regression model of a continuous outcome (quantitiative trait),
-# with spike and slab priors on the coefficients. By "best", we mean the
-# approximating distribution that locally minimizes the Kullback-Leibler
-# divergence between the approximating distribution and the exact posterior.
-#
-# The required inputs are as follows. Input X is an N x P matrix of
-# observations about the variables (or features), where N is the number of
-# samples, and P is the number of variables. Y is the vector of observations
-# about the outcome; it is a vector of length N. To account for an
-# intercept, Y and X must be centered beforehand so that Y and each column
-# of X has a mean of zero. 
-#
-# Note that this routine is implemented with the assumption that the data X
-# is single floating-point precision (type HELP SINGLE), as opposed to the
-# MATLAB default of double precision. This is useful for large data sets,
-# because single precision requires half of the number of bits as double
-# floating-point precision. If X is provided in another numerical
-# representation, it is immediately converted to SINGLE.
-#
-# Inputs SIGMA, SA and LOGODDS are the hyperparameters. SIGMA and SA are
-# scalars. SIGMA specifies the variance of the residual, and SA*SIGMA is the
-# prior variance of the coefficients. LOGODDS is the prior log-odds of
-# inclusion for each variable. It is equal to LOGODDS = LOG(Q./(1-Q)), where
-# Q is the prior probability that each variable is included in the linear
-# model of Y (i.e. the prior probability that its coefficient is not zero).
-# LOGODDS may either be a scalar, in which case all the variables have the
-# same prior inclusion probability, or it may be a vector of length P.
-#
-# There are four outputs. Output scalar LNZ is the variational estimate of
-# the marginal log-likelihood given the hyperparameters SIGMA, SA and
-# LOGODDS.
-#
-# Outputs ALPHA, MU and S are the parameters of the variational
-# approximation and, equivalently, variational estimates of posterior
-# quantites: under the variational approximation, the ith regression
-# coefficient is normal with probability ALPHA(i); MU(i) and S(i) are the
-# mean and variance of the coefficient given that it is included in the
-# model. Outputs ALPHA, MU and S are all column vectors of length P.
-#
-# VARBVS(...,OPTIONS) overrides the default behaviour of the algorithm. Set
-# OPTIONS.ALPHA and OPTIONS.MU to override the random initialization of
-# variational parameters ALPHA and MU. Set OPTIONS.VERBOSE = FALSE to turn
-# off reporting the algorithm's progress.
-varbvs <- function (X, y, sigma, sa, logodds, alpha = NULL, mu = NULL,
+varbvs <- function (X, y, sigma, sa, logodds, alpha0 = NULL, mu0 = NULL,
                     verbose = TRUE) {
+  # Implements the fully-factorized variational approximation for
+  # Bayesian variable selection in linear regression. It finds the
+  # "best" fully-factorized variational approximation to the posterior
+  # distribution of the coefficients in a linear regression model of a
+  # continuous outcome (quantitiative trait), with spike and slab
+  # priors on the coefficients. By "best", we mean the approximating
+  # distribution that locally minimizes the Kullback-Leibler
+  # divergence between the approximating distribution and the exact
+  # posterior.
+  #
+  # Args:
+  #   X        n x p matrix of observations about the variables (or
+  #            features), where n is the number of samples
+  #            (observations), and p is the number of variables.
+  #   y        Vector of observations about the outcome. It is a
+  #            vector of length n.
+  #   sigma    Variance of the residual.
+  #   sa       sa*sigma is the prior variance of the coefficients.
+  #   logodds  Prior log-odds of inclusion for each variable. It is
+  #            equal to logodds = log(q/(1-q)), where q is the prior
+  #            probability that each variable is included in the
+  #            linear model of Y (i.e. the prior probability that
+  #            its coefficient is not zero). It may either be a
+  #            scalar, in which case all the variables have the
+  #            same prior inclusion probability, or it may be a
+  #            vector of length p.
+  #   alpha0   Initial variational estimate of posterior inclusion
+  #            probabilities. If alpha0 = NULL, the variational
+  #            parameters are initialized at random.
+  #   mu0      Initial variational estimate of posterior mean
+  #            coefficients. If mu0 = NULL, the variational
+  #            parameters are randomly initialized.
+  #   verbose  Set verbose = FALSE to turn off reporting the
+  #            algorithm's progress. 
+  #
+  # Returns a list containing four components: ‘alpha’, ‘mu’ and ‘s’
+  # are the parameters of the variational approximation and,
+  # equivalently, variational estimates of posterior quantites: under
+  # the variational approximation, the ith regression coefficient is
+  # normal with probability alpha[i]; mu[i] and s[i] are the mean and
+  # variance of the coefficient given that it is included in the
+  # model. Outputs alpha, mu and s are all column vectors of length p.
+  #
+  # Output ‘lnZ’ is a scalar giving the variational estimate of
+  # the marginal log-likelihood.  
+  #
+  # Note: to account for an intercept, y and X must be centered
+  # beforehand so that vector y and each column of X has a mean of
+  # zero.
 
   # Convergence is reached when the maximum relative distance between
   # successive updates of the variational parameters is less than this
@@ -145,14 +149,18 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha = NULL, mu = NULL,
 
   # TAKE CARE OF OPTIONAL INPUTS.
   # Set initial estimates of variational parameters.
-  if (is.null(alpha)) {
+  if (is.null(alpha0)) {
     alpha <- runif(p)
     alpha <- alpha / sum(alpha)
   }
+  else
+    alpha <- alpha0
   if (is.null(mu))
-    mu <- rnorm(p)    
+    mu <- rnorm(p)
+  else
+    mu <- mu0
   if (length(alpha) != p || length(mu) != p)
-    stop("alpha and mu must be vectors of length p")
+    stop("alpha0 and mu0 must be vectors of length p")
 
   # INITIAL STEPS.
   # Compute a few useful quantities.
@@ -195,9 +203,9 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha = NULL, mu = NULL,
 
     # COMPUTE VARIATIONAL LOWER BOUND.
     # Compute the lower bound to the marginal log-likelihood.
-    ## lnZ = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
-    ## 	     + intgamma(logodds,alpha) ...
-    ## 	     + intklbeta(alpha,mu,s,sigma*sa);
+    lnZ <- intlinear(Xr,d,y,sigma,alpha,mu,s)
+           + intgamma(logodds,alpha)
+           + intklbeta(alpha,mu,s,sigma*sa)
 
     # CHECK CONVERGENCE.
     # Print the status of the algorithm and check the convergence
@@ -335,6 +343,99 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S) {
               Xr    = result$Xr))
 }
 
+intlinear <- function (Xr, d, y, sigma, alpha, mu, s) {
+  # Computes an integral that appears in the variational lower bound
+  # of the marginal log-likelihood. This integral is the expectation
+  # of the linear regression log-likelihood taken with respect to the
+  # variational approximation. Inputs Xr and d must be equal to Xr =
+  # X*(alpha*mu) and d = diag(X'*X). For a description of the
+  # remaining inputs, see function ‘varbvs’.
+  n <- length(y)
+  f <- -n/2*log(2*pi*sigma) - norm2(y - Xr)^2/(2*sigma) 
+       - dot(d,betavar(alpha,mu,s))/(2*sigma)
+  return(f)
+}
+                      
+intklbeta <- function (alpha, mu, s, sa) {
+  # Computes an integral that appears in the variational lower bound
+  # of the marginal log-likelihood. This integral is the negative
+  # Kullback-Leibler divergence between the approximating distribution
+  # and the prior of the coefficients. Input ‘sa’ specifies the prior
+  # variance of the coefficients. (It is not the same as the ‘sa’ used
+  # as input to ‘varbvs’.) See function ‘varbvs’ for details on the
+  # inputs to this function.
+  f <- (sum(alpha) + dot(alpha,log(s/sa)) - dot(alpha,s + mu^2)/sa)/2 
+       - dot(alpha,log(alpha + eps))
+       - dot(1 - alpha,log(1 - alpha + eps))
+  return(f)
+}
+
+intgamma <- function (logodds, alpha) {
+  # Computes an integral that appears in the variational lower bound
+  # of the marginal log-likelihood. This integral is the expectation
+  # on the prior inclusion probabilities taken with respect to the
+  # variational approximation.
+  #
+  # Args:
+  #   logodds  Scalar, or a vector, specifying the prior log-odds.
+  #   alpha    Mixture weights for the variational approximation.
+  #
+  # See function ‘varbvs’ for details on the input arguments.
+
+  # This is the same as 
+  #
+  #    sum(alpha*log(q) + (1-alpha)*log(1-q)).
+  #  
+  return(sum((alpha-1) * logodds + logsigmoid(logodds)))
+}
+
+betavar <- function (p, mu, s) {
+  # betavar(p,mu,s) returns the variance of random vector X, in which
+  # X[i] is drawn from the normal distribution with probability p[i],
+  # and X[i] is zero with probability 1-p[i]. Inputs mu and s specify
+  # the mean and variance of the normal density. Inputs p, mu and s
+  # must be vectors of the same length. This function is useful for
+  # calculating the variance of the coefficients under the
+  # fully-factorized variational approximation.
+
+  # Note that this is the same as 
+  # 
+  #    v = p*(s + mu^2) - (p*mu)^2.
+  #
+  return(p*(s + (1 - p)*mu^2))
+}
+
+dot <- function (x,y) {
+  # Return the dot product of vectors x and y.
+  return(sum(x*y))
+}
+
+norm2 <- function (x) {
+  # Return the quadratic norm (2-norm) of vector x.
+  return(sqrt(dot(x,x)))
+}
+
+logsigmoid <- function (x) {
+  # Returns the logarithm of the sigmoid. Use this instead of
+  # log(sigmoid(x)) to avoid loss of numerical precision.
+  return(-logpexp(-x))
+}
+
+logpexp <- function (x) {
+  # logpexp(x) returns log(1 + exp(x)). For large x, logpexp(x) should
+  # be approximately x. The computation is performed in a numerically
+  # stable manner.
+
+  # For large entries, log(1 + exp(x)) is effectively the same as x.
+  y <- x
+
+  # Find entries of x that are not large. For these entries, compute
+  # log(1 + exp(x)).
+  S    <- which(x < 16)
+  y(S) <- log(1 + exp(x(S)))
+  return(y)
+}
+
 diagsq <- function (X, a = NULL) {
   # diagsq(X) returns diag(X'*X).
   # diagsq(X,a) returns diag(X'*diag(a)*X).
@@ -351,7 +452,7 @@ relerr <- function (x1, x2) {
   if (length(x1) == 0 || length(x2) == 0)
     y <- 0
   else
-    y <- abs(x1 - x2) / (abs(x1) + abs(x2) + eps())
+    y <- abs(x1 - x2) / (abs(x1) + abs(x2) + eps)
   return(y)
 }
 
@@ -405,7 +506,3 @@ is.odd <- function (x) {
   return(x %% 2)
 }
 
-eps <- function () {
-  # Return machine epsilon.
-  return(.Machine$double.eps)
-}
