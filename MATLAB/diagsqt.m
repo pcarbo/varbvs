@@ -23,6 +23,6 @@ function y = diagsqt (X, a)
   end
   
   % Compute the result using the efficient C routine.
-  y = diagsqtfast(X,a);
+  y = diagsqtmatlab(X,a);
 
   

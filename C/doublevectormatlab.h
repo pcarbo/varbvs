@@ -10,7 +10,7 @@
 
 // Type definitions.
 // -----------------------------------------------------------------
-// A vector with double precision floating-point entries.
+// A vector with double-precision floating-point entries.
 typedef struct {
   Size    n;      // Size of vector.
   double* elems;  // Vector entries.

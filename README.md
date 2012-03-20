@@ -71,6 +71,11 @@ MATLAB.
 *Make note about including flag -DMATLAB_MEX_FILE when building MEX
  files.*
 
+*Make note here about including additional flags when building the MEX
+ files . For example, I use -O3 -Os with gcc, and -O3 -Os -s when
+ linking the object files using gcc. It is also important to activate
+ the C99 standard; e.g. using -std=gnu99.*
+
 Start by running the script **example1.m**. This script demonstrates
 how the variational inference algorithm is used to compute posterior
 probabilities for a small linear regression example in which only a

@@ -51,13 +51,8 @@ cat("Computing variational estimates.\n")
 grid        <- grid3d(sigma,sa,log10q)
 names(grid) <- c("sigma","sa","log10q")
 # [w alpha mu] = varsimbvs(X,y,sigma,sa,log10q,a,b,c);
-
-xy <- t(data$X) %*% data$y
-d  <- diag(t(data$X) %*% data$X)
-
-alpha0 <- runif(p)
-alpha0 <- alpha0 / sum(alpha0)
-mu0    <- rnorm(p)
-Xr0    <- data$X %*% (alpha0*mu0)
-
-result <- varbvsupdate(data$X,9,0.1,-4,xy,d,alpha0,mu0,Xr0,1:p)
+result <- varbvs(data$X,data$y,10,0.1,-4)
+lnZ    <- result$lnZ
+alpha  <- result$alpha
+mu     <- result$mu
+s      <- result$s

@@ -12,8 +12,9 @@
 // Function declarations.
 // -----------------------------------------------------------------
 // Compute the sample variance.
-double computeVar (const double* x, Size n);
+double computeVariance (const double* x, Size n);
 
+// Function definitions.
 // -----------------------------------------------------------------
 // MEX-file gateway routine.
 void mexFunction (int nlhs, mxArray* plhs[], 
@@ -30,29 +31,29 @@ void mexFunction (int nlhs, mxArray* plhs[],
   DoubleVector y = createMatlabVector(p,&plhs[0]);
 
   // This is storage for a column of matrix X.
-  double* xk = malloc(sizeof(double)*n);
+  double* x = malloc(sizeof(double)*n);
 
   // Repeat for each column of X.
   for (Index k = 0; k < p; k++) {
 
     // Get the kth column of X.
-    copyColumn(X.elems,xk,k,n);
+    copyColumn(X.elems,x,k,n);
 
     // Compute the sample variance.
-    y.elems[k] = computeVar(xk,n);
+    y.elems[k] = computeVariance(x,n);
   }
 
   // Free the dynamically allocated memory.
-  free(xk);
+  free(x);
 }
 
 // Compute the sample variance.
-double computeVar (const double* x, Size n) {
+double computeVariance (const double* x, Size n) {
   double y = 0;  // The return value.
   double t;      // Intermediate result.
 
   // Compute the sample mean.
-  double mu = sum(x,n)/n;
+  double mu = sum(x,n) / n;
 
   // Repeat for each entry of x.
   for (Index i = 0; i < n; i++) {

@@ -27,11 +27,10 @@ create.snps <- function (p, n) {
   beta[S] <- rnorm(n)
 
   # Generate the minor allele frequencies. They are uniform on [0.05,0.5].
-  maf <- 0.05 + 0.45 * runif(p)
+  maf <- 0.05 + 0.45*runif(p)
 
   # Output the minor allele frequencies and additive effects.
-  snps <- list(maf = maf,beta = beta)
-  return(snps)
+  return(list(maf = maf,beta = beta))
 }
 
 create.data <- function (snps, sigma, n) {
@@ -78,8 +77,7 @@ create.data <- function (snps, sigma, n) {
   y <- y - mean(y)
 
   # Output the genotype and quantitative trait samples.
-  data <- list(X = X,y = y)
-  return(data)
+  return(list(X = X,y = y))
 }
 
 varbvs <- function (X, y, sigma, sa, logodds, alpha0 = NULL, mu0 = NULL,
@@ -140,12 +138,29 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha0 = NULL, mu0 = NULL,
   tolerance <- 1e-4  
 
   # CHECK INPUTS.
+  # Check input X.
+  if (!is.matrix(X))
+    stop("Input argument X must be a matrix")
   if (!is.double(X))
     X <- double(X)
-  
+
   # Get the number of samples (n) and variables (p).
-  n <- nrows(X)
-  p <- ncols(X)
+  n <- nrow(X)
+  p <- ncol(X)
+
+  # Check input y.
+  if (length(y) != n)
+    stop("Data X and y do not match")
+
+  # Check inputs sigma and sa.
+  if (!is.scalar(sigma) || !is.scalar(sa))
+    stop("Input arguments sigma and sa must be scalars")
+
+  # Check input logodds.
+  if (is.scalar(logodds))
+    logodds <- rep(logodds,p)
+  if (length(logodds) != p)
+    stop("Input logodds must be a scalar or a vector of length p")
 
   # TAKE CARE OF OPTIONAL INPUTS.
   # Set initial estimates of variational parameters.
@@ -155,19 +170,21 @@ varbvs <- function (X, y, sigma, sa, logodds, alpha0 = NULL, mu0 = NULL,
   }
   else
     alpha <- alpha0
-  if (is.null(mu))
+  if (is.null(mu0))
     mu <- rnorm(p)
   else
     mu <- mu0
   if (length(alpha) != p || length(mu) != p)
     stop("alpha0 and mu0 must be vectors of length p")
-
+  
   # INITIAL STEPS.
   # Compute a few useful quantities.
-  xy <- y %*% X
-  d  <- diagsq(X)
-  Xr <- X %*% (alpha*mu)
+  xy <- c(y %*% X)           # xy = X'*y.
+  d  <- diagsq(X)            # d  = diag(X'*Y).
+  Xr <- c(X %*% (alpha*mu))  # Xr = X*(alpha*mu).
 
+  browser()
+  
   # Calculate the variance of the coefficients.
   s <- sa*sigma/(sa*d + 1)
 
@@ -443,7 +460,7 @@ diagsq <- function (X, a = NULL) {
     n <- nrow(X)
     a <- rep(1,n)
   }
-  y <- a %*% X^2
+  y <- c(a %*% X^2)  # y = X^2*a.
   return(y)
 }
 

@@ -10,7 +10,7 @@
 
 // Type definitions.
 // -----------------------------------------------------------------
-// A dense matrix with single precision floating-point entries.
+// A dense matrix with single-precision floating-point entries.
 typedef struct {
   Size        nr;     // Number of rows.
   Size        nc;     // Number of columns.

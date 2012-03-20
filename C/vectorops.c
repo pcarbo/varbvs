@@ -8,9 +8,7 @@ void copy (const double* source, double* dest, Size n) {
   memcpy(dest,source,sizeof(double)*n);
 }
 
-// Get a pointer to column j of matrix X. The entries of the matrix
-// are assumed to be stored so that the entries in a single column are
-// consecutive. Input n is the number of rows in the matrix.
+// Get a pointer to column j of matrix X.
 const MatrixElem* getColumn (const MatrixElem* X, Index j, Size n) {
   return X + n*j;
 }
@@ -22,7 +20,7 @@ void copyColumn (const MatrixElem* X, double* y, Index j, Size n) {
     *y = (double) *xij;
 }
 
-// Set the entries of the vector to the same value.
+// Set the entries of the vector to a.
 void setVector (double* x, Size n, double a) {
   for (Index i = 0; i < n; i++)
     x[i] = a;
@@ -38,11 +36,9 @@ double sum (const double* x, Size n) {
 
 // Return the largest entry in the vector.
 double max (const double* x, Size n) {
-  double y = x[0]; // The return value.
-  double xi;
-  for (Index i = 1; i < n; i++) {
-    xi = x[i];
-    y  = (xi > y) * xi + (xi <= y) * y;
+  double y = x[0];
+  for (Index i = 1; i < n; i++, x++) {
+    y  = (x[i] > y) * x[i] + (x[i] <= y) * y;
   }
   return y;
 }
