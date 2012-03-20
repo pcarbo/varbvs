@@ -22,24 +22,23 @@ void diagsq (const MatrixElem* X, const double* a, double* y,
 void mexFunction (int nlhs, mxArray* plhs[], 
 		  int nrhs, const mxArray* prhs[]) {
 
-  // GET INPUTS.
   // Get the input matrix X.
   const SingleMatrix X = getSingleMatrix(prhs[0]);
 
   // Get the input vector a.
   const DoubleVector a = getDoubleVector(prhs[1]);
   
-  // INITIALIZE THE OUTPUT.
+  // Initialize the output.
   DoubleVector y = createMatlabVector(X.nc,&plhs[0]);
   
-  // COMPUTE y = (X.^2)'*a.
+  // Compute y = (X.^2)'*a.
   diagsq(X.elems,a.elems,y.elems,X.nr,X.nc);
 }
 
 // Compute (X.^2)'*a and store the result in vector y.
 void diagsq (const MatrixElem* X, const double* a, double* y, 
 	     Size m, Size n) {
-  double t;  // An intermediate result.
+  double t;
 
   // Repeat for each column of X.
   for (Index j = 0; j < n; j++, y++) {

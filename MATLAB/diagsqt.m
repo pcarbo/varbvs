@@ -6,11 +6,11 @@
 function y = diagsqt (X, a)
 
   % If input A is not provided, set it to a vector of ones.
-  [n p] = size(X);
+  [m n] = size(X);
   if ~exist('a')
-    a = ones(p,1);
+    a = ones(n,1);
   end
-  if length(a) ~= p
+  if length(a) ~= n
     error('Inputs X and A do not match');
   end
 
