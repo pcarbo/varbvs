@@ -52,6 +52,9 @@ fprintf('Creating data.\n');
 sz = var(X*beta,1);
 fprintf('Proportion of variance explained is %0.3f.\n',sz/(sz + se));
 
+% DEBUGGING.
+save('data.mat','maf','beta','X','y');
+
 % COMPUTE VARIATIONAL ESTIMATES.
 fprintf('Computing variational estimates.\n');
 [sigma sa log10q] = ndgrid(sigma,sa,log10q);

@@ -37,22 +37,28 @@ dyn.load("varbvsupdateR.so")
 
 # CREATE THE DATA.
 # Note that X and y are centered.
-cat("Creating data.\n")
-snps <- create.snps(p,na)
-data <- create.data(snps,se,n)
+# cat("Creating data.\n")
+# snps <- create.snps(p,na)
+# data <- create.data(snps,se,n)
+
+# DEBUGGING.
+d         <- readMat("../MATLAB/data.mat")
+snps$maf  <- d$maf
+snps$beta <- d$beta
+data$X    <- d$X
+data$y    <- c(d$y)
+rm(d)
 
 # Calculate the proportion of variance explained. Here, SZ is the sample
 # genetic variance.
 sz <- var(c(data$X %*% snps$beta))
-cat("Proportion of variance explained:",sz/(sz + se),"\n")
+cat(sprintf("Proportion of variance explained is %0.3f.\n",sz/(sz + se)))
 
 # COMPUTE VARIATIONAL ESTIMATES.
 cat("Computing variational estimates.\n")
 grid        <- grid3d(sigma,sa,log10q)
 names(grid) <- c("sigma","sa","log10q")
-# [w alpha mu] = varsimbvs(X,y,sigma,sa,log10q,a,b,c);
-result <- varbvs(data$X,data$y,10,0.1,-4)
-lnZ    <- result$lnZ
+result <- varsimbvs(data$X,data$y,grid$sigma,grid$sa,grid$log10q,a,b,ca)
+w      <- result$w
 alpha  <- result$alpha
 mu     <- result$mu
-s      <- result$s

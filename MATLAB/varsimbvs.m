@@ -59,10 +59,7 @@ function [w, alpha, mu] = varsimbvs (X, y, sigma, sa, log10q, a, b, c)
   [n p] = size(X);
   ns    = numel(sigma);
 
-  % Inputs A, B and C must be double scalars.
-  a = double(a);
-  b = double(b);
-  c = double(c);
+  % Inputs A, B and C must be scalars.
   if ~(isscalar(a) & isscalar(b) & isscalar(c))
     error('Inputs A, B and C must be scalars');
   end
