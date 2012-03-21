@@ -23,11 +23,7 @@ options = sprintf('-O -largeArrayDims COPTIMFLAGS="%s" LDOPTIMFLAGS="%s"',...
 eval(['mex ',options,' ../C/var1matlab.c',corefiles{1:3}]);
 eval(['mex ',options,' ../C/diagsqmatlab.c',corefiles{1:3}]);
 eval(['mex ',options,' ../C/diagsqtmatlab.c',corefiles{1:3}]);
+eval(['mex ',options,' ../C/varbvsupdatematlab.c',corefiles{1:5}]);
+eval(['mex ',options,' ../C/varbvsbinupdatematlab.c',corefiles{[1:4 6]}]);
 return
-eval(['mex ',options,' ../C/varbvsupdatematlab.c',corefiles{[1:4 7]}]);
 fprintf('Compilation of MEX files is complete.\n');
-
-% mex -O -largeArrayDims CXXOPTIMFLAGS='-O3' LDOPTIMFLAGS='-O3' ...
-%     diagsqtfast.cpp doublevector.cpp singlematrix.cpp common.cpp
-% mex -O -largeArrayDims CXXOPTIMFLAGS='-O3' LDOPTIMFLAGS='-O3' ...
-%     varbvsbinupdate.cpp doublevector.cpp singlematrix.cpp common.cpp

@@ -95,7 +95,7 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
   end
 
   % Set initial estimates of sufficient statistics.
-  if isfield(options,'alpha') & 
+  if isfield(options,'alpha') 
     alpha = double(options.alpha(:));
   else
     alpha = rand(p,1);

@@ -40,3 +40,64 @@
 % There are three outputs. Output vectors ALPHA and MU are the updated
 % variational parameters, and XR = X*(ALPHA.*MU). The computational
 % complexity of VARBVSBINUPDATE is O(N*LENGTH(I)).
+function [alpha, mu, Xr] = varbvsbinupdate (X, sa, logodds, stats, ...
+					    alpha0, mu0, Xr0, I)
+
+  % Get the number of samples (n) and variables (p).
+  [n p] = size(X);
+
+  % CHECK THE INPUTS.
+  % X must be single precision.
+  if ~isa(X,'single')
+    error('Input argument X must be SINGLE')
+  end
+
+  % Check input SA.
+  if ~isscalar(sa)
+    error('Input SA must be a scalar');
+  end
+
+  % Check input LOGODDS.
+  if isscalar(logodds)
+    logodds = repmat(logodds,p,1);
+  end
+  if length(logodds) ~= p
+    error('Input LOGODDS must be a scalar or a vector of length P');
+  end
+
+  % Check input STATS.
+  if ~isfield(stats,'u') | ~isfield(stats,'xy') | ~isfield(stats,'d')
+    error('STATS must be a STRUCT with fields ''u'', ''xy'', ''xu'' and ''d''')
+  end
+  if length(stats.u) ~= n
+    error('STATS.U must be a vector of length N');
+  end
+  if length(stats.d) ~= p | length(stats.xy) ~= p | length(stats.xu) ~= p
+    error('STATS.D, STATS.XY and STATS.XU must be vectors of length P');
+  end
+  stats.u  = double(stats.u);
+  stats.d  = double(stats.d);
+  stats.xy = double(stats.xy);
+  stats.xu = double(stats.xu);
+
+  % Check inputs ALPHA0 and MU0.
+  if length(alpha0) ~= p | length(mu0) ~= p
+    error('Inputs ALPHA0 and MU0 must be vectors of length P');  
+  end
+
+  % Check input XR0.
+  if length(Xr0) ~= n
+    error('Input XR0 must be a vector of length N');
+  end
+
+  % Check input I.
+  if sum(I < 1 | I > p)
+    error('Input I contains invalid variable indices');
+  end
+
+  % Execute the C routine. We need to subtract 1 from the indices because
+  % MATLAB arrays start at one, but C arrays start at zero.
+  [alpha mu Xr] = ...
+      varbvsbinupdatematlab(X,double(sa),double(logodds),stats,...
+			    double(alpha0),double(mu0),double(Xr0),...
+			    double(I-1));
