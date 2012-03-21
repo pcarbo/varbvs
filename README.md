@@ -71,26 +71,27 @@ MATLAB.
 Note that the beginning of this script sets some compiler and linker
 flags. These flags tell the GCC compiler to use the ISO C99 standard,
 and to optimize the code as much as possible. However, these flags may
-not be relevant to your setup, especially if you are not using the
-[gcc](gcc.gnu.org) compiler. To avoid problems, if you are not using
-gcc it may be best to set the variables **cflags** and **ldflags** to
-empty strings before running the **install.m** script. 
+not be relevant to your setup, especially if you are not using
+[GCC](gcc.gnu.org). To avoid errors during installation, if you are
+using a compiler other than GCC, it may be best to set variables
+**cflags** and **ldflags** to empty strings before running the
+**install.m** script.
 
 If you modify the installation procedure to fit your compiler setup,
 it is important that you define macro MATLAB_MEX_FILE, akin to the
-#define MATLAB_MEX_FILE directive in C. In gcc, this is accomplished
-by including flag -DMATLAB_MEX_FILE when issuing the command to build
-the MEX files.
+\#define MATLAB_MEX_FILE directive in C. In GCC, this is accomplished
+by including flag -DMATLAB_MEX_FILE when issuing the commands to build
+MEX files.
 
-Start by running the script **example1.m**. This script demonstrates
-how the variational inference algorithm is used to compute posterior
-probabilities for a small linear regression example in which only a
-small subset of the variables (single nucleotide polymorphisms, or
-SNPs) has affects the outcome (a simulated quantitative trait). In
-this small example, the variational estimates of the posterior
-probabilities are compared with estimates obtained by MCMC
-simulation. Notice that it takes a considerable amount of time to
-simulate the Markov chain.
+Once you have built the MEX files, start by running the script
+**example1.m**. This script demonstrates how the variational inference
+algorithm is used to compute posterior probabilities for a small
+linear regression example in which only a small subset of the
+variables (single nucleotide polymorphisms, or SNPs) has affects the
+outcome (a simulated quantitative trait). In this small example, the
+variational estimates of the posterior probabilities are compared with
+estimates obtained by MCMC simulation. Notice that it takes a
+considerable amount of time to simulate the Markov chain.
 
 ###Quick start for R
 
