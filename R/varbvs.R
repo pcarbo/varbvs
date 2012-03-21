@@ -1,4 +1,4 @@
-# *** DESCRIBE CONTENTS OF FILE HERE ***
+# *** TO DO: DESCRIBE CONTENTS OF FILE HERE ***
 
 # CONSTANTS.
 eps <- .Machine$double.eps

@@ -4,7 +4,7 @@
 % passed to the compiler. These flags tell the GCC compiler to use the ISO
 % C99 standard, and to optimize the code as much as possible. Depending
 % on the compiler you use to build the MEX shared library files, you may
-% want to change these flags, or set them to the empty string ('').
+% want to change these variables, or set them to the empty string ('').
 cflags  = '-std=gnu99 -O3 -Os';
 ldflags = '-s -O3 -Os';
 

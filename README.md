@@ -50,31 +50,37 @@ archive, you will see that the main directory contains two
 subdirectories, one for the MATLAB functions, and one for the R
 code.
 
-Next you will need to compile the C++ code into MATLAB executable
-("MEX") files. To do this, you will need to have a [C++ compiler
+Next you will need to compile the C code into MATLAB executable
+("MEX") files. To do this, you will need to have a [C compiler
 supported by
 MATLAB](http://www.mathworks.com/support/compilers/current_release/),
 and you will need to configure MATLAB to build MEX files. See [this
 webpage](http://www.mathworks.com/support/tech-notes/1600/1605.html)
 for details. When you follow this step, it is important that you
-configure MATLAB so that it uses the version of the C++ compiler that
-is compatible with your version of MATLAB. Otherwise, you will
-encounter errors when building the MEX files, or MATLAB may crash when
-attempting to run the examples. If you run into these problems, you may
-have to run the mex command with the -v flag to check what compiler is
-being used, and you may have to edit the MEX configuration file
-manually.
+configure MATLAB so that it uses the version of the C compiler that is
+compatible with your version of MATLAB. Otherwise, you will encounter
+errors when building the MEX files, or MATLAB may crash when
+attempting to run the examples. If you run into these problems, you
+may have to run the mex command with the -v flag to check what
+compiler is being used, and you may have to edit the MEX configuration
+file manually.
 
 To build the necessary MEX files, run the **install.m** script in
 MATLAB. 
 
-*Make note about including flag -DMATLAB_MEX_FILE when building MEX
- files.*
+Note that the beginning of this script sets some compiler and linker
+flags. These flags tell the GCC compiler to use the ISO C99 standard,
+and to optimize the code as much as possible. However, these flags may
+not be relevant to your setup, especially if you are not using the
+[gcc](gcc.gnu.org) compiler. To avoid problems, if you are not using
+gcc it may be best to set the variables **cflags** and **ldflags** to
+empty strings before running the **install.m** script. 
 
-*Make note here about including additional flags when building the MEX
- files . For example, I use -O3 -Os with gcc, and -O3 -Os -s when
- linking the object files using gcc. It is also important to activate
- the C99 standard; e.g. using -std=gnu99.*
+If you modify the installation procedure to fit your compiler setup,
+it is important that you define macro MATLAB_MEX_FILE, akin to the
+#define MATLAB_MEX_FILE directive in C. In gcc, this is accomplished
+by including flag -DMATLAB_MEX_FILE when issuing the command to build
+the MEX files.
 
 Start by running the script **example1.m**. This script demonstrates
 how the variational inference algorithm is used to compute posterior
