@@ -32,20 +32,20 @@ log10q <- seq(-2.5,-1,0.25)
 set.seed(1);
 
 # Load the R and C function definitions.
-source("varbvs.R")
-dyn.load("varbvsupdateR.so")
+# source("varbvs.R")
+# dyn.load("varbvsupdateR.so")
 
 # CREATE THE DATA.
 # Note that X and y are centered.
-# cat("Creating data.\n")
-# snps <- create.snps(p,na)
-# data <- create.data(snps,se,n)
+cat("Creating data.\n")
+snps <- create.snps(p,na)
+data <- create.data(snps,se,n)
 
 # DEBUGGING.
-d    <- readMat("../MATLAB/data.mat")
-snps <- list(maf=d$maf,beta=d$beta)
-data <- list(X=d$X,y=c(d$y))
-rm(d)
+# d    <- readMat("../MATLAB/data.mat")
+# snps <- list(maf=d$maf,beta=d$beta)
+# data <- list(X=d$X,y=c(d$y))
+# rm(d)
 
 # Calculate the proportion of variance explained. Here, SZ is the sample
 # genetic variance.
@@ -64,7 +64,7 @@ mu     <- result$mu
 # Show posterior mean of hyperparameters.
 cat("Approximate posterior means of hyperparameters:\n")
 cat("Approximate posterior means of hyperparameters:\n")
-cat(sprintf("log10(sigma) %6.3f\n",dot(w,log10(sigma))))
-cat(sprintf("log10(sa)    %6.3f\n",dot(w,log10(sa))))
-cat(sprintf("log10(q)     %6.3f\n",dot(w,log10q)))
+cat(sprintf("log10(sigma) %6.3f\n",sum(w*log10(sigma))))
+cat(sprintf("log10(sa)    %6.3f\n",sum(w*log10(sa))))
+cat(sprintf("log10(q)     %6.3f\n",sum(w*log10q)))
 
