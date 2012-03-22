@@ -24,9 +24,9 @@ Returns a list containing two components:
 
 \examples{
 
-  ## Generate minor allele frequencies and additive effects for 1000
-  ## SNPs; of these SNPs, 10 have nonzero additive effects on the trait.
-  snps <- create.snps(1000,10)
+## Generate minor allele frequencies and additive effects for 1000
+## SNPs; of these SNPs, 10 have nonzero additive effects on the trait.
+snps <- create.snps(1000,10)
 
 }
 
