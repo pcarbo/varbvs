@@ -1,0 +1,4 @@
+useDynLib(varbvs)
+export(varbvs,
+       varbvsupdate,
+       varsimbvs)
