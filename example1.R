@@ -42,11 +42,9 @@ dyn.load("varbvsupdateR.so")
 # data <- create.data(snps,se,n)
 
 # DEBUGGING.
-d         <- readMat("../MATLAB/data.mat")
-snps$maf  <- d$maf
-snps$beta <- d$beta
-data$X    <- d$X
-data$y    <- c(d$y)
+d    <- readMat("../MATLAB/data.mat")
+snps <- list(maf=d$maf,beta=d$beta)
+data <- list(X=d$X,y=c(d$y))
 rm(d)
 
 # Calculate the proportion of variance explained. Here, SZ is the sample
@@ -62,3 +60,11 @@ result <- varsimbvs(data$X,data$y,grid$sigma,grid$sa,grid$log10q,a,b,ca)
 w      <- result$w
 alpha  <- result$alpha
 mu     <- result$mu
+
+# Show posterior mean of hyperparameters.
+cat("Approximate posterior means of hyperparameters:\n")
+cat("Approximate posterior means of hyperparameters:\n")
+cat(sprintf("log10(sigma) %6.3f\n",dot(w,log10(sigma))))
+cat(sprintf("log10(sa)    %6.3f\n",dot(w,log10(sa))))
+cat(sprintf("log10(q)     %6.3f\n",dot(w,log10q)))
+

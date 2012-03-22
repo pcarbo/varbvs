@@ -190,6 +190,7 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
     alpha[ ,i] <- result$alpha
     mu[ ,i]    <- result$mu
   }
+  cat("\n")
   
   # Choose an initialization common to all the runs of the coordinate ascent
   # algorithm. This is chosen from the hyperparameters with the highest
@@ -202,7 +203,7 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
   cat(sprintf("Computing importance weights for %d combinations ",ns))
   cat("of hyperparameters.\n")
   for (i in 1:ns) {
-    cat(sprintf("(%03d) sigma = %4.1f, sa = %0.3f, q = %0.2e\n",
+    cat(sprintf("(%03d) sigma = %4.1f, sa = %0.3f, q = %0.2e",
                 i,sigma[i],sa[i],q1[i]))
     cat(rep("\b",1,44),sep="");
   
@@ -220,13 +221,16 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
                logpve(ca*sx,sa[i]) +              # Prior on sa.
                dbeta(q1[i],a+1,b,log=TRUE)        # Prior on log10q.
   }
-
+  cat("\n")
+  
   # Compute the normalized importance weights.
   w <- normalizelogweights(logw)
 
   # Compute the weighted averages.
   alpha <- c(alpha %*% w)
   mu    <- c(mu    %*% w)
+
+  return(list(w=w,alpha=alpha,mu=mu))
 }
 
 varbvs <- function (X, y, sigma, sa, logodds, alpha0 = NULL, mu0 = NULL,
