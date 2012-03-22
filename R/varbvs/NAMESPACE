@@ -1,5 +1,5 @@
 useDynLib(varbvs)
-export(varbvs,
+export(varbvsoptimize,
        varbvsupdate,
        varsimbvs,
        grid3d,

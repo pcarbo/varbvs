@@ -1,12 +1,12 @@
-\name{varbvs}
-\alias{varbvs}
+\name{varbvsoptimize}
+\alias{varbvsoptimize}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{varbvs}
+\title{varbvsoptimize}
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-varbvs(X, y, sigma, sa, logodds, alpha0 = NULL, mu0 = NULL, verbose = TRUE)
+varbvsoptimize(X, y, sigma, sa, logodds, alpha0 = NULL, mu0 = NULL, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
