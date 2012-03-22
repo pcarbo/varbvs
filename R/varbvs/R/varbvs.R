@@ -1,23 +1,12 @@
-# *** TO DO: DESCRIBE CONTENTS OF FILE HERE ***
-
-# CONSTANTS.
+# Shorthand constant for machine precision.
 eps <- .Machine$double.eps
 
-# FUNCTION DEFINITIONS.
 create.snps <- function (p, n) {
   # Generates minor allele frequencies and additive effects for
   # genetic loci (specifically, these are single nucleotide
   # polymorphisms, or SNPs for short). Additive effects are generated
   # from the standard normal, and minor allele frequencies are uniform
   # between 0.05 and 0.5.
-  #
-  # Args:
-  #   p  Number of SNPs. 
-  #   n  Number of causal SNPs.
-  #
-  # Returns a list containing two components:
-  #   maf   Vector with minor allele frequencies of SNPs.
-  #   beta  Vector with additive effects of SNPs.
   
   # Generate additive effects for the SNPs, such that N of them have a
   # nonzero effect on the trait.
