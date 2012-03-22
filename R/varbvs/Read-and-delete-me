@@ -1,7 +1,0 @@
-* Edit the help file skeletons in 'man', possibly combining help files
-  for multiple functions.
-* If you have compiled code, add a .First.lib() function in 'R' to load
-  the shared object.
-* Run R CMD build to build the package tarball.
-* Run R CMD check to check the package tarball.
-
