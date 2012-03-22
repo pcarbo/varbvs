@@ -80,7 +80,7 @@ create.data <- function (snps, sigma, n) {
 ## % inference procedure involves an inner loop and an outer loop. The inner
 ## % loop consists of running a coordinate ascent algorithm to tighten the
 ## % variational lower bound given a setting of the hyperparameters (this inner
-## % loop is implemented in function VARBVS). The outer loop computes
+## % loop is implemented in function VARBVSOPTIMIZE). The outer loop computes
 ## % importance weights for all combinations of the hyperparameters.
 ## %
 ## % Input X is an N x P matrix of observations about the variables (or
@@ -173,8 +173,8 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
     mu0    <- rnorm(p)
 
     # Run the coordinate ascent algorithm.
-    result     <- varbvs(X,y,sigma[i],sa[i],logit(q1[i]),
-                         alpha0,mu0,verbose=FALSE)
+    result     <- varbvsoptimize(X,y,sigma[i],sa[i],logit(q1[i]),
+                                 alpha0,mu0,verbose=FALSE)
     lnZ[i]     <- result$lnZ
     alpha[ ,i] <- result$alpha
     mu[ ,i]    <- result$mu
@@ -197,8 +197,8 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
     cat(rep("\b",1,44),sep="");
   
     # Run the coordinate ascent algorithm.
-    result <- varbvs(X,y,sigma[i],sa[i],logit(q1[i]),alpha0,mu0,
-                     verbose=FALSE)
+    result <- varbvsoptimize(X,y,sigma[i],sa[i],logit(q1[i]),alpha0,mu0,
+                             verbose=FALSE)
 
     # Compute the log-importance weight. Note that if X ~ p(x), then
     # the probability density of Y = log(X) is proportional to
@@ -222,8 +222,8 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
   return(list(w=w,alpha=alpha,mu=mu))
 }
 
-varbvs <- function (X, y, sigma, sa, logodds, alpha0 = NULL, mu0 = NULL,
-                    verbose = TRUE) {
+varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
+                            mu0 = NULL, verbose = TRUE) {
   # Implements the fully-factorized variational approximation for
   # Bayesian variable selection in linear regression. It finds the
   # "best" fully-factorized variational approximation to the posterior
@@ -538,7 +538,7 @@ intlinear <- function (Xr, d, y, sigma, alpha, mu, s) {
   # of the linear regression log-likelihood taken with respect to the
   # variational approximation. Inputs Xr and d must be equal to Xr =
   # X*(alpha*mu) and d = diag(X'*X). For a description of the
-  # remaining inputs, see function ‘varbvs’.
+  # remaining inputs, see function ‘varbvsoptimize’.
   n <- length(y)
   f <- -n/2*log(2*pi*sigma) - norm2(y - Xr)^2/(2*sigma) -
         dot(d,betavar(alpha,mu,s))/(2*sigma)
@@ -551,8 +551,8 @@ intklbeta <- function (alpha, mu, s, sa) {
   # Kullback-Leibler divergence between the approximating distribution
   # and the prior of the coefficients. Input ‘sa’ specifies the prior
   # variance of the coefficients. (It is not the same as the ‘sa’ used
-  # as input to ‘varbvs’.) See function ‘varbvs’ for details on the
-  # inputs to this function.
+  # as input to ‘varbvsoptimize’.) See function ‘varbvsoptimize’ for
+  # details on the inputs to this function.
   f <- (sum(alpha) + dot(alpha,log(s/sa)) - dot(alpha,s + mu^2)/sa)/2 -
         dot(alpha,log(alpha + eps)) -
         dot(1 - alpha,log(1 - alpha + eps))
@@ -569,7 +569,7 @@ intgamma <- function (logodds, alpha) {
   #   logodds  Scalar, or a vector, specifying the prior log-odds.
   #   alpha    Mixture weights for the variational approximation.
   #
-  # See function ‘varbvs’ for details on the input arguments.
+  # See function ‘varbvsoptimize’ for details on the input arguments.
 
   # This is the same as 
   #
