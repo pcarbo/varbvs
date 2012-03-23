@@ -11,7 +11,7 @@ grid3d <- function (x, y, z) {
   Y <- X
   Z <- X
 
-  # Set the entries of the 3-d arrays.
+  # Set the entries of the 3-D arrays.
   for (i in 1:nx)
     for (j in 1:ny)
       for (k in 1:nz) {

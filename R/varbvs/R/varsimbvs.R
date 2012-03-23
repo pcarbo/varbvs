@@ -53,7 +53,7 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
     alpha0 <- runif(p)
     alpha0 <- alpha0 / sum(alpha0)
     mu0    <- rnorm(p)
-
+    
     # Run the coordinate ascent algorithm.
     result     <- varbvsoptimize(X,y,sigma[i],sa[i],logit(q1[i]),
                                  alpha0,mu0,verbose=FALSE)
@@ -79,8 +79,11 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
     cat(rep("\b",1,44),sep="");
   
     # Run the coordinate ascent algorithm.
-    result <- varbvsoptimize(X,y,sigma[i],sa[i],logit(q1[i]),
-                             alpha0,mu0,verbose=FALSE)
+    result     <- varbvsoptimize(X,y,sigma[i],sa[i],logit(q1[i]),
+                                 alpha0,mu0,verbose=FALSE)
+    lnZ[i]     <- result$lnZ
+    alpha[ ,i] <- result$alpha
+    mu[ ,i]    <- result$mu
 
     # Compute the log-importance weight. Note that if X ~ p(x), then
     # the probability density of Y = log(X) is proportional to

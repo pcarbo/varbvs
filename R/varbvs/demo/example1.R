@@ -38,12 +38,6 @@ cat("Creating data.\n")
 snps <- create.snps(p,na)
 data <- create.data(snps$maf,snps$beta,se,n)
 
-# DEBUGGING.
-# d    <- readMat("../MATLAB/data.mat")
-# snps <- list(maf=d$maf,beta=d$beta)
-# data <- list(X=d$X,y=c(d$y))
-# rm(d)
-
 # Calculate the proportion of variance explained. Here, SZ is the sample
 # genetic variance.
 sz <- var(c(data$X %*% snps$beta))
@@ -61,7 +55,7 @@ mu          <- result$mu
 # Show posterior mean of hyperparameters.
 cat("Approximate posterior means of hyperparameters:\n")
 cat("Approximate posterior means of hyperparameters:\n")
-cat(sprintf("log10(sigma) %6.3f\n",sum(w*log10(sigma))))
-cat(sprintf("log10(sa)    %6.3f\n",sum(w*log10(sa))))
-cat(sprintf("log10(q)     %6.3f\n",sum(w*log10q)))
+cat(sprintf("log10(sigma) %6.3f\n",sum(w*log10(grid$sigma))))
+cat(sprintf("log10(sa)    %6.3f\n",sum(w*log10(grid$sa))))
+cat(sprintf("log10(q)     %6.3f\n",sum(w*grid$log10q)))
 

@@ -29,8 +29,8 @@ varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
 
 \arguments{
 
-  \subsection{Arguments common to both functions}
-  
+  \subsection{Arguments common to both functions}  
+
   \item{X}{Matrix of observations about the variables (or features). It
            has \code{n} rows and \code{p} columns, where \code{n} is the
            number of samples, and \code{p} is the number of variables.}
@@ -62,7 +62,7 @@ varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
                 variational # parameters are randomly initialized.}
   
   \subsection{Arguments specific to \code{varbvsoptimize}}
-	 
+
   \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the #
                  algorithm's progress.}
 
