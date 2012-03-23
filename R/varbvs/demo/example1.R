@@ -38,6 +38,11 @@ cat("Creating data.\n")
 snps <- create.snps(p,na)
 data <- create.data(snps$maf,snps$beta,se,n)
 
+# Debugging.
+d      <- readMat("data.mat")
+data$X <- d$X
+data$y <- d$y
+
 # Calculate the proportion of variance explained. Here, SZ is the sample
 # genetic variance.
 sz <- var(c(data$X %*% snps$beta))
