@@ -29,11 +29,7 @@ sa     <- seq(0.025,0.4,0.025)
 log10q <- seq(-2.5,-1,0.25)
 
 # Set the random number generator seed.
-set.seed(1);
-
-# Load the R and C function definitions.
-# source("varbvs.R")
-# dyn.load("varbvsupdateR.so")
+set.seed(1)
 
 # CREATE THE DATA.
 # Note that X and y are centered.
@@ -56,10 +52,10 @@ cat(sprintf("Proportion of variance explained is %0.3f.\n",sz/(sz + se)))
 cat("Computing variational estimates.\n")
 grid        <- grid3d(sigma,sa,log10q)
 names(grid) <- c("sigma","sa","log10q")
-result <- varsimbvs(data$X,data$y,grid$sigma,grid$sa,grid$log10q,a,b,ca)
-w      <- result$w
-alpha  <- result$alpha
-mu     <- result$mu
+result      <- varsimbvs(data$X,data$y,grid$sigma,grid$sa,grid$log10q,a,b,ca)
+w           <- result$w
+alpha       <- result$alpha
+mu          <- result$mu
 
 # Show posterior mean of hyperparameters.
 cat("Approximate posterior means of hyperparameters:\n")

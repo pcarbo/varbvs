@@ -4,7 +4,13 @@ create.snps <- function (p, n) {
   # polymorphisms, or SNPs for short). Additive effects are generated
   # from the standard normal, and minor allele frequencies are uniform
   # between 0.05 and 0.5.
-  
+
+  # Check the inputs.
+  if (!is.scalar(p) || !is.numeric(p))
+    stop("Invalid 'p' argument")
+  if (!is.scalar(n) || !is.numeric(n))
+    stop("Invalid 'n' argument")
+    
   # Generate additive effects for the SNPs, such that N of them have a
   # nonzero effect on the trait.
   S       <- sample(p)
