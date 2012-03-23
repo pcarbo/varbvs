@@ -21,11 +21,11 @@ they do. This should be done with links to the functions, as in
 To see an example of how the variational inference procedure can be used
 to compute posterior inclusion probabilities and the posterior
 distribution of the hyperparameters in a linear regression setting, run
-run \code{demo(example1)}.
+\code{demo(example1)}.
   
-To get more information on this package, including the license, and the
-list of user-level functions made availabe in this package, use
-\code{help(package="varbvs")}.}
+To see more details about the \pkg{varbvs} package, including the
+license and the list of user-level functions available in this package,
+use \code{help(package="varbvs")}.}
 
 \author{Peter Carbonetto <pcarbo@uchicago.edu>}}
 
