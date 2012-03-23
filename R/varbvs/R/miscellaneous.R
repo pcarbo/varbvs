@@ -193,8 +193,8 @@ grid3d <- function (x,y,z) {
 }
 
 is.scalar <- function (x) {
-  # Returns TRUE if and only if x is a scalar.
-  return(length(x) == 1)
+  # Returns TRUE if and only if x is a (numeric) scalar.
+  return(length(x) == 1 && is.numeric(x))
 }
 
 is.odd <- function (x) {

@@ -6,9 +6,9 @@ create.snps <- function (p, n) {
   # between 0.05 and 0.5.
 
   # Check the inputs.
-  if (!is.scalar(p) || !is.numeric(p))
+  if (!is.scalar(p))
     stop("Invalid 'p' argument")
-  if (!is.scalar(n) || !is.numeric(n))
+  if (!is.scalar(n))
     stop("Invalid 'n' argument")
     
   # Generate additive effects for the SNPs, such that N of them have a
@@ -34,9 +34,23 @@ create.data <- function (maf, beta, sigma, n) {
   # generated according to y = X*beta + e, where the residual e is
   # normal with mean zero and covariance sigma*I.
 
+  # Check the inputs.
+  maf  <- c(maf)
+  beta <- c(beta)
+  if (!is.numeric(maf))
+    stop("Invalid 'maf' argument")
+  if (!is.numeric(beta))
+    stop("Invalid 'beta' argument")
+  if (!is.numeric(sigma))
+    stop("Invalid 'sigma' argument")
+  if (!is.numeric(n))
+    stop("Invalid 'n' argument")
+  if (length(maf) != length(beta))
+    stop("Vectors 'maf' and 'beta' must be the same length")
+
   # Get the number of SNPs.
   p <- length(maf)
-  
+            
   # Simulate genotype data X from an idealized population, according to the
   # specified minor allele frequencies.
   X <- (rnorm(n*p) < rep(maf,n)) +
