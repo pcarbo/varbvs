@@ -22,6 +22,10 @@ Returns a list containing two components:
 \item{beta}{vector with additive effects of SNPs.}
 }
 
+\seealso{
+\code{\link{create.data}}
+}
+
 \examples{
 
 ## Generate minor allele frequencies and additive effects for 1000

@@ -35,7 +35,7 @@ set.seed(1)
 # Note that X and y are centered.
 cat("Creating data.\n")
 snps <- create.snps(p,na)
-data <- create.data(snps,se,n)
+data <- create.data(snps$maf,snps$beta,se,n)
 
 # DEBUGGING.
 # d    <- readMat("../MATLAB/data.mat")

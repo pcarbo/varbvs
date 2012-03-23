@@ -25,7 +25,7 @@ create.snps <- function (p, n) {
   return(list(maf = maf,beta = beta))
 }
 
-create.data <- function (snps, sigma, n) {
+create.data <- function (maf, beta, sigma, n) {
   # Generates samples of the genotypes and quantitative trait (the
   # continuous outcome Y) according to the specified SNP minor allele
   # frequencies and additive effects. Genotypes are generated from a
@@ -33,21 +33,7 @@ create.data <- function (snps, sigma, n) {
   # frequencies. Observations about the quantitative trait are
   # generated according to y = X*beta + e, where the residual e is
   # normal with mean zero and covariance sigma*I.
-  #
-  # Args:
-  #   snps$maf   Minor allele frequencies of the SNPs.
-  #   snps$beta  Additive effects of the SNPs.
-  #   sigma      Variance of residual.
-  #   n          Number of samples to generate.
-  #
-  # Returns a list containing two components:
-  #   X  Matrix of genotype data with centered columns.
-  #   y  Vector of quantitative trait data (centered so that mean is 0).
 
-  # The the information about the SNPs.
-  maf  <- snps$maf
-  beta <- snps$beta
-  
   # Get the number of SNPs.
   p <- length(maf)
   

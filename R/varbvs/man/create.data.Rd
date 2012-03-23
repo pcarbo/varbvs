@@ -1,72 +1,53 @@
 \name{create.data}
 \alias{create.data}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{create.data}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
-\usage{
-create.data(snps, sigma, n)
-}
-%- maybe also 'usage' for other objects documented here.
+\title{Simulate SNP data}
+
+\description{Generates samples of the genotypes and quantitative trait
+  (i.e. a continuous outcome Y) according to the specified SNP minor
+  allele frequencies and additive effects.}
+
+\usage{create.data(maf, beta, sigma, n)}
+
 \arguments{
-  \item{snps}{
-%%     ~~Describe \code{snps} here~~
-}
-  \item{sigma}{
-%%     ~~Describe \code{sigma} here~~
-}
-  \item{n}{
-%%     ~~Describe \code{n} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+  \item{maf}{vector giving minor allele frequencies of the SNPs.}
+  \item{beta}{vector of the same length giving the additive effects
+              of the SNPs.}
+  \item{sigma}{positive scalar specifying the variance of residual.}
+  \item{n}{number of samples to generate.}
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+\details{Genotypes are generated from a binomial distribution with
+  success rates given by the minor allele frequencies. Observations
+  about the quantitative trait are generated according to \code{y =
+  X*beta + e}, where the residual \code{e} is normal with mean zero and
+  covariance \code{sigma} times the identity matrix.}
+
+\value{
+Returns a list containing two components:
+\item{X}{matrix of genotype data with centered columns so that the mean
+         of each column is zero.}
+\item{y}{vector of quantitative trait data, centered so that the mean of
+         the vector entries is zero.}
+}
+
+\author{Peter Carbonetto}
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{create.snps}}
 }
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (snps, sigma, n) 
-{
-    maf <- snps$maf
-    beta <- snps$beta
-    p <- length(maf)
-    X <- (rnorm(n * p) < rep(maf, n)) + (rnorm(n * p) < rep(maf, 
-        n))
-    X <- matrix(X, n, p)
-    X <- center.columns(X)
-    y <- X \%*\% beta + sqrt(sigma) * rnorm(n)
-    y <- c(y)
-    y <- y - mean(y)
-    return(list(X = X, y = y))
-  }
+\examples{
+
+## Generate genotypes and quantitative trait measurements for 1000 SNPs
+## and 200 individuals, in which the variance of the residual error is
+## 4. Of these SNPs, 10 have nonzero additive effects on the trait.
+se   <- 4
+snps <- create.snps(1000,10)
+data <- create.data(snps$maf,snps$beta,se,200)
+
+## Calculate the proportion of variance in the quantitative trait
+## explained by the SNPs.
+sz <- var(c(data$X %*% snps$beta))
+sz/(sz + se)
+
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
