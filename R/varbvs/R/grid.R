@@ -1,6 +1,6 @@
-grid3d <- function (x,y,z) {
-  # Does the same thing as NDGRID(x,y,z) in MATLAB.
-
+grid3d <- function (x, y, z) {
+  # Does the same thing as ndgrid(x,y,z) in MATLAB.
+  
   # Get the number of entries in each of the inputs.
   nx <- length(x)
   ny <- length(y)
@@ -20,6 +20,5 @@ grid3d <- function (x,y,z) {
         Z[i,j,k] <- z[k]
       }
   
-  grid <- list(X = X,Y = Y,Z = Z)
-  return(grid)
+  return(list(X = X,Y = Y,Z = Z))
 }

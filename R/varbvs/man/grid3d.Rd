@@ -1,74 +1,25 @@
 \name{grid3d}
 \alias{grid3d}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{grid3d}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
-\usage{
-grid3d(x, y, z)
-}
-%- maybe also 'usage' for other objects documented here.
+\title{Generates possible combinations of 3 variables}
+
+\description{It is equivalent to \code{ndgrid(x,y,z)} in MATLAB.}
+
+\usage{grid3d(x, y, z)}
+
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
-}
-  \item{y}{
-%%     ~~Describe \code{y} here~~
-}
-  \item{z}{
-%%     ~~Describe \code{z} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+  \item{x,y,z}{vectors specifying the domains for variables X, Y and Z}
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+\value{Returns a list containing three components, \code{X}, \code{Y}
+and \code{Z}. Each is an array with one element for every possible
+combination of X, Y and Z, so that \code{c(X[i], Y[i], Z[i])} is a
+possible assignment to variables X, Y and Z.}
 
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
+\author{Peter Carbonetto}
+
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (x, y, z) 
-{
-    nx <- length(x)
-    ny <- length(y)
-    nz <- length(z)
-    X <- array(dim = c(nx, ny, nz))
-    Y <- X
-    Z <- X
-    for (i in 1:nx) for (j in 1:ny) for (k in 1:nz) {
-        X[i, j, k] <- x[i]
-        Y[i, j, k] <- y[j]
-        Z[i, j, k] <- z[k]
-    }
-    grid <- list(X = X, Y = Y, Z = Z)
-    return(grid)
-  }
+## Generate all possible combinations of three binary variables.
+grid <- grid3d(0:1,0:1,0:1)
+
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
