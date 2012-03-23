@@ -1,47 +1,4 @@
 varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S) {
-  # Runs a single iteration of the coordinate ascent updates to
-  # maximize the variational lower bound for Bayesian variable
-  # selection in linear regression. It adjusts the fully-factorized
-  # variational approximation to the posterior distribution of the
-  # coefficients in a linear regression model of a continuous outcome
-  # (quantitiative trait), with spike and slab priors on the
-  # coefficients.
-  #
-  # Args:
-  #   X        n x p matrix of observations about the variables (or
-  #            features), where n is the number of samples, and p is
-  #            the number of variables. X must be a double-precision
-  #            matrix. (Unlike MATLAB, there are no single-precision
-  #            floating-point numbers in R.) 
-  #   sigma    Variance of the residual (a scalar).
-  #   sa       sa*sigma is the prior variance of the regression 
-  #            coefficients (also a scalar).
-  #   logodds  Prior log-odds of inclusion for each variable. It is equal
-  #            to logodds = log(q./(1-q)), where q is the prior
-  #            probability that each variable is included in the linear
-  #            model of Y. It is a vector of length p.
-  #   xy       Equal to X'*y, where y is the vector of observations
-  #            about the outcome.
-  #   d        Equal to diag(X'*X).
-  #   alpha0   Current variational estimates of the posterior inclusion
-  #            probabilities. It is a vector of length p.
-  #   mu0      Current variational estimates of the posterior mean
-  #            coefficients. It is a vector of length p.
-  #   Xr0      Equal to X*(alpha0*mu0).
-  #   S        Order in which the coordinates are updated. It is a
-  #            vector of any length. Each entry of S must be an
-  #            integer between 1 and p.
-  #
-  # Returns a list containing three components:
-  #   alpha    Updated variational estimates of the posterior inclusion
-  #            probabilities. 
-  #   mu       Updated variational estimates of the posterior mean
-  #            coefficients.
-  #   Xr       Equal to X*(alpha*mu).
-  #
-  # Note: to account for an intercept, y and X must be centered
-  # beforehand so that y and each column of X has a mean of zero. The
-  # computational complexity of this algorithm is O(n*length(S)).
   
   # CHECK THE INPUTS.
   # Check input X.

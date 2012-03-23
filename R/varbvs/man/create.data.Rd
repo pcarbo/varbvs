@@ -32,9 +32,7 @@ Returns a list containing two components:
 
 \author{Peter Carbonetto}
 
-\seealso{
-\code{\link{create.snps}}
-}
+\seealso{\code{\link{create.snps}}}
 
 \examples{
 
