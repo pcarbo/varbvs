@@ -18,7 +18,7 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
   # CHECK INPUTS.
   # Check input X.
   if (!is.matrix(X))
-    stop("Input argument X must be a matrix")
+    stop("Input argument 'X' must be a matrix")
   if (!is.double(X))
     X <- double(X)
 
@@ -29,17 +29,17 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
   # Check input y.
   y <- c(y)
   if (length(y) != n)
-    stop("Data X and y do not match")
+    stop("Data 'X' and 'y' do not match")
 
   # Check inputs sigma and sa.
   if (!is.scalar(sigma) || !is.scalar(sa))
-    stop("Input arguments sigma and sa must be scalars")
+    stop("Input arguments 'sigma' and 'sa' must be scalars")
 
   # Check input logodds.
   if (is.scalar(logodds))
     logodds <- rep(logodds,p)
   if (length(logodds) != p)
-    stop("Input logodds must be a scalar or a vector of length p")
+    stop("Input 'logodds' must be a scalar or a vector of length 'p'")
 
   # TAKE CARE OF OPTIONAL INPUTS.
   # Set initial estimates of variational parameters.
@@ -54,7 +54,7 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
   else
     mu <- c(mu0)
   if (length(alpha) != p || length(mu) != p)
-    stop("alpha0 and mu0 must be vectors of length p")
+    stop("'alpha0' and 'mu0' must be vectors of length 'p'")
   
   # INITIAL STEPS.
   # Compute a few useful quantities.

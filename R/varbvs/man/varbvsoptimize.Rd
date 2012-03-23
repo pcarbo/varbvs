@@ -112,11 +112,31 @@ updated matrix-vector product \code{Xr}.}
 \author{Peter Carbonetto}
 
 \seealso{
-\code{\link{varbvsoptimize}},
 \code{\link{varsimbvs}}
 }
 
 \examples{
 
-  ## Write an example here.
+## Randomly generate genotypes and quantitative trait measurements for
+## 1000 SNPs and 500 individuals, in which the variance of the residual
+## error is 4. Of these SNPs, 10 have nonzero additive effects on the
+## trait.
+se   <- 4
+snps <- create.snps(1000,10)
+data <- create.data(snps$maf,snps$beta,se,500)
+
+## Compute the variational approximation given (appropriate) choices for
+## the hyperparameters.
+result <- varbvsoptimize(data$X,data$y,4,1/4,log(0.01/0.99))
+
+## View the posterior inclusion probabilities for the (true) causal SNPs.
+S <- which(snps$beta != 0)
+cbind(snps$beta[S],result$alpha[S])
+
+## View the largest posterior inclusion probability for a SNP that has
+## no effect on the quantitative trait.
+S <- which(snps$beta == 0)
+i <- S[which.max(result$alpha[S])]
+cbind(snps$beta[i],result$alpha[i])
+
 }

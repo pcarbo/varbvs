@@ -1,130 +1,79 @@
 \name{varsimbvs}
 \alias{varsimbvs}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{varsimbvs}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
-\usage{
-varsimbvs(X, y, sigma, sa, log10q, a, b, ca)
-}
-%- maybe also 'usage' for other objects documented here.
+
+\title{Full inference procedure for Bayesian variable selection
+in linear regression}
+
+\description{\code{varsimbvs} is a special implementation of the
+variational inference procedure used in the two simulation studies for
+the Bayesian Analysis paper. The main distinguishing feature of this
+procedure is the choice of priors for the hyperparameters of the
+variable selection model. In addition, we also avoid erratic behaviour
+in the variational approximation by first searching for a good
+initialization of the variational parameters. This inference procedure
+involves an inner loop and an outer loop. The inner loop consists of
+running a coordinate ascent algorithm to tighten the variational lower
+bound given a setting of the hyperparameters (this inner loop is
+implemented by \code{\link{varbvsoptimize}}). The outer loop computes
+importance weights for all combinations of the hyperparameters.}
+
+\usage{varsimbvs(X, y, sigma, sa, log10q, a, b, ca)}
+
 \arguments{
-  \item{X}{
-%%     ~~Describe \code{X} here~~
-}
-  \item{y}{
-%%     ~~Describe \code{y} here~~
-}
-  \item{sigma}{
-%%     ~~Describe \code{sigma} here~~
-}
-  \item{sa}{
-%%     ~~Describe \code{sa} here~~
-}
-  \item{log10q}{
-%%     ~~Describe \code{log10q} here~~
-}
-  \item{a}{
-%%     ~~Describe \code{a} here~~
-}
-  \item{b}{
-%%     ~~Describe \code{b} here~~
-}
-  \item{ca}{
-%%     ~~Describe \code{ca} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+
+  \item{X}{Matrix of observations about the variables (or features). It
+           has \code{n} rows and \code{p} columns, where \code{n} is the
+           number of samples, and \code{p} is the number of variables.}
+	 
+  \item{y}{Vector of observations about the outcome. It is a vector of
+           length \code{n}.}
+
+  \item{sigma, sa, log10q}{These arguments specify the combinations of
+    the hyperparameter settings. These inputs must be vectors of the
+    same length. For each combination of the hyperparameters, we compute
+    an importance weight. \code{sigma} is the residual variance,
+    \code{sigma*sa} is the prior variance of the regression
+    coefficients, and \code{log10q} is the (base 10) logarithm of the
+    prior inclusion probability.}
+
+  \item{a, b, ca}{These arguments are all positive scalars specifying
+    the priors on the hyperparameters. \code{a} and \code{b} are the
+    prior sample sizes for the beta prior on the prior inclusion
+    probability. We assume a uniform prior on the "proportion of
+    variance explained", except that we replace the prior inclusion
+    probability in the proportion of variance explained by a constant,
+    \code{ca}. This is done purely for convenience, so that
+    hyperparameter \code{sa} does not depend on the prior inclusion
+    probability a priori, making it easier to implement the Markov chain
+    Monte Carlo (MCMC) method (see the Bayesian Analysis article for
+    details). We assume the standard noninformative prior on the
+    residual variance \code{sigma}.}
+
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+\value{
+Returns a list containing three components:
+
+\item{alpha}{variational estimates of the posterior inclusion
+             probabilities, averaged over settings of the
+             hyperparameters.}
+
+\item{mu}{variational estimates of the posterior mean coefficients,
+          averaged over settings of the hyperparameters.}
+
+\item{w}{normalized importance weights for all settings of the
+         hyperparameters}
+}
+     
+\author{Peter Carbonetto}
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{varbvsoptimize}}
 }
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (X, y, sigma, sa, log10q, a, b, ca) 
-{
-    as <- 0.01
-    bs <- 0.01
-    if (!is.matrix(X)) 
-        stop("Input argument X must be a matrix")
-    n <- nrow(X)
-    p <- ncol(X)
-    ns <- length(sigma)
-    if (!is.scalar(a) || !is.scalar(b) || !is.scalar(c)) 
-        stop("Input arguments a, b and c must be scalars")
-    if (length(sa) != ns || length(log10q) != ns) 
-        stop("Inputs sigma, sa and log10q must be the same size")
-    sx <- sum(sd(X)^2)
-    q1 <- 10^log10q
-    lnZ <- rep(0, ns)
-    logw <- rep(0, ns)
-    alpha <- matrix(0, p, ns)
-    mu <- matrix(0, p, ns)
-    cat(sprintf("Finding best initialization for \%d combinations ", 
-        ns))
-    cat("of hyperparameters.\n")
-    for (i in 1:ns) {
-        cat(sprintf("(\%03d) sigma = \%4.1f, sa = \%0.3f, q = \%0.2e", 
-            i, sigma[i], sa[i], q1[i]))
-        cat(rep("\b", 1, 44), sep = "")
-        alpha0 <- runif(p)
-        alpha0 <- alpha0/sum(alpha0)
-        mu0 <- rnorm(p)
-        result <- varbvs(X, y, sigma[i], sa[i], logit(q1[i]), 
-            alpha0, mu0, verbose = FALSE)
-        lnZ[i] <- result$lnZ
-        alpha[, i] <- result$alpha
-        mu[, i] <- result$mu
-    }
-    cat("\n")
-    i <- which.max(lnZ)
-    alpha0 <- c(alpha[, i])
-    mu0 <- c(mu[, i])
-    cat(sprintf("Computing importance weights for \%d combinations ", 
-        ns))
-    cat("of hyperparameters.\n")
-    for (i in 1:ns) {
-        cat(sprintf("(\%03d) sigma = \%4.1f, sa = \%0.3f, q = \%0.2e", 
-            i, sigma[i], sa[i], q1[i]))
-        cat(rep("\b", 1, 44), sep = "")
-        result <- varbvs(X, y, sigma[i], sa[i], logit(q1[i]), 
-            alpha0, mu0, verbose = FALSE)
-        logw[i] <- lnZ[i] + loginvgamma(sigma[i], as/2, bs/2) + 
-            logpve(ca * sx, sa[i]) + dbeta(q1[i], a + 1, b, log = TRUE)
-    }
-    cat("\n")
-    w <- normalizelogweights(logw)
-    alpha <- c(alpha \%*\% w)
-    mu <- c(mu \%*\% w)
-    return(list(w = w, alpha = alpha, mu = mu))
-  }
+\examples{
+
+## Run the demonstration R Script.
+demo(example1)
+
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

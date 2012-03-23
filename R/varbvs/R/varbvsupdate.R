@@ -10,7 +10,7 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S) {
   # CHECK THE INPUTS.
   # Check input X.
   if (!is.double(X) || !is.matrix(X))
-    stop("Input argument X must be a double-precision matrix")
+    stop("Input argument 'X' must be a double-precision matrix")
   
   # Get the number of samples (n), the number of variables (p), and
   # the number of updates to execute (m).
@@ -20,29 +20,29 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S) {
 
   # Check inputs sigma and sa.
   if (!is.scalar(sigma) || !is.scalar(sa))
-    stop("Input arguments sigma and sa must be scalars")
+    stop("Input arguments 'sigma' and 'sa' must be scalars")
 
   # Check input logodds.
   if (length(logodds) == 1)
     logodds <- rep(logodds,p)
   if (length(logodds) != p)
-    stop("Input logodds must be a scalar or a vector of length p")
+    stop("Input 'logodds' must be a scalar or a vector of length 'p'")
 
   # Check inputs xy and d.
   if (length(xy) != p || length(d) != p)
-    stop("Inputs xy and d must be vectors of length p")
+    stop("Inputs 'xy' and 'd' must be vectors of length 'p'")
 
   # Check inputs alpha0 and mu0.
   if (length(alpha0) != p || length(mu0) != p)
-    stop("Inputs alpha0 and mu0 must be vectors of length p")
+    stop("Inputs 'alpha0' and 'mu0' must be vectors of length 'p'")
 
   # Check input Xr0.
   if (length(Xr0) != n)
-    stop("Input Xr0 must be a vector of length n")
+    stop("Input 'Xr0' must be a vector of length 'n'")
 
   # Check input S.
   if (sum(S < 1 | S > p) > 0)
-      stop("Input S contains invalid variable indices")
+      stop("Input 'S' contains invalid variable indices")
 
   # Execute the C routine, and return the results in a list object.
   # The only components of the list that change are alpha, mu and Xr.

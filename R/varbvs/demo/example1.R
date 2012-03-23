@@ -12,18 +12,19 @@ na <- 20   # Number of variables that effect the outcome ("causal" SNPs).
 # rough calculations).
 se <- 9
 
-# These two parameters specify the Beta prior on the proportion of variables
+# These two parameters specify the beta prior on the proportion of variables
 # (SNPs) that are included in the linear model of Y.
 a <- 0.02
 b <- 1
 
 # This parameter specifies the prior on the variance of the regression
-# coefficients (sa). For more information on this prior, see MULTISNPSIM.
+# coefficients ('sa'). For more information on this prior, see
+# 'varsimbvs'.
 ca <- 0.02
 
 # Candidate values of the variance of the residual (sigma), the prior
-# variance of the regression coefficients (sa), and logarithm of the prior
-# inclusion probability (log10q).
+# variance of the regression coefficients ('sa'), and logarithm of the
+# prior inclusion probability ('log10q').
 sigma  <- seq(8,13)
 sa     <- seq(0.025,0.4,0.025)
 log10q <- seq(-2.5,-1,0.25)
