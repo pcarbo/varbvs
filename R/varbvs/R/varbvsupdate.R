@@ -1,4 +1,11 @@
 varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S) {
+  # Runs a single iteration of the coordinate ascent updates to
+  # maximize the variational lower bound for Bayesian variable
+  # selection in linear regression. It adjusts the fully-factorized
+  # variational approximation to the posterior distribution of the
+  # coefficients in a linear regression model of a continuous outcome
+  # (quantitiative trait), with spike and slab priors on the
+  # coefficients.
   
   # CHECK THE INPUTS.
   # Check input X.
@@ -16,7 +23,7 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S) {
     stop("Input arguments sigma and sa must be scalars")
 
   # Check input logodds.
-  if (is.scalar(logodds))
+  if (length(logodds) == 1)
     logodds <- rep(logodds,p)
   if (length(logodds) != p)
     stop("Input logodds must be a scalar or a vector of length p")

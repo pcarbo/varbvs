@@ -1,145 +1,122 @@
 \name{varbvsoptimize}
 \alias{varbvsoptimize}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{varbvsoptimize}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\alias{varbvsupdate}
+
+\title{Coordinate ascent for variational approximation to Bayesian
+       variable selection in linear regression}
+
+\description{\code{varbvsoptimize} implements the fully-factorized
+variational approximation for Bayesian variable selection in linear
+regression. It finds the "best" fully-factorized variational
+approximation to the posterior distribution of the coefficients in a
+linear regression model of a continuous outcome (quantitiative trait),
+with spike and slab priors on the coefficients. By "best", we mean the
+approximating distribution that locally minimizes the Kullback-Leibler
+divergence between the approximating distribution and the exact
+posterior.
+
+\code{varbvsupdate} runs a single iteration of the coordinate ascent
+updates to maximize the variational lower bound or, equivalently,
+to minimize the Kullback-Leibler divergence objective.}
+
 \usage{
-varbvsoptimize(X, y, sigma, sa, logodds, alpha0 = NULL, mu0 = NULL, verbose = TRUE)
-}
-%- maybe also 'usage' for other objects documented here.
-\arguments{
-  \item{X}{
-%%     ~~Describe \code{X} here~~
-}
-  \item{y}{
-%%     ~~Describe \code{y} here~~
-}
-  \item{sigma}{
-%%     ~~Describe \code{sigma} here~~
-}
-  \item{sa}{
-%%     ~~Describe \code{sa} here~~
-}
-  \item{logodds}{
-%%     ~~Describe \code{logodds} here~~
-}
-  \item{alpha0}{
-%%     ~~Describe \code{alpha0} here~~
-}
-  \item{mu0}{
-%%     ~~Describe \code{mu0} here~~
-}
-  \item{verbose}{
-%%     ~~Describe \code{verbose} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+
+varbvsoptimize(X, y, sigma, sa, logodds, alpha0 = NULL,
+mu0 = NULL, verbose = TRUE)
+
+varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+\arguments{
+
+  \subsection{Arguments common to both functions}
+  
+  \item{X}{Matrix of observations about the variables (or features). It
+           has \code{n} rows and \code{p} columns, where \code{n} is the
+           number of samples, and \code{p} is the number of variables.}
+
+  \item{y}{Vector of observations about the outcome. It is a vector of
+           length \code{n}.}
+
+  \item{sigma}{Scalar giving the variance of the residual.}
+
+  \item{sa}{\code{sa*sigma} is the prior variance of the regression
+            coefficients.}
+
+  \item{logodds}{Prior log-odds of inclusion for each variable. It is
+                 equal to \code{logodds = log(q/(1-q))}, where \code{q}
+                 is the prior probability that each variable is included
+                 in the linear model of Y. It may either be a scalar, in
+                 which case all the variables have the same prior
+                 inclusion probability, or it may be a vector of length
+                 \code{p}.}
+
+  \item{alpha0}{Initial variational estimate of posterior inclusion #
+                probabilities. It is a vector of length \code{p}. If
+                \code{alpha0 = NULL} in \code{varbvsoptimize}, the
+                variational # parameters are initialized at random.}
+	      
+  \item{mu0}{Initial variational estimate of posterior mean #
+                coefficients. It is a vector of length \code{p}. If
+                \code{mu0 = NULL} in \code{varbvsoptimize}, the
+                variational # parameters are randomly initialized.}
+  
+  \subsection{Arguments specific to \code{varbvsoptimize}}
+	 
+  \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the #
+                 algorithm's progress.}
+
+  \subsection{Arguments specific to \code{varbvsupdate}}
+	       
+  \item{xy}{Equal to \code{t(X) \%*\% y}, where \code{y} is the vector of
+            observations about the outcome.}
+
+  \item{d}{Equal to \code{diag(t(X) \%*\% X)}.}
+	  
+  \item{Xr0}{Equal to \code{X \%*\% (alpha0*mu0)}.}
+  
+  \item{S}{Order in which the coordinates are updated. It is a vector of
+           any length. Each entry of \code{S} must be an integer between
+           1 and \code{p}.}
+}
+       
+\details{
+
+\code{alpha}, \code{mu} and \code{s} are the parameters of the
+variational approximation and, equivalently, variational estimates of
+posterior quantites: under the variational approximation, the ith
+regression coefficient is normal with probability \code{alpha[i]};
+\code{mu[i]} and \code{s[i]} are the mean and variance of the
+coefficient given that it is included in the model. \code{alpha},
+\code{mu} and \code{s} are always column vectors of length \code{p}.
+
+To account for an intercept, \code{y} and \code{X} must be centered
+beforehand so that \code{y} and each column of \code{X} has a mean of
+zero.
+
+The computational complexity of running \cote{varbvsupdate} is
+\code{O(n*length(S))}. For speed of computation, most of the work is
+done by \code{varbvsupdateR}, a function implemented in C. The call to
+the C function in the shared library is made using \code{\link{.C}}.  }
+
+\value{
+
+\code{varbvsoptimize} returns a list containing four components:
+variational parameters \code{alpha}, \code{mu} and \code{s}, and the
+variational estimate of the marginal log-likelihood \code{lnZ}.
+
+\code{varbvsupdate} returns a list containing three components:
+the updated variational parameters \code{alpha} and \code{mu}, and the
+updated matrix-vector product \code{Xr}.}
+
+\author{Peter Carbonetto}
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{varbvsoptimize}},
+\code{\link{varsimbvs}}
 }
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (X, y, sigma, sa, logodds, alpha0 = NULL, mu0 = NULL, 
-    verbose = TRUE) 
-{
-    tolerance <- 1e-04
-    if (!is.matrix(X)) 
-        stop("Input argument X must be a matrix")
-    if (!is.double(X)) 
-        X <- double(X)
-    n <- nrow(X)
-    p <- ncol(X)
-    if (length(y) != n) 
-        stop("Data X and y do not match")
-    if (!is.scalar(sigma) || !is.scalar(sa)) 
-        stop("Input arguments sigma and sa must be scalars")
-    if (is.scalar(logodds)) 
-        logodds <- rep(logodds, p)
-    if (length(logodds) != p) 
-        stop("Input logodds must be a scalar or a vector of length p")
-    if (is.null(alpha0)) {
-        alpha <- runif(p)
-        alpha <- alpha/sum(alpha)
-    }
-    else alpha <- alpha0
-    if (is.null(mu0)) 
-        mu <- rnorm(p)
-    else mu <- mu0
-    if (length(alpha) != p || length(mu) != p) 
-        stop("alpha0 and mu0 must be vectors of length p")
-    xy <- c(y \%*\% X)
-    d <- diagsq(X)
-    Xr <- c(X \%*\% (alpha * mu))
-    s <- sa * sigma/(sa * d + 1)
-    lnZ <- -Inf
-    iter <- 0
-    if (verbose) {
-        cat("       variational    max. incl max.\n")
-        cat("iter   lower bound  change vars E[b]\n")
-    }
-    while (TRUE) {
-        iter <- iter + 1
-        alpha0 <- alpha
-        mu0 <- mu
-        lnZ0 <- lnZ
-        params0 <- c(alpha, alpha * mu)
-        if (is.odd(iter)) 
-            S <- seq(1, p)
-        else S <- seq(p, 1, -1)
-        result <- varbvsupdate(X, sigma, sa, logodds, xy, d, 
-            alpha, mu, Xr, S)
-        alpha <- result$alpha
-        mu <- result$mu
-        Xr <- result$Xr
-        lnZ <- intlinear(Xr, d, y, sigma, alpha, mu, s) + intgamma(logodds, 
-            alpha) + intklbeta(alpha, mu, s, sigma * sa)
-        params <- c(alpha, alpha * mu)
-        S <- which(abs(params) > 1e-06)
-        err <- relerr(params[S], params0[S])
-        if (verbose) 
-            cat(sprintf("\%4d \%+13.6e \%0.1e \%4d \%0.2f\n", iter, 
-                lnZ, max(err), round(sum(alpha)), max(abs(alpha * 
-                  mu))))
-        if (lnZ < lnZ0) {
-            alpha <- alpha0
-            mu <- mu0
-            lnZ <- lnZ0
-            break
-        }
-        else if (max(err) < tolerance) 
-            break
-    }
-    return(list(alpha = alpha, mu = mu, s = s, lnZ = lnZ))
-  }
+\examples{
+
+  ## Write an example here.
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

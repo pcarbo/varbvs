@@ -9,46 +9,6 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
   # distribution that locally minimizes the Kullback-Leibler
   # divergence between the approximating distribution and the exact
   # posterior.
-  #
-  # Args:
-  #   X        n x p matrix of observations about the variables (or
-  #            features), where n is the number of samples
-  #            (observations), and p is the number of variables.
-  #   y        Vector of observations about the outcome. It is a
-  #            vector of length n.
-  #   sigma    Variance of the residual.
-  #   sa       sa*sigma is the prior variance of the coefficients.
-  #   logodds  Prior log-odds of inclusion for each variable. It is
-  #            equal to logodds = log(q/(1-q)), where q is the prior
-  #            probability that each variable is included in the
-  #            linear model of Y (i.e. the prior probability that
-  #            its coefficient is not zero). It may either be a
-  #            scalar, in which case all the variables have the
-  #            same prior inclusion probability, or it may be a
-  #            vector of length p.
-  #   alpha0   Initial variational estimate of posterior inclusion
-  #            probabilities. If alpha0 = NULL, the variational
-  #            parameters are initialized at random.
-  #   mu0      Initial variational estimate of posterior mean
-  #            coefficients. If mu0 = NULL, the variational
-  #            parameters are randomly initialized.
-  #   verbose  Set verbose = FALSE to turn off reporting the
-  #            algorithm's progress. 
-  #
-  # Returns a list containing four components: ‘alpha’, ‘mu’ and ‘s’
-  # are the parameters of the variational approximation and,
-  # equivalently, variational estimates of posterior quantites: under
-  # the variational approximation, the ith regression coefficient is
-  # normal with probability alpha[i]; mu[i] and s[i] are the mean and
-  # variance of the coefficient given that it is included in the
-  # model. Outputs alpha, mu and s are all column vectors of length p.
-  #
-  # Output ‘lnZ’ is a scalar giving the variational estimate of
-  # the marginal log-likelihood.  
-  #
-  # Note: to account for an intercept, y and X must be centered
-  # beforehand so that vector y and each column of X has a mean of
-  # zero.
 
   # Convergence is reached when the maximum relative distance between
   # successive updates of the variational parameters is less than this
@@ -67,6 +27,7 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
   p <- ncol(X)
 
   # Check input y.
+  y <- c(y)
   if (length(y) != n)
     stop("Data X and y do not match")
 
@@ -87,11 +48,11 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
     alpha <- alpha / sum(alpha)
   }
   else
-    alpha <- alpha0
+    alpha <- c(alpha0)
   if (is.null(mu0))
     mu <- rnorm(p)
   else
-    mu <- mu0
+    mu <- c(mu0)
   if (length(alpha) != p || length(mu) != p)
     stop("alpha0 and mu0 must be vectors of length p")
   
