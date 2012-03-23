@@ -38,16 +38,17 @@ Returns a list containing two components:
 
 \examples{
 
-## Generate genotypes and quantitative trait measurements for 1000 SNPs
-## and 200 individuals, in which the variance of the residual error is
-## 4. Of these SNPs, 10 have nonzero additive effects on the trait.
+## Randomly generate genotypes and quantitative trait measurements for
+## 1000 SNPs and 200 individuals, in which the variance of the residual
+## error is 4. Of these SNPs, 10 have nonzero additive effects on the
+## trait.
 se   <- 4
 snps <- create.snps(1000,10)
 data <- create.data(snps$maf,snps$beta,se,200)
 
 ## Calculate the proportion of variance in the quantitative trait
 ## explained by the SNPs.
-sz <- var(c(data$X %*% snps$beta))
+sz <- var(c(data$X \%*\% snps$beta))
 sz/(sz + se)
 
 }
