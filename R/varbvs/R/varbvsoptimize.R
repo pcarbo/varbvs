@@ -54,7 +54,7 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
   else
     mu <- c(mu0)
   if (length(alpha) != p || length(mu) != p)
-    stop("'alpha0' and 'mu0' must be vectors of length 'p'")
+    stop("'alpha0' and 'mu0' must be NULL or vectors of length 'p'")
   
   # INITIAL STEPS.
   # Compute a few useful quantities.
@@ -103,7 +103,7 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
 
     # CHECK CONVERGENCE.
     # Print the status of the algorithm and check the convergence
-    # criterion.  Convergence is reached when the maximum relative
+    # criterion. Convergence is reached when the maximum relative
     # difference between the parameters at two successive iterations
     # is less than the specified tolerance, or when the variational
     # lower bound has decreased. I ignore parameters that are very

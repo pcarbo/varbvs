@@ -12,13 +12,21 @@ is.odd <- function (x) {
 }
 
 dot <- function (x,y) {
-  # Return the dot product of vectors x and y.
+  # Returns the dot product of vectors x and y.
   return(sum(x*y))
 }
 
 norm2 <- function (x) {
-  # Return the quadratic norm (2-norm) of vector x.
+  # Returns the quadratic norm (2-norm) of vector x.
   return(sqrt(dot(x,x)))
+}
+
+qnorm <- function (x, a) {
+  # Returns the quadratic norm of vector x with respect to positive
+  # definite matrix with diagonal entries a. For a definition of the
+  # quadratic norm, see p. 635 of Convex Optimization (2004) by Boyd &
+  # Vandenberghe.
+  return(sqrt(dot(x*a,x)))
 }
 
 diagsq <- function (X, a = NULL) {
@@ -29,9 +37,23 @@ diagsq <- function (X, a = NULL) {
     a <- rep(1,n)
   }
 
-  # This is y = X^2*a.
+  # Compute y = (X.^2)'*a.
   a <- c(a)
   y <- c(a %*% X^2)  
+  return(y)
+}
+
+diagsqt <- function (X, a = NULL) {
+  # diagsqt(x) returns diag(X*X').  
+  # diagsqt(X,a) returns diag(X*diag(a)*X').
+  if (is.null(a)) {
+    n <- ncol(X)
+    a <- rep(1,n)
+  }
+
+  #  Compute y = X^2*a.
+  a <- c(a)
+  y <- c(X^2 %*% a)
   return(y)
 }
 

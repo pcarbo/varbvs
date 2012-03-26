@@ -67,15 +67,4 @@ cat(sprintf("log10(sa)    %6.3f\n",sum(w*log10(grid$sa))))
 cat(sprintf("log10(q)     %6.3f\n",sum(w*grid$log10q)))
 
 # DISPLAY POSTERIOR DISTRIBUTIONS OF HYPERPARAMETERS.
-# Plot the variational estimate of the residual variance (sigma).
-barplot(apply(w,1,sum),space=0,border=NA,names.arg=sigma,ylim=c(0,0.8),
-        xlab="sigma",ylab="posterior",col="yellowgreen",axes=FALSE,
-        cex.names=0.9,cex.axis=0.9)
-axis(2,at=c(0,0.4,0.8),line=NA,las=1)
-## subplot(3,3,1);
-## bar(x,N,1,'LineStyle','none','FaceColor',rgb('yellowgreen'));
-
-## Plot the variational estimate of the prior variance (sa).
-barplot(apply(w,2,sum),space=0,border=NA,names.arg=sa,ylim=c(0,0.8),
-        xlab="sa",ylab="posterior",col="yellowgreen",axes=FALSE)
-axis(2,at=c(0,0.4,0.8),line=NA,las=1)
+# *** TO DO ***

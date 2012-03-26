@@ -10,7 +10,7 @@ intlinear <- function (Xr, d, y, sigma, alpha, mu, s) {
         dot(d,betavar(alpha,mu,s))/(2*sigma)
   return(f)
 }
-                      
+
 intklbeta <- function (alpha, mu, s, sa) {
   # Computes an integral that appears in the variational lower bound
   # of the marginal log-likelihood. This integral is the negative
