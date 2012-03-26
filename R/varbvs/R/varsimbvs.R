@@ -35,10 +35,15 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
   # log-importance weights (logw), variational estimates of the
   # posterior inclusion probabilities (alpha), and variational
   # estimates of the posterior mean coefficients (mu).
-  lnZ   <- array(dim=dim(sigma))
-  logw  <- array(dim=dim(sigma))
-  alpha <- matrix(0,p,ns)
-  mu    <- matrix(0,p,ns)
+  lnZ     <- sigma
+  logw    <- sigma
+  lnZ[ ]  <- NA
+  logw[ ] <- NA
+  alpha   <- matrix(0,p,ns)
+  mu      <- matrix(0,p,ns)
+
+  dimnames(alpha) <- list(sample=NULL,importance.sample=NULL)
+  dimnames(mu)    <- list(sample=NULL,importance.sample=NULL)
   
   # First get the best initialization for the variational
   # parameters. Repeat for each combination of the hyperparameters.

@@ -56,7 +56,7 @@ create.data <- function (maf, beta, sigma, n) {
   X <- (rnorm(n*p) < rep(maf,n)) +
        (rnorm(n*p) < rep(maf,n))
   X <- matrix(X,n,p)
-
+  
   # Center the columns of X.
   X <- center.columns(X)
 
@@ -69,6 +69,7 @@ create.data <- function (maf, beta, sigma, n) {
   y <- y - mean(y)
 
   # Output the genotype and quantitative trait samples.
+  dimnames(X) <- list(sample=NULL,variable=NULL)
   return(list(X = X,y = y))
 }  
 

@@ -43,19 +43,39 @@ data <- create.data(snps$maf,snps$beta,se,n)
 sz <- var(c(data$X %*% snps$beta))
 cat(sprintf("Proportion of variance explained is %0.3f.\n",sz/(sz + se)))
 
+# Generate the importance samples at regular intervals in a predefined
+# grid.
+grid                  <- grid3d(sigma,sa,log10q)
+names(grid)           <- c("sigma","sa","log10q")
+dimnames(grid$sigma)  <- list(sigma=NULL,sa=NULL,log10q=NULL)
+dimnames(grid$sa)     <- dimnames(grid$sa)
+dimnames(grid$log10q) <- dimnames(grid$sa)
+
 # COMPUTE VARIATIONAL ESTIMATES.
 cat("Computing variational estimates.\n")
-grid        <- grid3d(sigma,sa,log10q)
-names(grid) <- c("sigma","sa","log10q")
-result      <- varsimbvs(data$X,data$y,grid$sigma,grid$sa,grid$log10q,a,b,ca)
-w           <- result$w
-alpha       <- result$alpha
-mu          <- result$mu
+result <- varsimbvs(data$X,data$y,grid$sigma,grid$sa,grid$log10q,a,b,ca)
+w      <- result$w
+alpha  <- result$alpha
+mu     <- result$mu
+remove(result)
 
-# Show posterior mean of hyperparameters.
+# SHOW POSTERIOR MEAN OF HYPERPARAMETERS.
 cat("Approximate posterior means of hyperparameters:\n")
 cat("Approximate posterior means of hyperparameters:\n")
 cat(sprintf("log10(sigma) %6.3f\n",sum(w*log10(grid$sigma))))
 cat(sprintf("log10(sa)    %6.3f\n",sum(w*log10(grid$sa))))
 cat(sprintf("log10(q)     %6.3f\n",sum(w*grid$log10q)))
 
+# DISPLAY POSTERIOR DISTRIBUTIONS OF HYPERPARAMETERS.
+# Plot the variational estimate of the residual variance (sigma).
+barplot(apply(w,1,sum),space=0,border=NA,names.arg=sigma,ylim=c(0,0.8),
+        xlab="sigma",ylab="posterior",col="yellowgreen",axes=FALSE,
+        cex.names=0.9,cex.axis=0.9)
+axis(2,at=c(0,0.4,0.8),line=NA,las=1)
+## subplot(3,3,1);
+## bar(x,N,1,'LineStyle','none','FaceColor',rgb('yellowgreen'));
+
+## Plot the variational estimate of the prior variance (sa).
+barplot(apply(w,2,sum),space=0,border=NA,names.arg=sa,ylim=c(0,0.8),
+        xlab="sa",ylab="posterior",col="yellowgreen",axes=FALSE)
+axis(2,at=c(0,0.4,0.8),line=NA,las=1)
