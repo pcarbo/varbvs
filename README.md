@@ -100,45 +100,56 @@ archive. Once you have extracted the files from the compressed
 archive, you will see that the main directory has two subdirectories,
 one containing the MATLAB code, and the other containing the R files.
 
-The subdirectory **R/varbvs** has all the necessary files to build a
-package for R. To install this package, follow the [standard
+The subdirectory **R/varbvs** has all the necessary files to build and
+install a package for R. To install this package, follow the [standard
 instructions](http://cran.r-project.org/doc/manuals/R-admin.html) for
 installing an R package from source. On a Unix platform, for example,
-the installation steps look approximately like this:
+the installation steps look like this:
 
-    R CMD build varbvs/R/varbvs
-    R CMD INSTALL varbvs/R/varbvs
+    R CMD build homedir/varbvs/R/varbvs
+    R CMD INSTALL homedir/varbvs/R/varbvs
 
 Once you have installed the package, you can load the functions in R
-with **library(varbvs)**. Run **help(varbvs)** for an overview of
-the package.
+by running **library(varbvs)**. To get an overview of the package, run
+**help(varbvs)** and **help(package="varbvs")** in R.
 
-The demonstration R script **example1.R** uses packages
-[ggplot2](http://had.co.nz/ggplot2) and grid. The grid package is
-usually included in the base distribution of R, and ggplot2 is
-available on [CRAN](http://cran.r-project.org), and can be installed
-using the **install.packages** function in R.
+Once you have installed and loaded the **varbvs** package, start by
+running the demonstration script with **demo(example1)**. This script
+demonstrates how the variational inference algorithm is used to
+compute posterior probabilities for a small linear regression example
+in which only a small subset of the variables (single nucleotide
+polymorphisms, or SNPs) has affects the outcome (a simulated
+quantitative trait). 
 
-###Overview of MATLAB functions 
+Note that the demonstration script **example1.R** needs packages
+[ggplot2](http://had.co.nz/ggplot2) and **grid** to show plots
+depicting the posterior distributions of the hyperparameters. The grid
+package is normally included in the base distribution of R, and
+ggplot2 is available on [CRAN](http://cran.r-project.org), and can be
+installed using the **install.packages** function for more recent
+versions of R.
 
-The MATLAB subdirectory contains over 40 functions. Here are the most
-important ones:
+###Overview of R and MATLAB functions 
 
-+ **varbvs.m** returns variational estimates of the posterior statistics
-for the linear regression model with spike and slab priors, given
-choices for the hyperparameters. It computes the posterior statistics
-by running the coordinate ascent updates until they converge at a
-local minimum of the Kullback-Leibler divergence objective (which
-corresponds to a local maximum of the variational lower bound to the
-marginal log-likelihood). This function implements the "inner loop" in
-the *Bayesian Analysis* paper.
+The MATLAB subdirectory and R package contains several useful
+functions. Here are the most interesting ones:
 
-+ **varbvsbin.m** is the same as **varbvs.m**, except that it is meant
-  for a logistic regression model instead of a linear regression
-  model. This is useful for modeling a binary-valued outcome, such as
-  disease status in a case-control study.
++ **varbvs** (MATLAB) and **varbvsoptimize** (R) return variational
+estimates of the posterior statistics for the linear regression model
+with spike and slab priors, given choices for the hyperparameters. It
+computes the posterior statistics by running the coordinate ascent
+updates until they converge at a local minimum of the Kullback-Leibler
+divergence objective (which corresponds to a local maximum of the
+variational lower bound to the marginal log-likelihood). This function
+implements the "inner loop" in the *Bayesian Analysis* paper.
 
-+ **varsimbvs.m** demonstrates how to run the full variational
++ **varbvsbin** (MATLAB) and **varbvsbinoptimize** (R) are the same as
+functions **varbvs** and **varbvsoptimize**, respectively except that
+they are meant for logistic regression instead of linear
+regression. This is useful for modeling a binary-valued outcome such
+as disease status in a case-control study.
+
++ **varsimbvs** demonstrates how to run the full variational
   inference procedure for Bayesian variable selection in linear
   regression, in which we fit both the regression coefficients and the
   hyperparameters to the data. It runs both the "inner" and "outer"
@@ -150,10 +161,6 @@ the *Bayesian Analysis* paper.
   the *Bayesian Analysis* paper. This function assumes specific
   choices for priors on the hyperparameters, as described in the
   paper and in the comments at the top of the file.
-
-###Overview of R functions
-
-*Details about main functions go here.*
 
 ###Who
 
