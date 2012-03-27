@@ -98,13 +98,13 @@ Start by downloading the github repository for this project. The
 simplest way to do this is to download the repository as a ZIP
 archive. Once you have extracted the files from the compressed
 archive, you will see that the main directory has two subdirectories,
-one containing the MATLAB code, and the other containing the R files.
+one containing the MATLAB code, and the other containing R files.
 
 The subdirectory **R/varbvs** has all the necessary files to build and
 install a package for R. To install this package, follow the [standard
 instructions](http://cran.r-project.org/doc/manuals/R-admin.html) for
-installing an R package from source. On a Unix platform, for example,
-the installation steps look like this:
+installing an R package from source. On a Unix or Unix-like platform
+(such as Mac OS X), the installation steps look something like this:
 
     R CMD build homedir/varbvs/R/varbvs
     R CMD INSTALL homedir/varbvs/R/varbvs
@@ -121,33 +121,34 @@ in which only a small subset of the variables (single nucleotide
 polymorphisms, or SNPs) has affects the outcome (a simulated
 quantitative trait). 
 
-Note that the demonstration script **example1.R** needs packages
-[ggplot2](http://had.co.nz/ggplot2) and **grid** to show plots
-depicting the posterior distributions of the hyperparameters. The grid
-package is normally included in the base distribution of R, and
-ggplot2 is available on [CRAN](http://cran.r-project.org), and can be
-installed using the **install.packages** function for more recent
-versions of R.
+Note that the demonstration script **example1.R** requires packages
+[ggplot2](http://had.co.nz/ggplot2) and **grid** to show the plots
+depicting the posterior distributions of the hyperparameters computed
+using the variational inference method. The grid package is normally
+included in the base distribution of R, and ggplot2 is available on
+[CRAN](http://cran.r-project.org), and can be installed using the
+**install.packages** function (for more recent versions of R).
 
 ###Overview of R and MATLAB functions 
 
-The MATLAB subdirectory and R package contains several useful
-functions. Here are the most interesting ones:
+The MATLAB subdirectory and R package contain several functions. Here
+are the most interesting ones:
 
-+ **varbvs** (MATLAB) and **varbvsoptimize** (R) return variational
-estimates of the posterior statistics for the linear regression model
-with spike and slab priors, given choices for the hyperparameters. It
-computes the posterior statistics by running the coordinate ascent
-updates until they converge at a local minimum of the Kullback-Leibler
-divergence objective (which corresponds to a local maximum of the
-variational lower bound to the marginal log-likelihood). This function
-implements the "inner loop" in the *Bayesian Analysis* paper.
++ **varbvs** in MATLAB or **varbvsoptimize** in R returns
+variational estimates of the posterior statistics for the linear
+regression model with spike and slab priors, given choices for the
+hyperparameters. It computes the posterior statistics by running the
+coordinate ascent updates until they converge at a local minimum of
+the Kullback-Leibler divergence objective (which corresponds to a
+local maximum of the variational lower bound to the marginal
+log-likelihood). This function implements the "inner loop" in the
+*Bayesian Analysis* paper.
 
-+ **varbvsbin** (MATLAB) and **varbvsbinoptimize** (R) are the same as
-functions **varbvs** and **varbvsoptimize**, respectively except that
-they are meant for logistic regression instead of linear
-regression. This is useful for modeling a binary-valued outcome such
-as disease status in a case-control study.
++ **varbvsbin** in MATLAB or **varbvsbinoptimize** in R is the same as
+function **varbvs**/**varbvsoptimize**, except that it is meant for
+logistic regression instead of linear regression. This is useful for
+modeling a binary-valued outcome such as disease status in a
+case-control study.
 
 + **varsimbvs** demonstrates how to run the full variational
   inference procedure for Bayesian variable selection in linear
