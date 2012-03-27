@@ -26,7 +26,7 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
     stop("Inputs 'sigma', 'sa' and 'log10q' must be the same size")
   
   # Get the sum of the sample variances.
-  sx <- sum(sd(X)^2)
+  sx <- sum(apply(X,2,sd)^2)
   
   # Get the settings for the prior inclusion probabilities.
   q1 <- 10^log10q

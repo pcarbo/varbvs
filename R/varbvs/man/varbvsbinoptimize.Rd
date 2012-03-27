@@ -102,7 +102,7 @@ variational approximation.
 Also note that the residual variance parameter \code{sigma} is not
 needed to model a binary trait.
 
-The computational complexity of running \cote{varbvsbinupdate} is
+The computational complexity of running \code{varbvsbinupdate} is
 \code{O(n*length(S))}. For efficient computation, most of the work is
 done by \code{varbvsbinupdateR}, a function implemented in C. The call to
 the C function in the shared library is made using \code{\link{.C}}.  }

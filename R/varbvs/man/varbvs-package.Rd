@@ -35,7 +35,7 @@ license and a list of available functions, use
 
 }
 
-\author{Peter Carbonetto <pcarbo@uchicago.edu>}}
+\author{Peter Carbonetto <pcarbo@uchicago.edu>}
 
 \references{Peter Carbonetto and Matthew Stephens (2012). Scalable
 variational inference for Bayesian variable selection in regression, and

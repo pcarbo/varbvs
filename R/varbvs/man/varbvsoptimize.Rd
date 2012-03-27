@@ -94,7 +94,7 @@ To account for an intercept, \code{y} and \code{X} must be centered
 beforehand so that \code{y} and each column of \code{X} has a mean of
 zero.
 
-The computational complexity of running \cote{varbvsupdate} is
+The computational complexity of running \code{varbvsupdate} is
 \code{O(n*length(S))}. For efficient computation, most of the work is
 done by \code{varbvsupdateR}, a function implemented in C. The call to
 the C function in the shared library is made using \code{\link{.C}}.
