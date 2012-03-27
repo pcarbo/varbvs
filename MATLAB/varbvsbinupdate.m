@@ -66,7 +66,8 @@ function [alpha, mu, Xr] = varbvsbinupdate (X, sa, logodds, stats, ...
   end
 
   % Check input STATS.
-  if ~isfield(stats,'u') | ~isfield(stats,'xy') | ~isfield(stats,'d')
+  if ~isfield(stats,'u') | ~isfield(stats,'xy') | ~isfield(stats,'xu') | ...
+     ~isfield(stats,'d') 
     error('STATS must be a STRUCT with fields ''u'', ''xy'', ''xu'' and ''d''')
   end
   if length(stats.u) ~= n

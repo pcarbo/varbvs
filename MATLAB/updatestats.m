@@ -6,7 +6,7 @@
 % are modified.
 %
 % Outputs XY, XU and D are defined as XY = X'*YHAT, XU = X'*U and D =
-% DIAG(UHAT), where U = SLOPE(U). For a definition of vectors YHAT and
+% DIAG(X'*UHAT*X), where U = SLOPE(U). For a definition of vectors YHAT and
 % matrix UHAT, see the Bayesian Analysis paper.
 %
 % The outputs may also be returned as a STRUCT.
@@ -25,8 +25,8 @@ function varargout = updatestats (X, y, eta)
   xy = double(yhat'*X)';
   xu = double(u'*X)';
 
-  % Compute the diagonal entries of matrix UHAT. For a definition of
-  % UHAT, see the journal paper.
+  % Compute the diagonal entries of X'*UHAT*X. For a definition of
+  % UHAT, see the Bayesian Analysis journal paper.
   d = diagsq(X,u) - xu.^2/sum(u);
 
   % Take care of the variable output arguments.

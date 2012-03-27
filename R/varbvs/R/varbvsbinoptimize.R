@@ -225,8 +225,8 @@ update.stats <- function (X, y, eta) {
   xy <- c(y %*% X)  # xy = X'*y.
   xu <- c(u %*% X)  # xu = X'*u.
 
-  # Compute the diagonal entries of matrix 'uhat'. For a definition of
-  # this matrix, see the journal paper.
+  # Compute the diagonal entries of X'*Uhat*X. For a definition of
+  # matrix Uhat, see the journal paper.
   d <- diagsq(X,u) - xu^2/sum(u)
 
   # Return the quantities as a list.

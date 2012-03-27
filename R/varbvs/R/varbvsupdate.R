@@ -62,7 +62,7 @@ varbvsupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S) {
                d       = as.double(d),       # d = diag(X'*X).
                alpha   = as.double(alpha0),  # Posterior inclusion prob's.
                mu      = as.double(mu0),     # Posterior mean coefficients.
-               Xr      = as.double(Xr0),     # Xr = X*r.
+               Xr      = as.double(Xr0),     # Xr = X*(alpha*mu).
                S       = as.integer(S-1),    # Updates to perform.
                DUP     = FALSE)
   return(list(alpha = result$alpha,
