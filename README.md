@@ -144,24 +144,24 @@ local maximum of the variational lower bound to the marginal
 log-likelihood). This function implements the "inner loop" in the
 *Bayesian Analysis* paper.
 
-+ **varbvsbin** in MATLAB or **varbvsbinoptimize** in R is the same as
-function **varbvs**/**varbvsoptimize**, except that it is meant for
++ **varbvsbin** in MATLAB or **varbvsbinoptimize** in R is analogous
+to **varbvs** or **varbvsoptimize**, except that it is meant for
 logistic regression instead of linear regression. This is useful for
 modeling a binary-valued outcome such as disease status in a
 case-control study.
 
-+ **varsimbvs** demonstrates how to run the full variational
-  inference procedure for Bayesian variable selection in linear
-  regression, in which we fit both the regression coefficients and the
-  hyperparameters to the data. It runs both the "inner" and "outer"
-  loops of the inference algorithm, where the inner loop executes the
-  coordinate ascent updates for a given value of the hyperparameters,
-  and the outer loop runs importance sampling to estimate the
-  posterior of the hyperparameters. This is precisely the variational
-  inference procedure used in the two simulation studies presented in
-  the *Bayesian Analysis* paper. This function assumes specific
-  choices for priors on the hyperparameters, as described in the
-  paper and in the comments at the top of the file.
++ **varsimbvs** (MATLAB and R) demonstrates how to run the full
+  variational inference procedure for Bayesian variable selection in
+  linear regression, in which we fit both the regression coefficients
+  and the hyperparameters to the data. It runs both the "inner" and
+  "outer" loops of the inference algorithm, where the inner loop
+  executes the coordinate ascent updates for a given value of the
+  hyperparameters, and the outer loop runs importance sampling to
+  estimate the posterior of the hyperparameters. This is precisely the
+  variational inference procedure used in the two simulation studies
+  presented in the *Bayesian Analysis* paper. This function assumes
+  specific choices for priors on the hyperparameters, as described in
+  the paper and in the comments at the top of the file.
 
 ###Who
 
