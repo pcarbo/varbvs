@@ -197,7 +197,7 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL,
   }
 }
 
-slope <- function slope (x) {
+slope <- function (x) {
   # Compute (sigmoid(x) - 1/2)/x, the slope of the conjugate to the
   # log-sigmoid function at x, times 2. For details, see Bishop
   # (2006), or the Bayesian Analysis paper. This is useful for working
@@ -230,7 +230,7 @@ update.stats <- function (X, y, eta) {
   d <- diagsq(X,u) - xu^2/sum(u)
 
   # Return the quantities as a list.
-  return(u=u,yhat=yhat,xy=xy,xu=xu,d=d)
+  return(list(u=u,yhat=yhat,xy=xy,xu=xu,d=d))
 }
 
 update.eta <- function (X, y, v, Xr, u) {

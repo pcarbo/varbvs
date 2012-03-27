@@ -64,9 +64,10 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, S) {
     stop("Input 'logodds' must be a scalar or a vector of length 'p'")
 
   # Check input stats.
-  if (!is.list(stats) || !identical(names(stats),c("u","xy","xu","d")))
+  if (!is.list(stats) || is.null(stats$u) || is.null(stats$xy) ||
+      is.null(stats$xu) || is.null(stats$d))
     stop("Invalid 'stats' argument")
-  if (length(stats$xu) != n)
+  if (length(stats$u) != n)
     stop("'stats$u' must be a vector of length 'n'")
   if (length(stats$xy) != p || length(stats$d) != p || length(stats$xu) != p)
     stop("'stats$xy', 'stats$xu' and 'stats$d' must be vectors of length 'p'")
@@ -99,7 +100,7 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, S) {
                u       = as.double(stats$u),  # u = slope(eta).
                xy      = as.double(stats$xy), # xy = X'*yhat.
                xu      = as.double(stats$xu), # xu = X'*u.
-               d       = as.double(d),        # d = diag(X'*Uhat*X).
+               d       = as.double(stats$d),  # d = diag(X'*Uhat*X).
                alpha   = as.double(alpha0),   # Posterior inclusion prob's.
                mu      = as.double(mu0),      # Posterior mean coefficients.
                Xr      = as.double(Xr0),      # Xr = X*(alpha*mu).

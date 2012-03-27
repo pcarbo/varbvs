@@ -8,11 +8,11 @@
 #include <R.h>
 #include <Rinternals.h>
 
-void varbvsupdateR (const int* np, const int* mp, const double* X, 
-		    const double* sap, const double* logodds, 
-		    const double* u, const double* xy, const double* xu, 
-		    const double* d, double* alpha, double* mu, 
-		    double* Xr, const int* S) {
+void varbvsbinupdateR (const int* np, const int* mp, const double* X, 
+		       const double* sap, const double* logodds, 
+		       const double* u, const double* xy, const double* xu, 
+		       const double* d, double* alpha, double* mu, 
+		       double* Xr, const int* S) {
 
   // Get the number of samples (n) and the number of coordinate ascent
   // updates (m).
@@ -20,7 +20,7 @@ void varbvsupdateR (const int* np, const int* mp, const double* X,
   const int m = *mp;
 
   // Get input scalar sa.
-  const double sigma = *sigmap;
+  const double sa = *sap;
 
   // Run the coordinate ascent updates.
   for (int j = 0; j < m; j++) {

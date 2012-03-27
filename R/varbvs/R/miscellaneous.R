@@ -114,6 +114,17 @@ betavar <- function (p, mu, s) {
   return(p*(s + (1 - p)*mu^2))
 }
 
+sigmoid <- function (x) {
+  # Returns the sigmoid of x. The sigmoid function is also known as
+  # the logistic link function. It is the inverse of logit(x).
+  return(1/(1 + exp(-x)))
+}
+
+logit <- function (x) {
+  # The logit function, which is the reverse of the sigmoid function.
+  return(log((x + eps)/((1 - x) + eps)))
+}
+  
 logpexp <- function (x) {
   # logpexp(x) returns log(1 + exp(x)). For large x, logpexp(x) should
   # be approximately x. The computation is performed in a numerically
@@ -135,8 +146,3 @@ logsigmoid <- function (x) {
   return(-logpexp(-x))
 }
 
-logit <- function (x) {
-  # The logit function, which is the reverse of the sigmoid function.
-  return(log((x + eps)/((1 - x) + eps)))
-}
-  

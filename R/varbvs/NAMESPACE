@@ -2,6 +2,8 @@ useDynLib(varbvs)
 export(varbvsoptimize,
        varbvsupdate,
        varsimbvs,
+       varbvsbinupdate,
+       varbvsbinoptimize,
        grid3d,
        create.snps,
        create.data)
