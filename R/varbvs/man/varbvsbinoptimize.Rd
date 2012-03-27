@@ -1,30 +1,30 @@
-\name{varbvsoptimize}
-\alias{varbvsoptimize}
-\alias{varbvsupdate}
+\name{varbvsbinoptimize}
+\alias{varbvsbinoptimize}
+\alias{varbvsbinupdate}
 
 \title{Coordinate ascent for variational approximation to Bayesian
-       variable selection in linear regression}
+       variable selection in logistic regression}
 
-\description{\code{varbvsoptimize} implements the fully-factorized
-variational approximation for Bayesian variable selection in linear
+\description{\code{varbvsbinoptimize} implements the fully-factorized
+variational approximation for Bayesian variable selection in logistic
 regression. It finds the "best" fully-factorized variational
 approximation to the posterior distribution of the coefficients in a
-linear regression model of a continuous outcome (quantitiative trait),
-with spike and slab priors on the coefficients. By "best", we mean the
-approximating distribution that locally minimizes the Kullback-Leibler
-divergence between the approximating distribution and the exact
-posterior.
+logistic regression model of a binary outcome or trait (e.g. disease
+status in a case-control study), with spike and slab priors on the
+coefficients. By "best", we mean the approximating distribution that
+locally minimizes the Kullback-Leibler divergence between the
+approximating distribution and the exact posterior.
 
-\code{varbvsupdate} runs a single iteration of the coordinate ascent
+\code{varbvsbinupdate} runs a single iteration of the coordinate ascent
 updates to maximize the variational lower bound or, equivalently,
 to minimize the Kullback-Leibler divergence objective.}
 
 \usage{
 
-varbvsoptimize(X, y, sigma, sa, logodds, alpha0 = NULL,
-mu0 = NULL, verbose = TRUE)
+varbvsbinoptimize(X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
+                  eta0 = NULL, fixed.eta = FALSE, verbose = TRUE)
 
-varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
+varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
 }
 
 \arguments{
@@ -35,13 +35,10 @@ varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
            has \code{n} rows and \code{p} columns, where \code{n} is the
            number of samples, and \code{p} is the number of variables.}
 
-  \item{y}{Vector of observations about the outcome. It is a vector of
-           length \code{n}.}
-
-  \item{sigma}{Scalar giving the variance of the residual.}
-
-  \item{sa}{\code{sa*sigma} is the prior variance of the regression
-            coefficients.}
+  \item{y}{Vector of observations about the binary outcome. It is a
+           vector of length \code{n}.}
+  
+  \item{sa}{Prior variance of the regression coefficients.}
 
   \item{logodds}{Prior log-odds of inclusion for each variable. It is
                  equal to \code{logodds = log(q/(1-q))}, where \code{q}
@@ -51,7 +48,7 @@ varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
                  inclusion probability, or it may be a vector of length
                  \code{p}.}
 
-  \item{alpha0}{Initial variational estimate of posterior inclusion
+  \item{alpha0}{Initial variational estimate of posterior inclusion #
                 probabilities. It is a vector of length \code{p}. If
                 \code{alpha0 = NULL}, the variational parameters are
                 initialized at random.}
@@ -60,13 +57,21 @@ varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
                 coefficients. It is a vector of length \code{p}. If
                 \code{mu0 = NULL}, the variational parameters are
                 randomly initialized.}
-  
-  \subsection{Arguments specific to \code{varbvsoptimize}}
 
-  \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the 
+  \subsection{Arguments specific to \code{varbvsbinoptimize}}
+
+  \item{eta0}{Initial free parameters specifying the variational lower
+              bound on the logistic regression factors. If \code{eta0 =
+              NULL}, the free parameters are initialized to a vector of
+              ones.}
+	      
+  \item{fixed.eta}{Set \code{fixed.eta = TRUE} to prevent ETA from being
+                   updated.}
+
+  \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the #
                  algorithm's progress.}
 
-  \subsection{Arguments specific to \code{varbvsupdate}}
+  \subsection{Arguments specific to \code{varbvsbinupdate}}
 	       
   \item{xy}{Equal to \code{t(X) \%*\% y}, where \code{y} is the vector of
             observations about the outcome.}
@@ -90,53 +95,28 @@ regression coefficient is normal with probability \code{alpha[i]};
 coefficient given that it is included in the model. \code{alpha},
 \code{mu} and \code{s} are always column vectors of length \code{p}.
 
-To account for an intercept, \code{y} and \code{X} must be centered
-beforehand so that \code{y} and each column of \code{X} has a mean of
-zero.
+Unlike function \code{\link{varbvsoptimize}}, \code{y} and \code{X} must
+not be centered. Instead, we will account for the intercept as we
+update the variational approximation.
 
-The computational complexity of running \cote{varbvsupdate} is
+Also note that the residual variance parameter \code{sigma} is not
+needed to model a binary trait.
+
+The computational complexity of running \cote{varbvsbinupdate} is
 \code{O(n*length(S))}. For speed of computation, most of the work is
-done by \code{varbvsupdateR}, a function implemented in C. The call to
+done by \code{varbvsbinupdateR}, a function implemented in C. The call to
 the C function in the shared library is made using \code{\link{.C}}.  }
 
 \value{
 
-\code{varbvsoptimize} returns a list containing four components:
-variational parameters \code{alpha}, \code{mu} and \code{s}, and the
-variational estimate of the marginal log-likelihood \code{lnZ}.
+\code{varbvsbinoptimize} returns a list containing five components:
+variational parameters \code{alpha}, \code{mu} and \code{s}, the vector
+of free parameters \code{eta}, and the variational estimate of the
+marginal log-likelihood \code{lnZ}.
 
-\code{varbvsupdate} returns a list containing three components:
+\code{varbvsbinupdate} returns a list containing three components:
 the updated variational parameters \code{alpha} and \code{mu}, and the
 updated matrix-vector product \code{Xr}.}
 
 \author{Peter Carbonetto}
 
-\seealso{
-\code{\link{varsimbvs}}
-}
-
-\examples{
-
-## Randomly generate genotypes and quantitative trait measurements for
-## 1000 SNPs and 500 individuals, in which the variance of the residual
-## error is 4. Of these SNPs, 10 have nonzero additive effects on the
-## trait.
-se   <- 4
-snps <- create.snps(1000,10)
-data <- create.data(snps$maf,snps$beta,se,500)
-
-## Compute the variational approximation given (appropriate) choices for
-## the hyperparameters.
-result <- varbvsoptimize(data$X,data$y,4,1/4,log(0.01/0.99))
-
-## View the posterior inclusion probabilities for the (true) causal SNPs.
-S <- which(snps$beta != 0)
-cbind(snps$beta[S],result$alpha[S])
-
-## View the largest posterior inclusion probability for a SNP that has
-## no effect on the quantitative trait.
-S <- which(snps$beta == 0)
-i <- S[which.max(result$alpha[S])]
-cbind(snps$beta[i],result$alpha[i])
-
-}

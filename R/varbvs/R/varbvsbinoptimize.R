@@ -1,61 +1,15 @@
-## % [LNZ,ALPHA,MU,S,ETA] = VARBVSBIN(X,Y,SA,LOGODDS) implements the
-## % fully-factorized variational approximation for Bayesian variable selection
-## % in logistic regression. It finds the "best" fully-factorized variational
-## % approximation to the posterior distribution of the coefficients in a
-## % logistic regression model of a binary outcome or trait (e.g. disease
-## % status in a case-control study), with spike and slab priors on the
-## % coefficients. By "best", we mean the approximating distribution that
-## % locally minimizes the Kullback-Leibler divergence between the
-## % approximating distribution and the exact posterior.
-## %
-## % The required inputs are as follows. Input X is an N x P matrix of
-## % observations about the variables (or features), where N is the number of
-## % samples, and P is the number of variables. Y is the vector of observations
-## % about the binary trait; it is a vector of length N. Unlike function
-## % VARBVS, Y and X must *not* be centered. Instead, we will account for the
-## % intercept as we update the variational approximation.
-## %
-## % Note that this routine is implemented with the assumption that the data X
-## % is single floating-point precision (type HELP SINGLE), as opposed to the
-## % MATLAB default of double precision. This is useful for large data sets,
-## % because single precision requires half of the number of bits as double
-## % floating-point precision. If X is provided in another numerical
-## % representation, it is immediately converted to SINGLE.
-## %
-## % Inputs SA and LOGODDS are the hyperparameters. Scalar SA is the prior
-## % variance of the coefficients. LOGODDS is the prior log-odds of inclusion
-## % for each variable. It is equal to LOGODDS = LOG(Q./(1-Q)), where Q is the
-## % prior probability that each variable is included in the linear model of Y
-## % (i.e. the prior probability that its coefficient is not zero). LOGODDS may
-## % either be a scalar, in which case all the variables have the same prior
-## % inclusion probability, or it may be a vector of length P. Note that the
-## % residual variance parameter (SIGMA) is not needed to model a binary trait.
-## %
-## % There are five outputs. Output scalar LNZ is the variational estimate of
-## % the marginal log-likelihood given the hyperparameters SA and LOGODDS.
-## %
-## % Outputs ALPHA, MU and S are the parameters of the variational
-## % approximation and, equivalently, variational estimates of posterior
-## % quantites: under the variational approximation, the ith regression
-## % coefficient is normal with probability ALPHA(i); MU(i) and S(i) are the
-## % mean and variance of the coefficient given that it is included in the
-## % model. Outputs ALPHA, MU and S are all column vectors of length P.
-## %
-## % ETA is the vector of free parameters that specifies the variational
-## % approximation to the likelihood factors in the logistic regression. ETA is
-## % a vector of length N.
-## %
-## % VARBVS(...,OPTIONS) overrides the default behaviour of the algorithm. Set
-## % OPTIONS.ALPHA and OPTIONS.MU to override the random initialization of
-## % variational parameters ALPHA and MU. Set OPTIONS.ETA to override the
-## % default initialization of the free parameters specifying the variational
-## % lower bound on the logistic regression factors. Set OPTIONS.FIXED_ETA =
-## % TRUE to prevent ETA from being updated. And set OPTIONS.VERBOSE = FALSE to
-## % turn off reporting the algorithm's progress.
 varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL,
-                               mu0 = NULL, eta = NULL, fixed.eta = FALSE,
+                               mu0 = NULL, eta0 = NULL, fixed.eta = FALSE,
                                verbose = TRUE ) {
-  # *** TO DO: BRIEF DESCRIPTION OF FUNCTION GOES HERE. ***
+  # Implements the fully-factorized variational approximation for
+  # Bayesian variable selection in logistic regression. It finds the
+  # "best" fully-factorized variational approximation to the posterior
+  # distribution of the coefficients in a logistic regression model of
+  # a binary outcome or trait (e.g. disease status in a case-control
+  # study), with spike and slab priors on the coefficients. By "best",
+  # we mean the approximating distribution that locally minimizes the
+  # Kullback-Leibler divergence between the approximating distribution
+  # and the exact posterior.
 
   # Convergence is reached when the maximum relative distance between
   # successive updates of the variational parameters is less than this
@@ -105,15 +59,15 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL,
 
   # Determine whether to update the variational approximation to the
   # logistic regression.
-  if (fixed.eta && is.null(eta))
-    stop("'fixed.eta = TRUE' requires specification of argument 'eta'")
+  if (fixed.eta && is.null(eta0))
+    stop("'fixed.eta = TRUE' requires specification of argument 'eta0'")
   
   # Initialize the free parameters specifying the variational
   # approximation to the logistic regression factors.
-  if (is.null(eta))
+  if (is.null(eta0))
     eta <- rep(1,n)
   else
-    eta <- c(eta)
+    eta <- c(eta0)
   if (length(eta) != n)
     stop("Input argument 'eta' must NULL or a vector of length 'n'")
 
