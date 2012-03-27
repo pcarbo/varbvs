@@ -9,11 +9,11 @@
 variational approximation for Bayesian variable selection in logistic
 regression. It finds the "best" fully-factorized variational
 approximation to the posterior distribution of the coefficients in a
-logistic regression model of a binary outcome or trait (e.g. disease
-status in a case-control study), with spike and slab priors on the
-coefficients. By "best", we mean the approximating distribution that
-locally minimizes the Kullback-Leibler divergence between the
-approximating distribution and the exact posterior.
+logistic regression model of a binary outcome (e.g. disease status in a
+case-control study), with spike and slab priors on the coefficients. By
+"best", we mean the approximating distribution that locally minimizes
+the Kullback-Leibler divergence between the approximating distribution
+and the exact posterior.
 
 \code{varbvsbinupdate} runs a single iteration of the coordinate ascent
 updates to maximize the variational lower bound or, equivalently,
@@ -48,7 +48,7 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
                  inclusion probability, or it may be a vector of length
                  \code{p}.}
 
-  \item{alpha0}{Initial variational estimate of posterior inclusion #
+  \item{alpha0}{Initial variational estimate of posterior inclusion 
                 probabilities. It is a vector of length \code{p}. If
                 \code{alpha0 = NULL}, the variational parameters are
                 initialized at random.}
@@ -68,7 +68,7 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
   \item{fixed.eta}{Set \code{fixed.eta = TRUE} to prevent ETA from being
                    updated.}
 
-  \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the #
+  \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the 
                  algorithm's progress.}
 
   \subsection{Arguments specific to \code{varbvsbinupdate}}
@@ -95,15 +95,15 @@ regression coefficient is normal with probability \code{alpha[i]};
 coefficient given that it is included in the model. \code{alpha},
 \code{mu} and \code{s} are always column vectors of length \code{p}.
 
-Unlike function \code{\link{varbvsoptimize}}, \code{y} and \code{X} must
-not be centered. Instead, we will account for the intercept as we
-update the variational approximation.
+Unlike \code{\link{varbvsoptimize}}, \code{y} and \code{X} must not be
+centered. Instead, we will account for the intercept as we update the
+variational approximation.
 
 Also note that the residual variance parameter \code{sigma} is not
 needed to model a binary trait.
 
 The computational complexity of running \cote{varbvsbinupdate} is
-\code{O(n*length(S))}. For speed of computation, most of the work is
+\code{O(n*length(S))}. For efficient computation, most of the work is
 done by \code{varbvsbinupdateR}, a function implemented in C. The call to
 the C function in the shared library is made using \code{\link{.C}}.  }
 
