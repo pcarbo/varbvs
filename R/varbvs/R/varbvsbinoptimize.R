@@ -148,12 +148,10 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL,
       S <- seq(1,p)
     else
       S <- seq(p,1,-1)
-    # TO DO.
-    # MATLAB code: [alpha mu Xr] =
-    # varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,I);
-    alpha <- result$alpha
-    mu    <- result$mu
-    Xr    <- result$Xr
+    result <- varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,S)
+    alpha  <- result$alpha
+    mu     <- result$mu
+    Xr     <- result$Xr
 
     # Recalculate the posterior variance of the coefficients.
     s <- sa/(sa*stats$d + 1)
@@ -162,7 +160,7 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL,
     # Update the free parameters specifying the variational approximation
     # to the logistic regression factors.
     if (!fixed.eta) {
-      eta   <- update.eta(X,y,betavar(alpha,mu,s),Xr,stats.u);
+      eta   <- update.eta(X,y,betavar(alpha,mu,s),Xr,stats$u);
       stats <- update.stats(X,y,eta)
     }
 
@@ -195,6 +193,9 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL,
     else if (max(err) < tolerance)
       break
   }
+
+  # Return the variational estimates.
+  return(list(alpha=alpha,mu=mu,s=s,eta=eta,lnZ=lnZ))
 }
 
 slope <- function (x) {
@@ -256,10 +257,10 @@ update.eta <- function (X, y, v, Xr, u) {
   s0 <- a*(1 + a*dot(v,xu^2))
   
   # Calculate the covariance between the intercept and coefficients.
-  c <- -a*xu*v
+  c0 <- -a*xu*v
   
   # This is the M-step update for the free parameters.
-  eta <- sqrt((mu0 + Xr)^2 + s0 + diagsqt(X,v) + 2*double(X*c))
+  eta <- sqrt((mu0 + Xr)^2 + s0 + diagsqt(X,v) + 2*c(X %*% c0))
   return(eta)
 }
 
@@ -279,7 +280,7 @@ intlogit <- function (y, stats, alpha, mu, s, Xr, eta) {
   # Compute the variational approximation to the expectation of the
   # log-likelihood with respect to the variational approximation.
   f <- sum(logsigmoid(eta)) + dot(eta,u*eta - 1)/2 + log(a)/2 +
-       a*sum(y - 0.5)^2/2 + dot(stats$yhat,Xr) - qnorm2(Xr,u)^2/2 +
-       a/2*dot(u,Xr)^2 - dot(d,betavar(alpha,mu,s))/2
+       a*sum(y - 0.5)^2/2 + dot(stats$yhat,Xr) - qnorm(Xr,u)^2/2 +
+       a/2*dot(u,Xr)^2 - dot(stats$d,betavar(alpha,mu,s))/2
   return(f)
 }

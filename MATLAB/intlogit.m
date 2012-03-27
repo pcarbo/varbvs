@@ -20,7 +20,7 @@ function I = intlogit (y, stats, alpha, mu, s, Xr, eta)
   yhat = stats.yhat;
   d    = stats.d;
   u    = stats.u;
-  U    = spdiag(u);
+  U    = diag(sparse(u));
 
   % Get the variance of the intercept given the other coefficients.
   a = 1/sum(u);

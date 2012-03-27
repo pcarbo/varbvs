@@ -41,6 +41,7 @@
 ## % variational parameters, and XR = X*(ALPHA.*MU). The computational
 ## % complexity of VARBVSBINUPDATE is O(N*LENGTH(I)).
 varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, S) {
+  # *** TO DO: BRIEF DESCRIPTION OF FUNCTION GOES HERE. ***
 
   # CHECK THE INPUTS.
   # Check input X.
