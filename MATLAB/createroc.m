@@ -7,8 +7,7 @@ function [fp, tp] = createroc (y, r)
 
   % Sort the ratings from highest to lowest.
   [ans I] = sort(-r);
-  y = y(I);
-  r = r(I);
+  y       = y(I);
 
   % Calculate the number of false positives and the number of true
   % positives for each decision threshold.
