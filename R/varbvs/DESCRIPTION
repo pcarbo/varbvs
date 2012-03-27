@@ -6,5 +6,6 @@ Date: 2012-03-22
 Author: Peter Carbonetto
 Maintainer: Peter Carbonetto <pcarbo@uchicago.edu>
 Description: Implements the variational inference procedure for Bayesian variable selection, as described in the "Scalable variational inference for Bayesian variable selection in regression, and its accuracy in genetic association studies" (Bayesian Analysis 7, March 2012, pages 73-108). This software has been used to implement Bayesian variable selection for large problems with over a million variables and thousands of samples.
+Suggests: grid, ggplot2
 LazyLoad: yes
 License: GPL (>= 3)

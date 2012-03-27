@@ -1,5 +1,3 @@
-*Note: the implementation for R is still under development.*
-
 #Variational inference for Bayesian variable selection implemented in MATLAB and R
 
 ###Introduction
@@ -17,7 +15,8 @@ been used to implement Bayesian variable selection for large problems
 with over a million variables and thousands of samples.
 
 The MATLAB implementation has been tested in version 7.10 (R2010a) of
-MATLAB for 64-bit Linux. An implementation for R is forthcoming.
+MATLAB for 64-bit Linux. The R implementation has been tested in
+version 2.14.2 of R for 64-bit Linux.
 
 ###License
 
@@ -95,7 +94,30 @@ considerable amount of time to simulate the Markov chain.
 
 ###Quick start for R
 
-*Instructions go here.*
+Start by downloading the github repository for this project. The
+simplest way to do this is to download the repository as a ZIP
+archive. Once you have extracted the files from the compressed
+archive, you will see that the main directory has two subdirectories,
+one containing the MATLAB code, and the other containing the R files.
+
+The subdirectory **R/varbvs** has all the necessary files to build a
+package for R. To install this package, follow the [standard
+instructions](http://cran.r-project.org/doc/manuals/R-admin.html) for
+installing an R package from source. On a Unix platform, for example,
+the installation steps look approximately like this:
+
+    R CMD build varbvs/R/varbvs
+    R CMD INSTALL varbvs/R/varbvs
+
+Once you have installed the package, you can load the functions in R
+with **library(varbvs)**. Run **help(varbvs)** for an overview of
+the package.
+
+The demonstration R script **example1.R** uses packages
+[ggplot2](http://had.co.nz/ggplot2) and grid. The grid package is
+usually included in the base distribution of R, and ggplot2 is
+available on [CRAN](http://cran.r-project.org), and can be installed
+using the **install.packages** function in R.
 
 ###Overview of MATLAB functions 
 
