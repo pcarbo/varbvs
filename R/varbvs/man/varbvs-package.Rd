@@ -14,18 +14,26 @@ million variables and thousands of samples.}
 
 \details{
 
-TO DO: point to the high-level functions, and give an overview of what
-they do. This should be done with links to the functions, as in
-\code{\link{varbvsoptimize}}.
+The main functions that implement the variational inference for Bayesian
+variable selection are \code{\link{varbvsoptimize}} (for linear
+regression) and \code{\link{varbvsbinoptimize}} (for logistic
+regression). Function \code{\link{varsimbvs}} demonstrates how the
+variational approximation can be combined with importance sampling to
+compute the posterior distributions for coefficients and
+hyperparameters. Accompanying functions that might be useful to users
+include \code{\link{grid3d}}, \code{\link{create.snps}} and
+\code{\link{create.data}}.
   
-To see an example of how the variational inference procedure can be used
-to compute posterior inclusion probabilities and the posterior
-distribution of the hyperparameters in a linear regression setting, run
+To see a full example of how the variational inference procedure can be
+used to compute posterior inclusion probabilities and posterior
+distributions of the hyperparameters in a linear regression setting, run
 \code{demo(example1)}.
   
 To see more details about the \pkg{varbvs} package, including the
-license and the list of user-level functions available in this package,
-use \code{help(package="varbvs")}.}
+license and a list of available functions, use
+\code{help(package="varbvs")}.
+
+}
 
 \author{Peter Carbonetto <pcarbo@uchicago.edu>}}
 
