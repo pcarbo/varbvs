@@ -44,10 +44,10 @@ Jónasson](http://www.hi.is/~jonasson).
 
 Start by downloading the github repository for this project. The
 simplest way to do this is to [download the repository as a ZIP
-archive](http://github.com/pcarbo/Variational-inference-for-Bayesian-variable-selection/zipball/master). Once you have extracted the files from the compressed
-archive, you will see that the main directory contains two
-subdirectories, one for the MATLAB functions, and one for the R
-code.
+archive](http://github.com/pcarbo/Variational-inference-for-Bayesian-variable-selection/zipball/master). Once
+you have extracted the files from the compressed archive, you will see
+that the main directory contains two subdirectories, one for the
+MATLAB functions, and one for the R code.
 
 Next you will need to compile the C code into MATLAB executable
 ("MEX") files. To do this, you will need to have a [C compiler
@@ -95,19 +95,18 @@ considerable amount of time to simulate the Markov chain.
 ###Quick start for R
 
 Start by downloading the github repository for this project. The
-simplest way to do this is to download the repository as a ZIP
-archive. Once you have extracted the files from the compressed
-archive, you will see that the main directory has two subdirectories,
-one containing the MATLAB code, and the other containing R files.
+simplest way to do this is to [download the repository as a ZIP
+archive](http://github.com/pcarbo/Variational-inference-for-Bayesian-variable-selection/zipball/master). Once
+you have extracted the files from the compressed archive, you will see
+that the main directory has two subdirectories, one containing the
+MATLAB code, and the other containing R files.
 
 The subdirectory **R/varbvs** has all the necessary files to build and
 install a package for R. To install this package, follow the [standard
 instructions](http://cran.r-project.org/doc/manuals/R-admin.html) for
 installing an R package from source. On a Unix or Unix-like platform
-(such as Mac OS X), the installation steps look something like this:
-
-    R CMD build homedir/varbvs/R/varbvs
-    R CMD INSTALL homedir/varbvs/R/varbvs
+(such as Mac OS X), the installation command is
+**R CMD build homedir/varbvs/R/varbvs**.
 
 Once you have installed the package, you can load the functions in R
 by running **library(varbvs)**. To get an overview of the package, run
