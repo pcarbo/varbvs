@@ -28,15 +28,12 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
 }
 
 \arguments{
-  \item{Arguments common to both functions}{}
+  \bold{Arguments common to both functions:}
   
   \item{X}{Matrix of observations about the variables (or features). It
            has \code{n} rows and \code{p} columns, where \code{n} is the
            number of samples, and \code{p} is the number of variables.}
 
-  \item{y}{Vector of observations about the binary outcome. It is a
-           vector of length \code{n}.}
-  
   \item{sa}{Prior variance of the regression coefficients.}
 
   \item{logodds}{Prior log-odds of inclusion for each variable. It is
@@ -56,8 +53,11 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
                 coefficients. It is a vector of length \code{p}. If
                 \code{mu0 = NULL}, the variational parameters are
                 randomly initialized.}
-	    
-  \item{Arguments specific to \code{varbvsbinoptimize}}{}
+	      
+  \bold{Arguments specific to \code{varbvsbinoptimize}:}
+  
+  \item{y}{Vector of observations about the binary outcome. It is a
+           vector of length \code{n}.}
   
   \item{eta0}{Initial free parameters specifying the variational lower
               bound on the logistic regression factors. If \code{eta0 =
@@ -70,13 +70,10 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
   \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the 
                  algorithm's progress.}
 
-  \item{Arguments specific to \code{varbvsbinupdate}}{}
+  \bold{Arguments specific to \code{varbvsbinupdate}:}
   
-  \item{xy}{Equal to \code{t(X) \%*\% y}, where \code{y} is the vector of
-            observations about the outcome.}
+  \item{stats}{Description goes here.}
 
-  \item{d}{Equal to \code{diag(t(X) \%*\% X)}.}
-	  
   \item{Xr0}{Equal to \code{X \%*\% (alpha0*mu0)}.}
   
   \item{S}{Order in which the coordinates are updated. It is a vector of

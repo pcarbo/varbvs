@@ -106,7 +106,7 @@ install a package for R. To install this package, follow the [standard
 instructions](http://cran.r-project.org/doc/manuals/R-admin.html) for
 installing an R package from source. On a Unix or Unix-like platform
 (such as Mac OS X), the installation command is
-**R CMD build homedir/varbvs/R/varbvs**.
+**R CMD INSTALL homedir/varbvs/R/varbvs**.
 
 Once you have installed the package, you can load the functions in R
 by running **library(varbvs)**. To get an overview of the package, run

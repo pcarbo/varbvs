@@ -1,6 +1,6 @@
-varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL,
-                               mu0 = NULL, eta0 = NULL, fixed.eta = FALSE,
-                               verbose = TRUE ) {
+varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
+                               eta0 = NULL, fixed.eta = FALSE,
+                               verbose = TRUE) {
   # Implements the fully-factorized variational approximation for
   # Bayesian variable selection in logistic regression. It finds the
   # "best" fully-factorized variational approximation to the posterior

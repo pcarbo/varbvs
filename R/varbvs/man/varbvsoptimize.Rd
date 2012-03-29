@@ -29,14 +29,11 @@ varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
 
 \arguments{
 
-  \item{Arguments common to both functions}{}
+  \bold{Arguments common to both functions:}
 
   \item{X}{Matrix of observations about the variables (or features). It
            has \code{n} rows and \code{p} columns, where \code{n} is the
            number of samples, and \code{p} is the number of variables.}
-
-  \item{y}{Vector of observations about the outcome. It is a vector of
-           length \code{n}.}
 
   \item{sigma}{Scalar giving the variance of the residual.}
 
@@ -61,12 +58,15 @@ varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
                 \code{mu0 = NULL}, the variational parameters are
                 randomly initialized.}
   
-  \item{Arguments specific to \code{varbvsoptimize}}{}
+  \bold{Arguments specific to \code{varbvsoptimize}:}
+
+  \item{y}{Vector of observations about the outcome. It is a vector of
+           length \code{n}.}
 
   \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the 
                  algorithm's progress.}
 
-  \item{Arguments specific to \code{varbvsupdate}}{}
+  \bold{Arguments specific to \code{varbvsupdate}:}
 	       
   \item{xy}{Equal to \code{t(X) \%*\% y}, where \code{y} is the vector of
             observations about the outcome.}
