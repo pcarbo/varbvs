@@ -43,8 +43,8 @@ Jónasson](http://www.hi.is/~jonasson).
 ###Quick start for MATLAB
 
 Start by downloading the github repository for this project. The
-simplest way to do this is to download the repository as a ZIP
-archive. Once you have extracted the files from the compressed
+simplest way to do this is to [download the repository as a ZIP
+archive](http://github.com/pcarbo/Variational-inference-for-Bayesian-variable-selection/zipball/master). Once you have extracted the files from the compressed
 archive, you will see that the main directory contains two
 subdirectories, one for the MATLAB functions, and one for the R
 code.
