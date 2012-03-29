@@ -28,9 +28,8 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
 }
 
 \arguments{
-
-  \subsection{Arguments common to both functions}  
-
+  \item{Arguments common to both functions}{}
+  
   \item{X}{Matrix of observations about the variables (or features). It
            has \code{n} rows and \code{p} columns, where \code{n} is the
            number of samples, and \code{p} is the number of variables.}
@@ -57,9 +56,9 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
                 coefficients. It is a vector of length \code{p}. If
                 \code{mu0 = NULL}, the variational parameters are
                 randomly initialized.}
-
-  \subsection{Arguments specific to \code{varbvsbinoptimize}}
-
+	    
+  \item{Arguments specific to \code{varbvsbinoptimize}}{}
+  
   \item{eta0}{Initial free parameters specifying the variational lower
               bound on the logistic regression factors. If \code{eta0 =
               NULL}, the free parameters are initialized to a vector of
@@ -71,8 +70,8 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
   \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the 
                  algorithm's progress.}
 
-  \subsection{Arguments specific to \code{varbvsbinupdate}}
-	       
+  \item{Arguments specific to \code{varbvsbinupdate}}{}
+  
   \item{xy}{Equal to \code{t(X) \%*\% y}, where \code{y} is the vector of
             observations about the outcome.}
 
