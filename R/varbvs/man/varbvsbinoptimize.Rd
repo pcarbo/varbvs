@@ -28,7 +28,6 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
 }
 
 \arguments{
-  \bold{Arguments common to both functions:}
   
   \item{X}{Matrix of observations about the variables (or features). It
            has \code{n} rows and \code{p} columns, where \code{n} is the
@@ -54,8 +53,6 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
                 \code{mu0 = NULL}, the variational parameters are
                 randomly initialized.}
 	      
-  \bold{Arguments specific to \code{varbvsbinoptimize}:}
-  
   \item{y}{Vector of observations about the binary outcome. It is a
            vector of length \code{n}.}
   
@@ -70,8 +67,6 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
   \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the 
                  algorithm's progress.}
 
-  \bold{Arguments specific to \code{varbvsbinupdate}:}
-  
   \item{stats}{Description goes here.}
 
   \item{Xr0}{Equal to \code{X \%*\% (alpha0*mu0)}.}
