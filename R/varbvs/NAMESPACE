@@ -4,6 +4,7 @@ export(varbvsoptimize,
        varsimbvs,
        varbvsbinupdate,
        varbvsbinoptimize,
+       updatestats,
        grid3d,
-       create.snps,
-       create.data)
+       "create.snps",
+       "create.data")

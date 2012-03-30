@@ -74,7 +74,7 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
   # INITIAL STEPS.
   # Compute a few useful quantities.
   Xr    <- c(X %*% (alpha*mu))  # Xr = X*(alpha*mu).
-  stats <- update.stats(X,y,eta)
+  stats <- updatestats(X,y,eta)
 
   # MAIN LOOP.
   # Repeat until convergence criterion is met.
@@ -115,7 +115,7 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
     # to the logistic regression factors.
     if (!fixed.eta) {
       eta   <- update.eta(X,y,betavar(alpha,mu,s),Xr,stats$u);
-      stats <- update.stats(X,y,eta)
+      stats <- updatestats(X,y,eta)
     }
 
     # COMPUTE VARIATIONAL LOWER BOUND.
@@ -160,7 +160,7 @@ slope <- function (x) {
   return((sigmoid(x) - 0.5)/(x + eps))
 }
 
-update.stats <- function (X, y, eta) {
+updatestats <- function (X, y, eta) {
   # Calculate some useful quantities for updating the variational
   # approximation to the logistic regression factors. Inputs X and y
   # specify the data, and eta is the vector of free parameters. It is
@@ -224,7 +224,7 @@ intlogit <- function (y, stats, alpha, mu, s, Xr, eta) {
   # model. This integral is an approximation to the expectation of the
   # logistic regression log-likelihood taken with respect to the
   # variational approximation. Input argument 'stats' must be the
-  # return argument to update.stats(X,y,eta). Input Xr be equal to Xr
+  # return argument to updatestats(X,y,eta). Input Xr be equal to Xr
   # = X*(alpha*mu).
 
   # Get the variance of the intercept given the other coefficients.

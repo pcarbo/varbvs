@@ -67,7 +67,9 @@ varbvsbinupdate(X, sa, logodds, stats, alpha0, mu0, Xr0, S)
   \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the 
                  algorithm's progress.}
 
-  \item{stats}{Description goes here.}
+  \item{stats}{This is the return value of
+  \code{updatestats(X,y,eta)}. See \code{\link{updatestats}} for more
+  information on this argument.}
 
   \item{Xr0}{Equal to \code{X \%*\% (alpha0*mu0)}.}
   
