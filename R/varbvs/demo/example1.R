@@ -68,7 +68,8 @@ cat(sprintf("log10(q)     %6.3f\n",sum(w*grid$log10q)))
 
 # DISPLAY POSTERIOR DISTRIBUTIONS OF HYPERPARAMETERS.
 # This part requires the 'grid' and 'ggplot2' packages.
-if (!suppressWarnings(require(grid) && require(ggplot2))) {
+if (!suppressWarnings(require(grid,quietly = TRUE) &&
+                      require(ggplot2,quietly = TRUE))) {
   cat(paste("Not showing plots because packages 'grid' and 'ggplot2'",
             "are not available.\n"))
 } else {
