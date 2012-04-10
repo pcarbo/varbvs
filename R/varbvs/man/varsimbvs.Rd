@@ -74,6 +74,6 @@ Returns a list containing three components:
 \examples{
 
 ## Run the demonstration R Script.
-demo(example1)
+\dontrun{demo(example1)}
 
 }
