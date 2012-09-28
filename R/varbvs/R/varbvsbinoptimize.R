@@ -21,7 +21,7 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
   if (!is.matrix(X))
     stop("Input argument 'X' must be a matrix")
   if (!is.double(X))
-    X <- double(X)
+    storage.mode(X) <- "double"
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
