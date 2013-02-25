@@ -121,7 +121,7 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
   % Determine whether to update the variational approximation to the
   % logistic regression.
   if isfield(options,'fixed_eta')
-    if ~isfield(options.eta)
+    if ~isfield(options,'eta')
       error('OPTIONS.FIXED_ETA = TRUE requires input OPTIONS.ETA');
     end
     fixed_eta = options.fixed_eta;
