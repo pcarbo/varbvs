@@ -20,7 +20,7 @@ version 2.14.2 of R for 64-bit Linux.
 
 Copyright (c) 2012-2013, Peter Carbonetto.
 
-The varbvs source code repostiroy by
+The varbvs source code repository by
 [Peter Carbonetto](http://github.com/pcarbo) is free software: you can
 redistribute it under the terms of the
 [GNU General Public License](http://www.gnu.org/licenses/gpl.html). All
@@ -94,7 +94,7 @@ considerable amount of time to simulate the Markov chain.
 
 Start by downloading the github repository for this project. The
 simplest way to do this is to [download the repository as a ZIP
-archive](http://github.com/pcarbo/Variational-inference-for-Bayesian-variable-selection/zipball/master). Once
+archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
 you have extracted the files from the compressed archive, you will see
 that the main directory has two subdirectories, one containing the
 MATLAB code, and the other containing R files.
@@ -162,7 +162,7 @@ case-control study.
 
 ###Who
 
-Variational inference for Bayesian variable selection was developed by:<br>
+The varbvs software package was developed by:<br>
 [Peter Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo)<br>
 Dept. of Human Genetics<br>
 University of Chicago<br> 
