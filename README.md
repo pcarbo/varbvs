@@ -62,8 +62,8 @@ may have to run the mex command with the -v flag to check what
 compiler is being used, and you may have to edit the MEX configuration
 file manually.
 
-To build the necessary MEX files, run the **install.m** script in
-MATLAB. 
+To build the necessary MEX files, run the
+[install.m](MATLAB/install.m) script in MATLAB.
 
 Note that the beginning of this script sets some compiler and linker
 flags. These flags tell the GCC compiler to use the ISO C99 standard,
@@ -72,7 +72,7 @@ not be relevant to your setup, especially if you are not using
 [gcc](http://gcc.gnu.org). To avoid errors during installation, if you
 are using a compiler other than GCC, it may be best to set variables
 **cflags** and **ldflags** to empty strings before running the
-**install.m** script.
+[install.m](MATLAB/install.m) script.
 
 If you modify the installation procedure to fit your compiler setup,
 it is important that you define macro MATLAB_MEX_FILE, akin to the
@@ -81,14 +81,15 @@ by including flag -DMATLAB_MEX_FILE when issuing the commands to build
 MEX files.
 
 Once you have built the MEX files, start by running the script
-**example1.m**. This script demonstrates how the variational inference
-algorithm is used to compute posterior probabilities for a small
-linear regression example in which only a small subset of the
-variables (single nucleotide polymorphisms, or SNPs) has affects the
-outcome (a simulated quantitative trait). In this small example, the
-variational estimates of the posterior probabilities are compared with
-estimates obtained by MCMC simulation. Notice that it takes a
-considerable amount of time to simulate the Markov chain.
+[example1.m](MATLAB/example1.m). This script demonstrates how the
+variational inference algorithm is used to compute posterior
+probabilities for a small linear regression example in which only a
+small subset of the variables (single nucleotide polymorphisms, or
+SNPs) has affects the outcome (a simulated quantitative trait). In
+this small example, the variational estimates of the posterior
+probabilities are compared with estimates obtained by MCMC
+simulation. Notice that it takes a considerable amount of time to
+simulate the Markov chain.
 
 ###Quick start for R
 
@@ -118,7 +119,8 @@ in which only a small subset of the variables (single nucleotide
 polymorphisms, or SNPs) has affects the outcome (a simulated
 quantitative trait). 
 
-Note that the demonstration script **example1.R** requires packages
+Note that the demonstration script
+[example1.R](R/varbvs/demo/example1.R) requires packages
 [ggplot2](http://had.co.nz/ggplot2) and **grid** to show the plots
 depicting the posterior distributions of the hyperparameters computed
 using the variational inference method. The grid package is normally
@@ -160,7 +162,7 @@ case-control study.
   specific choices for priors on the hyperparameters, as described in
   the paper and in the comments at the top of the file.
 
-###Who
+###Credits
 
 The varbvs software package was developed by:<br>
 [Peter Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo)<br>
