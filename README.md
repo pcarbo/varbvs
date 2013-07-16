@@ -20,14 +20,14 @@ version 2.14.2 of R for 64-bit Linux.
 
 Copyright (c) 2012-2013, Peter Carbonetto.
 
-Variational inference for Bayesian variable selection by [Peter
-Carbonetto](http://github.com/pcarbo) is free software: you
-can redistribute it under the terms of the [GNU General Public
-License](http://www.gnu.org/licenses/gpl.html). All the files in this
-project are part of Variational inference for Bayesian variable
-selection. This project is distributed in the hope that it will be
-useful, but **without any warranty**; without even the implied
-warranty of **merchantability or fitness for a particular
+The varbvs source code repostiroy by
+[Peter Carbonetto](http://github.com/pcarbo) is free software: you can
+redistribute it under the terms of the
+[GNU General Public License](http://www.gnu.org/licenses/gpl.html). All
+the files in this project are part of Variational inference for
+Bayesian variable selection. This project is distributed in the hope
+that it will be useful, but **without any warranty**; without even the
+implied warranty of **merchantability or fitness for a particular
 purpose**. See file LICENSE for the full text of the license.
 
 This project includes several MATLAB functions created by James
@@ -42,7 +42,7 @@ Jónasson](http://www.hi.is/~jonasson).
 
 Start by downloading the github repository for this project. The
 simplest way to do this is to [download the repository as a ZIP
-archive](http://github.com/pcarbo/Variational-inference-for-Bayesian-variable-selection/zipball/master). Once
+archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
 you have extracted the files from the compressed archive, you will see
 that the main directory contains two subdirectories, one for the
 MATLAB functions, and one for the R code.
@@ -69,8 +69,8 @@ Note that the beginning of this script sets some compiler and linker
 flags. These flags tell the GCC compiler to use the ISO C99 standard,
 and to optimize the code as much as possible. However, these flags may
 not be relevant to your setup, especially if you are not using
-[GCC](gcc.gnu.org). To avoid errors during installation, if you are
-using a compiler other than GCC, it may be best to set variables
+[gcc](http://gcc.gnu.org). To avoid errors during installation, if you
+are using a compiler other than GCC, it may be best to set variables
 **cflags** and **ldflags** to empty strings before running the
 **install.m** script.
 
