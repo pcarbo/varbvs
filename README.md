@@ -24,11 +24,11 @@ The varbvs source code repository by
 [Peter Carbonetto](http://github.com/pcarbo) is free software: you can
 redistribute it under the terms of the
 [GNU General Public License](http://www.gnu.org/licenses/gpl.html). All
-the files in this project are part of Variational inference for
-Bayesian variable selection. This project is distributed in the hope
-that it will be useful, but **without any warranty**; without even the
-implied warranty of **merchantability or fitness for a particular
-purpose**. See file [LICENSE](LICENSE) for the full text of the license.
+the files in this project are part of varbvs. This project is
+distributed in the hope that it will be useful, but **without any
+warranty**; without even the implied warranty of **merchantability or
+fitness for a particular purpose**. See file [LICENSE](LICENSE) for
+the full text of the license.
 
 This project includes several MATLAB functions created by James
 P. LeSage as part of the [Econometrics
