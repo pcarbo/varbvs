@@ -165,7 +165,7 @@ case-control study.
 ###Credits
 
 The varbvs software package was developed by:<br>
-[Peter Carbonetto]((http://www.cs.ubc.ca/spider/pcarbo)<br>
+[Peter Carbonetto](http://www.cs.ubc.ca/spider/pcarbo)<br>
 Dept. of Human Genetics<br>
 University of Chicago<br> 
 March 2012
