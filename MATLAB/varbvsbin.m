@@ -185,8 +185,8 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute variational lower bound to marginal log-likelihood.
     lnZ = intlogit(y,stats,alpha,mu,s,Xr,eta) ...
-	  + intgamma(logodds,alpha) ...
-	  + intklbeta(alpha,mu,s,sa);
+          + intgamma(logodds,alpha) ...
+          + intklbeta(alpha,mu,s,sa);
     
     % CHECK CONVERGENCE.
     % Print the status of the algorithm and check the convergence criterion.
