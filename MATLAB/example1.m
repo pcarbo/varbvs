@@ -10,7 +10,7 @@ clear
 % SCRIPT PARAMETERS.
 p  = 1e3;  % The number of variables (SNPs).
 n  = 500;  % The number of samples.
-na = 20;   % Number of variables that effect the outcome ("causal" SNPs).
+na = 20;   % Number of variables that affect the outcome ("causal" SNPs).
 ns = 2e4;  % Length of Markov chain.
 m0 = 100;  % Upper limit on number of selected variables in Markov chain.
 
