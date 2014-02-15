@@ -10,10 +10,10 @@
 clear
 
 % SCRIPT PARAMETERS.
-p  = 5000;  % Number of variables (SNPs).
-n  = 2000;  % Number of samples (subjects).
+p  = 1e4;   % Number of variables (SNPs).
+n  = 4000;  % Number of samples (subjects).
 na = 20;    % Number of SNPs that affect the outcome.
-sb = 0.1;   % Standard deviation of log-odds ratios.
+sb = 0.2;   % Standard deviation of log-odds ratios.
 p1 = 0.4;   % Target proportion of subjects that are cases (y = 1).
 
 % Set the random number generator seed.
@@ -27,6 +27,7 @@ rng(seed);
 % is matched with a SNP that has the same effect, but in the opposite
 % direction. I also adjust the minor allele frequencies so that these
 % "matched" SNPs have the same minor allele frequency.
+fprintf('Creating data set.\n');
 [maf beta]  = createsnps(p,na);
 beta        = sb * beta;
 I           = find(beta ~= 0);
@@ -37,3 +38,9 @@ snps2       = I(t+1:na);
 beta(snps2) = -beta(snps1);
 maf(snps2)  = maf(snps1);
 [X y]       = createbindata(maf,beta,logit(p1),n);
+
+% COMPUTE VARIATIONAL ESTIMATES.
+fprintf('Computing variational estimates.\n');
+% h  = pve(sx,sd^2,theta0);
+[logw alpha mu s eta] = multisnpbinhyper(X,y,0.5,-2.7);
+
