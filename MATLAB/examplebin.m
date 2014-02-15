@@ -16,6 +16,11 @@ na = 20;    % Number of SNPs that affect the outcome.
 sb = 0.2;   % Standard deviation of log-odds ratios.
 p1 = 0.4;   % Target proportion of subjects that are cases (y = 1).
 
+% Candidate values of the prior proportion of variance explained (h), and
+% prior log-odds for inclusion (theta0).
+h      = (0.05:0.05:0.3)';
+theta0 = (-3:0.25:-2)';
+
 % Set the random number generator seed.
 seed = 1;
 rng(seed);
@@ -41,6 +46,6 @@ maf(snps2)  = maf(snps1);
 
 % COMPUTE VARIATIONAL ESTIMATES.
 fprintf('Computing variational estimates.\n');
-% h  = pve(sx,sd^2,theta0);
-[logw alpha mu s eta] = multisnpbinhyper(X,y,0.5,-2.7);
+[H THETA0] = ndgrid(h,theta0);
+[logw alpha mu s eta] = multisnpbinhyper(X,y,H,THETA0);
 
