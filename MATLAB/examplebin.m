@@ -10,19 +10,19 @@
 clear
 
 % SCRIPT PARAMETERS.
-p  = 1e4;   % Number of variables (SNPs).
-n  = 4000;  % Number of samples (subjects).
-na = 20;    % Number of SNPs that affect the outcome.
+p  = 1000;  % Number of variables (SNPs).
+n  = 2e4;   % Number of samples (subjects).
+na = 10;    % Number of SNPs that affect the outcome.
 sb = 0.2;   % Standard deviation of log-odds ratios.
 p1 = 0.4;   % Target proportion of subjects that are cases (y = 1).
 
-% Candidate values of the prior proportion of variance explained (h), and
+% Candidate values for the prior proportion of variance explained (h), and
 % prior log-odds for inclusion (theta0).
-h      = (0.05:0.05:0.3)';
-theta0 = (-3:0.25:-2)';
+h      = (0.1:0.1:0.5)';
+theta0 = (-2.5:0.25:-1.5)';
 
 % Set the random number generator seed.
-seed = 1;
+seed = 5;
 rng(seed);
 
 % GENERATE DATA SET.
@@ -49,3 +49,26 @@ fprintf('Computing variational estimates.\n');
 [H THETA0] = ndgrid(h,theta0);
 [logw alpha mu s eta] = multisnpbinhyper(X,y,H,THETA0);
 
+% Compute the normalize importance weights.
+w = normalizelogweights(logw);
+
+% Calculate the posterior mean of the intercept.
+mu0 = zeros(size(w));
+r   = alpha .* mu;
+for i = 1:numel(w)
+  d      = slope(eta(:,i));
+  mu0(i) = (sum(y - 0.5) - d'*X*r(:,i))/sum(d);
+end
+fprintf('Posterior mean of beta0: %0.2f\n',dot(mu0(:),w(:)));
+
+% Calculate the posterior mean of the prior variance of the log-odds
+% ratios (sa).
+sx = sum(var1(X));
+sa = pve2sa(sx,H,THETA0);
+fprintf('Posterior mean of sa: %0.2f\n\n',dot(sa(:),w(:));
+
+% Show the posterior distribution of the genome-wide log-odds (theta0). 
+fprintf('Posterior of theta0:\n');
+fprintf('theta0 prob\n')
+fprintf('%6.2f %0.2f\n',[theta0'; sum(w,1)])
+fprintf('\n');
