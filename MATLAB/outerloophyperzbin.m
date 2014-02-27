@@ -1,9 +1,10 @@
-% [LOGW,ALPHA,MU,S,ETA] = OUTERLOOPHYPERBIN(X,Y,ALPHA,MU,ETA,H,THETA0)
+% [LOGW,ALPHA,MU,S,ETA] = OUTERLOOPHYPERZBIN(X,Z,Y,ALPHA,MU,ETA,H,THETA0)
 % computes unnormalized log-importance weights for the hyperparameters. It
-% is used by MULTISNPBINHYPER to implement the "outer loop" of the inference
-% algorithm for analysis of a binary trait.
+% is used by MULTISNPBINZHYPER to implement the "outer loop" of the
+% inference algorithm for analysis of a binary trait, allowing for
+% covariates.
 function [logw, alpha, mu, s, eta] = ...
-      outerloophyperbin (X, y, alpha, mu, eta, h, theta0)
+      outerloophyperzbin (X, Z, y, alpha, mu, eta, h, theta0)
 
   % Get the number of participants in the study (n), the number of SNPs
   % genotyped (p), and the number of combinations of the hyperparameters
@@ -33,6 +34,6 @@ function [logw, alpha, mu, s, eta] = ...
     % hyperparameters.
     options = struct('alpha',alpha(:,i),'mu',mu(:,i),'eta',eta(:,i));
     [logw(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
-	varbvsbin(X,y,sa(i),log(10)*theta0(i),options);
+	varbvszbin(X,Z,y,sa(i),log(10)*theta0(i),options);
     fprintf('\n');
   end

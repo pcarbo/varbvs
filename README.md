@@ -18,7 +18,7 @@ version 2.14.2 of R for 64-bit Linux.
 
 ###License
 
-Copyright (c) 2012-2013, Peter Carbonetto.
+Copyright (c) 2012-2014, Peter Carbonetto.
 
 The varbvs source code repository by
 [Peter Carbonetto](http://github.com/pcarbo) is free software: you can

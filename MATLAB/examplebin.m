@@ -56,8 +56,8 @@ w = normalizelogweights(logw);
 mu0 = zeros(size(w));
 r   = alpha .* mu;
 for i = 1:numel(w)
-  d      = slope(eta(:,i));
-  mu0(i) = (sum(y - 0.5) - d'*X*r(:,i))/sum(d);
+  u      = slope(eta(:,i));
+  mu0(i) = (sum(y - 0.5) - u'*X*r(:,i))/sum(u);
 end
 fprintf('Posterior mean of beta0: %0.2f\n',dot(mu0(:),w(:)));
 
@@ -65,7 +65,7 @@ fprintf('Posterior mean of beta0: %0.2f\n',dot(mu0(:),w(:)));
 % ratios (sa).
 sx = sum(var1(X));
 sa = pve2sa(sx,H,THETA0);
-fprintf('Posterior mean of sa: %0.2f\n\n',dot(sa(:),w(:));
+fprintf('Posterior mean of sa: %0.2f\n\n',dot(sa(:),w(:)));
 
 % Show the posterior distribution of the genome-wide log-odds (theta0). 
 fprintf('Posterior of theta0:\n');

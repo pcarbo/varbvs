@@ -1,6 +1,13 @@
-% *** DESCRIPTION OF FUNCTION GOES HERE ***
-function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, ...
-                                                options)
+% [LNZ,ALPHA,MU,S,ETA] = VARBVSBIN(X,Y,SA,LOGODDS) implements the
+% fully-factorized variational approximation for Bayesian variable selection
+% in logistic regression, allowing for covariates. It is the same as
+% VARBVSBIN, except that it allows for an additional set of covariates that
+% are not subject to the same "spike-and-slab" priors as the other
+% variables. The covariate data Z are specified as an N x M matrix, where N
+% is the number of samples, and M is the number of covariates. This function
+% is equivalent to VARBVSBIN when only one covariate is specified, the
+% intercept, and Z = ONES(N,1).
+function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, options)
 
   % Convergence is reached when the maximum relative distance between
   % successive updates of the variational parameters is less than this
@@ -84,6 +91,11 @@ function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, ...
     verbose = true;
   end
   clear options
+  
+  % INITIAL STEPS.
+  % Compute a few useful quantities.
+  Xr = double(X*(alpha.*mu));
+  % TO DO.
 
   % MAIN LOOP.
   % Repeat until convergence criterion is met.
@@ -126,7 +138,9 @@ function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, ...
     
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute variational lower bound to marginal log-likelihood.
-    % TO DO.
+    lnZ = intlogitz(stuff goes here) ...
+          + intgamma(logodds,alpha) ...
+          + intklbeta(alpha,mu,s,sa);
 
     % CHECK CONVERGENCE.
     % Print the status of the algorithm and check the convergence criterion.
