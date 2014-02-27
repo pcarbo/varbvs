@@ -77,7 +77,7 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
   % SA must be a double scalar.
   sa = double(sa); 
   if ~isscalar(sa)
-    error('Input SA must be scalars');
+    error('Input SA must be a scalar');
   end
 
   % LOGODDS must be a double precision column vector of length P.

@@ -22,7 +22,7 @@ h      = (0.1:0.1:0.5)';
 theta0 = (-2.5:0.25:-1.5)';
 
 % Set the random number generator seed.
-seed = 5;
+seed = 1;
 rng(seed);
 
 % GENERATE DATA SET.
