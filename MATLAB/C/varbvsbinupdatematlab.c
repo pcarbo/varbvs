@@ -19,10 +19,10 @@ void mexFunction (int nlhs, mxArray* plhs[],
   const SingleMatrix X       = getSingleMatrix(prhs[0]);
   const double       sa      = *mxGetPr(prhs[1]);
   const DoubleVector logodds = getDoubleVector(prhs[2]);
-  const DoubleVector u       = getDoubleVector(mxGetField(prhs[3],0,"u"));
   const DoubleVector d       = getDoubleVector(mxGetField(prhs[3],0,"d"));
+  const DoubleVector xdx     = getDoubleVector(mxGetField(prhs[3],0,"xdx"));
   const DoubleVector xy      = getDoubleVector(mxGetField(prhs[3],0,"xy"));
-  const DoubleVector xu      = getDoubleVector(mxGetField(prhs[3],0,"xu"));
+  const DoubleVector xd      = getDoubleVector(mxGetField(prhs[3],0,"xd"));
   const DoubleVector alpha0  = getDoubleVector(prhs[4]);
   const DoubleVector mu0     = getDoubleVector(prhs[5]);
   const DoubleVector Xr0     = getDoubleVector(prhs[6]);
@@ -55,7 +55,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
     copyColumn(X.elems,x,k,n);
 
     // Perform the update.
-    varbvsbinupdate(x,xy.elems[k],xu.elems[k],d.elems[k],u.elems,sa,
+    varbvsbinupdate(x,xy.elems[k],xd.elems[k],xdx.elems[k],d.elems,sa,
 		    logodds.elems[k],alpha.elems+k,mu.elems+k,Xr.elems,n);
   }
 

@@ -8,16 +8,16 @@
 // Execute a single coordinate ascent update to maximize the
 // variational lower bound for Bayesian variable selection in logistic
 // regression.
-void varbvsbinupdate (const double* x, double xy, double xu, double d, 
-		      const double* u, double sa, double logodds, 
+void varbvsbinupdate (const double* x, double xy, double xd, double xdx, 
+		      const double* d, double sa, double logodds, 
 		      double* alpha, double* mu, double* Xr, Size n) {
 
   // Compute the variational estimate of the posterior variance.
-  double s = sa/(sa*d + 1);      
+  double s = sa/(sa*xdx + 1);      
   
   // Update the variational estimate of the posterior mean.
   double r = (*alpha) * (*mu);
-  *mu = s*(xy + d*r + xu*dot(u,Xr,n)/sum(u,n) - dotscaled(x,Xr,u,n));
+  *mu = s*(xy + xdx*r + xd*dot(d,Xr,n)/sum(d,n) - dotscaled(x,Xr,d,n));
     
   // Update the variational estimate of the posterior inclusion
   // probability.

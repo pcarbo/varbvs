@@ -172,13 +172,13 @@ function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
     [alpha mu Xr] = varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,I);
 
     % Recalculate the posterior variance of the coefficients.
-    s = sa./(sa*stats.d + 1);  
+    s = sa./(sa*stats.xdx + 1);  
 
     % UPDATE ETA.
     % Update the free parameters specifying the variational approximation
     % to the logistic regression factors.
     if ~fixed_eta
-      eta   = updateeta(X,y,betavar(alpha,mu,s),Xr,stats.u);
+      eta   = updateeta(X,y,betavar(alpha,mu,s),Xr,stats.d);
       stats = updatestats(X,y,eta);
     end
 

@@ -124,10 +124,10 @@ function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, options)
     else
       I = p:-1:1;
     end
-    % TO DO.
+    [alpha mu Xr] = varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,I);
 
     % Recalculate the posterior variance of the coefficients.
-    % TO DO.
+    s = sa./(sa*stats.dxx + 1);
 
     % UPDATE ETA.
     % Update the free parameters specifying the variational approximation
@@ -138,7 +138,7 @@ function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, options)
     
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute variational lower bound to marginal log-likelihood.
-    lnZ = intlogitz(stuff goes here) ...
+    lnZ = intlogitz(Z,y,stats,alpha,mu,s,Xr,eta) ...
           + intgamma(logodds,alpha) ...
           + intklbeta(alpha,mu,s,sa);
 

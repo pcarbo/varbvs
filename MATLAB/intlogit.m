@@ -18,15 +18,15 @@ function I = intlogit (y, stats, alpha, mu, s, Xr, eta)
 
   % Get some of the statistics.
   yhat = stats.yhat;
+  xdx  = stats.xdx;
   d    = stats.d;
-  u    = stats.u;
-  U    = diag(sparse(u));
+  D    = diag(sparse(d));
 
   % Get the variance of the intercept given the other coefficients.
-  a = 1/sum(u);
+  a = 1/sum(d);
 
   % Compute the variational approximation to the expectation of the
   % log-likelihood with respect to the variational approximation.
-  I = sum(logsigmoid(eta)) + eta'*(u.*eta - 1)/2 + log(a)/2 ...
-      + a*sum(y - 0.5)^2/2 + yhat'*Xr - qnorm(Xr,U)^2/2 ...
-      + a/2*(u'*Xr)^2 - d'*betavar(alpha,mu,s)/2;
+  I = sum(logsigmoid(eta)) + eta'*(d.*eta - 1)/2 + log(a)/2 ...
+      + a*sum(y - 0.5)^2/2 + yhat'*Xr - qnorm(Xr,D)^2/2 ...
+      + a*(d'*Xr)^2/2 - xdx'*betavar(alpha,mu,s)/2;

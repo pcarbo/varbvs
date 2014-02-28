@@ -10,7 +10,7 @@ ldflags = '-s -O3 -Os';
 
 % These are the files containing the main functions implemented in C. Note
 % that not all these files are needed to compile each of the MEX files.
-Rsrcdir   = '../R/varbvs/src/'
+Rsrcdir   = '../R/varbvs/src/';
 corefiles = {'C/doublevectormatlab.c '
 	     'C/singlematrixmatlab.c ' 
 	     [ Rsrcdir 'vectorops.c ' ]

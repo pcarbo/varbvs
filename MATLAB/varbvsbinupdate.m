@@ -66,20 +66,20 @@ function [alpha, mu, Xr] = varbvsbinupdate (X, sa, logodds, stats, ...
   end
 
   % Check input STATS.
-  if ~isfield(stats,'u') | ~isfield(stats,'xy') | ~isfield(stats,'xu') | ...
-     ~isfield(stats,'d') 
-    error('STATS must be a STRUCT with fields ''u'', ''xy'', ''xu'' and ''d''')
+  if ~isfield(stats,'d') | ~isfield(stats,'xy') | ~isfield(stats,'xd') | ...
+     ~isfield(stats,'xdx') 
+    error('STATS must be a STRUCT with fields d, xy, xd and xdx')
   end
-  if length(stats.u) ~= n
-    error('STATS.U must be a vector of length N');
+  if length(stats.d) ~= n
+    error('STATS.D must be a vector of length N');
   end
-  if length(stats.d) ~= p | length(stats.xy) ~= p | length(stats.xu) ~= p
-    error('STATS.D, STATS.XY and STATS.XU must be vectors of length P');
+  if length(stats.xdx) ~= p | length(stats.xy) ~= p | length(stats.xd) ~= p
+    error('STATS.XDX, STATS.XY and STATS.XD must be vectors of length P');
   end
-  stats.u  = double(stats.u);
-  stats.d  = double(stats.d);
-  stats.xy = double(stats.xy);
-  stats.xu = double(stats.xu);
+  stats.d   = double(stats.d);
+  stats.xdx = double(stats.xdx);
+  stats.xy  = double(stats.xy);
+  stats.xd  = double(stats.xd);
 
   % Check inputs ALPHA0 and MU0.
   if length(alpha0) ~= p | length(mu0) ~= p
