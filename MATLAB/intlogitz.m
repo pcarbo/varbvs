@@ -4,7 +4,7 @@ function I = intlogitz (Z, y, stats, alpha, mu, s, Xr, eta)
 
   % Get some of the statistics.
   yhat = stats.yhat;
-  dxx  = stats.dxx;
+  xdx  = stats.xdx;
   S    = stats.S;
   d    = stats.d;
   D    = diag(sparse(d));
@@ -13,4 +13,4 @@ function I = intlogitz (Z, y, stats, alpha, mu, s, Xr, eta)
   % log-likelihood with respect to the approximate posterior distribution.
   I = sum(logsigmoid(eta)) + eta'*(d.*eta - 1)/2 + logdet(S)/2 ...
       + qnorm(Z'*(y - 0.5),S)^2/2 + yhat'*Xr - qnorm(Xr,D)^2/2 ...
-      + qnorm(Z'*D*Xr,S)^2/2 - dxx'*betavar(alpha,mu,s)/2;
+      + qnorm(Z'*D*Xr,S)^2/2 - xdx'*betavar(alpha,mu,s)/2;

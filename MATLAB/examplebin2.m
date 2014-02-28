@@ -49,4 +49,19 @@ X     = X(:,1:p);
 % COMPUTE VARIATIONAL ESTIMATES.
 fprintf('Computing variational estimates.\n');
 [H THETA0] = ndgrid(h,theta0);
-% TO DO.
+[logw alpha mu s eta] = multisnpbinzhyper(X,Z,y,H,THETA0);
+
+% Compute the normalize importance weights.
+w = normalizelogweights(logw);
+
+% Calculate the posterior mean of the prior variance of the log-odds
+% ratios (sa).
+sx = sum(var1(X));
+sa = pve2sa(sx,H,THETA0);
+fprintf('Posterior mean of sa: %0.2f\n\n',dot(sa(:),w(:)));
+
+% Show the posterior distribution of the genome-wide log-odds (theta0). 
+fprintf('Posterior of theta0:\n');
+fprintf('theta0 prob\n')
+fprintf('%6.2f %0.2f\n',[theta0'; sum(w,1)])
+fprintf('\n');

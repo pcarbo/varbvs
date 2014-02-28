@@ -36,4 +36,13 @@ double dot (const double* x, const double* y, Size n);
 // Compute x'*D*y, the dot product of x and y scaled by D = diag(d).
 double dotscaled (const double* x, const double* y, const double* d, Size n);
 
+// Compute the matrix-vector product X'*y, the transposed matrix X
+// times the vector y, and return the result in the entries of vector
+// a. The entries in a single column of the matrix are assumed to be
+// stored consecutively in memory. Inputs nr and nc are the number of
+// rows and and columns of matrix X. Vector y is assumed to have one
+// entry for every row of X, and vector a is assumed to have one entry
+// for every column of X.
+void matrixvec (const double* X, const double* y, double* a, Size nr, Size nc);
+
 #endif

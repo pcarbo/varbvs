@@ -3,6 +3,7 @@
 #include "vectorops.h"
 #include "doublevectormatlab.h"
 #include "singlematrixmatlab.h"
+#include "doublematrixmatlab.h"
 #include "varbvsbin.h"
 
 // These include files have a bunch of definitions to interface C
@@ -22,16 +23,18 @@ void mexFunction (int nlhs, mxArray* plhs[],
   const DoubleVector d       = getDoubleVector(mxGetField(prhs[3],0,"d"));
   const DoubleVector xdx     = getDoubleVector(mxGetField(prhs[3],0,"xdx"));
   const DoubleVector xy      = getDoubleVector(mxGetField(prhs[3],0,"xy"));
-  const DoubleVector xd      = getDoubleVector(mxGetField(prhs[3],0,"xd"));
+  const DoubleMatrix dzr     = getDoubleMatrix(mxGetField(prhs[3],0,"dzr"));
   const DoubleVector alpha0  = getDoubleVector(prhs[4]);
   const DoubleVector mu0     = getDoubleVector(prhs[5]);
   const DoubleVector Xr0     = getDoubleVector(prhs[6]);
   const DoubleVector I       = getDoubleVector(prhs[7]);
 
-  // Get the number of samples (n), the number of variables (p), and
-  // the number of coordinate ascent updates (numiter).
+  // Get the number of samples (n), the number of variables (p), the
+  // number of covariates (m), and the number of coordinate ascent
+  // updates (numiter).
   const Size n       = X.nr;
   const Size p       = X.nc;
+  const Size m       = dzr.nc;
   const Size numiter = I.n;
 
   // INITIALIZE OUTPUTS.
@@ -43,8 +46,11 @@ void mexFunction (int nlhs, mxArray* plhs[],
   copyDoubleVector(mu0,mu);
   copyDoubleVector(Xr0,Xr);
 
-  // This is storage for a column of matrix X.
+  // This is storage for a column of matrix X, and two vectors storing
+  // intermediate results.
   double* x = malloc(sizeof(double)*n);
+  double* a = malloc(sizeof(double)*m);
+  double* b = malloc(sizeof(double)*m);
 
   // RUN COORDINATE ASCENT UPDATES.
   // Repeat for each coordinate ascent update.
@@ -55,10 +61,13 @@ void mexFunction (int nlhs, mxArray* plhs[],
     copyColumn(X.elems,x,k,n);
 
     // Perform the update.
-    varbvsbinupdate(x,xy.elems[k],xd.elems[k],xdx.elems[k],d.elems,sa,
-		    logodds.elems[k],alpha.elems+k,mu.elems+k,Xr.elems,n);
+    varbvszbinupdate(x,xy.elems[k],xdx.elems[k],d.elems,dzr.elems,sa,
+		     logodds.elems[k],alpha.elems + k,mu.elems + k,
+		     Xr.elems,a,b,n,m);
   }
 
   // Free the dynamically allocated memory.
+  free(a);
+  free(b);
   free(x);
 }

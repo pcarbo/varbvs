@@ -94,8 +94,8 @@ function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, options)
   
   % INITIAL STEPS.
   % Compute a few useful quantities.
-  Xr = double(X*(alpha.*mu));
-  % TO DO.
+  Xr    = double(X*(alpha.*mu));
+  stats = updatestats2(X,Z,y,eta);
 
   % MAIN LOOP.
   % Repeat until convergence criterion is met.
@@ -124,16 +124,17 @@ function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, options)
     else
       I = p:-1:1;
     end
-    [alpha mu Xr] = varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,I);
+    [alpha mu Xr] = varbvszbinupdate(X,sa,logodds,stats,alpha,mu,Xr,I);
 
     % Recalculate the posterior variance of the coefficients.
-    s = sa./(sa*stats.dxx + 1);
+    s = sa./(sa*stats.xdx + 1);
 
     % UPDATE ETA.
     % Update the free parameters specifying the variational approximation
     % to the logistic regression factors.
     if ~fixed_eta
-      % TO DO.
+      eta   = updateetaz(X,Z,y,betavar(alpha,mu,s),Xr,stats.d);
+      stats = updatestats2(X,Z,y,eta);
     end
     
     % COMPUTE VARIATIONAL LOWER BOUND.

@@ -65,3 +65,14 @@ double dotscaled (const double* x, const double* y, const double* d,
     z += x[i] * y[i] * d[i];
   return z;
 }
+
+// Compute X'*y and return the result in a.
+void matrixvec (const double* X, const double* y, double* a, 
+		Size nr, Size nc) {
+  Index i = 0;
+  for (Index c = 0; c < nc; c++) {
+    a[c] = 0;
+    for (Index r = 0; r < nr; r++, i++)
+      a[c] += X[i] * y[r];
+  }
+}

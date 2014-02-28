@@ -47,7 +47,8 @@ maf(snps2)  = maf(snps1);
 % COMPUTE VARIATIONAL ESTIMATES.
 fprintf('Computing variational estimates.\n');
 [H THETA0] = ndgrid(h,theta0);
-[logw alpha mu s eta] = multisnpbinhyper(X,y,H,THETA0);
+% [logw alpha mu s eta] = multisnpbinhyper(X,y,H,THETA0);
+[logw alpha mu s eta] = multisnpbinzhyper(X,ones(n,1),y,H,THETA0);
 
 % Compute the normalize importance weights.
 w = normalizelogweights(logw);
@@ -72,3 +73,13 @@ fprintf('Posterior of theta0:\n');
 fprintf('theta0 prob\n')
 fprintf('%6.2f %0.2f\n',[theta0'; sum(w,1)])
 fprintf('\n');
+
+% Calculate the posterior inclusion probabilities (PIPs), and show the PIPs
+% for the variables that are most likely to be included in the model,
+% with PIP > 0.1.
+PIP     = alpha * w(:);
+[ans I] = sort(-PIP);
+I       = I(1:sum(PIP > 0.1));
+fprintf('Selected variables:\n');
+fprintf(' PIP    mu  beta\n');
+fprintf('%0.2f %+0.2f %+0.2f\n',[PIP(I) mu(I) beta(I)]');
