@@ -1,4 +1,17 @@
-% *** DESCRIPTION OF FUNCTION GOES HERE ****
+% [S,D,YHAT,XY,XD,XDX,DZR] = UPDATESTATS2(X,Z,Y,ETA) calculates useful
+% quantities for updating the variational approximation to the logistic
+% regression factors, allowing for covariates. Inputs X, Z and Y specify the
+% data (see VARBVSZBIN), and ETA is the vector of free parameters. It is a
+% column vector of length equal to the number of samples. This function
+% should be called whenever the free parameters are modified.
+%
+% The outputs are defined as XY = X'*YHAT, XD = X'*D, XDX = DIAG(X'*DHAT*X),
+% DZR = D*Z*R' and S = INV(Z'*D*Z) is the posterior covariance of the
+% covariate effects given the other effects, where D = SLOPE(ETA), and R is
+% the upper triangular matrix such that R'*R = S. For a definition of
+% vectors YHAT and matrix DHAT, see the Bayesian Analysis paper.
+%
+% The outputs may also be returned as a STRUCT.
 function varargout = updatestats2 (X, Z, y, eta)
 
   % Compute the slope of the conjugate.
@@ -10,7 +23,7 @@ function varargout = updatestats2 (X, Z, y, eta)
   D = diag(sparse(d));
   S = inv(Z'*D*Z);
   
-  % Compute matrix DZR = D*Z*R, where R is an upper triangular matrix such
+  % Compute matrix DZR = D*Z*R', where R is an upper triangular matrix such
   % that R'*R = S.
   R   = chol(S);
   dzr = D*(Z*R');

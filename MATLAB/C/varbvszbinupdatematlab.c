@@ -11,7 +11,7 @@
 #include "mex.h"
 #include "matrix.h"
 
-// MEX-file gateway routine. Note that varbvsbinupdate.m checks the
+// MEX-file gateway routine. Note that varbvszbinupdate.m checks the
 // inputs, so we do not have to do it here.
 void mexFunction (int nlhs, mxArray* plhs[], 
 		  int nrhs, const mxArray* prhs[]) {

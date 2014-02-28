@@ -3,7 +3,6 @@
 % variational lower bound for Bayesian variable selection in logistic
 % regression, allowing for additional covariates. It is the same as
 % VARBVSBINUPDATE, except that it allows for an arbitrary set of covariates.
-%
 % Input STATS is the STRUCT output from UPDATESTATS2.
 function [alpha, mu, Xr] = varbvszbinupdate (X, sa, logodds, stats, ...
                                              alpha0, mu0, Xr0, I)

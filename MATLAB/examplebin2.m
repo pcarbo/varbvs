@@ -16,7 +16,7 @@ u = [-1 1]';
 % Candidate values for the prior proportion of variance explained (h), and
 % prior log-odds for inclusion (theta0).
 h      = (0.1:0.1:0.5)';
-theta0 = (-3:0.5:-1)';
+theta0 = (-2.5:0.25:-1.5)';
 
 % Set the random number generator seed.
 seed = 1;
@@ -48,11 +48,29 @@ X     = X(:,1:p);
 
 % COMPUTE VARIATIONAL ESTIMATES.
 fprintf('Computing variational estimates.\n');
+Z = [ones(n,1) Z];
 [H THETA0] = ndgrid(h,theta0);
 [logw alpha mu s eta] = multisnpbinzhyper(X,Z,y,H,THETA0);
 
 % Compute the normalize importance weights.
 w = normalizelogweights(logw);
+
+% Calculate and show the posterior mean of u, the regression coefficients
+% corresponding to the covariates.
+m   = size(Z,2);
+ns  = numel(w);
+muz = zeros(m,ns);
+for i = 1:ns
+  stats    = updatestats2(X,Z,y,eta(:,i));
+  d        = stats.d;
+  S        = stats.S;
+  Xr       = X*(alpha(:,i).*mu(:,i));
+  muz(:,i) = S*Z'*(y - 0.5 - d.*Xr);
+end
+fprintf('Posterior mean of covariate effects:\n');
+fprintf('   mu     u\n');
+fprintf('%+0.2f %+0.2f\n',[muz*w(:) [logit(p1);u]]');
+fprintf('\n');
 
 % Calculate the posterior mean of the prior variance of the log-odds
 % ratios (sa).
@@ -65,3 +83,13 @@ fprintf('Posterior of theta0:\n');
 fprintf('theta0 prob\n')
 fprintf('%6.2f %0.2f\n',[theta0'; sum(w,1)])
 fprintf('\n');
+
+% Calculate the posterior inclusion probabilities (PIPs), and show the PIPs
+% for the variables that are most likely to be included in the model,
+% with PIP > 0.1.
+PIP     = alpha * w(:);
+[ans I] = sort(-PIP);
+I       = I(1:sum(PIP > 0.1));
+fprintf('Selected variables:\n');
+fprintf(' PIP    mu  beta\n');
+fprintf('%0.2f %+0.2f %+0.2f\n',[PIP(I) mu(I) beta(I)]');

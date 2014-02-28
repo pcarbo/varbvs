@@ -1,5 +1,6 @@
 % INTLOGITZ(Z,Y,STATS,ALPHA,MU,S,XR,ETA) is the same as INTLOGIT, except
-% that it allows for an arbitrary set of covariates Z.
+% that it allows for an arbitrary set of covariates Z. STATS is the STRUCT
+% output from UPDATESTATS2.
 function I = intlogitz (Z, y, stats, alpha, mu, s, Xr, eta)
 
   % Get some of the statistics.
