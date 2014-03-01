@@ -15,7 +15,6 @@ function eta = updateetaz (X, Z, y, v, Xr, d)
   C = -double((S*Z'*D)*X)*diag(sparse(v));
 
   % This is the M-step update for the free parameters.
-  t   = double((S*Z'*D)*X)';
-  eta = sqrt((Z*muz + Xr).^2 + diagsq2(Z,S) + diagsq2(Z,t'*diag(v)*t) ...
-             + diagsqt(X,v) + 2*double(sum((Z*C).*X,2)));
-
+  U   = double((S*Z'*D)*X)';
+  eta = sqrt((Z*muz + Xr).^2 + diagsq2(Z,S) + diagsq2(Z,U'*diag(v)*U) ...
+             + diagsqt(X,v) + 2*diagprod(X*C',Z));
