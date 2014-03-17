@@ -105,7 +105,7 @@ install a package for R. To install this package, follow the [standard
 instructions](http://cran.r-project.org/doc/manuals/R-admin.html) for
 installing an R package from source. On a Unix or Unix-like platform
 (such as Mac OS X), the installation command is
-**R CMD INSTALL homedir/varbvs/R/varbvs**.
+**R CMD INSTALL --clean homedir/varbvs/R/varbvs**.
 
 Once you have installed the package, you can load the functions in R
 by running **library(varbvs)**. To get an overview of the package, run
@@ -119,7 +119,7 @@ in which only a small subset of the variables (single nucleotide
 polymorphisms, or SNPs) has affects the outcome (a simulated
 quantitative trait). 
 
-Note that the demonstration script
+**Note:** The demonstration script
 [example1.R](R/varbvs/demo/example1.R) requires packages
 [ggplot2](http://had.co.nz/ggplot2) and **grid** to show the plots
 depicting the posterior distributions of the hyperparameters computed
@@ -127,6 +127,13 @@ using the variational inference method. The grid package is normally
 included in the base distribution of R, and ggplot2 is available on
 [CRAN](http://cran.r-project.org), and can be installed using the
 **install.packages** function (for more recent versions of R).
+
+**Another note:** By default, R compiles the C code with the debugging
+information using the **-g** flag. The computations will run much
+faster without this debugging information. For example, on a Linux
+machine you can override the default package compilation by creating a
+text file **.R/Makevars** in your home directory that contains a
+single line: **CFLAGS=-fpic -O3**. 
 
 ###Overview of R and MATLAB functions 
 
