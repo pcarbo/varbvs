@@ -39,6 +39,10 @@
 % effects (given that the variable is included in the model) for each etting
 % of the hyperparameters. ALPHA, MU and S are each a matrix of dimension P x
 % NS, where NS is the number of hyperparameter settings.
+%
+% [LOGW,ALPHA,MU,S] = MULTISNPHYPER(X,Y,LOG10SIGMA,H,THETA0,ALPHA0,MU0)%
+% initializes the variational parameters for each combination of the
+% hyperparameters, overriding a random initialization of these parameters.
 function [logw, alpha, mu, s] = ...
         multisnphyper (X, y, log10sigma, h, theta0, alpha, mu)
   
@@ -49,15 +53,24 @@ function [logw, alpha, mu, s] = ...
   ns    = numel(h);
   
   % Set a random initialization of the variational parameters for each
-  % combination of the hyperparameters.
-  alpha = rand(p,ns);
-  alpha = alpha ./ repmat(sum(alpha),p,1);
-  mu    = randn(p,ns);
+  % combination of the hyperparameters, or use the initialization
+  % provided by the input arguments.
+  if exist('alpha','var')
+    alpha = repmat(alpha,1,ns);
+  else
+    alpha = rand(p,ns);
+    alpha = alpha ./ repmat(sum(alpha),p,1);
+  end
+  if exist('mu','var')
+    mu = repmat(mu,1,ns);
+  else
+    mu = randn(p,ns);
+  end
 
   % First get the best initialization for the variational parameters.
   fprintf('Finding best initialization for %d combinations ',ns);
   fprintf('of hyperparameters.\n');
-  [logw alpha mu] = outerloophyper(X,y,alpha,mu,log10sigma,h,log10odds);
+  [logw alpha mu] = outerloophyper(X,y,alpha,mu,log10sigma,h,theta0);
   
   % Choose an initialization common to all the runs of the coordinate ascent
   % algorithm. This is chosen from the hyperparameters with the highest
@@ -69,4 +82,5 @@ function [logw, alpha, mu, s] = ...
   % Compute the unnormalized log-importance weights.
   fprintf('Computing importance weights for %d combinations ',ns);
   fprintf('of hyperparameters.\n');
-  [logw alpha mu s] = outerloophyper(X,y,alpha,mu,log10sigma,h,log10odds);
+  [logw alpha mu s] = outerloophyper(X,y,alpha,mu,log10sigma,h,theta0);
+
