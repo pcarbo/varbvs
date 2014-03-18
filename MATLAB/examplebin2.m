@@ -52,7 +52,7 @@ Z = [ones(n,1) Z];
 [H THETA0] = ndgrid(h,theta0);
 [logw alpha mu s eta] = multisnpbinzhyper(X,Z,y,H,THETA0);
 
-% Compute the normalize importance weights.
+% Compute the normalized importance weights.
 w = normalizelogweights(logw);
 
 % Calculate and show the posterior mean of u, the regression coefficients
