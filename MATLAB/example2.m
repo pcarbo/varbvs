@@ -11,7 +11,7 @@ clear
 % SCRIPT PARAMETERS.
 p  = 1e3;   % Number of variables (SNPs).
 n  = 2e3;   % Number of samples (subjects).
-na = 10;    % Number of SNPs that affect the outcome.
+na = 20;    % Number of SNPs that affect the outcome.
 sb = 0.2;   % Standard deviation of nonzero coefficients.
 se = 9;     % Variance of residual.
 
@@ -20,7 +20,7 @@ se = 9;     % Variance of residual.
 % (theta0).
 log10sigma = (0.8:0.05:1.1)';
 theta0     = (-2.5:0.25:-1.5)';
-h          = (0.05:0.1:0.45)';
+h          = (0.05:0.05:0.45)';
 
 % Set the random number generator seed.
 seed = 1;

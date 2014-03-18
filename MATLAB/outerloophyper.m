@@ -24,10 +24,10 @@ function [logw, alpha, mu, s] = ...
 
   % Repeat for each combination of the hyperparameters.
   for i = 1:ns
-    fprintf('(%03d) sigma = %0.2e, h = %0.3f, theta = %+0.2f (sd = %0.3f)',...
-	    i,sigma(i),h(i),theta0(i),sqrt(sa(i)));
+    fprintf('(%03d) sigma = %0.2f, h = %0.3f, theta = %+0.2f ',...
+	    i,sigma(i),h(i),theta0(i));
     fprintf('(sd = %0.3f)\n',sqrt(sa(i)));
-  
+
     % Compute the unnormalized log-importance weight given values for the
     % hyperparameters, LOG10SIGMA, H and THETA0. Implicitly, the importance
     % weight includes these terms: the likelihood, the prior, and the
