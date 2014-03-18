@@ -42,6 +42,11 @@
 % column of ETA is the set of parameters specifying the variational
 % approximation to logistic regression factors, conditioned on the
 % hyperparameter settings. ETA is an N x NS matrix.
+%
+% [LOGW,ALPHA,MU,S,ETA] = MULTISNPBINHYPER(X,Y,H,THETA0,ALPHA,MU,ETA)
+% initializes the parameters specifying the approximating distribution for
+% each combination of the hyperparameters, overriding a random
+% initialization of these parameters.
 function [logw, alpha, mu, s, eta] = ...
         multisnpbinhyper (X, y, h, theta0, alpha, mu, eta)
 
