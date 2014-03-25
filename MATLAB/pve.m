@@ -1,4 +1,4 @@
-<% PVE(SX,SA,THETA0) returns the prior estimate of the proportion of variance
+% PVE(SX,SA,THETA0) returns the prior estimate of the proportion of variance
 % in a given outcome (e.g. a quantitative trait) that is explained by a
 % collection of explanatory variables (e.g. genetic markers). SA is the
 % prior variance of the additive effects on the outcome, THETA0 is the
