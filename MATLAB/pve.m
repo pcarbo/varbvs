@@ -6,7 +6,7 @@
 % sample variances for all the explanatory variables. If inputs SA and
 % THETA0 are both not scalars, they must be numeric arrays of the same
 % dimension.
-function h = pve (sx, sa, THETA0)
+function h = pve (sx, sa, theta0)
 
   % This is the expected value of the sample genetic variance divided by
   % the variance of the residual.
