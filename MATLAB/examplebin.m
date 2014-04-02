@@ -45,9 +45,12 @@ maf(snps2)  = maf(snps1);
 [X y]       = createbindata(maf,beta,logit(p1),n);
 
 % COMPUTE VARIATIONAL ESTIMATES.
+% Note that this yield the same result:
+%
+%   [logw alpha mu s eta] = multisnpbinhyper(X,y,H,THETA0);
+%
 fprintf('Computing variational estimates.\n');
 [H THETA0] = ndgrid(h,theta0);
-% [logw alpha mu s eta] = multisnpbinhyper(X,y,H,THETA0);
 [logw alpha mu s eta] = multisnpbinzhyper(X,ones(n,1),y,H,THETA0);
 
 % Compute the normalize importance weights.

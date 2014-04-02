@@ -12,9 +12,10 @@ function eta = updateetaz (X, Z, y, v, Xr, d)
   muz = S*Z'*(y - 0.5 - d.*Xr);
 
   % Calculate the covariance between the coefficients u and beta.
-  C = -double((S*Z'*D)*X)*diag(sparse(v));
+  V = diag(sparse(v));
+  C = -double((S*Z'*D)*X)*V;
 
   % This is the M-step update for the free parameters.
   U   = double((S*Z'*D)*X)';
-  eta = sqrt((Z*muz + Xr).^2 + diagsq2(Z,S) + diagsq2(Z,U'*diag(v)*U) ...
+  eta = sqrt((Z*muz + Xr).^2 + diagsq2(Z,S) + diagsq2(Z,U'*V*U) ...
              + diagsqt(X,v) + 2*diagprod(X*C',Z));
