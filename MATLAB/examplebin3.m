@@ -1,4 +1,7 @@
-% PROVDE SHORT DESCRIPTION OF MATLAB SCRIPT HERE.
+% In this smalls script, I test the "alternative" implementation of the
+% variational approximation for logistic regression (VARBVSALTBIN) against
+% the standard implementation (VARBVSBIN). Both procedures should give
+% exactly the same solution.
 clear
 
 % SCRIPT PARAMETERS.
@@ -36,14 +39,5 @@ fprintf('Computing variational estimates.\n');
 [lnZ0 alpha0 mu0 s0 eta] = varbvsbin(X,y,sa^2,log(na/p));
 
 % RECONSTRUCT VARIATIONAL ESTIMATES USING "varbvs".
-d    = slope(eta);
-D    = diag(d) - d*d'/sum(d);
-R    = chol(D);
-Xhat = R*X;
-yhat = y - 0.5;
-yhat = R'\(yhat - sum(yhat)/sum(d)*d);
 options = struct('alpha',alpha0,'mu',mu0);
-[lnZ alpha mu s] = varbvs(Xhat,yhat,1,sa^2,log(na/p),options);
-lnZ = lnZ + n/2*log(2*pi) - log(sum(d))/2 + yhat'*yhat/2 ...
-      + sum(logsigmoid(eta)) + eta'*(d.*eta - 1)/2 ...
-      + sum(y - 0.5)^2/(2*sum(d));
+[lnZ alpha mu s] = varbvsaltbin(X,y,sa^2,log(na/p),eta,options);
