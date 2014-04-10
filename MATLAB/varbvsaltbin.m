@@ -11,15 +11,20 @@ function [lnZ, alpha, mu, s] = varbvsaltbin (X, y, sa, logodds, eta, options)
   % Get the number of samples.
   n = length(y);
 
+  % Take care of the optional inputs.
+  if ~exist('options')
+    options = [];
+  end
+
   % Use the variational approximation to the logistic regression factors,
   % specified by the vector of parameters ETA, to transform the model to a
   % linear regression; that is, YHAT now acts as a quantitative trait.
   y    = y - 0.5;
   d    = slope(eta);
-  D    = diag(d + 1e-4) - d*d'/sum(d);
+  D    = diag(d + 1e-6) - d*d'/sum(d);
   R    = chol(D);
   yhat = R'\(y - sum(y)/sum(d)*d);
-  [lnZ alpha mu s] = varbvs(R*X,yhat,1,sa,logodds);
+  [lnZ alpha mu s] = varbvs(R*X,yhat,1,sa,logodds,options);
 
   % We need to modify the final expression for the variational lower
   % bound. 

@@ -1,4 +1,4 @@
-% [LNZ,ALPHA,MU,S,ETA] = VARBVSBIN(X,Y,SA,LOGODDS) implements the
+% [LNZ,ALPHA,MU,S,ETA] = VARBVSZBIN(X,Z,Y,SA,LOGODDS) implements the
 % fully-factorized variational approximation for Bayesian variable selection
 % in logistic regression, allowing for covariates. It is the same as
 % VARBVSBIN, except that it allows for an additional set of covariates that
