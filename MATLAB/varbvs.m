@@ -1,3 +1,5 @@
+% NOTE: UPDATE THESE COMMENTS.
+%
 % [LNZ,ALPHA,MU,S] = VARBVS(X,Y,SIGMA,SA,LOGODDS) implements the
 % fully-factorized variational approximation for Bayesian variable selection
 % in linear regression. It finds the "best" fully-factorized variational
@@ -45,7 +47,8 @@
 % OPTIONS.ALPHA and OPTIONS.MU to override the random initialization of
 % variational parameters ALPHA and MU. Set OPTIONS.VERBOSE = FALSE to turn
 % off reporting the algorithm's progress.
-function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
+function [lnZ, alpha, mu, s, sigma] = varbvs (X, y, sigma, sa, ...
+                                              logodds, options)
 
   % Convergence is reached when the maximum relative distance between
   % successive updates of the variational parameters is less than this
@@ -104,6 +107,13 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
     error('OPTIONS.ALPHA and OPTIONS.MU must be vectors of length P');
   end
 
+  % Determine whether to update the residual variance parameter.
+  if isfield(options,'update_sigma')
+    update_sigma = options.update_sigma;
+  else
+    update_sigma = false;
+  end
+
   % Determine whether to display the algorithm's progress.
   if isfield(options,'verbose')
     verbose = options.verbose;
@@ -127,8 +137,8 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
   lnZ  = -Inf;
   iter = 0;
   if verbose
-    fprintf('       variational    max. incl max.\n');
-    fprintf('iter   lower bound  change vars E[b]\n');
+    fprintf('       variational    max. incl max.      \n');
+    fprintf('iter   lower bound  change vars E[b] sigma\n');
   end
   while true
 
@@ -150,6 +160,16 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
     end
     [alpha mu Xr] = varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,I);
     
+    % UPDATE RESIDUAL VARIANCE.
+    % Compute the maximum likelihood estimate of the residual variance
+    % parameter (SIGMA), if requested. Note that we must also recalculate
+    % the variance of the regression coefficients.
+    if update_sigma
+      sigma = (norm(y - Xr)^2 + d'*betavar(alpha,mu,s) ...
+               + alpha'*(s + mu.^2)/sa)/(n + sum(alpha));
+      s = sa*sigma./(sa*d + 1);
+    end
+
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute the lower bound to the marginal log-likelihood.
     lnZ = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
@@ -166,8 +186,8 @@ function [lnZ, alpha, mu, s] = varbvs (X, y, sigma, sa, logodds, options)
     I      = find(abs(params) > 1e-6);
     err    = relerr(params(I),params0(I));
     if verbose
-      fprintf('%4d %+13.6e %0.1e %4d %0.2f\n',iter,lnZ,max(err),...
-	      round(sum(alpha)),max(abs(alpha.*mu)));
+      fprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f\n',iter,lnZ,max(err),...
+	      round(sum(alpha)),max(abs(alpha.*mu)),sqrt(sigma));
     end
     if lnZ < lnZ0
       alpha = alpha0;
