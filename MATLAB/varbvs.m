@@ -1,5 +1,3 @@
-% NOTE: UPDATE THESE COMMENTS.
-%
 % [LNZ,ALPHA,MU,S] = VARBVS(X,Y,SIGMA,SA,LOGODDS) implements the
 % fully-factorized variational approximation for Bayesian variable selection
 % in linear regression. It finds the "best" fully-factorized variational
@@ -46,7 +44,11 @@
 % VARBVS(...,OPTIONS) overrides the default behaviour of the algorithm. Set
 % OPTIONS.ALPHA and OPTIONS.MU to override the random initialization of
 % variational parameters ALPHA and MU. Set OPTIONS.VERBOSE = FALSE to turn
-% off reporting the algorithm's progress.
+% off reporting the algorithm's progress. And set OPTIONS.UPDATE_SIGMA =
+% TRUE to compute the maximum likelihood estimate of the residual variance
+% (SIGMA), in which case input SIGMA acts as the initial estimate of this
+% parameter. When this option is set to TRUE, the maximum likelihood
+% estimate is returned in the fifth output.
 function [lnZ, alpha, mu, s, sigma] = varbvs (X, y, sigma, sa, ...
                                               logodds, options)
 
