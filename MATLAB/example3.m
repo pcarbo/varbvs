@@ -1,4 +1,5 @@
-% DESCRIPTION OF SCRIPT GOES HERE.
+% This is a small example to check that estimation of the residual
+% variance parameter (SIGMA) works correctly.
 clear
 
 % SCRIPT PARAMETERS.

@@ -1,5 +1,6 @@
 varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
-                            mu0 = NULL, verbose = TRUE) {
+                            mu0 = NULL, update.sigma = FALSE,
+                            verbose = TRUE) {
   # Implements the fully-factorized variational approximation for
   # Bayesian variable selection in linear regression. It finds the
   # "best" fully-factorized variational approximation to the posterior
@@ -70,8 +71,8 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
   lnZ  <- -Inf
   iter <- 0
   if (verbose) {
-    cat("       variational    max. incl max.\n")
-    cat("iter   lower bound  change vars E[b]\n")
+    cat("       variational    max. incl max.      \n")
+    cat("iter   lower bound  change vars E[b] sigma\n")
   }
   while (TRUE) {
 
@@ -101,6 +102,16 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
            intgamma(logodds,alpha) +
            intklbeta(alpha,mu,s,sigma*sa)
 
+    # UPDATE RESIDUAL VARIANCE.
+    # Compute the maximum likelihood estimate of the residual variance
+    # parameter (sigma), if requested. Note that we must also recalculate
+    # the variance of the regression coefficients.
+    if (update.sigma) {
+      sigma <- (norm2(y - Xr)^2 + dot(d,betavar(alpha,mu,s))
+                + dot(alpha,s + mu^2)/sa)/(n + sum(alpha))
+      s <- sa*sigma/(sa*d + 1)
+    }
+    
     # CHECK CONVERGENCE.
     # Print the status of the algorithm and check the convergence
     # criterion. Convergence is reached when the maximum relative
@@ -112,7 +123,7 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
     S      <- which(abs(params) > 1e-6)
     err    <- relerr(params[S],params0[S])
     if (verbose)
-      cat(sprintf('%4d %+13.6e %0.1e %4d %0.2f\n',iter,lnZ,max(err),
+      cat(sprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f\n',iter,lnZ,max(err),
                   round(sum(alpha)),max(abs(alpha*mu))))
     if (lnZ < lnZ0) {
       alpha <- alpha0
@@ -125,5 +136,5 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
   }
 
   # Return the variational estimates.
-  return(list(alpha=alpha,mu=mu,s=s,lnZ=lnZ))
+  return(list(alpha=alpha,mu=mu,s=s,lnZ=lnZ,sigma=sigma))
 }

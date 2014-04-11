@@ -22,7 +22,7 @@ to minimize the Kullback-Leibler divergence objective.}
 \usage{
 
 varbvsoptimize(X, y, sigma, sa, logodds, alpha0 = NULL,
-mu0 = NULL, verbose = TRUE)
+mu0 = NULL, update.sigma = FALSE,verbose = TRUE)
 
 varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
 }
@@ -59,6 +59,10 @@ varbvsupdate(X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, S)
   \item{y}{Vector of observations about the outcome. It is a vector of
            length \code{n}.}
 
+  \item{update.sigma}{Set \code{update.sigma = TRUE} to compute the
+                      maximum likelihood estimate of the residual
+                      variance parameter.}
+	 
   \item{verbose}{Set \code{verbose = FALSE} to turn off reporting the 
                  algorithm's progress.}
 
@@ -97,9 +101,10 @@ the C function in the shared library is made using \code{\link{.C}}.
 
 \value{
 
-\code{varbvsoptimize} returns a list containing four components:
-variational parameters \code{alpha}, \code{mu} and \code{s}, and the
-variational estimate of the marginal log-likelihood \code{lnZ}.
+\code{varbvsoptimize} returns a list containing 5 components:
+variational parameters \code{alpha}, \code{mu} and \code{s}, the
+variational estimate of the marginal log-likelihood \code{lnZ}, and the
+residual variance parameter \code{sigma}.
 
 \code{varbvsupdate} returns a list containing three components:
 the updated variational parameters \code{alpha} and \code{mu}, and the
