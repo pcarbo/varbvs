@@ -1,5 +1,5 @@
 #Variational inference for Bayesian variable selection implemented in MATLAB and R
-
+ 
 ###Introduction
 
 This software package includes
