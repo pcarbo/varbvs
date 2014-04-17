@@ -80,8 +80,8 @@ fprintf('Recomputing variational estimates for first half of SNPs.\n');
 alpha2  = alpha0;
 mu2     = mu0;
 s2      = s0;
-options = struct('alpha',alpha0(A),'mu',mu0(A),'Xb0',...
-                 X(:,B)*(alpha0(B).*mu0(B)));
+options = struct('alpha',alpha0(A),'mu',mu0(A),...
+                 'Xb0',X(:,B)*(alpha0(B).*mu0(B)));
 lnZa0   = varbvsaltzbin(X(:,A),Z,y,sa^2,log(2*na/(3*p)),eta,options);
 fprintf('\n');
 [lnZa1 alpha2(A) mu2(A) s2(A)] = ...
