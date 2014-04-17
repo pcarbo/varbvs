@@ -5,7 +5,7 @@
 clear
 
 % SCRIPT PARAMETERS.
-p  = 5000;  % Number of variables (SNPs).
+p  = 1000;  % Number of variables (SNPs).
 n  = 4000;  % Number of samples (subjects).
 na = 16;    % Number of SNPs that affect the outcome.
 sa = 0.2;   % Standard deviation of log-odds ratios.
@@ -50,7 +50,7 @@ maf(snps2)  = maf(snps1);
 % Generate the samples.
 nz    = length(u);
 [X y] = createbindata([maf repmat(0.5,1,nz)],[beta; u],logit(p1),n);
-Z     = [ones(n,1) X(:,p+(1:nz))];
+Z     = [ones(n,1)] % X(:,p+(1:nz))];
 X     = X(:,1:p);
 
 % COMPUTE VARIATIONAL ESTIMATES USING UNIFORM PRIOR.
