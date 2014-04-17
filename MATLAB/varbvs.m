@@ -44,8 +44,10 @@
 % VARBVS(...,OPTIONS) overrides the default behaviour of the algorithm. Set
 % OPTIONS.ALPHA and OPTIONS.MU to override the random initialization of
 % variational parameters ALPHA and MU. Set OPTIONS.VERBOSE = FALSE to turn
-% off reporting the algorithm's progress. And set OPTIONS.UPDATE_SIGMA =
-% TRUE to compute the maximum likelihood estimate of the residual variance
+% off reporting the algorithm's progress. Set OPTIONS.UPDATE_VARS to specify
+% the indices of the variables to update, so that the variational estimates
+% for the other variables remain fixed. And set OPTIONS.UPDATE_SIGMA = TRUE
+% to compute the maximum likelihood estimate of the residual variance
 % (SIGMA), in which case input SIGMA acts as the initial estimate of this
 % parameter. When this option is set to TRUE, the maximum likelihood
 % estimate is returned in the fifth output.
@@ -109,6 +111,15 @@ function [lnZ, alpha, mu, s, sigma] = varbvs (X, y, sigma, sa, ...
     error('OPTIONS.ALPHA and OPTIONS.MU must be vectors of length P');
   end
 
+  % Determine whether to update the variational estimates for only a
+  % subset of the variables.
+  if isfield(options,'update_vars')
+    update_vars = options.update_vars(:)';
+  else
+    update_vars = 1:p;
+  end
+  p = length(update_vars);
+
   % Determine whether to update the residual variance parameter.
   if isfield(options,'update_sigma')
     update_sigma = options.update_sigma;
@@ -156,9 +167,9 @@ function [lnZ, alpha, mu, s, sigma] = varbvs (X, y, sigma, sa, ...
     % UPDATE VARIATIONAL APPROXIMATION.
     % Run a forward or backward pass of the coordinate ascent updates.
     if isodd(iter)
-      I = 1:p;
+      I = update_vars(1:p);
     else
-      I = p:-1:1;
+      I = update_vars(p:-1:1);
     end
     [alpha mu Xr] = varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,I);
     
