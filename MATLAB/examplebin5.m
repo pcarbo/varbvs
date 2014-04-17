@@ -1,3 +1,7 @@
+% The goal of this script is to test a more efficient strategy for computing
+% variational estimates of posterior probabilities and the variational lower
+% bound when we only update the posterior probabilities for a small subset
+% of SNPs.
 clear
 
 % SCRIPT PARAMETERS.
