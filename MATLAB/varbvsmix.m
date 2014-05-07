@@ -156,7 +156,8 @@ function [lnZ, alpha, mu1, mu2, s1, s2] = ...
       % probability.
       SSR1     = mu1(i)^2/s1(i);
       SSR2     = mu2(i)^2/s2(i);
-      alpha(i) = sigmoid(logodds + (log(s1(i)*sa2/(s2(i)*sa1)) + SSR1-SSR2)/2);
+      alpha(i) = sigmoid(logodds(i) + log(s1(i)*sa2/(s2(i)*sa1))/2 ...
+                         + (SSR1 - SSR2)/2);
   
       % Update Xr = X*r.
       rnew = alpha(i)*mu1(i) + (1-alpha(i))*mu2(i);
@@ -177,7 +178,6 @@ function [lnZ, alpha, mu1, mu2, s1, s2] = ...
 
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute the lower bound to the marginal log-likelihood.
-    % TO DO: Fix this up.
     lnZ = intlinearmix(Xr,d,y,sigma,alpha,mu1,mu2,s1,s2) ...
           + intgamma(logodds,alpha) ...
           + intklbetamix(alpha,mu1,mu2,s1,s2,sigma*sa1,sigma*sa2);
