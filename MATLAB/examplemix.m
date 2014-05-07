@@ -1,12 +1,21 @@
-% DESCRIPTION OF THIS SCRIPT GOES HERE.
+% This is a small script to evaluate the variational approximation for the
+% mixture model in an idealized setting when the genetic markers (SNPs)
+% are uncorrelated with each other.
 clear
 
 % SCRIPT PARAMETERS.
-n     = 5e3;  % Number of samples.
-p     = 2e3;  % Number of variables (SNPs).
-na    = 10;   % Number of QTLs.
-h     = 0.4;  % Proportion of variance explained by polygenic effects.
-sa    = 0.2;  % Variance of additive QTL effects.
+n  = 1e3;  % Number of samples.
+p  = 2e3;  % Number of variables (SNPs).
+na = 10;   % Number of QTLs.
+r  = 0.4;  % Proportion of variance explained by "background" effects.
+sa = 0.2;  % Variance of additive QTL effects.
+
+% Candidate values for the log-odds of being a QTL (theta0), the proportion
+% of variance explained by the "background" polygenic effects (h), and prior
+% estimate of the *standard deviation* of the additive QTL effects (sd).
+theta0 = (-3:0.25:-1)';
+h      = (0.1:0.1:0.9)';
+sd     = 0.1:0.1:0.4;
 
 % Set the random number generator seed.
 seed = 1;
@@ -24,7 +33,8 @@ X   = (rand(n,p) < repmat(maf,n,1)) + ...
       (rand(n,p) < repmat(maf,n,1));
 X   = X - repmat(mean(X),n,1);
 
-% Generate "background" polygenic effects for most of the SNPs.
+% Generate "background" polygenic effects for most (but not all) of the
+% SNPs.
 beta    = randn(p,1);
 I       = randperm(p);
 I       = I(1:na);
@@ -40,18 +50,20 @@ beta(I) = 0;
 %   a = beta'*cov(X)*beta.
 %
 % Here, sb is the variance of the "background" polygenic effects.
-sb   = h/(1-h)/var(X*beta,1);
+sb   = r/(1-r)/var(X*beta,1);
 beta = sqrt(sb) * beta;
 
 % Generate the additive QTL effects.
-I       = find(beta == 0);
+qtl     = beta == 0;
+I       = find(qtl);
 beta(I) = sqrt(sa) * randn(na,1);
 
 % Generate the quantitative trait measurements, then take into account an
-% intercept by centering the outcomes Y to have mean zero.
+% intercept by centering the outcomes Y to have mean zero. Note that the
+% columns of X are already centered.
 y = X*beta + randn(n,1);
 y = y - mean(y);
 
 % COMPUTE VARIATIONAL ESTIMATES.
 fprintf('Computing variational estimates.\n');
-[alpha mu1 mu2 s1 s2] = varbvsmix(X,y,1,sa,sb,log(na/p));
+[lnZ alpha mu1 mu2 s1 s2] = varbvsmix(X,y,var(y),sa,sb,log(na/p));
