@@ -4,5 +4,5 @@
 % first mixture component. Inputs P, MU1 and MU2 must be scalars, or arrays
 % of the same dimension.
 function r = betameanmix (p, mu1, mu2)
-  r = p.*mu1 + (1-p).*mu2
+  r = p.*mu1 + (1-p).*mu2;
 

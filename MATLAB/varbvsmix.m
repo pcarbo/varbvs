@@ -110,7 +110,7 @@ function [lnZ, alpha, mu1, mu2, s1, s2] = ...
   % avoid storing the transpose of X, since X may be large.
   xy = (y'*X)';
   d  = sum(X.^2)';
-  Xr = X*(alpha.*mu1 + (1-alpha).*mu2);
+  Xr = X*betameanmix(alpha,mu1,mu2);
   
   % Calculate the variances of the coefficients.
   s1 = sa1*sigma./(sa1*d + 1);
@@ -120,8 +120,10 @@ function [lnZ, alpha, mu1, mu2, s1, s2] = ...
   % Repeat until convergence criterion is met.
   lnZ  = -Inf;
   iter = 0;
-  fprintf('       variational    max. incl max.      \n');
-  fprintf('iter   lower bound  change vars E[b] sigma\n');
+  if verbose
+    fprintf('       variational    max. incl max.      \n');
+    fprintf('iter   lower bound  change vars E[b] sigma\n');
+  end
   while true
 
     % Go to the next iteration.
