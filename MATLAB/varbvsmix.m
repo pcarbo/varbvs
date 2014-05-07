@@ -143,6 +143,8 @@ function [lnZ, alpha, mu1, mu2, s1, s2] = ...
     else
       I = p:-1:1;
     end
+
+    % TO DO: implement a much faster loop in C.
     for i = 1:p
   
       % Update the variational estimates of the posterior means.
@@ -162,11 +164,17 @@ function [lnZ, alpha, mu1, mu2, s1, s2] = ...
     end
 
     % UPDATE RESIDUAL VARIANCE.
+    % Compute the maximum likelihood estimate of the residual variance
+    % parameter (SIGMA). Note that after updating the residual variance
+    % parameter, we must also recalculate the variance of the regression
+    % coefficients. 
+    %
+    % TO DO: verify that this expression is correct.
     sigma = (norm(y - Xr)^2 + d'*betavarmix(alpha,mu1,mu2,s1,s2) ...
              + alpha'*(s1 + mu1.^2)/sa1 ...
              + (1-alpha)'*(s2 + mu2.^2)/sa2)/(n + p);
-    s1 = sa1*sigma./(sa1*d + 1);
-    s2 = sa2*sigma./(sa2*d + 1);
+    s1    = sa1*sigma./(sa1*d + 1);
+    s2    = sa2*sigma./(sa2*d + 1);
 
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute the lower bound to the marginal log-likelihood.

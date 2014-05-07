@@ -1,4 +1,4 @@
-% BETAMEANMIX(P,MU,S) returns the mean of X, in which X is drawn from a
+% BETAMEANMIX(P,MU1,MU2) returns the mean of X, in which X is drawn from a
 % mixture of two normals. Inputs MU1 and MU2 specify the means of the two
 % normal densities, and P specifies the probability of drawing X from the
 % first mixture component. Inputs P, MU1 and MU2 must be scalars, or arrays
