@@ -144,7 +144,7 @@ function [lnZ, alpha, mu1, mu2, s1, s2] = ...
       I = p:-1:1;
     end
 
-    % TO DO: implement a much faster loop in C.
+    % TO DO: implement a much faster loop in C!!!
     for i = 1:p
   
       % Update the variational estimates of the posterior means.
@@ -172,9 +172,10 @@ function [lnZ, alpha, mu1, mu2, s1, s2] = ...
     %
     % TO DO: verify this expression.
     sigma = (norm(y - Xr)^2 + d'*betavarmix(alpha,mu1,mu2,s1,s2) ...
-             + alpha'*(s1 + mu1.^2)/sa1 + (1-alpha)'*(s2 + mu2.^2)/sa2)/(n+p);
-    s1    = sa1*sigma./(sa1*d + 1);
-    s2    = sa2*sigma./(sa2*d + 1);
+             + alpha'*(s1 + mu1.^2)/sa1 ...
+             + (1-alpha)'*(s2 + mu2.^2)/sa2)/(n + p);
+    s1 = sa1*sigma./(sa1*d + 1);
+    s2 = sa2*sigma./(sa2*d + 1);
 
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute the lower bound to the marginal log-likelihood.
@@ -191,8 +192,10 @@ function [lnZ, alpha, mu1, mu2, s1, s2] = ...
     params = [ alpha; alpha.*mu1; (1-alpha).*mu2 ];
     I      = find(abs(params) > 1e-6);
     err    = relerr(params(I),params0(I));
-    fprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f\n',iter,lnZ,max(err),...
-            round(sum(alpha)),max(abs(alpha.*mu1)),sqrt(sigma));
+    if verbose
+      fprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f\n',iter,lnZ,max(err),...
+              round(sum(alpha)),max(abs(alpha.*mu1)),sqrt(sigma));
+    end
     if lnZ < lnZ0
       alpha = alpha0;
       mu1   = mu10;
