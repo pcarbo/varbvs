@@ -2,6 +2,7 @@ useDynLib(varbvs)
 export(varbvsoptimize,
        varbvsupdate,
        varsimbvs,
+       varbvsmixupdate,
        varbvsbinupdate,
        varbvsbinoptimize,
        updatestats,
