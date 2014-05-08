@@ -1,9 +1,9 @@
 % [LNZ,ALPHA,MU1,MU2,S1,S2,SIGMA] = VARBVSMIX(X,Y,SIGMA,SA1,SA2,LOGODDS)
-% implements the fully-factorized variational approximation for the "mixture
-% model" with linear regression. It finds a "good" fully-factorized
-% variational approximation to the posterior distribution of the
-% coefficients in a linear regression model of a continuous outcome, with
-% normal mixture priors on the coefficients. By "good", we mean the
+% implements the fully-factorized variational approximation for the Bayesian
+% variable selection mixture model with linear regression. It finds a "good"
+% fully-factorized variational approximation to the posterior distribution
+% of the coefficients in a linear regression model of a continuous outcome,
+% with normal mixture priors on the coefficients. By "good", we mean the
 % approximating distribution that locally minimizes the Kullback-Leibler
 % divergence between the approximating distribution and the exact posterior.
 %
@@ -126,26 +126,8 @@ function [lnZ, alpha, mu1, mu2, s1, s2, sigma] = ...
     else
       I = p:-1:1;
     end
-
-    % TO DO: implement a much faster loop in C!!!
-    for i = 1:p
-  
-      % Update the variational estimates of the posterior means.
-      r      = alpha(i)*mu1(i) + (1-alpha(i))*mu2(i);
-      mu1(i) = s1(i)/sigma * (xy(i) + d(i)*r - dot(X(:,i),Xr));
-      mu2(i) = s2(i)/sigma * (xy(i) + d(i)*r - dot(X(:,i),Xr));
-  
-      % Update the variational estimate of the posterior inclusion
-      % probability.
-      SSR1     = mu1(i)^2/s1(i);
-      SSR2     = mu2(i)^2/s2(i);
-      alpha(i) = sigmoid(logodds(i) + log(s1(i)*sa2/(s2(i)*sa1))/2 ...
-                         + (SSR1 - SSR2)/2);
-  
-      % Update Xr = X*r.
-      rnew = alpha(i)*mu1(i) + (1-alpha(i))*mu2(i);
-      Xr   = Xr + (rnew - r)*X(:,i);
-    end
+    [alpha mu1 mu2 Xr] = varbvsmixupdate(X,sigma,sa1,sa2,logodds,xy,...
+                                         d,alpha,mu1,mu2,Xr,I);
 
     % UPDATE RESIDUAL VARIANCE.
     % Compute the maximum likelihood estimate of the residual variance

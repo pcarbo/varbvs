@@ -17,6 +17,7 @@ corefiles = {'C/doublevectormatlab.c '
 	     [ Rsrcdir 'vectorops.c ' ]
 	     [ Rsrcdir 'sigmoid.c '   ]
 	     [ Rsrcdir 'varbvs.c '    ]
+             [ Rsrcdir 'varbvsmix.c ' ]
 	     [ Rsrcdir 'varbvsbin.c ' ]};
 
 % These are the commands to build the build the MEX shared library files.
@@ -27,6 +28,7 @@ eval(['mex ',options,'C/var1matlab.c ',corefiles{1:4}]);
 eval(['mex ',options,'C/diagsqmatlab.c ',corefiles{1:4}]);
 eval(['mex ',options,'C/diagsqtmatlab.c ',corefiles{1:4}]);
 eval(['mex ',options,'C/varbvsupdatematlab.c ',corefiles{1:6}]);
-eval(['mex ',options,'C/varbvsbinupdatematlab.c ',corefiles{[1:5 7]}]);
-eval(['mex ',options,'C/varbvszbinupdatematlab.c ',corefiles{[1:5 7]}]);
+eval(['mex ',options,'C/varbvsmixupdatematlab.c ',corefiles{[1:5 7]}]);
+eval(['mex ',options,'C/varbvsbinupdatematlab.c ',corefiles{[1:5 8]}]);
+eval(['mex ',options,'C/varbvszbinupdatematlab.c ',corefiles{[1:5 8]}]);
 fprintf('Compilation of MEX files is complete.\n');

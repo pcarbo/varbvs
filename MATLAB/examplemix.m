@@ -1,21 +1,14 @@
 % This is a small script to evaluate the variational approximation for the
-% mixture model in an idealized setting when the genetic markers (SNPs)
-% are uncorrelated with each other.
+% Bayesian variable selection mixture model in an idealized setting when the
+% genetic markers (SNPs) are uncorrelated with each other.
 clear
 
 % SCRIPT PARAMETERS.
 n  = 1e3;  % Number of samples.
 p  = 2e3;  % Number of variables (SNPs).
 na = 10;   % Number of QTLs.
-r  = 0.4;  % Proportion of variance explained by "background" effects.
+h  = 0.4;  % Proportion of variance explained by "background" effects.
 sa = 0.2;  % Variance of additive QTL effects.
-
-% Candidate values for the log-odds of being a QTL (theta0), the proportion
-% of variance explained by the "background" polygenic effects (h), and prior
-% estimate of the *standard deviation* of the additive QTL effects (sd).
-theta0 = (-3:0.25:-1)';
-h      = (0.1:0.1:0.9)';
-sd     = 0.1:0.1:0.4;
 
 % Set the random number generator seed.
 seed = 1;
@@ -50,7 +43,7 @@ beta(I) = 0;
 %   a = beta'*cov(X)*beta.
 %
 % Here, sb is the variance of the "background" polygenic effects.
-sb   = r/(1-r)/var(X*beta,1);
+sb   = h/(1-h)/var(X*beta,1);
 beta = sqrt(sb) * beta;
 
 % Generate the additive QTL effects.
