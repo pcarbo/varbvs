@@ -52,24 +52,24 @@ varbvsmixupdate <- function (X, sigma, sa1, sa2, logodds, xy, d,
   # coerce X here; if X is large, it could use a lot of memory to
   # duplicate this matrix. For this same reason, I set DUP = FALSE so
   # that the input arguments are not duplicated.
-  result <- .C("varbvsmixupdateR",
-               n       = as.integer(n),      # Number of samples.
-               m       = as.integer(m),      # Number of updates.
-               X       = X,                  # Matrix of samples.
-               sigma   = as.double(sigma),   # Residual variance.
-               sa1     = as.double(sa1),     # Prior variance of coefficients.
-               sa2     = as.double(sa2),     # Prior variance of coefficients.
-               logodds = as.double(logodds), # Prior log-odds.
-               xy      = as.double(xy),      # xy = X'*y.
-               d       = as.double(d),       # d = diag(X'*X).
-               alpha   = as.double(alpha0),  # Posterior inclusion prob's.
-               mu1     = as.double(mu10),    # Posterior mean coefficients.
-               mu2     = as.double(mu20),    # Posterior mean coefficients.
-               Xr      = as.double(Xr0),     # Xr = X*(alpha*mu).
-               S       = as.integer(S-1),    # Updates to perform.
-               DUP     = FALSE)
-  return(list(alpha = result$alpha,
-              mu1   = result$mu1,
-              mu2   = result$mu2,
-              Xr    = result$Xr))
+  out <- .C("varbvsmixupdateR",
+            n       = as.integer(n),      # Number of samples.
+            m       = as.integer(m),      # Number of updates.
+            X       = X,                  # Matrix of samples.
+            sigma   = as.double(sigma),   # Residual variance.
+            sa1     = as.double(sa1),     # Prior variance of coefficients.
+            sa2     = as.double(sa2),     # Prior variance of coefficients.
+            logodds = as.double(logodds), # Prior log-odds.
+            xy      = as.double(xy),      # xy = X'*y.
+            d       = as.double(d),       # d = diag(X'*X).
+            alpha   = as.double(alpha0),  # Posterior inclusion prob's.
+            mu1     = as.double(mu10),    # Posterior mean coefficients.
+            mu2     = as.double(mu20),    # Posterior mean coefficients.
+            Xr      = as.double(Xr0),     # Xr = X*(alpha*mu).
+            S       = as.integer(S-1),    # Updates to perform.
+            DUP     = FALSE)
+  return(list(alpha = out$alpha,
+              mu1   = out$mu1,
+              mu2   = out$mu2,
+              Xr    = out$Xr))
 }

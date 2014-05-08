@@ -97,7 +97,7 @@ normalizelogweights <- function (logw) {
   # Normalize the importance weights.
   w <- w / sum(w)
 }
-  
+
 betavar <- function (p, mu, s) {
   # betavar(p,mu,s) returns the variance of random vector X, in which
   # X[i] is drawn from the normal distribution with probability p[i],
@@ -112,6 +112,25 @@ betavar <- function (p, mu, s) {
   #    v = p*(s + mu^2) - (p*mu)^2.
   #
   return(p*(s + (1 - p)*mu^2))
+}
+
+betameanmix <- function (p, mu1, mu2) {
+  # betameanmix(p,mu1,mu2) returns the mean of X, in which X is drawn
+  # from a mixture of two normals. Inputs mu1 and mu2 specify the
+  # means of the two normal densities, and p specifies the probability
+  # of drawing x from the first mixture component. Inputs p, mu1 and
+  # mu2 must be vectors of the same length.
+  return(p*mu1 + (1-p)*mu2)
+}
+
+betavarmix <- function (p, mu1, mu2, s1, s2) {
+  # betavarmix(p,mu1,mu2,s1,s2) returns the variance of X, in which X
+  # is drawn from a mixture of two normals. Inputs mu1, mu2, s1 and s2
+  # specify the means and variances of the two normal densities, and p
+  # specifies the probability of drawing X from the first mixture
+  # component. Inputs p, mu1, mu2, s1 and s2 must be vectors of the
+  # same length.
+  return(p*(s1 + mu1^2) + (1-p)*(s2 + mu2^2) - betameanmix(p,mu1,mu2)^2)
 }
 
 sigmoid <- function (x) {
