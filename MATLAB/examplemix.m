@@ -8,11 +8,12 @@ n  = 5e3;  % Number of samples.
 p  = 1e3;  % Number of variables (SNPs).
 na = 10;   % Number of QTLs.
 r  = 0.4;  % Proportion of variance explained by "background" effects.
-sd = 0.5;  % Standard deviation of additive QTL effects.
+sd = 0.5;  % Standard deviation (*not variance*) of additive QTL effects.
 
 % Candidate values for the prior log-odds of inclusion (theta0), the
 % proportion of variance explained by the "background" polygenic effects
-% (h), and the prior standard deviation of the additive QTL effects (sa).
+% (h), and the prior standard deviation (*not variance*) of the additive QTL
+% effects (sa).
 theta0 = (-3:0.25:-1.5)';
 h      = (0.3:0.025:0.45)';
 sa     = (0.2:0.1:0.8)';
