@@ -108,9 +108,9 @@ varbvsoptimize <- function (X, y, sigma, sa, logodds, alpha0 = NULL,
 
     # COMPUTE VARIATIONAL LOWER BOUND.
     # Compute the lower bound to the marginal log-likelihood.
-    lnZ <- intlinear(Xr,d,y,sigma,alpha,mu,s) +
-           intgamma(logodds,alpha) +
-           intklbeta(alpha,mu,s,sigma*sa)
+    lnZ <- (intlinear(Xr,d,y,sigma,alpha,mu,s) 
+            + intgamma(logodds,alpha) 
+            + intklbeta(alpha,mu,s,sigma*sa))
     
     # CHECK CONVERGENCE.
     # Print the status of the algorithm and check the convergence

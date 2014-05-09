@@ -120,9 +120,9 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
 
     # COMPUTE VARIATIONAL LOWER BOUND.
     # Compute variational lower bound to marginal log-likelihood.
-    lnZ <- intlogit(y,stats,alpha,mu,s,Xr,eta) +
-           intgamma(logodds,alpha) +
-           intklbeta(alpha,mu,s,sa)
+    lnZ <- (intlogit(y,stats,alpha,mu,s,Xr,eta)
+            + intgamma(logodds,alpha)
+            + intklbeta(alpha,mu,s,sa))
 
     # CHECK CONVERGENCE.
     # Print the status of the algorithm and check the convergence
@@ -233,8 +233,7 @@ intlogit <- function (y, stats, alpha, mu, s, Xr, eta) {
 
   # Compute the variational approximation to the expectation of the
   # log-likelihood with respect to the variational approximation.
-  f <- sum(logsigmoid(eta)) + dot(eta,u*eta - 1)/2 + log(a)/2 +
-       a*sum(y - 0.5)^2/2 + dot(stats$yhat,Xr) - qnorm(Xr,u)^2/2 +
-       a/2*dot(u,Xr)^2 - dot(stats$d,betavar(alpha,mu,s))/2
-  return(f)
+  return(sum(logsigmoid(eta)) + dot(eta,u*eta - 1)/2 + log(a)/2
+         + a*sum(y - 0.5)^2/2 + dot(stats$yhat,Xr) - qnorm(Xr,u)^2/2
+         + a/2*dot(u,Xr)^2 - dot(stats$d,betavar(alpha,mu,s))/2)
 }

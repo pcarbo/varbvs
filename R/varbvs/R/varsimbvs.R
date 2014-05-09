@@ -35,10 +35,10 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
   # log-importance weights (logw), variational estimates of the
   # posterior inclusion probabilities (alpha), and variational
   # estimates of the posterior mean coefficients (mu).
-  lnZ     <- sigma
-  logw    <- sigma
-  lnZ[ ]  <- NA
-  logw[ ] <- NA
+  lnZ    <- sigma
+  logw   <- sigma
+  lnZ[]  <- NA
+  logw[] <- NA
   alpha   <- matrix(0,p,ns)
   mu      <- matrix(0,p,ns)
 
@@ -60,11 +60,11 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
     mu0    <- rnorm(p)
     
     # Run the coordinate ascent algorithm.
-    result     <- varbvsoptimize(X,y,sigma[i],sa[i],logit(q1[i]),
-                                 alpha0,mu0,verbose=FALSE)
-    lnZ[i]     <- result$lnZ
-    alpha[ ,i] <- result$alpha
-    mu[ ,i]    <- result$mu
+    result    <- varbvsoptimize(X,y,sigma[i],sa[i],logit(q1[i]),
+                                alpha0,mu0,verbose=FALSE)
+    lnZ[i]    <- result$lnZ
+    alpha[,i] <- result$alpha
+    mu[,i]    <- result$mu
   }
   cat("\n")
   
@@ -72,8 +72,8 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
   # algorithm. This is chosen from the hyperparameters with the highest
   # marginal likelihood.
   i      <- which.max(lnZ)
-  alpha0 <- c(alpha[ ,i])
-  mu0    <- c(mu[ ,i])
+  alpha0 <- c(alpha[,i])
+  mu0    <- c(mu[,i])
   
   # Repeat for each combination of the hyperparameters.
   cat(sprintf("Computing importance weights for %d combinations ",ns))
@@ -84,21 +84,21 @@ varsimbvs <- function (X, y, sigma, sa, log10q, a, b, ca) {
     cat(rep("\b",1,44),sep="");
   
     # Run the coordinate ascent algorithm.
-    result     <- varbvsoptimize(X,y,sigma[i],sa[i],logit(q1[i]),
-                                 alpha0,mu0,verbose=FALSE)
-    lnZ[i]     <- result$lnZ
-    alpha[ ,i] <- result$alpha
-    mu[ ,i]    <- result$mu
+    result    <- varbvsoptimize(X,y,sigma[i],sa[i],logit(q1[i]),
+                                alpha0,mu0,verbose=FALSE)
+    lnZ[i]    <- result$lnZ
+    alpha[,i] <- result$alpha
+    mu[,i]    <- result$mu
 
     # Compute the log-importance weight. Note that if X ~ p(x), then
     # the probability density of Y = log(X) is proportional to
     # x*p(x). This is useful for calculating the prior for the
     # logarithm of the prior inclusion probability, since we want to
     # calculate the posterior distribution for log10(q), not q.
-    logw[i] <- lnZ[i] +                           # Marginal likelihood.
-               loginvgamma(sigma[i],as/2,bs/2) +  # Prior on sigma.
-               logpve(ca*sx,sa[i]) +              # Prior on sa.
-               dbeta(q1[i],a+1,b,log=TRUE)        # Prior on log10q.
+    logw[i] <- (lnZ[i]                             # Marginal likelihood.
+                + loginvgamma(sigma[i],as/2,bs/2)  # Prior on sigma.
+                + logpve(ca*sx,sa[i])              # Prior on sa.
+                + dbeta(q1[i],a+1,b,log=TRUE))     # Prior on log10q.
   }
   cat("\n")
   

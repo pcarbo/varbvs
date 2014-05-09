@@ -51,7 +51,7 @@ diagsqt <- function (X, a = NULL) {
     a <- rep(1,n)
   }
 
-  #  Compute y = X^2*a.
+  # Compute y = X^2*a.
   a <- c(a)
   y <- c(X^2 %*% a)
   return(y)

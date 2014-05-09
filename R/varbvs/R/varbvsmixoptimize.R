@@ -115,9 +115,9 @@ varbvsmixoptimize <- function (X, y, sigma, sa1, sa2, logodds, alpha0 = NULL,
     
     # COMPUTE VARIATIONAL LOWER BOUND.
     # Compute the lower bound to the marginal log-likelihood.
-    lnZ <- intlinearmix(Xr,d,y,sigma,alpha,mu1,mu2,s1,s2) 
-           + intgamma(logodds,alpha) 
-           + intklbetamix(alpha,mu1,mu2,s1,s2,sigma*sa1,sigma*sa2)
+    lnZ <- (intlinearmix(Xr,d,y,sigma,alpha,mu1,mu2,s1,s2) 
+            + intgamma(logodds,alpha) 
+            + intklbetamix(alpha,mu1,mu2,s1,s2,sigma*sa1,sigma*sa2))
 
     # CHECK CONVERGENCE.
     # Print the status of the algorithm and check the convergence

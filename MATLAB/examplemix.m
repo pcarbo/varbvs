@@ -73,12 +73,15 @@ sx = sum(var1(X));
 q  = sigmoid10(-THETA0);
 SB = H./(1-H)./(q*sx);
 
-% Initialize storage for the unnormalized log-importance weights, posterior
-% inclusion probabilities, and posterior means of the additive QTL effects.
+% Initialize storage for the unnormalized log-importance weights, residual
+% variances, posterior inclusion probabilities, and posterior means of the
+% additive QTL effects.
 ns    = numel(H);
 logw  = zeros(size(H));
+sigma = zeros(size(H));
 alpha = zeros(p,ns);
 mu1   = zeros(p,ns);
+mu2   = zeros(p,ns);
 
 % Compute the unnormalized log-importance weights. These are valid
 % importance weights so long as the prior and proposal distributions cancel
@@ -89,9 +92,9 @@ options.verbose = false;
 fprintf('iter theta0    h   sa sigma\n');
 fprintf('---- ------ ---- ---- -----\n');
 for i = 1:ns
-  [logw(i) alpha(:,i) mu1(:,i) mu2 s1 s2 sigma] = ...
+  [logw(i) alpha(:,i) mu1(:,i) mu2(:,i) s1 s2 sigma(i)] = ...
       varbvsmix(X,y,var(y),SA(i)^2,SB(i),log(10)*THETA0(i),options);
-  fprintf('%4d %0.3f %0.2f %0.2f %5.2f',i,THETA0(i),H(i),SA(i),sqrt(sigma));
+  fprintf('%4d %0.3f %0.2f %0.2f %5.2f',i,THETA0(i),H(i),SA(i),sqrt(sigma(i)));
   fprintf(repmat('\b',1,27))
 end
 fprintf('\n\n');
