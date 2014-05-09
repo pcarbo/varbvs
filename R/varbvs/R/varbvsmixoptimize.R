@@ -32,8 +32,8 @@ varbvsmixoptimize <- function (X, y, sigma, sa1, sa2, logodds, alpha0 = NULL,
     stop("Data 'X' and 'y' do not match")
 
   # Check inputs sigma and sa.
-  if (!is.scalar(sigma) || !is.scalar(sa))
-    stop("Input arguments 'sigma' and 'sa' must be scalars")
+  if (!is.scalar(sigma) || !is.scalar(sa1) || !is.scalar(sa2))
+    stop("Input arguments 'sigma', 'sa1' and 'sa2' must be scalars")
 
   # Check input logodds.
   if (is.scalar(logodds))
@@ -132,13 +132,13 @@ varbvsmixoptimize <- function (X, y, sigma, sa1, sa2, logodds, alpha0 = NULL,
     if (verbose)
       cat(sprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f\n',iter,lnZ,max(err),
                   round(sum(alpha)),max(abs(alpha*mu1)),sqrt(sigma)))
-    # if (lnZ < lnZ0) {
-    #   alpha <- alpha0
-    #   mu1   <- mu10
-    #   mu2   <- mu20
-    #   lnZ   <- lnZ0
-    #   break
-    # }
+    if (lnZ < lnZ0) {
+      alpha <- alpha0
+      mu1   <- mu10
+      mu2   <- mu20
+      lnZ   <- lnZ0
+      break
+    }
     if (max(err) < tolerance)
       break
   }
