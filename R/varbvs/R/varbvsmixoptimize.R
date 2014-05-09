@@ -132,14 +132,14 @@ varbvsmixoptimize <- function (X, y, sigma, sa1, sa2, logodds, alpha0 = NULL,
     if (verbose)
       cat(sprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f\n',iter,lnZ,max(err),
                   round(sum(alpha)),max(abs(alpha*mu1)),sqrt(sigma)))
-    if (lnZ < lnZ0) {
-      alpha <- alpha0
-      mu1   <- mu10
-      mu2   <- mu20
-      lnZ   <- lnZ0
-      break
-    }
-    else if (max(err) < tolerance)
+    # if (lnZ < lnZ0) {
+    #   alpha <- alpha0
+    #   mu1   <- mu10
+    #   mu2   <- mu20
+    #   lnZ   <- lnZ0
+    #   break
+    # }
+    if (max(err) < tolerance)
       break
   }
 
