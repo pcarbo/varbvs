@@ -129,6 +129,7 @@ fprintf('\n');
 % Calculate the posterior inclusion probabilities (PIPs), and show the
 % extent to which the SNPs with high PIP correspond to the QTLs.
 PIP     = alpha * w(:);
+mu1     = mu1   * w(:);
 I       = find(PIP > 0.5 | qtl);
 [ans J] = sort(-abs(beta(I)));
 I       = I(J);
