@@ -1,4 +1,9 @@
-% DESCRIPTION OF THIS FUNCTION GOES HERE.
+% [ALPHA,MU,S] = SINGLESNPHYPER(X,Y,W,LOG10SIGMA,H,THETA0) computes
+% posterior probabilities and expectations of the coefficients in Bayesian
+% variable selection averaged over hyperparameter settings, assuming that
+% all variables are independent of each other. Input W is the array of
+% normalized importance weights. For an explanation of the other inputs,
+% and the outputs, see function MULTISNPHYPER.
 function [alpha, mu, s] = singlesnphyper (X, y, w, log10sigma, h, theta0)
 
   % Get the number of participants in the study (n), the number of SNPs
