@@ -1,7 +1,8 @@
 % [ALPHA,MU,S] = INDBVS(XY,D,SIGMA,SA,LOGODDS) computes posterior
-% probabilities and expectations of the coefficients in Bayesian variable
-% selection assuming that all variables are independent of each other. See
-% VARBVS and VARBVSUPDATE for details about the inputs and outputs.
+% probabilities and expectations of the coefficients for Bayesian variable
+% selection in linear regression, ignoring correlations between the
+% variables. See VARBVS and VARBVSUPDATE for details about the inputs and
+% outputs.
 function [alpha, mu, s] = indbvs (xy, d, sigma, sa, logodds)
 
   % Calculate the mean (mu) and variance of the coefficients (s) given that

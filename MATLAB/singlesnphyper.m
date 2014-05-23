@@ -1,8 +1,9 @@
 % [ALPHA,MU,S] = SINGLESNPHYPER(X,Y,LOG10SIGMA,H,THETA0) computes posterior
-% probabilities and expectations of the coefficients in Bayesian variable
-% selection for each setting of the hyperparameters, assuming that all
-% variables are independent of each other. For an explanation of the inputs
-% and outputs, see function MULTISNPHYPER.
+% probabilities and expectations of the coefficients for Bayesian variable
+% selection in linear regression, assuming that all variables are
+% independent of each other. The posterior quantities are computed for each
+% setting of the hyperparameters. For an explanation of the inputs and
+% outputs, see function MULTISNPHYPER.
 function [alpha, mu, s] = singlesnphyper (X, y, log10sigma, h, theta0)
 
   % Get the number of participants in the study (n), the number of SNPs

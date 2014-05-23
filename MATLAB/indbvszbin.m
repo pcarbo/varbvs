@@ -1,4 +1,8 @@
-% DESCRIPTION OF FUNCTION GOES HERE.
+% [ALPHA,MU,S] = INDBVSZBIN(X,Z,Y,SA,LOGODDS,ETA) computes posterior
+% probabilities and expectations of the coefficients for Bayesian variable
+% selection in logistic regression, allowing for covariates, ignoring
+% correlations between the variables. See VARBVSZBIN and VARBVSZBINUPDATE
+% for details about the inputs and outputs.
 function [alpha, mu, s] = indbvszbin (X, Z, y, sa, logodds, eta)
 
   % Get the statistics used to calculate the posterior probabilities and
