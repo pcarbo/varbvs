@@ -12,6 +12,6 @@ function [alpha, mu, s] = indbvszbin (X, Z, y, sa, logodds, eta)
   % inclusion probabilities (alpha), ignoring correlations between all
   % variables (or features).
   s     = sa./(sa*xdx + 1);
-  mu    = s.*xy/sigma;
+  mu    = s.*xy;
   SSR   = mu.^2./s;
   alpha = sigmoid(logodds + (log(s/sa) + SSR)/2);
