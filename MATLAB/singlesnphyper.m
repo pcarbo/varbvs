@@ -1,10 +1,9 @@
-% [ALPHA,MU,S] = SINGLESNPHYPER(X,Y,W,LOG10SIGMA,H,THETA0) computes
-% posterior probabilities and expectations of the coefficients in Bayesian
-% variable selection averaged over hyperparameter settings, assuming that
-% all variables are independent of each other. Input W is the array of
-% normalized importance weights. For an explanation of the other inputs,
-% and the outputs, see function MULTISNPHYPER.
-function [alpha, mu, s] = singlesnphyper (X, y, w, log10sigma, h, theta0)
+% [ALPHA,MU,S] = SINGLESNPHYPER(X,Y,LOG10SIGMA,H,THETA0) computes posterior
+% probabilities and expectations of the coefficients in Bayesian variable
+% selection for each setting of the hyperparameters, assuming that all
+% variables are independent of each other. For an explanation of the inputs
+% and outputs, see function MULTISNPHYPER.
+function [alpha, mu, s] = singlesnphyper (X, y, log10sigma, h, theta0)
 
   % Get the number of participants in the study (n), the number of SNPs
   % genotyped (p), and the number of combinations of the hyperparameters
@@ -40,9 +39,3 @@ function [alpha, mu, s] = singlesnphyper (X, y, w, log10sigma, h, theta0)
     [alpha(:,i) mu(:,i) s(:,i)] = indbvs(xy,d,sigma(i),sa(i),...
                                          log(10)*theta0(i));
   end
-
-  % Compute the posterior expectations averaged over the settings of the
-  % hyperparameters.
-  alpha = alpha * w(:);
-  mu    = mu    * w(:);
-  s     = s     * w(:);
