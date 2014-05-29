@@ -39,7 +39,7 @@ fprintf('Proportion of variance explained is %0.3f.\n',sz/(sz + se));
 % COMPUTE VARIATIONAL ESTIMATES.
 fprintf('Computing variational estimates.\n');
 [H THETA0] = ndgrid(h,theta0);
-[logw alpha mu s sigma] = multisnphyper(X,y,H,THETA0);
+[logw sigma alpha mu s] = multisnphyper(X,y,H,THETA0);
 
 % Compute the normalized importance weights.
 w = normalizelogweights(logw);

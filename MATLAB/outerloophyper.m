@@ -1,8 +1,8 @@
-% [LOGW,ALPHA,MU,S,SIGMA] = OUTERLOOPHYPER(X,Y,ALPHA,MU,SIGMA,H,THETA0)
+% [LOGW,SIGMA,ALPHA,MU,S] = OUTERLOOPHYPER(X,Y,ALPHA,MU,SIGMA,H,THETA0)
 % computes unnormalized log-importance weights for the hyperparameters. It
 % is used by MULTISNPHYPER to implement the "outer loop" of the inference
 % algorithm for analysis of a quantitative trait.
-function [logw, alpha, mu, s, sigma] = ...
+function [logw, sigma, alpha, mu, s] = ...
     outerloophyper (X, y, alpha, mu, sigma, h, theta0)
 
   % Get the number of participants in the study (n), the number of SNPs

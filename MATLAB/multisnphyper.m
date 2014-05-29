@@ -1,4 +1,4 @@
-% [LOGW,ALPHA,MU,S,SIGMA] = MULTISNPHYPER(X,Y,H,THETA0) runs the full
+% [LOGW,SIGMA,ALPHA,MU,S] = MULTISNPHYPER(X,Y,H,THETA0) runs the full
 % variational inference procedure for Bayesian variable selection in linear
 % regression (for a quantitative trait). The first part to the algorithm
 % searches for a good initialization of the variational parameters.
@@ -39,10 +39,10 @@
 % maximum likelihood estimate of the residual variance; it is an array of
 % the same size as H and THETA0.
 %
-% [LOGW,ALPHA,MU,S,SIGMA] = MULTISNPHYPER(X,Y,H,THETA0,ALPHA0,MU0)
+% [LOGW,SIGMA,ALPHA,MU,S] = MULTISNPHYPER(X,Y,H,THETA0,ALPHA0,MU0)
 % initializes the variational parameters for each combination of the
 % hyperparameters, overriding a random initialization of these parameters.
-function [logw, alpha, mu, s, sigma] = multisnphyper (X, y, h, theta0, ...
+function [logw, sigma, alpha, mu, s] = multisnphyper (X, y, h, theta0, ...
                                                       alpha, mu)
   
   % Get the number of participants in the study (n), the number of SNPs
@@ -70,7 +70,7 @@ function [logw, alpha, mu, s, sigma] = multisnphyper (X, y, h, theta0, ...
   % First get the best initialization for the variational parameters.
   fprintf('Finding best initialization for %d combinations ',ns);
   fprintf('of hyperparameters.\n');
-  [logw alpha mu s sigma] = outerloophyper(X,y,alpha,mu,sigma,h,theta0);
+  [logw sigma alpha mu s] = outerloophyper(X,y,alpha,mu,sigma,h,theta0);
   
   % Choose an initialization common to all the runs of the coordinate ascent
   % algorithm. This is chosen from the hyperparameters with the highest
@@ -83,5 +83,5 @@ function [logw, alpha, mu, s, sigma] = multisnphyper (X, y, h, theta0, ...
   % Compute the unnormalized log-importance weights.
   fprintf('Computing importance weights for %d combinations ',ns);
   fprintf('of hyperparameters.\n');
-  [logw alpha mu s sigma] = outerloophyper(X,y,alpha,mu,sigma,h,theta0);
+  [logw sigma alpha mu s] = outerloophyper(X,y,alpha,mu,sigma,h,theta0);
 
