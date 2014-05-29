@@ -68,6 +68,11 @@ function [logw, sigma, alpha, mu, s] = multisnphyper (X, y, h, theta0, ...
     mu = randn(p,ns);
   end
 
+  % Take care of the remaining optional arguments.
+  if ~exist('verbose','var')
+    verbose = true;
+  end
+
   % First get the best initialization for the variational parameters.
   fprintf('Finding best initialization for %d combinations ',ns);
   fprintf('of hyperparameters.\n');
