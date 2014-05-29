@@ -15,12 +15,10 @@ na = 20;    % Number of SNPs that affect the outcome.
 sb = 0.2;   % Standard deviation of nonzero coefficients.
 se = 9;     % Variance of residual.
 
-% Candidate values for the log-variance of the residual (log10sigma), prior
-% proportion of variance explained (h), and prior log-odds of inclusion
-% (theta0).
-log10sigma = (0.8:0.05:1.1)';
-theta0     = (-2.5:0.25:-1.5)';
-h          = (0.05:0.05:0.45)';
+% Candidate values for the prior proportion of variance explained (h) and
+% prior log-odds of inclusion (theta0).
+theta0 = (-2.5:0.25:-1.5)';
+h      = (0.05:0.05:0.45)';
 
 % Set the random number generator seed.
 seed = 1;
@@ -40,8 +38,8 @@ fprintf('Proportion of variance explained is %0.3f.\n',sz/(sz + se));
 
 % COMPUTE VARIATIONAL ESTIMATES.
 fprintf('Computing variational estimates.\n');
-[LOG10SIGMA H THETA0] = ndgrid(log10sigma,h,theta0);
-[logw alpha mu s] = multisnphyper(X,y,LOG10SIGMA,H,THETA0);
+[H THETA0] = ndgrid(h,theta0);
+[logw alpha mu s sigma] = multisnphyper(X,y,H,THETA0);
 
 % Compute the normalized importance weights.
 w = normalizelogweights(logw);
@@ -49,7 +47,7 @@ w = normalizelogweights(logw);
 % Show the posterior mean of each of the hyperparameters.
 fprintf('Posterior mean of hyperparameters:\n');
 fprintf('param   mean\n');
-fprintf('sigma  %5.2f\n',dot(10.^LOG10SIGMA(:),w(:)));
+fprintf('sigma  %5.2f\n',dot(sigma(:),w(:)));
 fprintf('theta0 %+0.2f\n',dot(THETA0(:),w(:)));
 fprintf('h      %5.2f\n',dot(H(:),w(:)));
 fprintf('\n');
