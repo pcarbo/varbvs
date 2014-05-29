@@ -42,8 +42,8 @@
 % [LOGW,ALPHA,MU,S,SIGMA] = MULTISNPHYPER(X,Y,H,THETA0,ALPHA0,MU0)
 % initializes the variational parameters for each combination of the
 % hyperparameters, overriding a random initialization of these parameters.
-function [logw, alpha, mu, s, sigma] = ...
-        multisnphyper (X, y, h, theta0, alpha, mu)
+function [logw, alpha, mu, s, sigma] = multisnphyper (X, y, h, theta0, ...
+                                                      alpha, mu)
   
   % Get the number of participants in the study (n), the number of SNPs
   % genotyped (p), and the number of combinations of the hyperparameters
