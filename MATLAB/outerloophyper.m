@@ -44,3 +44,6 @@ function [logw, sigma, alpha, mu, s] = ...
       fprintf('\n');
     end
   end
+  if ~verbose
+    fprintf('\n');
+  end
