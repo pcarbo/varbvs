@@ -15,8 +15,8 @@
 % coefficients ("effects") corresponding to these variables. You simply need
 % to subtract the effects from the vector Y and all the calculations will
 % still be valid.
-function [lnZ, alpha, mu, s] = varbvsaltzbin (X, Z, y, sa, logodds, ...
-                                              eta, options)
+function [lnZ, alpha, mu, s, sa] = varbvsaltzbin (X, Z, y, sa, logodds, ...
+                                                  eta, options)
 
   % Get the number of samples.
   n = length(y);
@@ -47,7 +47,7 @@ function [lnZ, alpha, mu, s] = varbvsaltzbin (X, Z, y, sa, logodds, ...
   D    = diag(d + 1e-6) - DZ*S*DZ';
   R    = chol(D);
   yhat = R'\(y - DZ*S*(Z'*y)) - R*Xb0;
-  [lnZ alpha mu s] = varbvs(R*X,yhat,1,sa,logodds,options);
+  [lnZ alpha mu s ans sa] = varbvs(R*X,yhat,1,sa,logodds,options);
 
   % We need to modify the final expression for the variational lower
   % bound. 

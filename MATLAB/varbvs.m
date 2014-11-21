@@ -51,8 +51,8 @@
 % (SIGMA), in which case input SIGMA acts as the initial estimate of this
 % parameter. When this option is set to TRUE, the maximum likelihood
 % estimate is returned in the fifth output.
-function [lnZ, alpha, mu, s, sigma] = varbvs (X, y, sigma, sa, ...
-                                              logodds, options)
+function [lnZ, alpha, mu, s, sigma, sa] = ...
+        varbvs (X, y, sigma, sa, logodds, options)
 
   % Convergence is reached when the maximum relative distance between
   % successive updates of the variational parameters is less than this
@@ -127,6 +127,14 @@ function [lnZ, alpha, mu, s, sigma] = varbvs (X, y, sigma, sa, ...
     update_sigma = false;
   end
 
+  % Determine whether to update the parameter specifying the prior variance of
+  % the additive effects.
+  if isfield(options,'update_sa')
+    update_sa = options.update_sa;
+  else
+    update_sa = false;
+  end
+
   % Determine whether to display the algorithm's progress.
   if isfield(options,'verbose')
     verbose = options.verbose;
@@ -150,8 +158,8 @@ function [lnZ, alpha, mu, s, sigma] = varbvs (X, y, sigma, sa, ...
   lnZ  = -Inf;
   iter = 0;
   if verbose
-    fprintf('       variational    max. incl max.      \n');
-    fprintf('iter   lower bound  change vars E[b] sigma\n');
+    fprintf('       variational    max. incl max.           \n');
+    fprintf('iter   lower bound  change vars E[b] sigma   sd\n');
   end
   while true
 
@@ -183,6 +191,15 @@ function [lnZ, alpha, mu, s, sigma] = varbvs (X, y, sigma, sa, ...
       s = sa*sigma./(sa*d + 1);
     end
 
+    % UPDATE PRIOR VARIANCE OF ADDITIVE EFFECTS.
+    % Compute the maximum likelihood estimate of the prior variance of the
+    % additive effects (SA), if requested. Note that we must also
+    % recalculate the variance of the regression coefficients.
+    if update_sa
+      sa = dot(alpha,s + mu.^2)/(sigma*sum(alpha));
+      s  = sa*sigma./(sa*d + 1);
+    end
+
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute the lower bound to the marginal log-likelihood.
     lnZ = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
@@ -199,8 +216,8 @@ function [lnZ, alpha, mu, s, sigma] = varbvs (X, y, sigma, sa, ...
     I      = find(abs(params) > 1e-6);
     err    = relerr(params(I),params0(I));
     if verbose
-      fprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f\n',iter,lnZ,max(err),...
-	      round(sum(alpha)),max(abs(alpha.*mu)),sqrt(sigma));
+      fprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f %0.2f\n',iter,lnZ,max(err),...
+	      round(sum(alpha)),max(abs(alpha.*mu)),sqrt(sigma),sqrt(sa));
     end
     if lnZ < lnZ0
       alpha = alpha0;

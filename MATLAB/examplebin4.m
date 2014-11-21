@@ -46,8 +46,9 @@ X     = X(:,1:p);
 % COMPUTE VARIATIONAL ESTIMATES USING "varbvszbin".
 fprintf('Computing variational estimates.\n');
 Z = [ones(n,1) Z];
-[lnZ0 alpha0 mu0 s0 eta] = varbvszbin(X,Z,y,sa^2,log(na/p));
+options = struct('update_sa',true);
+[lnZ0 alpha0 mu0 s0 eta sa0] = varbvszbin(X,Z,y,sa^2,log(na/p),options);
 
 % RECONSTRUCT VARIATIONAL ESTIMATES USING "varbvs".
-options = struct('alpha',alpha0,'mu',mu0);
-[lnZ alpha mu s] = varbvsaltzbin(X,Z,y,sa^2,log(na/p),eta,options);
+options = struct('alpha',alpha0,'mu',mu0,'update_sa',true);
+[lnZ alpha mu s sa] = varbvsaltzbin(X,Z,y,sa^2,log(na/p),eta,options);
