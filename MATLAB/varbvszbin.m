@@ -1,4 +1,4 @@
-% [LNZ,ALPHA,MU,S,ETA] = VARBVSZBIN(X,Z,Y,SA,LOGODDS) implements the
+% [LNZ,ALPHA,MU,S,ETA,SA] = VARBVSZBIN(X,Z,Y,SA,LOGODDS) implements the
 % fully-factorized variational approximation for Bayesian variable selection
 % in logistic regression, allowing for covariates. It is the same as
 % VARBVSBIN, except that it allows for an additional set of covariates that
@@ -7,7 +7,8 @@
 % is the number of samples, and M is the number of covariates. This function
 % is equivalent to VARBVSBIN when only one covariate is specified, the
 % intercept, and Z = ONES(N,1).
-function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, options)
+function [lnZ, alpha, mu, s, eta, sa] = ...
+        varbvszbin (X, Z, y, sa, logodds, options)
 
   % Convergence is reached when the maximum relative distance between
   % successive updates of the variational parameters is less than this
@@ -84,6 +85,14 @@ function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, options)
     fixed_eta = false;
   end
   
+  % Determine whether to update the prior variance of the additive
+  % effects.
+  if isfield(options,'update_sa')
+    update_sa = options.update_sa;
+  else
+    update_sa = FALSE;
+  end
+
   % Determine whether to display the algorithm's progress.
   if isfield(options,'verbose')
     verbose = options.verbose;
@@ -102,8 +111,8 @@ function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, options)
   lnZ  = -Inf;
   iter = 0;
   if verbose
-    fprintf('       variational    max. incl max.\n');
-    fprintf('iter   lower bound  change vars E[b]\n');
+    fprintf('       variational    max. incl max.     \n');
+    fprintf('iter   lower bound  change vars E[b]   sd\n');
   end
   while true
 
@@ -129,6 +138,13 @@ function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, options)
     % Recalculate the posterior variance of the coefficients.
     s = sa./(sa*stats.xdx + 1);
 
+    % UPDATE PRIOR VARIANCE OF ADDITIVE EFFECTS.
+    % Compute the maximum likelihood estimate of the prior variance
+    % parameter (sa).
+    if update_sa
+      sa = dot(alpha,s + mu.^2)/sum(alpha);
+    end
+
     % UPDATE ETA.
     % Update the free parameters specifying the variational approximation
     % to the logistic regression factors.
@@ -153,8 +169,8 @@ function [lnZ, alpha, mu, s, eta] = varbvszbin (X, Z, y, sa, logodds, options)
     I      = find(abs(params) > 1e-6);
     err    = relerr(params(I),params0(I));
     if verbose
-     fprintf('%4d %+13.6e %0.1e %4d %0.2f\n',iter,lnZ,max(err),...
-	      round(sum(alpha)),max(abs(alpha.*mu)));
+      fprintf('%4d %+13.6e %0.1e %4d %0.2f %0.2f\n',iter,lnZ,max(err),...
+              round(sum(alpha)),max(abs(alpha.*mu)),sqrt(sa));
     end
     if lnZ < lnZ0
       alpha = alpha0;
