@@ -15,8 +15,11 @@
 % coefficients ("effects") corresponding to these variables. You simply need
 % to subtract the effects from the vector Y and all the calculations will
 % still be valid.
-function [lnZ, alpha, mu, s, sa] = varbvsaltzbin (X, Z, y, sa, logodds, ...
-                                                  eta, options)
+%
+% Note that the input OPTIONS is also passed to VARBVS. For more details
+% about this input, see the help for function VARBVS.
+function [lnZ, alpha, mu, s, sa] = ...
+        varbvsaltzbin (X, Z, y, sa, logodds, eta, options)
 
   % Get the number of samples.
   n = length(y);
