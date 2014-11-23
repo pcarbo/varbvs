@@ -7,6 +7,10 @@
 % is the number of samples, and M is the number of covariates. This function
 % is equivalent to VARBVSBIN when only one covariate is specified, the
 % intercept, and Z = ONES(N,1).
+%
+% Note that this function includes the additional option to compute the
+% maximum likelihood estimate of the prior variance of the additive effects
+% (SA). To activate this option, set OPTIONS.UPDATE_SA = TRUE.
 function [lnZ, alpha, mu, s, eta, sa] = ...
         varbvszbin (X, Z, y, sa, logodds, options)
 
