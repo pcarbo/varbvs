@@ -1,4 +1,4 @@
-% [LNZ,ALPHA,MU,S] = VARBVS(X,Y,SIGMA,SA,LOGODDS) implements the
+% [LNZ,ALPHA,MU,S,SIGMA,SA] = VARBVS(X,Y,SIGMA,SA,LOGODDS) implements the
 % fully-factorized variational approximation for Bayesian variable selection
 % in linear regression. It finds the "best" fully-factorized variational
 % approximation to the posterior distribution of the coefficients in a
@@ -46,11 +46,20 @@
 % variational parameters ALPHA and MU. Set OPTIONS.VERBOSE = FALSE to turn
 % off reporting the algorithm's progress. Set OPTIONS.UPDATE_VARS to specify
 % the indices of the variables to update, so that the variational estimates
-% for the other variables remain fixed. And set OPTIONS.UPDATE_SIGMA = TRUE
+% for the other variables remain fixed. Set OPTIONS.UPDATE_SIGMA = TRUE
 % to compute the maximum likelihood estimate of the residual variance
 % (SIGMA), in which case input SIGMA acts as the initial estimate of this
 % parameter. When this option is set to TRUE, the maximum likelihood
-% estimate is returned in the fifth output.
+% estimate is returned as one of the outputs. Set OPTIONS.UPDATE_SA =
+% TRUE to compute the maximum likelihood estimate of the prior variance
+% of the regression coefficients (SA), in which case input SA acts as the
+% initial estimate of this parameter. When this option is set to TRUE,
+% the maximum likelihood estimate is returned as one of the outputs.
+%
+% When OPTIONS.UPDATE_SA = TRUE, there is the additional option of computing
+% the maximum a posteriori estimate of the prior variance parameter (SA),
+% in which SA is drawn from a scaled inverse chi-square distribution with
+% scale OPTIONS.SA0 and degrees of freedom OPTIONS.N0.
 function [lnZ, alpha, mu, s, sigma, sa] = ...
         varbvs (X, y, sigma, sa, logodds, options)
 
@@ -135,6 +144,21 @@ function [lnZ, alpha, mu, s, sigma, sa] = ...
     update_sa = false;
   end
 
+  % Get the scale parameter for the scaled inverse chi-square prior.
+  if isfield(options,'')
+    sa0 = options.sa0;
+  else
+    sa0 = 0;
+  end
+
+  % Get the number of degrees of freedom for the scaled inverse chi-square
+  % prior.
+  if isfield(options,'n0')
+    n0 = options.n0;
+  else
+    n0 = 0;
+  end
+
   % Determine whether to display the algorithm's progress.
   if isfield(options,'verbose')
     verbose = options.verbose;
@@ -196,7 +220,7 @@ function [lnZ, alpha, mu, s, sigma, sa] = ...
     % additive effects (SA), if requested. Note that we must also
     % recalculate the variance of the regression coefficients.
     if update_sa
-      sa = dot(alpha,s + mu.^2)/(sigma*sum(alpha));
+      sa = (sa0*n0 + dot(alpha,s + mu.^2))/(n0 + sigma*sum(alpha));
       s  = sa*sigma./(sa*d + 1);
     end
 
