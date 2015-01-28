@@ -145,7 +145,7 @@ function [lnZ, alpha, mu, s, sigma, sa] = ...
   end
 
   % Get the scale parameter for the scaled inverse chi-square prior.
-  if isfield(options,'')
+  if isfield(options,'sa0')
     sa0 = options.sa0;
   else
     sa0 = 0;

@@ -94,7 +94,7 @@ function [lnZ, alpha, mu, s, eta, sa] = ...
   if isfield(options,'update_sa')
     update_sa = options.update_sa;
   else
-    update_sa = FALSE;
+    update_sa = false;
   end
 
   % Determine whether to display the algorithm's progress.
