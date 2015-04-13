@@ -51,11 +51,13 @@ create.data <- function (maf, beta, sigma, n) {
   # Get the number of SNPs.
   p <- length(maf)
             
-  # Simulate genotype data X from an idealized population, according to the
-  # specified minor allele frequencies.
-  X <- (rnorm(n*p) < rep(maf,n)) +
-       (rnorm(n*p) < rep(maf,n))
-  X <- matrix(X,n,p)
+  # Simulate genotype data X from an idealized population, according
+  # to the specified minor allele frequencies. The mean of each column
+  # of X should be roughly equal to the minor allele frequency; that
+  # is, for large n, colMeans(Y)/2 should be nearly equal to maf.
+  X <- (runif(n*p) < maf) +
+       (runif(n*p) < maf)
+  X <- matrix(X,n,p,byrow = TRUE)
   
   # Center the columns of X.
   X <- center.columns(X)
