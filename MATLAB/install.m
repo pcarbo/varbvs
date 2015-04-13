@@ -6,7 +6,7 @@
 % on the compiler you use to build the MEX shared library files, you may
 % want to change these variables, or set them to the empty string ('').
 cflags  = '-std=gnu99 -O3 -Os';
-ldflags = '-s -O3 -Os';
+ldflags = '-O3 -Os';
 
 % These are the files containing the main functions implemented in C. Note
 % that not all these files are needed to compile each of the MEX files.
