@@ -8,9 +8,10 @@ clear
 % -----------------
 n  = 1e3;  % Number of samples.
 p  = 2e3;  % Number of variables (markers).
-m  = 3;    % Number of covariates (variables included in model with Pr. 1).
+m  = 3;    % Number of covariates (variables included with probability 1).
 na = 20;   % Number of QTLs.
 r  = 0.5;  % Proportion of variance in residuals explained by QTLs.
+se = 4;    % Variance of residual.
 
 % Candidate values for the prior proportion of variance explained (h) and
 % prior log-odds of inclusion (theta0).
@@ -31,32 +32,38 @@ maf = 0.05 + 0.45 * rand(1,p);
 X   = (rand(n,p) < repmat(maf,n,1)) + ...
       (rand(n,p) < repmat(maf,n,1));
 
-% Generate the covariates, and the linear effects of the covariates.
-Z = randn(n,m);
-u = randn(m,1);
-
-% Generate additive effects for the markers, such that 'na' of them have a
-% nonzero effect on the trait.
+% Generate additive effects for the markers so that exactly na of them have
+% a nonzero effect on the trait.
 I       = randperm(p);
 I       = I(1:na);
 beta    = zeros(p,1);
 beta(I) = randn(na,1);
 
 % Adjust the QTL effects so that we control for the proportion of variance
-% explained (r). That is, we adjust beta so that
-%         
-%   r = a/(a+1)
-%
-% where I've defined
-%          
-%   a = beta'*cov(X)*beta.
-%
-% Here, sb is the variance of the (nonzero) QTL effects.
+% explained (r). That is, we adjust beta so that r = a/(a+1), where I've
+% defined a = beta'*cov(X)*beta. Here, sb is the variance of the (nonzero)
+% QTL effects.
 sb   = r/(1-r)/var(X*beta,1);
-beta = sqrt(sb) * beta;
+beta = sqrt(sb*se) * beta;
 
+% Generate the covariate data, and the linear effects of the covariates.
+if m > 0
+  Z = randn(n,m);
+  u = randn(m,1);
+else
+  Z = [];
+end
+  
 % Generate the quantitative trait measurements.
-y = Z*u + X*beta + randn(n,1);
+y = X*beta + sqrt(se)*randn(n,1);
+if m > 0
+  y = y + Z*u;
+end
+
+% REMOVE LINEAR EFFECTS OF COVARIATES
+% -----------------------------------
+% Include the intercept.
+Z = [ones(n,1) Z];
 
 % Adjust the genotypes and phenotypes so that the linear effects of
 % the covariates are removed. This is equivalent to integrating out
@@ -83,6 +90,10 @@ w = normalizelogweights(logw);
 % SUMMARIZE RESULTS OF MULTI-MARKER ANALYSIS
 % ------------------------------------------
 % Show the posterior mean of each of the hyperparameters.
+%
+% TO DO: Add the credible intervals.
+% NOTE: Will not be a true credible interval for sigma.
+%
 fprintf('Posterior mean of hyperparameters:\n');
 fprintf('param   mean\n');
 fprintf('sigma  %5.2f\n',dot(sigma(:),w(:)));
