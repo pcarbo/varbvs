@@ -1,12 +1,23 @@
 % EXPLAIN HERE WHAT THIS SCRIPT DOES.
 %
+%   Illustrates use of Bayesian variable selection model when...
+%
+%   * The outcome (Y) is a quantitative trait.
+%
+%   * We have a uniform prior for the proportion of variance explained.
+%
+%   * We have a uniform prior for the prior log-odds of inclusion.
+%
+%   * We have additional variables included in the model with probability
+%    (these are the covariates).
+%
 % This script has been tested in MATLAB R2014b (8.4).
 %
 clear
 
 % SCRIPT PARAMETERS
 % -----------------
-n  = 1e3;  % Number of samples.
+n  = 500;  % Number of samples.
 p  = 2e3;  % Number of variables (markers).
 m  = 3;    % Number of covariates (variables included with probability 1).
 na = 20;   % Number of QTLs.
@@ -15,8 +26,10 @@ se = 4;    % Variance of residual.
 
 % Candidate values for the prior proportion of variance explained (h) and
 % prior log-odds of inclusion (theta0).
-theta0 = (-3:0.5:-1)';
-h      = (0.1:0.1:0.9)';
+%
+% TO DO: Explain how these candidate parameter settings were chosen.
+theta0 = (-3:0.1:-1.5)';
+h      = (0.2:0.05:0.8)';
 
 % Set the random number generator seed.
 rng(1);
@@ -27,7 +40,7 @@ rng(1);
 % [0.05,0.5]. Then simulate genotypes assuming all markers are uncorrelated
 % (i.e. no linkage disequilibrium), according to the specified minor allele
 % frequencies.
-fprintf('Creating data set.\n');
+fprintf('Generating data set.\n');
 maf = 0.05 + 0.45 * rand(1,p);
 X   = (rand(n,p) < repmat(maf,n,1)) + ...
       (rand(n,p) < repmat(maf,n,1));
@@ -63,6 +76,7 @@ end
 % REMOVE LINEAR EFFECTS OF COVARIATES
 % -----------------------------------
 % Include the intercept.
+fprintf('Removing linear effects of covariates.\n');
 Z = [ones(n,1) Z];
 
 % Adjust the genotypes and phenotypes so that the linear effects of
@@ -89,16 +103,28 @@ w = normalizelogweights(logw);
 
 % SUMMARIZE RESULTS OF MULTI-MARKER ANALYSIS
 % ------------------------------------------
-% Show the posterior mean of each of the hyperparameters.
-%
-% TO DO: Add the credible intervals.
-% NOTE: Will not be a true credible interval for sigma.
-%
-fprintf('Posterior mean of hyperparameters:\n');
-fprintf('param   mean\n');
-fprintf('sigma  %5.2f\n',dot(sigma(:),w(:)));
-fprintf('theta0 %+0.2f\n',dot(THETA0(:),w(:)));
-fprintf('h      %5.2f\n',dot(H(:),w(:)));
+% Show the posterior mean and credible interval for each of the
+% hyperparameters.
+fprintf('Posterior distribution of hyperparameters:\n');
+fprintf('param    mean Pr>90%%\n');
+
+% Show the posterior mean and "credible interval" for sigma (not a true
+% credible interval).
+[ans I] = sort(sigma(:));
+t     = dot(sigma(:),w(:));
+[a b] = cred(sigma(I),w(I),t,0.9);
+fprintf('sigma   %5.3f [%0.2f,%0.2f]*\n',t,a,b);
+
+% Show the posterior mean and credible interval for theta0.
+t     = dot(THETA0(:),w(:));
+[a b] = cred(theta0,sum(w,1),t,0.9);
+fprintf('theta0 %+0.3f [%+0.1f,%+0.1f]\n',t,a,b);
+
+% Show the posterior mean and credible interval for h.
+t     = dot(H(:),w(:));
+[a b] = cred(h,sum(w,2),t,0.9);
+fprintf('h      %6.3f [%0.2f,%0.2f]\n',t,a,b);
+fprintf('Note: not a true credible interval.\n');
 fprintf('\n');
 
 % Calculate the posterior inclusion probabilities (PIPs), and show the PIPs
@@ -107,6 +133,6 @@ fprintf('\n');
 PIP     = alpha * w(:);
 [ans I] = sort(-PIP);
 I       = I(1:sum(PIP > 0.1));
-fprintf('Selected variables:\n');
+fprintf('Selected variables with PIP > 10%%:\n');
 fprintf(' PIP    mu  beta\n');
 fprintf('%0.2f %+0.2f %+0.2f\n',[PIP(I) mu(I) beta(I)]');
