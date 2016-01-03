@@ -26,12 +26,23 @@ Strategy for my new implementation of 'varbvs':
 
 * Give platform and MATLAB version used for testing.
 
-Files that are good to go:
+Files that are good to go
+-------------------------
+* betavar.m
 * diagsq.m
+* intgamma.m
+* intklbeta.m
+* logsigmoid.m
+* logpexp.m
+* relerr.m
+* varbvsnormupdate.m.
+
 * doublematrixmex.h
 * doublevectormex.h
-* singlematrixmex.c
+* singlematrixmex.h
+
 * diagsqmex.c
 * doublematrixmex.c
 * doublevectormex.c
 * singlematrixmex.c
+* varbvsnormupdatemex.c

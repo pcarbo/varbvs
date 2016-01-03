@@ -1,17 +1,12 @@
-// For a description of this C code, see varbvsupdate.m.
+// For a description of this C code, see varbvsnormupdate.m.
 #include "types.h"
 #include "vectorops.h"
 #include "doublevectormatlab.h"
 #include "singlematrixmatlab.h"
 #include "varbvs.h"
-
-// These include files have a bunch of definitions to interface C
-// routines to MATLAB.
 #include "mex.h"
 #include "matrix.h"
 
-// MEX-file gateway routine. Note that varbvsupdate.m checks the
-// inputs, so we do not have to do it here.
 void mexFunction (int nlhs, mxArray* plhs[], 
 		  int nrhs, const mxArray* prhs[]) {
 
@@ -33,7 +28,8 @@ void mexFunction (int nlhs, mxArray* plhs[],
   const Size p = X.nc;
   const Size m = I.n;
 
-  // INITIALIZE OUTPUTS.
+  // (1) INITIALIZE OUTPUTS
+  // ----------------------
   DoubleVector alpha = createMatlabVector(p,&plhs[0]);
   DoubleVector mu    = createMatlabVector(p,&plhs[1]);
   DoubleVector Xr    = createMatlabVector(n,&plhs[2]);
@@ -45,7 +41,8 @@ void mexFunction (int nlhs, mxArray* plhs[],
   // This is storage for a column of matrix X.
   double* x = malloc(sizeof(double)*n);
 
-  // RUN COORDINATE ASCENT UPDATES.
+  // (2) RUN COORDINATE ASCENT UPDATES
+  // ---------------------------------
   // Repeat for each coordinate ascent update.
   for (Index j = 0; j < m; j++) {
     Index k = (Index) I.elems[j];

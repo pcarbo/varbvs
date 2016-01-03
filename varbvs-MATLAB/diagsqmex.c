@@ -2,13 +2,10 @@
 #include "types.h"
 #include "doublevectormex.h"
 #include "singlematrixmex.h"
-
-// These include files have a bunch of definitions to interface C
-// routines to MATLAB.
 #include "mex.h"
 #include "matrix.h"
 
-// Function declarations.
+// FUNCTION DECLARATIONS
 // -----------------------------------------------------------------
 // Compute (X.^2)'*a and store the result in vector y. X is an m x n
 // matrix in which the entries in each column are stored consecutively
@@ -16,9 +13,8 @@
 void diagsq (const MatrixElem* X, const double* a, double* y, 
 	     Size m, Size n);
 
-// Function definitions.
+// FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
-// MEX-file gateway routine.
 void mexFunction (int nlhs, mxArray* plhs[], 
 		  int nrhs, const mxArray* prhs[]) {
 
@@ -35,6 +31,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
   diagsq(X.elems,a.elems,y.elems,X.nr,X.nc);
 }
 
+// -----------------------------------------------------------------
 // Compute (X.^2)'*a and store the result in vector y.
 void diagsq (const MatrixElem* X, const double* a, double* y, 
 	     Size m, Size n) {

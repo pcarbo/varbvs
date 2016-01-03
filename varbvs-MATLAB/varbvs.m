@@ -300,11 +300,10 @@ function fit = varbvs (X, Z, y, family, options)
       fprintf('hyperparameters.\n');
       for i = 1:ns
 
-        % Find a set of parameters that locally minimize the Kullback-Leibler
+        % Find a set of parameters that locally minimize the K-L
         % divergence between the approximating distribution and the exact
         % posterior.
-        if family == 'gaussian'
-        end
+        % TO DO. 
       end
     
       % Choose an initialization common to all the runs of the coordinate
@@ -322,7 +321,7 @@ function fit = varbvs (X, Z, y, family, options)
     fprintf('hyperparameters.\n');
     for i = 1:ns
 
-      % Find a set of parameters that locally minimize the Kullback-Leibler
+      % Find a set of parameters that locally minimize the K-L
       % divergence between the approximating distribution and the exact
       % posterior.
       % TO DO.
@@ -337,5 +336,13 @@ function fit = varbvs (X, Z, y, family, options)
   elseif family == 'binomial'
     fit = struct('logw',logw,'sigma',sigma,'sa',sa,'logodds',logodds,...
                  'alpha',alpha,'mu',mu,'s',s,'eta',eta);
+  end
+
+% ------------------------------------------------------------------
+% TO DO: Explain here what this function does.
+function x = outerloop (X, Z, y, verbose)
+  if verbose
+    fprintf('       variational    max. incl max.           \n');
+    fprintf('iter   lower bound  change vars E[b] sigma   sd\n');
   end
   

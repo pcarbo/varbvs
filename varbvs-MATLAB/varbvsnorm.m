@@ -1,4 +1,6 @@
-% [LNZ,ALPHA,MU,S,SIGMA,SA] = VARBVS(X,Y,SIGMA,SA,LOGODDS) implements the
+% TO DO: Update this function description.
+%
+% [logw,ALPHA,MU,S,SIGMA,SA] = varbvsnorm(X,Y,SIGMA,SA,LOGODDS,...) implements the
 % fully-factorized variational approximation for Bayesian variable selection
 % in linear regression. It finds the "best" fully-factorized variational
 % approximation to the posterior distribution of the coefficients in a
@@ -61,15 +63,16 @@
 % in which SA is drawn from a scaled inverse chi-square distribution with
 % scale OPTIONS.SA0 and degrees of freedom OPTIONS.N0.
 function [logw, sigma, sa, alpha, mu, s] = ...
-        varbvs (X, y, sigma, sa, logodds, update_sigma, update_sa, n0, sa0)
+        varbvsnorm (X, y, sigma, sa, logodds, tol, maxiter, verbose, ...
+                    outer_iter, update_sigma, update_sa, n0, sa0)
 
   % Get the number of samples (n) and variables (p).
   [n p] = size(X);
   
   % (1) INITIAL STEPS
   % -----------------
-  % Compute a few useful quantities. Here I calculate X'*Y as (Y'*X)' to
-  % avoid storing the transpose of X, since X may be large.
+  % Compute a few useful quantities. Here I calculate X'*y as (y'*X)' to
+  % avoid computing the transpose of X, since X may be large.
   xy = double(y'*X)';
   d  = diagsq(X);
   Xr = double(X*(alpha.*mu));
@@ -77,78 +80,89 @@ function [logw, sigma, sa, alpha, mu, s] = ...
   % Calculate the variance of the coefficients.
   s = sa*sigma./(sa*d + 1);
   
-  % MAIN LOOP.
-  % Repeat until convergence criterion is met.
-  logw  = -Inf;
-  iter = 0;
-  if verbose
-    fprintf('       variational    max. incl max.           \n');
-    fprintf('iter   lower bound  change vars E[b] sigma   sd\n');
-  end
-  while true
+  % (2) MAIN LOOP
+  % -------------
+  % Repeat until convergence criterion is met, or until the maximum
+  % number of iterations is reached.
+  logw = -Inf;
+  for iter = 1:maxiter
 
-    % Go to the next iteration.
-    iter = iter + 1;
-    
     % Save the current variational parameters and lower bound.
     alpha0  = alpha;
     mu0     = mu;
     logw0   = logw;
     params0 = [ alpha; alpha .* mu ];
 
-    % UPDATE VARIATIONAL APPROXIMATION.
+    % (2a) UPDATE VARIATIONAL APPROXIMATION
+    % -------------------------------------
     % Run a forward or backward pass of the coordinate ascent updates.
-    if isodd(iter)
-      I = update_vars(1:p);
+    if mod(iter,2)
+      i = 1:p;
     else
-      I = update_vars(p:-1:1);
+      i = p:-1:1;
     end
-    [alpha mu Xr] = varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,I);
+    [alpha mu Xr] = varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,i);
     
-    % UPDATE RESIDUAL VARIANCE.
-    % Compute the maximum likelihood estimate of the residual variance
-    % parameter (SIGMA), if requested. Note that we must also recalculate
-    % the variance of the regression coefficients.
+    % (2b) UPDATE RESIDUAL VARIANCE
+    % -----------------------------
+    % Compute the maximum likelihood estimate of sigma, if requested.
+    % Note that we must also recalculate the variance of the regression
+    % coefficients when this parameter is updated.
     if update_sigma
       sigma = (norm(y - Xr)^2 + d'*betavar(alpha,mu,s) ...
                + alpha'*(s + mu.^2)/sa)/(n + sum(alpha));
       s = sa*sigma./(sa*d + 1);
     end
 
-    % UPDATE PRIOR VARIANCE OF ADDITIVE EFFECTS.
-    % Compute the maximum likelihood estimate of the prior variance of the
-    % additive effects (SA), if requested. Note that we must also
-    % recalculate the variance of the regression coefficients.
+    % (2c) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
+    % -----------------------------------------------------
+    % Compute the maximum a posteriori estimate of sa, if requested. Note
+    % that we must also recalculate the variance of the regression
+    % coefficients when this parameter is updated. 
     if update_sa
       sa = (sa0*n0 + dot(alpha,s + mu.^2))/(n0 + sigma*sum(alpha));
       s  = sa*sigma./(sa*d + 1);
     end
 
-    % COMPUTE VARIATIONAL LOWER BOUND.
+    % (2d) COMPUTE VARIATIONAL LOWER BOUND
+    % ------------------------------------
     % Compute the lower bound to the marginal log-likelihood.
     logw = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
            + intgamma(logodds,alpha) ...
            + intklbeta(alpha,mu,s,sigma*sa);
     
-    % CHECK CONVERGENCE.
+    % (2e) CHECK CONVERGENCE
+    % ----------------------
     % Print the status of the algorithm and check the convergence criterion.
     % Convergence is reached when the maximum relative difference between
     % the parameters at two successive iterations is less than the specified
     % tolerance, or when the variational lower bound has decreased. I ignore
-    % parameters that are very small.
-    params = [ alpha; alpha .* mu ];
-    I      = find(abs(params) > 1e-6);
-    err    = relerr(params(I),params0(I));
+    % parameters that are very small. If the variational bound decreases,
+    % stop.
+    params = [alpha; alpha.*mu];
+    i      = find(abs(params) > 1e-6);
+    err    = relerr(params(i),params0(i));
     if verbose
-      fprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f %0.2f\n',iter,lnZ,max(err),...
-	      round(sum(alpha)),max(abs(alpha.*mu)),sqrt(sigma),sqrt(sa));
+      % TO DO: Fix this.
+      fprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f %0.2f\n',iter,logw,...
+              max(err),round(sum(alpha)),max(abs(alpha.*mu)),sigma,sa);
     end
     if lnZ < lnZ0
       alpha = alpha0;
       mu    = mu0;
       lnZ   = lnZ0;
       break
-    elseif max(err) < tolerance
+    elseif max(err) < tol
       break
     end
   end
+
+% ----------------------------------------------------------------------
+% intlinear(Xr,d,y,sigma,alpha,mu,s) computes an integral that appears in
+% the variational lower bound of the marginal log-likelihood. This integral
+% is the expectation of the linear regression log-likelihood taken with
+% respect to the variational approximation.
+function y = intlinear (Xr, d, y, sigma, alpha, mu, s)
+  n = length(y);
+  y = - n/2*log(2*pi*sigma) - norm(y - Xr)^2/(2*sigma) ...
+      - d'*betavar(alpha,mu,s)/(2*sigma);
