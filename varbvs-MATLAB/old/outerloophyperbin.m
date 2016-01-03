@@ -15,11 +15,6 @@ function [logw, alpha, mu, s, eta] = ...
   sx = sum(var1(X));
   sa = pve2sa(sx,h,theta0);
 
-  % Initialize storage for the unnormalized log-importance weights, and
-  % variances of the additive effects.
-  logw = zeros(size(h));
-  s    = zeros(p,ns);
-
   % Repeat for each combination of the hyperparameters.
   for i = 1:ns
     fprintf('(%03d) h = %0.3f, theta0 = %+0.2f (sd = %0.3f)\n',...

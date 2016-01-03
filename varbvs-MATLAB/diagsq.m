@@ -1,20 +1,16 @@
-% DIAGSQ(X) is the same as DIAG(X'*X), but the computation is done more
+% diagsq(X) is the same as diag(X'*X), but the computation is done more
 % efficiently, and without having to store an intermediate matrix of the
-% same size as X. 
-%
-% DIAGSQ(X,A) efficiently computes DIAG(X'*DIAG(A)*X).
+% same size as X. diag(X,a) efficiently computes diag(X'*diag(a)*X). See the
+% help for function diag for more details.
 function y = diagsq (X, a)
 
-  % If input A is not provided, set it to a vector of ones.
+  % If input a is not provided, set it to a vector of ones.
   [m n] = size(X);
   if ~exist('a')
     a = ones(m,1);
   end
-  if length(a) ~= m
-    error('Inputs X and A do not match');
-  end
 
-  % Convert A to a double column vector.
+  % Convert input a to a double column vector.
   a = double(a(:));
 
   % Convert X to single precision.
@@ -23,5 +19,5 @@ function y = diagsq (X, a)
   end
   
   % Compute the result using the efficient C routine.
-  y = diagsqmatlab(X,a);
+  y = diagsqmex(X,a);
   

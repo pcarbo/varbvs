@@ -35,8 +35,8 @@
 %
 function fit = varbvs (X, Z, y, family, options)
 
-  % 1. CHECK INPUTS
-  % ---------------
+  % (1) CHECK INPUTS
+  % ----------------
   % Get the number of samples (n) and variables (p).
   [n p] = size(X);
 
@@ -67,9 +67,12 @@ function fit = varbvs (X, Z, y, family, options)
   if isempty(family)
     family = 'gaussian';
   end
+  if ~(family == 'gaussian' | family == 'binomial')
+    error('family must be gaussian or binomial');
+  end
   
-  % 2. PROCESS OPTIONS
-  % ------------------
+  % (2) PROCESS OPTIONS
+  % -------------------
   % If the 'options' input argument is not specified, all the options are
   % set to the defaults.
   if nargin < 5
@@ -151,7 +154,7 @@ function fit = varbvs (X, Z, y, family, options)
   % x ns matrix.
   if isfield(options,'logodds')
     logodds = double(options.theta(:)');
-  else if isscalar(sigma) & isscalar(sa)
+  elseif isscalar(sigma) & isscalar(sa)
     logodds = linspace(-log10(p),-0.3,20);
   else
     error('options.logodds must be specified')
@@ -211,6 +214,7 @@ function fit = varbvs (X, Z, y, family, options)
   % Set initial estimates of variational parameter alpha.
   if isfield(options,'alpha')
     alpha = double(options.alpha);
+    initialize_params = false;  
     if size(alpha,1) ~= p
       error('options.alpha must have as many rows as X has columns')
     end
@@ -226,6 +230,7 @@ function fit = varbvs (X, Z, y, family, options)
   % Set initial estimates of variational parameter mu.
   if isfield(options,'mu')
     mu = double(options.mu(:));
+    initialize_params = false;  
     if size(mu,1) ~= p
       error('options.mu must have as many rows as X has columns')
     end
@@ -241,6 +246,7 @@ function fit = varbvs (X, Z, y, family, options)
   % relevant for logistic regression.
   if isfield(options,'eta')
     eta = double(options.eta);
+    initialize_params = false;  
     if family ~= 'binomial'
       error('options.eta is only valid for family = binomial');
     end
@@ -250,11 +256,86 @@ function fit = varbvs (X, Z, y, family, options)
     if size(eta,2) == 1
       eta = repmat(eta,1,ns);
     end
-  else if family == 'binomial'
+  elseif family == 'binomial'
     eta = ones(n,ns);
   end
 
+  % OPTIONS.INITIALIZE_PARAMS
+  % Determine whether to find a good initialization for the variational
+  % parameters.
+  if isfield(options,'initialize_params')
+    initialize_params = options.initialize_params;
+  end
+  
   % TO DO: Allow specification of summary statistics from "fixed"
   % variational estimates for an external set of variables.
   clear options
+
+  % (3) PREPROCESSING STEPS
+  % -----------------------
+  % TO DO.
+  
+  % (4) INITIALIZE STORAGE FOR THE OUTPUTS
+  % --------------------------------------
+  % Initialize storage for the variational estimate of the marginal
+  % log-likelihood for each hyperparameter setting (logw), and the variances
+  % of the regression coefficients (s).
+  logw = zeros(1,ns);
+  s    = zeros(p,ns);
+  
+  % (5) FIT BAYESIAN VARIABLE SELECTION MODEL TO DATA
+  % -------------------------------------------------
+  if ns == 1
+
+    % TO DO: Implement special case when there is only one hyperparameter
+    % setting.
+    
+  else
+      
+    % If a good initialization isn't already provided, find a good
+    % initialization for the variational parameters. Repeat for each
+    % candidate setting of the hyperparameters.
+    if initialize_params
+      fprintf('Finding best initialization for %d combinations of ',ns);
+      fprintf('hyperparameters.\n');
+      for i = 1:ns
+
+        % Find a set of parameters that locally minimize the Kullback-Leibler
+        % divergence between the approximating distribution and the exact
+        % posterior.
+        if family == 'gaussian'
+        end
+      end
+    
+      % Choose an initialization common to all the runs of the coordinate
+      % ascent algorithm. This is chosen from the hyperparameters with
+      % the highest variational estimate of the marginal likelihood.
+      [ans i] = max(logw);
+      alpha   = repmat(alpha(:,i),1,ns);
+      mu      = repmat(mu(:,i),1,ns);
+      eta     = repmat(eta(:,i),1,ns);
+    end
+    
+    % Compute a variational approximation to the posterior distribution
+    % for each candidate setting of the hyperparameters.
+    fprintf('Computing marginal likelihood for %d combinations of ',ns);
+    fprintf('hyperparameters.\n');
+    for i = 1:ns
+
+      % Find a set of parameters that locally minimize the Kullback-Leibler
+      % divergence between the approximating distribution and the exact
+      % posterior.
+      % TO DO.
+    end
+  end
+
+  % 5. CREATE FINAL OUTPUT
+  % ----------------------
+  if family == 'gaussian'
+    fit = struct('logw',logw,'sigma',sigma,'sa',sa,'logodds',logodds,...
+                 'alpha',alpha,'mu',mu,'s',s);
+  elseif family == 'binomial'
+    fit = struct('logw',logw,'sigma',sigma,'sa',sa,'logodds',logodds,...
+                 'alpha',alpha,'mu',mu,'s',s,'eta',eta);
+  end
   

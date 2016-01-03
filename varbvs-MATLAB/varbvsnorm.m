@@ -60,114 +60,14 @@
 % the maximum a posteriori estimate of the prior variance parameter (SA),
 % in which SA is drawn from a scaled inverse chi-square distribution with
 % scale OPTIONS.SA0 and degrees of freedom OPTIONS.N0.
-function [lnZ, alpha, mu, s, sigma, sa] = ...
-        varbvs (X, y, sigma, sa, logodds, options)
+function [logw, sigma, sa, alpha, mu, s] = ...
+        varbvs (X, y, sigma, sa, logodds, update_sigma, update_sa, n0, sa0)
 
-  % Convergence is reached when the maximum relative distance between
-  % successive updates of the variational parameters is less than this
-  % quantity.
-  tolerance = 1e-4;  
-
-  % CHECK INPUTS.
   % Get the number of samples (n) and variables (p).
   [n p] = size(X);
-
-  % X must be single precision.
-  if ~isa(X,'single')
-    X = single(X);
-  end
-
-  % Y must be a double precision column vector of length N.
-  y = double(y(:));
-  if length(y) ~= n
-    error('Data X and Y do not match');
-  end
-
-  % SIGMA and SA must be double scalars.
-  sigma = double(sigma);
-  sa    = double(sa); 
-  if ~(isscalar(sigma) & isscalar(sa))
-    error('Inputs SIGMA and SA must be scalars');
-  end
-
-  % LOGODDS must be a double precision column vector of length P.
-  if isscalar(logodds)
-    logodds = repmat(logodds,p,1);
-  end
-  logodds = double(logodds(:));
-  if length(logodds) ~= p
-    error('LOGODDS must be a scalar or a vector of length P');
-  end
-
-  % TAKE CARE OF OPTIONAL INPUTS.
-  if ~exist('options')
-    options = [];
-  end
-
-  % Set initial estimates of variational parameters.
-  if isfield(options,'alpha')
-    alpha = double(options.alpha(:));
-  else
-    alpha = rand(p,1);
-    alpha = alpha / sum(alpha);
-  end
-  if isfield(options,'mu')
-    mu = double(options.mu(:));
-  else
-    mu = randn(p,1);
-  end
-  if length(alpha) ~= p || length(mu) ~= p
-    error('OPTIONS.ALPHA and OPTIONS.MU must be vectors of length P');
-  end
-
-  % Determine whether to update the variational estimates for only a
-  % subset of the variables.
-  if isfield(options,'update_vars')
-    update_vars = options.update_vars(:)';
-  else
-    update_vars = 1:p;
-  end
-  p = length(update_vars);
-
-  % Determine whether to update the residual variance parameter.
-  if isfield(options,'update_sigma')
-    update_sigma = options.update_sigma;
-  else
-    update_sigma = false;
-  end
-
-  % Determine whether to update the parameter specifying the prior variance of
-  % the additive effects.
-  if isfield(options,'update_sa')
-    update_sa = options.update_sa;
-  else
-    update_sa = false;
-  end
-
-  % Get the scale parameter for the scaled inverse chi-square prior.
-  if isfield(options,'sa0')
-    sa0 = options.sa0;
-  else
-    sa0 = 0;
-  end
-
-  % Get the number of degrees of freedom for the scaled inverse chi-square
-  % prior.
-  if isfield(options,'n0')
-    n0 = options.n0;
-  else
-    n0 = 0;
-  end
-
-  % Determine whether to display the algorithm's progress.
-  if isfield(options,'verbose')
-    verbose = options.verbose;
-  else
-    verbose = true;
-  end
-  clear options
   
-  % INITIAL STEPS.
+  % (1) INITIAL STEPS
+  % -----------------
   % Compute a few useful quantities. Here I calculate X'*Y as (Y'*X)' to
   % avoid storing the transpose of X, since X may be large.
   xy = double(y'*X)';
@@ -179,7 +79,7 @@ function [lnZ, alpha, mu, s, sigma, sa] = ...
   
   % MAIN LOOP.
   % Repeat until convergence criterion is met.
-  lnZ  = -Inf;
+  logw  = -Inf;
   iter = 0;
   if verbose
     fprintf('       variational    max. incl max.           \n');
@@ -193,7 +93,7 @@ function [lnZ, alpha, mu, s, sigma, sa] = ...
     % Save the current variational parameters and lower bound.
     alpha0  = alpha;
     mu0     = mu;
-    lnZ0    = lnZ;
+    logw0   = logw;
     params0 = [ alpha; alpha .* mu ];
 
     % UPDATE VARIATIONAL APPROXIMATION.
@@ -226,9 +126,9 @@ function [lnZ, alpha, mu, s, sigma, sa] = ...
 
     % COMPUTE VARIATIONAL LOWER BOUND.
     % Compute the lower bound to the marginal log-likelihood.
-    lnZ = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
-	  + intgamma(logodds,alpha) ...
-	  + intklbeta(alpha,mu,s,sigma*sa);
+    logw = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
+           + intgamma(logodds,alpha) ...
+           + intklbeta(alpha,mu,s,sigma*sa);
     
     % CHECK CONVERGENCE.
     % Print the status of the algorithm and check the convergence criterion.

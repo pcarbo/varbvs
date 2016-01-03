@@ -52,27 +52,6 @@ function [logw, sigma, alpha, mu, s] = multisnphyper (X, y, h, theta0, ...
   [n p] = size(X);
   ns    = numel(h);
   
-  % Set a random initialization of the variational parameters for each
-  % combination of the hyperparameters, or use the initialization
-  % provided by the input arguments.
-  sigma = repmat(var(y),size(h));
-  if exist('alpha','var')
-    alpha = repmat(alpha,1,ns);
-  else
-    alpha = rand(p,ns);
-    alpha = alpha ./ repmat(sum(alpha),p,1);
-  end
-  if exist('mu','var')
-    mu = repmat(mu,1,ns);
-  else
-    mu = randn(p,ns);
-  end
-
-  % Take care of the remaining optional arguments.
-  if ~exist('verbose','var')
-    verbose = true;
-  end
-
   % First get the best initialization for the variational parameters.
   fprintf('Finding best initialization for %d combinations ',ns);
   fprintf('of hyperparameters.\n');

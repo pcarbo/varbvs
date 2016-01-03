@@ -15,20 +15,10 @@ function [logw, sigma, alpha, mu, s] = ...
   sx = sum(var1(X));
   sa = pve2sa(sx,h,theta0);
 
-  % Initialize storage for the unnormalized log-importance weights, and
-  % variances of the additive effects.
-  logw = zeros(size(h));
-  s    = zeros(p,ns);
-
   % Repeat for each combination of the hyperparameters.
   for i = 1:ns
     fprintf('(%03d) h = %0.3f, theta = %+0.2f (sd = %0.3f) ',...
             i,h(i),theta0(i),sqrt(sa(i)));
-    if verbose
-      fprintf('\n');
-    else
-      fprintf(repmat('\b',1,44))
-    end
 
     % Compute the unnormalized log-importance weight given values for the
     % hyperparameters, LOG10SIGMA, H and THETA0. Implicitly, the importance
@@ -40,10 +30,4 @@ function [logw, sigma, alpha, mu, s] = ...
                      'verbose',verbose);
     [logw(i) alpha(:,i) mu(:,i) s(:,i) sigma(i)] = ...
 	varbvs(X,y,sigma(i),sa(i),log(10)*theta0(i),options);
-    if verbose
-      fprintf('\n');
-    end
-  end
-  if ~verbose
-    fprintf('\n');
   end
