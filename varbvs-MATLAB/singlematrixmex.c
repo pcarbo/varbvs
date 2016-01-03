@@ -1,8 +1,8 @@
 #include "singlematrixmatlab.h"
 
-// Function definitions.
+// FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
-// Get a single-precision floating-point matrix from a MATLAB array. 
+// Get a single precision matrix from a MATLAB array. 
 SingleMatrix getSingleMatrix (const mxArray* ptr) {
   SingleMatrix result;
   result.nr = mxGetM(ptr);

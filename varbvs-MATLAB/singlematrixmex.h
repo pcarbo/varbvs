@@ -2,24 +2,21 @@
 #define INCLUDE_SINGLEMATRIXMATLAB
 
 #include "types.h"
-
-// These include files have a bunch of definitions to interface C
-// routines to MATLAB.
 #include "mex.h"
 #include "matrix.h"
 
-// Type definitions.
+// TYPE DEFINIITIONS
 // -----------------------------------------------------------------
-// A dense matrix with single-precision floating-point entries.
+// A dense matrix with single precision floating point entries.
 typedef struct {
   Size        nr;     // Number of rows.
   Size        nc;     // Number of columns.
   MatrixElem* elems;  // Entries of matrix.
 } SingleMatrix;
 
-// Function declarations.
+// FUNCTION DECLARATIONS
 // -----------------------------------------------------------------
-// Get a single precision floating point matrix from a MATLAB array. 
+// Get a single precision matrix from a MATLAB array. 
 SingleMatrix getSingleMatrix (const mxArray* ptr);
 
 #endif

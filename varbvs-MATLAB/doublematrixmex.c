@@ -1,8 +1,8 @@
 #include "doublematrixmatlab.h"
 
-// Function definitions.
+// FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
-// Get a double-precision floating-point matrix from a MATLAB array. 
+// Get a double precision matrix from a MATLAB array. 
 DoubleMatrix getDoubleMatrix (const mxArray* ptr) {
   DoubleMatrix result;
   result.nr    = mxGetM(ptr);

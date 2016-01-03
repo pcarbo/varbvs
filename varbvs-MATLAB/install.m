@@ -11,9 +11,9 @@ ldflags = '-O3 -Os';
 % These are the files containing the main functions implemented in C. Note
 % that not all these files are needed to compile each of the MEX files.
 Rsrcdir   = '../R/varbvs/src/';
-corefiles = {'C/doublevectormatlab.c '
-             'C/doublematrixmatlab.c '
-	     'C/singlematrixmatlab.c ' 
+corefiles = {'C/doublevectormex.c '
+             'C/doublematrixmex.c '
+	     'C/singlematrixmex.c ' 
 	     [ Rsrcdir 'vectorops.c ' ]
 	     [ Rsrcdir 'sigmoid.c '   ]
 	     [ Rsrcdir 'varbvs.c '    ]
@@ -24,11 +24,11 @@ corefiles = {'C/doublevectormatlab.c '
 options = sprintf(['-O -largeArrayDims -IC -I%s ' ...
 		   'COPTIMFLAGS="%s" LDOPTIMFLAGS="%s" '],...
 		   Rsrcdir,cflags,ldflags);
-eval(['mex ',options,'C/var1matlab.c ',corefiles{1:4}]);
-eval(['mex ',options,'C/diagsqmatlab.c ',corefiles{1:4}]);
-eval(['mex ',options,'C/diagsqtmatlab.c ',corefiles{1:4}]);
-eval(['mex ',options,'C/varbvsupdatematlab.c ',corefiles{1:6}]);
-eval(['mex ',options,'C/varbvsmixupdatematlab.c ',corefiles{[1:5 7]}]);
-eval(['mex ',options,'C/varbvsbinupdatematlab.c ',corefiles{[1:5 8]}]);
-eval(['mex ',options,'C/varbvszbinupdatematlab.c ',corefiles{[1:5 8]}]);
+eval(['mex ',options,'C/var1mex.c ',corefiles{1:4}]);
+eval(['mex ',options,'C/diagsqmex.c ',corefiles{1:4}]);
+eval(['mex ',options,'C/diagsqtmex.c ',corefiles{1:4}]);
+eval(['mex ',options,'C/varbvsupdatemex.c ',corefiles{1:6}]);
+eval(['mex ',options,'C/varbvsmixupdatemex.c ',corefiles{[1:5 7]}]);
+eval(['mex ',options,'C/varbvsbinupdatemex.c ',corefiles{[1:5 8]}]);
+eval(['mex ',options,'C/varbvszbinupdatemex.c ',corefiles{[1:5 8]}]);
 fprintf('Compilation of MEX files is complete.\n');

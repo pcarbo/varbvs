@@ -4,16 +4,15 @@
 % help for function diag for more details.
 function y = diagsq (X, a)
 
-  % If input a is not provided, set it to a vector of ones.
+  % If input a is not provided, set it to a vector of ones. Then convert
+  % input a to a double-precision column vector.
   [m n] = size(X);
   if ~exist('a')
     a = ones(m,1);
   end
-
-  % Convert input a to a double column vector.
   a = double(a(:));
 
-  % Convert X to single precision.
+  % Convert X to single precision, if necessary.
   if ~isa(X,'single')
     X = single(X);
   end

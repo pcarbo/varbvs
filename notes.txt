@@ -26,5 +26,12 @@ Strategy for my new implementation of 'varbvs':
 
 * Give platform and MATLAB version used for testing.
 
-
-
+Files that are good to go:
+* diagsq.m
+* doublematrixmex.h
+* doublevectormex.h
+* singlematrixmex.c
+* diagsqmex.c
+* doublematrixmex.c
+* doublevectormex.c
+* singlematrixmex.c

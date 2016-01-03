@@ -2,23 +2,20 @@
 #define INCLUDE_DOUBLEVECTORMATLAB
 
 #include "types.h"
-
-// These include files have a bunch of definitions to interface C
-// routines to MATLAB.
 #include "mex.h"
 #include "matrix.h"
 
-// Type definitions.
+// TYPE DEFINITIONS
 // -----------------------------------------------------------------
-// A vector with double-precision floating-point entries.
+// A vector with double precision entries.
 typedef struct {
   Size    n;      // Size of vector.
   double* elems;  // Vector entries.
 } DoubleVector;
 
-// Function declarations.
+// FUNCTION DECLARATIONS
 // -----------------------------------------------------------------
-// Get a double-precision floating-point vector from a MATLAB array.
+// Get a double precision vector from a MATLAB array.
 DoubleVector getDoubleVector (const mxArray* ptr);
 
 // Create a column vector in MATLAB array.

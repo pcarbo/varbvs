@@ -1,9 +1,9 @@
 #include "doublevectormatlab.h"
 #include "vectorops.h"
 
-// Function definitions.
+// FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
-// Get a double-precision floating-point vector from a MATLAB array.
+// Get a double precision vector from a MATLAB array.
 DoubleVector getDoubleVector (const mxArray* ptr) {
   DoubleVector result;
   result.n = mxGetNumberOfElements(ptr);
