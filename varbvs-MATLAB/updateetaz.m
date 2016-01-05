@@ -19,3 +19,9 @@ function eta = updateetaz (X, Z, y, v, Xr, d)
   U   = double((S*Z'*D)*X)';
   eta = sqrt((Z*muz + Xr).^2 + diagsq2(Z,S) + diagsq2(Z,U'*V*U) ...
              + diagsqt(X,v) + 2*diagprod(X*C',Z));
+
+% ----------------------------------------------------------------------
+% DIAGPROD(A,B) efficiently computes DIAG(A*B').
+function y = diagprod (A, B)
+  y = double(sum(A.*B,2));
+  

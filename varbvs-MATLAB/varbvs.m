@@ -212,6 +212,7 @@ function fit = varbvs (X, Z, y, family, options)
 
   % OPTIONS.ALPHA
   % Set initial estimates of variational parameter alpha.
+  initialize_params = true;
   if isfield(options,'alpha')
     alpha = double(options.alpha);
     initialize_params = false;  
@@ -245,8 +246,9 @@ function fit = varbvs (X, Z, y, family, options)
   % Set initial estimates of variational parameter eta. Note this is only
   % relevant for logistic regression.
   if isfield(options,'eta')
-    eta = double(options.eta);
-    initialize_params = false;  
+    eta               = double(options.eta);
+    initialize_params = false;
+    update_eta        = false;
     if family ~= 'binomial'
       error('options.eta is only valid for family = binomial');
     end
@@ -257,9 +259,20 @@ function fit = varbvs (X, Z, y, family, options)
       eta = repmat(eta,1,ns);
     end
   elseif family == 'binomial'
-    eta = ones(n,ns);
+    eta               = ones(n,ns);
+    initialize_params = true;  
   end
 
+  % OPTIONS.UPDATE_ETA
+  % Determine whether to update the variational parameter eta. Note this
+  % is only relevant for logistic regression.
+  if isfield(options,'eta')
+    update_eta = options.update_eta;
+    if family ~= 'binomial'
+      error('options.update_eta is only valid for family = binomial');
+    end
+  end
+  
   % OPTIONS.INITIALIZE_PARAMS
   % Determine whether to find a good initialization for the variational
   % parameters.
@@ -267,13 +280,29 @@ function fit = varbvs (X, Z, y, family, options)
     initialize_params = options.initialize_params;
   end
   
-  % TO DO: Allow specification of summary statistics from "fixed"
+  % TO DO: Allow specification of summary statistics ('Xb') from "fixed"
   % variational estimates for an external set of variables.
   clear options
 
   % (3) PREPROCESSING STEPS
   % -----------------------
-  % TO DO.
+  % Adjust the genotypes and phenotypes so that the linear effects of
+  % the covariates are removed. This is equivalent to integrating out
+  % the regression coefficients corresponding to the covariates with
+  % respect to an improper, uniform prior; see Chipman, George and
+  % McCulloch, "The Practical Implementation of Bayesian Model
+  % Selection," 2001.
+  if family == 'gaussian' & intercept & isempty(Z)
+     X = X - repmat(mean(X),length(y),1);
+     y = y - mean(y);
+  elseif family == 'gaussian' & ~isempty(Z)
+
+    % This should give the same result as centering the columns of X and
+    % subtracting the mean from y when we have only one covariate, the
+    % intercept.
+    y = y - Z*((Z'*Z)\(Z'*y));
+    X = X - Z*((Z'*Z)\(Z'*X));
+  end
   
   % (4) INITIALIZE STORAGE FOR THE OUTPUTS
   % --------------------------------------
@@ -340,9 +369,21 @@ function fit = varbvs (X, Z, y, family, options)
 
 % ------------------------------------------------------------------
 % TO DO: Explain here what this function does.
-function x = outerloop (X, Z, y, verbose)
+%
+% NOTE: Use base-10 log for logodds.
+%
+function [logw, sigma, sa, alpha, mu, s] = ...
+        outerloop (X, Z, y, family, sigma, sa, logodds, alpha, mu, tol, ...
+                   maxiter, verbose, outer_iter, update_sigma, update_sa, ...
+                   n0, sa0)
+    
   if verbose
     fprintf('       variational    max. incl max.           \n');
     fprintf('iter   lower bound  change vars E[b] sigma   sd\n');
   end
   
+  if family == 'gaussian'
+    [logw sigma sa alpha mu s] = ...
+        varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
+                   verbose,outer_iter,update_sigma,update_sa,n0,sa0);
+  end

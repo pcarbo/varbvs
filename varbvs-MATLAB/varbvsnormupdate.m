@@ -6,7 +6,7 @@
 % Input X is an n x p matrix of observations about the variables (or
 % features), where n is the number of samples, and p is the number of
 % variables. Input xy = X'*y, where y is the vector of observations about
-% the outcome. X must be a single precision matrix.
+% the continuous outcome. X must be a single precision matrix.
 %
 % Inputs sigma, sa and logodds specify other model parameters. sigma and sa
 % are scalars. sigma specifies the variance of the residual, and sa is the

@@ -147,6 +147,7 @@ function [lnZ, alpha, mu, s, eta, sa] = ...
     % parameter (sa).
     if update_sa
       sa = dot(alpha,s + mu.^2)/sum(alpha);
+      s  = sa./(sa*stats.xdx + 1);
     end
 
     % UPDATE ETA.

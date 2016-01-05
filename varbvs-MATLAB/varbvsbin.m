@@ -1,3 +1,5 @@
+% TO DO: Update description of this function.
+% 
 % [LNZ,ALPHA,MU,S,ETA] = VARBVSBIN(X,Y,SA,LOGODDS) implements the
 % fully-factorized variational approximation for Bayesian variable selection
 % in logistic regression. It finds the "best" fully-factorized variational
@@ -52,162 +54,196 @@
 % lower bound on the logistic regression factors. Set OPTIONS.FIXED_ETA =
 % TRUE to prevent ETA from being updated. And set OPTIONS.VERBOSE = FALSE to
 % turn off reporting the algorithm's progress.
-function [lnZ, alpha, mu, s, eta] = varbvsbin (X, y, sa, logodds, options)
+function [lnZ, alpha, mu, s, eta] = ...
+        varbvsbin (X, y, sa, logodds, alpha, mu, eta, tol, maxiter, ...
+                   verbose, outer_iter, update_sa, update_eta, n0, sa0)
 
-  % Convergence is reached when the maximum relative distance between
-  % successive updates of the variational parameters is less than this
-  % quantity.
-  tolerance = 1e-4;  
-  
-  % CHECK INPUTS.
-  % Get the number of samples and variables.
+  % Get the number of samples (n) and variables (p).
   [n p] = size(X);
 
-  % Make sure the genotypes are in single precision.
+  % (1) INITIAL STEPS
+  % -----------------
+  % Input X must be single precision.
   if ~isa(X,'single')
     X = single(X);
   end
 
-  % Y must be a double precision column vector of length N.
-  y = double(y(:));
-  if length(y) ~= n
-    error('Data X and Y do not match');
-  end
-
-  % SA must be a double scalar.
-  sa = double(sa); 
-  if ~isscalar(sa)
-    error('Input SA must be a scalar');
-  end
-
-  % LOGODDS must be a double precision column vector of length P.
-  if isscalar(logodds)
-    logodds = repmat(logodds,p,1);
-  end
-  logodds = double(logodds(:));
-  if length(logodds) ~= p
-    error('LOGODDS must be a scalar or a vector of the same length as Y');
-  end
-
-  % TAKE CARE OF OPTIONS.
-  if ~exist('options')
-    options = [];
-  end
-
-  % Set initial estimates of sufficient statistics.
-  if isfield(options,'alpha') 
-    alpha = double(options.alpha(:));
-  else
-    alpha = rand(p,1);
-    alpha = alpha / sum(alpha);
-  end
-  if isfield(options,'mu')
-    mu = double(options.mu(:));
-  else
-    mu = randn(p,1);
-  end
-  if length(alpha) ~= p || length(mu) ~= p
-    error('OPTIONS.ALPHA and OPTIONS.MU must be vectors of length P');
-  end
-
-  % Initialize the free parameters specifying the variational approximation
-  % to the logistic regression factors.
-  if isfield(options,'eta')
-    eta = options.eta;
-  else
-    eta = ones(n,1);
-  end
-
-  % Determine whether to update the variational approximation to the
-  % logistic regression.
-  if isfield(options,'fixed_eta')
-    if ~isfield(options,'eta')
-      error('OPTIONS.FIXED_ETA = TRUE requires input OPTIONS.ETA');
-    end
-    fixed_eta = options.fixed_eta;
-  else
-    fixed_eta = false;
-  end
-  
-  % Determine whether to display the algorithm's progress.
-  if isfield(options,'verbose')
-    verbose = options.verbose;
-  else
-    verbose = true;
-  end
-  clear options
-  
-  % INITIAL STEPS.
   % Compute a few useful quantities.
   Xr    = double(X*(alpha.*mu));
-  stats = updatestats(X,y,eta);
+  stats = update_stats(X,y,eta);
 
-  % MAIN LOOP.
-  % Repeat until convergence criterion is met.
-  lnZ  = -Inf;
-  iter = 0;
-  if verbose
-    fprintf('       variational    max. incl max.\n');
-    fprintf('iter   lower bound  change vars E[b]\n');
-  end
-  while true
-
-    % Go to the next iteration.
-    iter = iter + 1;
+  % (2) MAIN LOOP
+  % -------------
+  % Repeat until convergence criterion is met, or until the maximum
+  % number of iterations is reached.
+  logw = -Inf;
+  for iter = 1:maxiter
     
     % Save the current variational parameters and lower bound.
     alpha0  = alpha;
     mu0     = mu;
-    lnZ0    = lnZ;
+    logw0   = logw;
     eta0    = eta;
-    params0 = [ alpha; alpha .* mu ];
+    params0 = [alpha; alpha.*mu];
 
-    % UPDATE VARIATIONAL APPROXIMATION.
+    % (2a) UPDATE VARIATIONAL APPROXIMATION
+    % -------------------------------------
     % Run a forward or backward pass of the coordinate ascent updates.
-    if isodd(iter)
-      I = 1:p;
+    if mod(iter,2)
+      i = 1:p;
     else
-      I = p:-1:1;
+      i = p:-1:1;
     end
-    [alpha mu Xr] = varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,I);
+    [alpha mu Xr] = varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,i);
 
     % Recalculate the posterior variance of the coefficients.
     s = sa./(sa*stats.xdx + 1);  
 
-    % UPDATE ETA.
+    % (2b) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
+    % -----------------------------------------------------
+    % Compute the maximum a posteriori estimate of sa, if requested. Note
+    % that we must also recalculate the variance of the regression
+    % coefficients when this parameter is updated. 
+    if update_sa
+      sa = (sa0*n0 + dot(alpha,s + mu.^2))/(n0 + sigma*sum(alpha));
+      s  = sa./(sa*stats.xdx + 1);
+    end
+    
+    % (2c) UPDATE ETA
+    % ---------------
     % Update the free parameters specifying the variational approximation
     % to the logistic regression factors.
-    if ~fixed_eta
-      eta   = updateeta(X,y,betavar(alpha,mu,s),Xr,stats.d);
-      stats = updatestats(X,y,eta);
+    if update_eta
+      eta   = update_eta(X,y,betavar(alpha,mu,s),Xr,stats.d);
+      stats = update_stats(X,y,eta);
     end
 
-    % COMPUTE VARIATIONAL LOWER BOUND.
+    % (2d) COMPUTE VARIATIONAL LOWER BOUND
+    % ------------------------------------
     % Compute variational lower bound to marginal log-likelihood.
     lnZ = intlogit(y,stats,alpha,mu,s,Xr,eta) ...
           + intgamma(logodds,alpha) ...
           + intklbeta(alpha,mu,s,sa);
     
-    % CHECK CONVERGENCE.
+    % (2e) CHECK CONVERGENCE
+    % ----------------------
     % Print the status of the algorithm and check the convergence criterion.
     % Convergence is reached when the maximum relative difference between
     % the parameters at two successive iterations is less than the specified
     % tolerance, or when the variational lower bound has decreased. I ignore
-    % parameters that are very small.
-    params = [ alpha; alpha .* mu ];
-    I      = find(abs(params) > 1e-6);
-    err    = relerr(params(I),params0(I));
+    % parameters that are very small. If the variational bound decreases,
+    % stop.
+    params = [alpha; alpha.*mu];
+    i      = find(abs(params) > 1e-6);
+    err    = relerr(params(i),params0(i));
     if verbose
+      % TO DO: Fix this.
      fprintf('%4d %+13.6e %0.1e %4d %0.2f\n',iter,lnZ,max(err),...
 	      round(sum(alpha)),max(abs(alpha.*mu)));
     end
-    if lnZ < lnZ0
+    if logw < logw0
       alpha = alpha0;
       mu    = mu0;
       eta   = eta0;
-      lnZ   = lnZ0;
+      logw  = logw0;
       break
-    elseif max(err) < tolerance
+    elseif max(err) < tol
       break
     end
   end
+
+% ----------------------------------------------------------------------
+% Calculates useful quantities for updating the variational approximation
+% to the logistic regression factors.
+function stats = update_stats (X, y, eta)
+
+  % Compute the slope of the conjugate.
+  d = slope(eta);
+
+  % Compute beta0 and yhat. See the journal paper for an explanation of
+  % these two variables.
+  beta0 = sum(y - 0.5)/sum(d);
+  yhat  = y - 0.5 - beta0*d;
+
+  % Calculate xy = X'*yhat as (yhat'*X)' and xd = X'*d as (d'*X)' to
+  % avoid storing the transpose of X, since X may be large.
+  xy = double(yhat'*X)';
+  xd = double(d'*X)';
+
+  % Compute the diagonal entries of X'*dhat*X. For a definition of dhat, see
+  % the Bayesian Analysis journal paper.
+  xdx = diagsq(X,d) - xd.^2/sum(d);
+
+  % Return the result.
+  stats = struct('d',d,'yhat',yhat,'xy',xy,'xd',xd,'xdx',xdx);
+
+% ----------------------------------------------------------------------
+% UPDATE_ETA(X,Y,V,XR,D) returns the M-step update for the parameters
+% specifying the variational lower bound to the logistic regression factors.
+%
+% The inputs are as follows. Input X is an N x P matrix of observations
+% about the variables (or features), where N is the number of samples, and P
+% is the number of variables. Y is the vector of observations about the
+% binary trait; it is a vector of length N. Vector Y and the columns of
+% matrix X must not be centered. Input XR must be equal to XR = X*R, where R
+% is the posterior mean of the coefficients. Note that under the
+% fully-factorized variational approximation, R = ALPHA.*MU; see VARBVSBIN
+% for details.
+%
+% Input V is the posterior variance of the coefficients. For this update to
+% be valid, it is required that the posterior covariance of the coefficients
+% is equal to DIAG(V). Input D must be D = SLOPE(ETA), where ETA is the
+% current estimate of the free parameters; see function SLOPE for details.
+function eta = update_eta (X, y, v, Xr, d)
+  
+  % Compute MU0, the posterior mean of the intercept in the logistic
+  % regression under the variational approximation. Here, A is the variance
+  % of the intercept given the other coefficients.
+  a   = 1/sum(d);
+  mu0 = a*(sum(y - 0.5) - d'*Xr);
+
+  % Compute S0, the (marginal) posterior variance of the intercept in the
+  % logistic regression. Here, I calculate XD = X'*D as (D'*X)' to avoid
+  % storing the transpose of X, since X may be large.
+  xd = double(d'*X)';
+  s0 = a*(1 + a*v'*(xd.^2));
+  
+  % Calculate the covariance between the intercept and coefficients.
+  c = -a*xd.*v;
+  
+  % This is the M-step update for the free parameters.
+  eta = sqrt((mu0 + Xr).^2 + s0 + diagsqt(X,v) + 2*double(X*c));
+
+% ----------------------------------------------------------------------
+% INTLOGIT(Y,STATS,ALPHA,MU,S,XR,ETA) computes an integral that appears in
+% the variational lower bound of the marginal log-likelihood for the
+% logistic regression model. This integral is an approximation to the
+% expectation of the logistic regression log-likelihood taken with respect
+% to the variational approximation. 
+%
+% Input arguments Y and STATS specify the variational approximation to the
+% likelihood. Y is the column vector of observations about the binary
+% outcome. STATS is the STRUCT output from UPDATESTATS. Inputs ALPHA, MU and
+% S are the parameters of the approximating distribution; see VARBVSBIN for
+% details. ETA is the vector of free parameters specifying the variational
+% lower bound to the logistic regression factors. Input XR must be equal to
+% XR = X*R, where R is the posterior mean of the coefficients. Note that
+% under the fully-factorized variational approximation, R = ALPHA.*MU; see
+% VARBVSBIN for details. ETA and XR are column vectors with the same length
+% as Y.
+function I = intlogit (y, stats, alpha, mu, s, Xr, eta)
+
+  % Get some of the statistics.
+  yhat = stats.yhat;
+  xdx  = stats.xdx;
+  d    = stats.d;
+  D    = diag(sparse(d));
+
+  % Get the variance of the intercept given the other coefficients.
+  a = 1/sum(d);
+
+  % Compute the variational approximation to the expectation of the
+  % log-likelihood with respect to the variational approximation.
+  I = sum(logsigmoid(eta)) + eta'*(d.*eta - 1)/2 + log(a)/2 ...
+      + a*sum(y - 0.5)^2/2 + yhat'*Xr - qnorm(Xr,D)^2/2 ...
+      + a*(d'*Xr)^2/2 - xdx'*betavar(alpha,mu,s)/2;

@@ -1,104 +1,65 @@
-% [ALPHA,MU,XR] = VARBVSBINUPDATE(X,SA,LOGODDS,STATS,ALPHA0,MU0,XR0,I) runs
+% [alpha,mu,Xr] = varbvsbinupdate(X,sa,logodds,stats,alpha0,mu0,Xr0,i) runs
 % a single iteration of the coordinate ascent updates to maximize the
 % variational lower bound for Bayesian variable selection in logistic
-% regression. It adjusts the fully-factorized variational approximation to
-% the posterior distribution of the coefficients in a logistic regression
-% model of a binary outcome or trait, with spike and slab priors on the
-% coefficients.
+% regression.
 %
-% All inputs to this function are required. Input X is an N x P matrix of
-% observations about the variables (or features), where N is the number of
-% samples, and P is the number of variables. Y is the vector of observations
-% about the binary trait; it is a vector of length N. Unlike function
-% VARBVSUPDATE, Y and X must *not* be centered. Instead, we will account for
-% the intercept as we update the variational approximation.
+% Input X is an n x p matrix of observations about the variables (or
+% features), where n is the number of samples, and p is the number of
+% variables. Input y is the vector of observations about the binary outcome;
+% it is a vector of length n. X must be a single precision matrix.
 %
-% This routine is implemented with the assumption that X is a single
-% floating-point precision matrix (type HELP SINGLE), as opposed to MATLAB's
-% default of double precision. This is useful for large data sets, because
-% single precision requires half of the number of bits as double
-% floating-point precision. If X is provided in another numerical
-% representation, an error is reported.
+% Input sa specifies the prior variance of the coefficients. Input logodds
+% is the prior log-odds of inclusion for each variable. It must be a vector
+% of length p. Note that a residual variance parameter (sigma) is not needed
+% to model a binary outcome. See function updatestats in varbvsbin.m for
+% more information about input 'stats'.
 %
-% Input scalar SA specifies the prior variance of the coefficients. LOGODDS
-% is the prior log-odds of inclusion for each variable. It is equal to
-% LOGODDS = LOG(Q./(1-Q)), where Q is the prior probability that each
-% variable is included in the linear model of Y. LOGODDS is a vector of
-% length P. Note that a residual variance parameter SIGMA is not needed to
-% model a binary trait. Input STATS is the STRUCT output from UPDATESTATS.
-%
-% Inputs ALPHA0, MU0 are the current parameters of the variational
+% Inputs alpha0, mu0 are the current parameters of the variational
 % approximation; under the variational approximation, the ith regression
-% coefficient is normal with probability ALPHA0(i), and MU0(i) is the mean
-% of the coefficient given that it is included in the model. Inputs XR0 must
-% be XR0 = X*(ALPHA0.*MU0).
+% coefficient is normal with probability alpha0(i), and mu0(i) is the mean
+% of the coefficient given that it is included in the model. Input Xr0 must
+% be Xr0 = X*(alpha0.*mu0).
 %
-% Input I specifies the order in which the coordinates are updated. It may
-% be a vector of any length. Each entry of I must be an integer between 1
+% Input i specifies the order in which the coordinates are updated. It may
+% be a vector of any length. Each entry of i must be an integer between 1
 % and P.
 %
-% There are three outputs. Output vectors ALPHA and MU are the updated
-% variational parameters, and XR = X*(ALPHA.*MU). The computational
-% complexity of VARBVSBINUPDATE is O(N*LENGTH(I)).
-function [alpha, mu, Xr] = varbvsbinupdate (X, sa, logodds, stats, ...
-					    alpha0, mu0, Xr0, I)
+% There are three outputs. Output vectors alpha and mu are the updated
+% variational parameters, and Xr = X*(alpha.*mu). The computational
+% complexity is O(n*length(i)).
+function [alpha, mu, Xr] = ...
+        varbvsbinupdate (X, sa, logodds, stats, alpha0, mu0, Xr0, i)
 
   % Get the number of samples (n) and variables (p).
   [n p] = size(X);
 
-  % CHECK THE INPUTS.
   % X must be single precision.
   if ~isa(X,'single')
-    error('Input argument X must be SINGLE')
+    error('Input X must be SINGLE')
   end
 
-  % Check input SA.
+  % Check input sa.
   if ~isscalar(sa)
-    error('Input SA must be a scalar');
+    error('Input sa must be a scalar');
   end
 
-  % Check input LOGODDS.
-  if isscalar(logodds)
-    logodds = repmat(logodds,p,1);
-  end
-  if length(logodds) ~= p
-    error('Input LOGODDS must be a scalar or a vector of length P');
+  % Check input logodds, alpha0 and mu0.
+  if ~(length(logodds) == p & length(alpha0) == p & length(mu0) ~= p)
+    error('logodds, alpha0 and mu0 must have length = size(X,2).')
   end
 
-  % Check input STATS.
-  if ~isfield(stats,'d') | ~isfield(stats,'xy') | ~isfield(stats,'xd') | ...
-     ~isfield(stats,'xdx') 
-    error('STATS must be a STRUCT with fields d, xy, xd and xdx')
-  end
-  if length(stats.d) ~= n
-    error('STATS.D must be a vector of length N');
-  end
-  if length(stats.xdx) ~= p | length(stats.xy) ~= p | length(stats.xd) ~= p
-    error('STATS.XDX, STATS.XY and STATS.XD must be vectors of length P');
-  end
-  stats.d   = double(stats.d);
-  stats.xdx = double(stats.xdx);
-  stats.xy  = double(stats.xy);
-  stats.xd  = double(stats.xd);
-
-  % Check inputs ALPHA0 and MU0.
-  if length(alpha0) ~= p | length(mu0) ~= p
-    error('Inputs ALPHA0 and MU0 must be vectors of length P');  
-  end
-
-  % Check input XR0.
+  % Check input Xr0.
   if length(Xr0) ~= n
-    error('Input XR0 must be a vector of length N');
+    error('length(Xr0) must be equal to size(X,1)');
   end
-
-  % Check input I.
-  if sum(I < 1 | I > p)
-    error('Input I contains invalid variable indices');
+   
+  % Check input i.
+  if sum(i < 1 | i > p)
+    error('Input i contains invalid variable indices');
   end
-
-  % Execute the C routine. We need to subtract 1 from the indices because
-  % MATLAB arrays start at one, but C arrays start at zero.
+   
+  % Execute the C routine. I subtract 1 from the indices because MATLAB
+  % arrays start at 1, but C arrays start at 0.
   [alpha mu Xr] = ...
-      varbvsbinupdatematlab(X,double(sa),double(logodds),stats,...
-			    double(alpha0),double(mu0),double(Xr0),...
-			    double(I-1));
+      varbvsbinupdatemex(X,double(sa),double(logodds),stats,double(alpha0),...
+                         double(mu0),double(Xr0),double(i-1));

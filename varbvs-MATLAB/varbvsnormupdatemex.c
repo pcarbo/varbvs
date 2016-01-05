@@ -10,7 +10,8 @@
 void mexFunction (int nlhs, mxArray* plhs[], 
 		  int nrhs, const mxArray* prhs[]) {
 
-  // GET INPUTS.
+  // (1) GET INPUTS
+  // --------------
   const SingleMatrix X       = getSingleMatrix(prhs[0]);
   const double       sigma   = *mxGetPr(prhs[1]);
   const double       sa      = *mxGetPr(prhs[2]);
@@ -28,7 +29,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
   const Size p = X.nc;
   const Size m = I.n;
 
-  // (1) INITIALIZE OUTPUTS
+  // (2) INITIALIZE OUTPUTS
   // ----------------------
   DoubleVector alpha = createMatlabVector(p,&plhs[0]);
   DoubleVector mu    = createMatlabVector(p,&plhs[1]);
@@ -41,7 +42,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
   // This is storage for a column of matrix X.
   double* x = malloc(sizeof(double)*n);
 
-  // (2) RUN COORDINATE ASCENT UPDATES
+  // (3) RUN COORDINATE ASCENT UPDATES
   // ---------------------------------
   // Repeat for each coordinate ascent update.
   for (Index j = 0; j < m; j++) {
