@@ -63,10 +63,16 @@ function [logw, sigma, sa, alpha, mu, s] = ...
     % Save the current variational parameters and lower bound.
     alpha0  = alpha;
     mu0     = mu;
-    logw0   = logw;
     params0 = [ alpha; alpha .* mu ];
 
-    % (2a) UPDATE VARIATIONAL APPROXIMATION
+    % (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
+    % --------------------------------------------
+    % Compute the lower bound to the marginal log-likelihood.
+    logw0 = int_linear(Xr,d,y,sigma,alpha,mu,s) ...
+            + int_gamma(logodds,alpha) ...
+            + int_klbeta(alpha,mu,s,sigma*sa);
+    
+    % (2b) UPDATE VARIATIONAL APPROXIMATION
     % -------------------------------------
     % Run a forward or backward pass of the coordinate ascent updates.
     if mod(iter,2)
@@ -75,8 +81,15 @@ function [logw, sigma, sa, alpha, mu, s] = ...
       i = p:-1:1;
     end
     [alpha mu Xr] = varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,i);
+
+    % (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
+    % --------------------------------------------
+    % Compute the lower bound to the marginal log-likelihood.
+    logw = int_linear(Xr,d,y,sigma,alpha,mu,s) ...
+           + int_gamma(logodds,alpha) ...
+           + int_klbeta(alpha,mu,s,sigma*sa);
     
-    % (2b) UPDATE RESIDUAL VARIANCE
+    % (2d) UPDATE RESIDUAL VARIANCE
     % -----------------------------
     % Compute the maximum likelihood estimate of sigma, if requested.
     % Note that we must also recalculate the variance of the regression
@@ -86,8 +99,8 @@ function [logw, sigma, sa, alpha, mu, s] = ...
                + alpha'*(s + mu.^2)/sa)/(n + sum(alpha));
       s = sa*sigma./(sa*d + 1);
     end
-
-    % (2c) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
+    
+    % (2e) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
     % -----------------------------------------------------
     % Compute the maximum a posteriori estimate of sa, if requested. Note
     % that we must also recalculate the variance of the regression
@@ -97,14 +110,7 @@ function [logw, sigma, sa, alpha, mu, s] = ...
       s  = sa*sigma./(sa*d + 1);
     end
 
-    % (2d) COMPUTE VARIATIONAL LOWER BOUND
-    % ------------------------------------
-    % Compute the lower bound to the marginal log-likelihood.
-    logw = intlinear(Xr,d,y,sigma,alpha,mu,s) ...
-           + intgamma(logodds,alpha) ...
-           + intklbeta(alpha,mu,s,sigma*sa);
-    
-    % (2e) CHECK CONVERGENCE
+    % (2f) CHECK CONVERGENCE
     % ----------------------
     % Print the status of the algorithm and check the convergence criterion.
     % Convergence is reached when the maximum relative difference between
@@ -135,7 +141,7 @@ function [logw, sigma, sa, alpha, mu, s] = ...
 % the variational lower bound of the marginal log-likelihood. This integral
 % is the expectation of the linear regression log-likelihood taken with
 % respect to the variational approximation.
-function I = intlinear (Xr, d, y, sigma, alpha, mu, s)
+function I = int_linear (Xr, d, y, sigma, alpha, mu, s)
   n = length(y);
   I = - n/2*log(2*pi*sigma) - norm(y - Xr)^2/(2*sigma) ...
       - d'*betavar(alpha,mu,s)/(2*sigma);

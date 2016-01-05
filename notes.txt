@@ -30,11 +30,14 @@ Files that are good to go
 -------------------------
 * betavar.m
 * diagsq.m
+* diagsqt.m
 * intgamma.m
 * intklbeta.m
 * logdet.m
 * logsigmoid.m
 * logpexp.m
+* normalizelogweights.m
+* qnorm.m
 * relerr.m
 * slope.m
 * varbvsbinupdate.m
@@ -45,6 +48,7 @@ Files that are good to go
 * singlematrixmex.h
 
 * diagsqmex.c
+* diagsqtmex.c
 * doublematrixmex.c
 * doublevectormex.c
 * singlematrixmex.c

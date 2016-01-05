@@ -24,7 +24,6 @@ corefiles = {'C/doublevectormex.c '
 options = sprintf(['-O -largeArrayDims -IC -I%s ' ...
 		   'COPTIMFLAGS="%s" LDOPTIMFLAGS="%s" '],...
 		   Rsrcdir,cflags,ldflags);
-eval(['mex ',options,'C/var1mex.c ',corefiles{1:4}]);
 eval(['mex ',options,'C/diagsqmex.c ',corefiles{1:4}]);
 eval(['mex ',options,'C/diagsqtmex.c ',corefiles{1:4}]);
 eval(['mex ',options,'C/varbvsupdatemex.c ',corefiles{1:6}]);

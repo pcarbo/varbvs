@@ -15,8 +15,7 @@ void diagsq (const MatrixElem* X, const double* a, double* y,
 
 // FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
-void mexFunction (int nlhs, mxArray* plhs[], 
-		  int nrhs, const mxArray* prhs[]) {
+void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
 
   // Get the input matrix X.
   const SingleMatrix X = getSingleMatrix(prhs[0]);
@@ -31,7 +30,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
   diagsq(X.elems,a.elems,y.elems,X.nr,X.nc);
 }
 
-// -----------------------------------------------------------------
+// ---------------------------------------------------------------------
 // Compute (X.^2)'*a and store the result in vector y.
 void diagsq (const MatrixElem* X, const double* a, double* y, 
 	     Size m, Size n) {

@@ -3,25 +3,20 @@
 #include "doublevectormatlab.h"
 #include "singlematrixmatlab.h"
 #include "vectorops.h"
-
-// These include files have a bunch of definitions to interface C
-// routines to MATLAB.
 #include "mex.h"
 #include "matrix.h"
 
-// Function declarations.
-// -----------------------------------------------------------------
+// FUNCTION DECLARATIONS
+// ---------------------------------------------------------------------
 // Compute X.^2*a and store the result in vector y. X is an m x n
 // matrix in which the entries in each column are stored consecutively
 // in memory.
-void diagsqt (const MatrixElem* X, const double* a, double* y, 
-	      Size m, Size n);
+void diagsqt (const MatrixElem* X, const double* a, double* y, Size m, Size n);
 
-// Function definitions.
-// -----------------------------------------------------------------
+// FUNCTION DEFINITIONS
+// ---------------------------------------------------------------------
 // MEX-file gateway routine.
-void mexFunction (int nlhs, mxArray* plhs[], 
-		  int nrhs, const mxArray* prhs[]) {
+void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
 
   // Get the input matrix X.
   const SingleMatrix X = getSingleMatrix(prhs[0]);
@@ -36,9 +31,10 @@ void mexFunction (int nlhs, mxArray* plhs[],
   diagsqt(X.elems,a.elems,y.elems,X.nr,X.nc);    
 }
 
+// ---------------------------------------------------------------------
 // Compute X.^2*a and store the result in vector y.
-void diagsqt (const MatrixElem* X, const double* a, double* y, 
-	     Size m, Size n) {
+void diagsqt (const MatrixElem* X, const double* a, double* y, Size m,
+	      Size n) {
   double t;  // An intermediate result.
 
   // Zero the entries of the result vector.

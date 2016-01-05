@@ -248,7 +248,7 @@ function fit = varbvs (X, Z, y, family, options)
   if isfield(options,'eta')
     eta               = double(options.eta);
     initialize_params = false;
-    update_eta        = false;
+    optimize_eta      = false;
     if family ~= 'binomial'
       error('options.eta is only valid for family = binomial');
     end
@@ -263,13 +263,13 @@ function fit = varbvs (X, Z, y, family, options)
     initialize_params = true;  
   end
 
-  % OPTIONS.UPDATE_ETA
+  % OPTIONS.OPTIMIZE_ETA
   % Determine whether to update the variational parameter eta. Note this
   % is only relevant for logistic regression.
   if isfield(options,'eta')
-    update_eta = options.update_eta;
+    optimize_eta = options.optimize_eta;
     if family ~= 'binomial'
-      error('options.update_eta is only valid for family = binomial');
+      error('options.optimize_eta is only valid for family = binomial');
     end
   end
   
@@ -311,6 +311,10 @@ function fit = varbvs (X, Z, y, family, options)
   % of the regression coefficients (s).
   logw = zeros(1,ns);
   s    = zeros(p,ns);
+
+  if verbose
+    % TO DO: Summarize analysis here, and print status message.
+  end
   
   % (5) FIT BAYESIAN VARIABLE SELECTION MODEL TO DATA
   % -------------------------------------------------
@@ -372,10 +376,10 @@ function fit = varbvs (X, Z, y, family, options)
 %
 % NOTE: Use base-10 log for logodds.
 %
-function [logw, sigma, sa, alpha, mu, s] = ...
-        outerloop (X, Z, y, family, sigma, sa, logodds, alpha, mu, tol, ...
-                   maxiter, verbose, outer_iter, update_sigma, update_sa, ...
-                   n0, sa0)
+function [logw, sigma, sa, alpha, mu, s, eta] = ...
+        outerloop (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta, ...
+                   tol, maxiter, verbose, outer_iter, update_sigma, ...
+                   update_sa, optimize_eta, n0, sa0)
     
   if verbose
     fprintf('       variational    max. incl max.           \n');
@@ -386,4 +390,10 @@ function [logw, sigma, sa, alpha, mu, s] = ...
     [logw sigma sa alpha mu s] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
                    verbose,outer_iter,update_sigma,update_sa,n0,sa0);
+  elseif family == 'binomial' & intercept & isempty(Z)
+    [logw sa alpha mu s eta] = ...
+        varbvsbin(X,y,sa,logodds,alpha,mu,eta,tol,maxiter,verbose,...
+                  outer_iter,update_sa,optimize_eta,n0,sa0);
+  elseif family == 'binomial'
+    % TO DO.
   end
