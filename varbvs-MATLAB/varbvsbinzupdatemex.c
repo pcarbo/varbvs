@@ -1,22 +1,18 @@
-// For a description of this C code, see varbvsbinupdate.m.
+// For a description of this C code, see varbvsbinzupdate.m.
 #include "types.h"
 #include "vectorops.h"
 #include "doublevectormatlab.h"
 #include "singlematrixmatlab.h"
 #include "doublematrixmatlab.h"
 #include "varbvsbin.h"
-
-// These include files have a bunch of definitions to interface C
-// routines to MATLAB.
 #include "mex.h"
 #include "matrix.h"
 
-// MEX-file gateway routine. Note that varbvszbinupdate.m checks the
-// inputs, so we do not have to do it here.
 void mexFunction (int nlhs, mxArray* plhs[], 
 		  int nrhs, const mxArray* prhs[]) {
 
-  // GET INPUTS.
+  // (1) GET INPUTS
+  // --------------
   const SingleMatrix X       = getSingleMatrix(prhs[0]);
   const double       sa      = *mxGetPr(prhs[1]);
   const DoubleVector logodds = getDoubleVector(prhs[2]);
@@ -37,7 +33,8 @@ void mexFunction (int nlhs, mxArray* plhs[],
   const Size m       = dzr.nc;
   const Size numiter = I.n;
 
-  // INITIALIZE OUTPUTS.
+  // (2) INITIALIZE OUTPUTS
+  // ----------------------
   DoubleVector alpha = createMatlabVector(p,&plhs[0]);
   DoubleVector mu    = createMatlabVector(p,&plhs[1]);
   DoubleVector Xr    = createMatlabVector(n,&plhs[2]);
@@ -52,7 +49,8 @@ void mexFunction (int nlhs, mxArray* plhs[],
   double* a = malloc(sizeof(double)*m);
   double* b = malloc(sizeof(double)*m);
 
-  // RUN COORDINATE ASCENT UPDATES.
+  // (3) RUN COORDINATE ASCENT UPDATES
+  // ---------------------------------
   // Repeat for each coordinate ascent update.
   for (Index iter = 0; iter < numiter; iter++) {
     Index k = (Index) I.elems[iter];
@@ -61,7 +59,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
     copyColumn(X.elems,x,k,n);
 
     // Perform the update.
-    varbvszbinupdate(x,xy.elems[k],xdx.elems[k],d.elems,dzr.elems,sa,
+    varbvsbinzupdate(x,xy.elems[k],xdx.elems[k],d.elems,dzr.elems,sa,
 		     logodds.elems[k],alpha.elems + k,mu.elems + k,
 		     Xr.elems,a,b,n,m);
   }

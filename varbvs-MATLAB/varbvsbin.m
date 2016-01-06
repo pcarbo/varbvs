@@ -52,7 +52,7 @@ function [logw, sa, alpha, mu, s, eta] = ...
   logw = -Inf;
   for iter = 1:maxiter
     
-    % Save the current variational parameters and lower bound.
+    % Save the current variational parameters.
     alpha0  = alpha;
     mu0     = mu;
     eta0    = eta;

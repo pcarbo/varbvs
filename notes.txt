@@ -1,5 +1,5 @@
-Strategy for my new implementation of 'varbvs':
-
+Strategy for my new implementation of 'varbvs'
+----------------------------------------------
 * Variants of varbvs:
     (1) Quantitative response variable with 0+ covariates, including
         an intercept (family = gaussian). See varbvsnorm.m.
@@ -41,6 +41,7 @@ Files that are good to go
 * relerr.m
 * slope.m
 * varbvsbinupdate.m
+* varbvsbinzupdate.m
 * varbvsnormupdate.m
 
 * doublematrixmex.h
@@ -53,4 +54,5 @@ Files that are good to go
 * doublevectormex.c
 * singlematrixmex.c
 * varbvsbinupdatemex.c
+* varbvsbinzupdatemex.c
 * varbvsnormupdatemex.c

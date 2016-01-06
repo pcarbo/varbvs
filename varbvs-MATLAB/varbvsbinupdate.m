@@ -44,7 +44,7 @@ function [alpha, mu, Xr] = ...
   end
 
   % Check input logodds, alpha0 and mu0.
-  if ~(length(logodds) == p & length(alpha0) == p & length(mu0) ~= p)
+  if ~(length(logodds) == p & length(alpha0) == p & length(mu0) == p)
     error('logodds, alpha0 and mu0 must have length = size(X,2).')
   end
 

@@ -106,7 +106,8 @@ function fit = varbvs (X, Z, y, family, options)
   % OPTIONS.INTERCEPT
   % Determine whether to include an intercept in the model. If other
   % covariates are included, simply treat the intercept as another
-  % covariate.
+  % covariate. Either an intercept or covariates is required for logistic
+  % regression model.
   if isfield(options,'intercept')
     intercept = options.intercept;
   else
@@ -114,6 +115,9 @@ function fit = varbvs (X, Z, y, family, options)
   end
   if intercept & ~isempty(Z)
     Z = [ones(n,1) Z];
+  end
+  if family == 'binomial' & ~intercept & isempty(Z)
+    error('family = binomial requires intercept or non-empty Z')
   end
 
   % OPTIONS.SIGMA
@@ -390,7 +394,7 @@ function [logw, sigma, sa, alpha, mu, s, eta] = ...
     [logw sigma sa alpha mu s] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
                    verbose,outer_iter,update_sigma,update_sa,n0,sa0);
-  elseif family == 'binomial' & intercept & isempty(Z)
+  elseif family == 'binomial' & isempty(Z)
     [logw sa alpha mu s eta] = ...
         varbvsbin(X,y,sa,logodds,alpha,mu,eta,tol,maxiter,verbose,...
                   outer_iter,update_sa,optimize_eta,n0,sa0);

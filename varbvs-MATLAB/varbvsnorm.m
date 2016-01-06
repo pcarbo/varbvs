@@ -60,7 +60,7 @@ function [logw, sigma, sa, alpha, mu, s] = ...
   logw = -Inf;
   for iter = 1:maxiter
 
-    % Save the current variational parameters and lower bound.
+    % Save the current variational parameters.
     alpha0  = alpha;
     mu0     = mu;
     params0 = [ alpha; alpha .* mu ];
