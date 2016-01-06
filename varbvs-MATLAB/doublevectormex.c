@@ -1,4 +1,4 @@
-#include "doublevectormatlab.h"
+#include "doublevectormex.h"
 #include "vectorops.h"
 
 // FUNCTION DEFINITIONS

@@ -1,7 +1,7 @@
 #include "sigmoid.h"
 #include <math.h>
 
-// Function definitions.
+// FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
 // Computes log(1 + exp(x)).
 double logpexp (double x) {

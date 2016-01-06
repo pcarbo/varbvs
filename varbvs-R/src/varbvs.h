@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// Function declarations.
+// FUNCTION DECLARATIONS
 // -----------------------------------------------------------------
 // Execute a single coordinate ascent update to maximize the
 // variational lower bound for Bayesian variable selection in linear

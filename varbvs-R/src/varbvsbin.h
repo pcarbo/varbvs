@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// Function declarations.
+// FUNCTION DECLARATIONS
 // -----------------------------------------------------------------
 // Execute a single coordinate ascent update to maximize the
 // variational lower bound for Bayesian variable selection in logistic
@@ -35,7 +35,7 @@ void varbvsbinupdate (const double* x, double xy, double xd, double xdx,
 // variational parameters that will be updated; and Xr is the
 // matrix-vector product X*r which will be udpated to reflect the
 // changes to alpha and mu.
-void varbvszbinupdate (const double* x, double xy, double xdx, 
+void varbvsbinzupdate (const double* x, double xy, double xdx, 
 		       const double* d, const double* dzr, double sa, 
 		       double logodds, double* alpha, double* mu, 
 		       double* Xr, double* a, double* b, Size n, Size m);

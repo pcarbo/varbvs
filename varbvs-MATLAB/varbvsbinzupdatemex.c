@@ -1,9 +1,9 @@
 // For a description of this C code, see varbvsbinzupdate.m.
 #include "types.h"
 #include "vectorops.h"
-#include "doublevectormatlab.h"
-#include "singlematrixmatlab.h"
-#include "doublematrixmatlab.h"
+#include "doublevectormex.h"
+#include "singlematrixmex.h"
+#include "doublematrixmex.h"
 #include "varbvsbin.h"
 #include "mex.h"
 #include "matrix.h"

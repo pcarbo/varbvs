@@ -1,4 +1,4 @@
-#include "singlematrixmatlab.h"
+#include "singlematrixmex.h"
 
 // FUNCTION DEFINITIONS
 // -----------------------------------------------------------------

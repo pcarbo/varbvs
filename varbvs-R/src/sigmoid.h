@@ -1,7 +1,7 @@
 #ifndef INCLUDE_SIGMOID
 #define INCLUDE_SIGMOID
 
-// Function declarations.
+// FUNCTION DECLARATIONS
 // -----------------------------------------------------------------
 // Compute log(1 + exp(x)) in a numerically stable manner.
 double logpexp (double x);

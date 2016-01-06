@@ -3,7 +3,7 @@
 #include "vectorops.h"
 #include <math.h>
 
-// Function definitions.
+// FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
 // Execute a single coordinate ascent update to maximize the
 // variational lower bound for Bayesian variable selection in linear

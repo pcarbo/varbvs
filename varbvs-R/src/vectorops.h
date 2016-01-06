@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// Function declarations.
+// FUNCTION DECLARATIONS
 // -----------------------------------------------------------------
 // Copy entries of one vector to another vector.
 void copy (const double* source, double* dest, Size n);

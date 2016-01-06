@@ -3,8 +3,8 @@
 #include "vectorops.h"
 #include <math.h>
 
-// Function definitions.
-// -----------------------------------------------------------------
+// FUNCTION DEFINITIONS
+// ---------------------------------------------------------------------
 // Execute a single coordinate ascent update to maximize the
 // variational lower bound for Bayesian variable selection in logistic
 // regression.
@@ -29,10 +29,11 @@ void varbvsbinupdate (const double* x, double xy, double xd, double xdx,
   add(Xr,rnew - r,x,n);
 }
 
+// ---------------------------------------------------------------------
 // Execute a single coordinate ascent update to maximize the
 // variational lower bound for Bayesian variable selection in logistic
 // regression, allowing for covariates.
-void varbvszbinupdate (const double* x, double xy, double xdx, 
+void varbvsbinzupdate (const double* x, double xy, double xdx, 
 		       const double* d, const double* dzr, double sa, 
 		       double logodds, double* alpha, double* mu, 
 		       double* Xr, double* a, double* b, Size n, Size m) {

@@ -1,7 +1,7 @@
 #include "vectorops.h"
 #include <string.h>
 
-// Function definitions.
+// FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
 // Copy entries of one vector to another vector.
 void copy (const double* source, double* dest, Size n) {

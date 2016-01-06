@@ -1,7 +1,7 @@
 // For a description of this C code, see diagsqt.m.
 #include "types.h"
-#include "doublevectormatlab.h"
-#include "singlematrixmatlab.h"
+#include "doublevectormex.h"
+#include "singlematrixmex.h"
 #include "vectorops.h"
 #include "mex.h"
 #include "matrix.h"

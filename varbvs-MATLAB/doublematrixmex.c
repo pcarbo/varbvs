@@ -1,4 +1,4 @@
-#include "doublematrixmatlab.h"
+#include "doublematrixmex.h"
 
 // FUNCTION DEFINITIONS
 // -----------------------------------------------------------------

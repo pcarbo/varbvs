@@ -1,8 +1,8 @@
 // For a description of this C code, see varbvsbinupdate.m.
 #include "types.h"
 #include "vectorops.h"
-#include "doublevectormatlab.h"
-#include "singlematrixmatlab.h"
+#include "doublevectormex.h"
+#include "singlematrixmex.h"
 #include "varbvsbin.h"
 #include "mex.h"
 #include "matrix.h"
