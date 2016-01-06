@@ -1,6 +1,6 @@
-% This script illustrates 'varbvs' genome-wide mapping of a quantitative
-% trait in simulated data when all the genetic markers are "unlinked" (not
-% correlated with each other).
+% This script illustrates 'varbvs' for genome-wide mapping of a quantitative
+% trait in a simulated data set in which all the genetic markers are
+% uncorrelated with each other (i.e., they are "unlinked").
 clear
 
 % SCRIPT PARAMETERS
@@ -12,8 +12,11 @@ na = 20;   % Number of quantitative trait loci (QTLs).
 se = 4;    % Variance of residual.
 r  = 0.5;  % Proportion of variance in trait explained by QTLs.
 
+% Include an intercept?
+intercept = true;
+
 % Candidate values for the prior log-odds of inclusion.
-theta0 = (-3:0.1:-1.5)';
+logodds = (-3:0.1:-1)';
 
 % Set the random number generator seed.
 rng(1);
@@ -22,19 +25,17 @@ rng(1);
 % -----------------
 % Generate the minor allele frequencies so that they are uniform over range
 % [0.05,0.5]. Then simulate genotypes assuming all markers are uncorrelated
-% (i.e. no linkage disequilibrium), according to the specified minor allele
-% frequencies.
-fprintf('Generating data set.\n');
+% (i.e., unlinked), according to the specified minor allele frequencies.
 maf = 0.05 + 0.45 * rand(1,p);
 X   = (rand(n,p) < repmat(maf,n,1)) + ...
       (rand(n,p) < repmat(maf,n,1));
 
 % Generate additive effects for the markers so that exactly na of them have
 % a nonzero effect on the trait.
-I       = randperm(p);
-I       = I(1:na);
+i       = randperm(p);
+i       = i(1:na);
 beta    = zeros(p,1);
-beta(I) = randn(na,1);
+beta(i) = randn(na,1);
 
 % Adjust the QTL effects so that we control for the proportion of variance
 % explained (r). That is, we adjust beta so that r = a/(a+1), where I've
@@ -42,6 +43,11 @@ beta(I) = randn(na,1);
 % QTL effects.
 sb   = r/(1-r)/var(X*beta,1);
 beta = sqrt(sb*se) * beta;
+
+% Generate the intercept.
+if intercept
+  mu = randn;
+end
 
 % Generate the covariate data (Z), and the linear effects of the
 % covariates (u).
@@ -54,6 +60,17 @@ end
   
 % Generate the quantitative trait measurements.
 y = X*beta + sqrt(se)*randn(n,1);
+if intercept
+  y = y + mu;
+end
 if m > 0
   y = y + Z*u;
 end
+
+% FIT VARIATIONAL APPROXIMATION TO POSTERIOR
+% ------------------------------------------
+% Fit the fully-factorized variational approximation to the posterior
+% distribution of the coefficients for a linear regression model of a
+% continuous outcome (quantitiative trait), with spike and slab priors on
+% the coefficients.
+fit = varbvs(X,Z,y,[],struct('intercept',intercept,'logodds',logodds));

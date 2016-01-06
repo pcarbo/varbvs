@@ -157,14 +157,14 @@ function fit = varbvs (X, Z, y, family, options)
   % log10(0.5). If necessary, I convert the prior log-odds settings to an p
   % x ns matrix.
   if isfield(options,'logodds')
-    logodds = double(options.theta(:)');
+    logodds = double(options.logodds);
   elseif isscalar(sigma) & isscalar(sa)
     logodds = linspace(-log10(p),-0.3,20);
   else
     error('options.logodds must be specified')
   end
   if ~ismatrix(logodds) | size(logodds,1) ~= p
-    logodds = repmat(logodds,p,1);
+    logodds = repmat(logodds(:)',p,1);
   end
 
   % Here is where I ensure that the numbers of candidate hyperparameter
@@ -317,7 +317,23 @@ function fit = varbvs (X, Z, y, family, options)
   s    = zeros(p,ns);
 
   if verbose
-    % TO DO: Summarize analysis here, and print status message.
+    fprintf('Fitting variational approximation for Bayesian variable ');
+    fprintf('selection model.\n');
+    fprintf('family:     %-8s',family); 
+    fprintf('   num. hyperparameter settings: %d\n',numel(sa));
+    fprintf('samples:    %-6d',n); 
+    fprintf('     convergence tolerance         %0.1e\n',tol);
+    fprintf('variables:  %-6d',p); 
+    fprintf('     maximum iteration number:     %d\n',maxiter);
+    fprintf('covariates: %-6d',size(Z,2) - intercept);
+    fprintf('     fit prior var. of coefs (sa): %s\n',tf2yn(update_sa));
+    fprintf('intercept:  %-3s        ',tf2yn(intercept));
+    if family == 'gaussian'
+      fprintf('fit residual var. (sigma):    %s\n',tf2yn(update_sigma));
+    elseif family == 'binomial'
+      % TO DO: FIX THIS.
+      fprintf('fit approx. factors (eta): %s\n',tf2yn(optimize_eta));
+    end
   end
   
   % (5) FIT BAYESIAN VARIABLE SELECTION MODEL TO DATA
@@ -376,6 +392,14 @@ function fit = varbvs (X, Z, y, family, options)
   end
 
 % ------------------------------------------------------------------
+function y = tf2yn (x)
+  if x
+    y = 'yes';
+  else
+    y = 'no';
+  end
+
+% ------------------------------------------------------------------
 % TO DO: Explain here what this function does.
 %
 % NOTE: Use base-10 log for logodds.
@@ -396,8 +420,10 @@ function [logw, sigma, sa, alpha, mu, s, eta] = ...
                    verbose,outer_iter,update_sigma,update_sa,n0,sa0);
   elseif family == 'binomial' & isempty(Z)
     [logw sa alpha mu s eta] = ...
-        varbvsbin(X,y,sa,logodds,alpha,mu,eta,tol,maxiter,verbose,...
+        varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...
                   outer_iter,update_sa,optimize_eta,n0,sa0);
   elseif family == 'binomial'
-    % TO DO.
+    [logw sa alpha mu s eta] = ...
+        varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,...
+                   verbose,outer_iter,update_sa,optimize_eta,n0,sa0);
   end
