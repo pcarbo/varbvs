@@ -61,9 +61,8 @@ function [logw, sigma, sa, alpha, mu, s] = ...
   for iter = 1:maxiter
 
     % Save the current variational parameters.
-    alpha0  = alpha;
-    mu0     = mu;
-    params0 = [ alpha; alpha .* mu ];
+    alpha0 = alpha;
+    mu0    = mu;
 
     % (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     % --------------------------------------------
@@ -80,7 +79,7 @@ function [logw, sigma, sa, alpha, mu, s] = ...
     else
       i = p:-1:1;
     end
-    [alpha mu Xr] = varbvsupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,i);
+    [alpha mu Xr] = varbvsnormupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,i);
 
     % (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     % --------------------------------------------
@@ -113,18 +112,16 @@ function [logw, sigma, sa, alpha, mu, s] = ...
     % (2f) CHECK CONVERGENCE
     % ----------------------
     % Print the status of the algorithm and check the convergence criterion.
-    % Convergence is reached when the maximum relative difference between
-    % the parameters at two successive iterations is less than the specified
-    % tolerance, or when the variational lower bound has decreased. I ignore
-    % parameters that are very small. If the variational bound decreases,
-    % stop.
-    params = [alpha; alpha.*mu];
-    i      = find(abs(params) > 1e-6);
-    err    = relerr(params(i),params0(i));
+    % Convergence is reached when the maximum difference between the
+    % posterior probabilities at two successive iterations is less than the
+    % specified tolerance, or when the variational lower bound has
+    % decreased. 
+    err = abs(alpha - alpha0);
     if verbose
-      % TO DO: Fix this.
-      fprintf('%4d %+13.6e %0.1e %4d %0.2f %5.2f %0.2f\n',iter,logw,...
-              max(err),round(sum(alpha)),max(abs(alpha.*mu)),sigma,sa);
+      status = sprintf('%05d %05d %+13.6e %0.1e %06.1f %0.1e %0.1e',...
+                       outer_iter,iter,logw,max(err),sum(alpha),sigma,sa);
+      fprintf(status);
+      fprintf(repmat('\b',1,length(status)));
     end
     if logw < logw0
       alpha = alpha0;

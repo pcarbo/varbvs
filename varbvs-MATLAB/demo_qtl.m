@@ -26,6 +26,7 @@ rng(1);
 % Generate the minor allele frequencies so that they are uniform over range
 % [0.05,0.5]. Then simulate genotypes assuming all markers are uncorrelated
 % (i.e., unlinked), according to the specified minor allele frequencies.
+fprintf('1. GENERATING DATA SET.\n')
 maf = 0.05 + 0.45 * rand(1,p);
 X   = (rand(n,p) < repmat(maf,n,1)) + ...
       (rand(n,p) < repmat(maf,n,1));
@@ -37,6 +38,11 @@ i       = i(1:na);
 beta    = zeros(p,1);
 beta(i) = randn(na,1);
 
+% Generate random labels for the markers.
+labels = num2cell(randi(max(1e6,p),p,1));
+labels = cellfun(@num2str,labels,'UniformOutput',false);
+labels = strcat('rs',labels);
+
 % Adjust the QTL effects so that we control for the proportion of variance
 % explained (r). That is, we adjust beta so that r = a/(a+1), where I've
 % defined a = beta'*cov(X)*beta. Here, sb is the variance of the (nonzero)
@@ -47,6 +53,8 @@ beta = sqrt(sb*se) * beta;
 % Generate the intercept.
 if intercept
   mu = randn;
+else
+  mu = 0;
 end
 
 % Generate the covariate data (Z), and the linear effects of the
@@ -59,10 +67,7 @@ else
 end
   
 % Generate the quantitative trait measurements.
-y = X*beta + sqrt(se)*randn(n,1);
-if intercept
-  y = y + mu;
-end
+y = mu + X*beta + sqrt(se)*randn(n,1);
 if m > 0
   y = y + Z*u;
 end
@@ -73,4 +78,10 @@ end
 % distribution of the coefficients for a linear regression model of a
 % continuous outcome (quantitiative trait), with spike and slab priors on
 % the coefficients.
-fit = varbvs(X,Z,y,[],struct('intercept',intercept,'logodds',logodds));
+fprintf('2. FITTING MODEL TO DATA.\n')
+fit = varbvs(X,Z,y,labels,[],struct('intercept',intercept,'logodds',logodds));
+
+% SUMMARIZE POSTERIOR DISTRIBUTION
+% --------------------------------
+fprintf('3. SUMMARIZING RESULTS.\n')
+varbvsprint(fit);

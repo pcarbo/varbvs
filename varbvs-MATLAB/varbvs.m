@@ -33,13 +33,13 @@
 % EXAMPLES:
 %    Give some examples here.
 %
-function fit = varbvs (X, Z, y, family, options)
+function fit = varbvs (X, Z, y, labels, family, options)
 
-  % (1) CHECK INPUTS
-  % ----------------
   % Get the number of samples (n) and variables (p).
   [n p] = size(X);
 
+  % (1) CHECK INPUTS
+  % ----------------
   % Input X must be single precision.
   if ~isa(X,'single')
     X = single(X);
@@ -60,8 +60,21 @@ function fit = varbvs (X, Z, y, family, options)
     error('Inputs X and y do not match.');
   end
 
-  % By default, Y is a quantitative trait (normally distributed).
+  % The labels must be a cell array with p elements, or an empty array.
   if nargin < 4
+    labels = [];
+  end
+  if isempty(labels)
+    labels = cell(p,1);
+  else
+    labels = labels(:);
+    if (~iscell(labels) | length(labels) ~= p)
+      error('labels must be a cell array with numel(labels) = size(X,2)');
+    end
+  end
+  
+  % By default, Y is a quantitative trait (normally distributed).
+  if nargin < 5
     family = 'gaussian';
   end
   if isempty(family)
@@ -75,7 +88,7 @@ function fit = varbvs (X, Z, y, family, options)
   % -------------------
   % If the 'options' input argument is not specified, all the options are
   % set to the defaults.
-  if nargin < 5
+  if nargin < 6
     options = [];
   end
   
@@ -84,7 +97,7 @@ function fit = varbvs (X, Z, y, family, options)
   if isfield(options,'tol')
     tol = options.tol;
   else
-    tol = 1e-4;
+    tol = 1e-6;
   end
 
   % OPTIONS.MAXITER
@@ -163,8 +176,11 @@ function fit = varbvs (X, Z, y, family, options)
   else
     error('options.logodds must be specified')
   end
-  if ~ismatrix(logodds) | size(logodds,1) ~= p
-    logodds = repmat(logodds(:)',p,1);
+  if ismatrix(logodds) & size(logodds,1) == p
+    prior_same = false;
+  else
+    prior_same = true;
+    logodds    = repmat(logodds(:)',p,1);
   end
 
   % Here is where I ensure that the numbers of candidate hyperparameter
@@ -262,8 +278,9 @@ function fit = varbvs (X, Z, y, family, options)
     if size(eta,2) == 1
       eta = repmat(eta,1,ns);
     end
-  elseif family == 'binomial'
+  else
     eta               = ones(n,ns);
+    optimize_eta      = true;
     initialize_params = true;  
   end
 
@@ -308,14 +325,7 @@ function fit = varbvs (X, Z, y, family, options)
     X = X - Z*((Z'*Z)\(Z'*X));
   end
   
-  % (4) INITIALIZE STORAGE FOR THE OUTPUTS
-  % --------------------------------------
-  % Initialize storage for the variational estimate of the marginal
-  % log-likelihood for each hyperparameter setting (logw), and the variances
-  % of the regression coefficients (s).
-  logw = zeros(1,ns);
-  s    = zeros(p,ns);
-
+  % Provide a brief summary of the analysis.
   if verbose
     fprintf('Fitting variational approximation for Bayesian variable ');
     fprintf('selection model.\n');
@@ -324,8 +334,8 @@ function fit = varbvs (X, Z, y, family, options)
     fprintf('samples:    %-6d',n); 
     fprintf('     convergence tolerance         %0.1e\n',tol);
     fprintf('variables:  %-6d',p); 
-    fprintf('     maximum iteration number:     %d\n',maxiter);
-    fprintf('covariates: %-6d',size(Z,2) - intercept);
+    fprintf('     iid variable selection prior: %s\n',tf2yn(prior_same));
+    fprintf('covariates: %-6d',max(0,size(Z,2) - intercept));
     fprintf('     fit prior var. of coefs (sa): %s\n',tf2yn(update_sa));
     fprintf('intercept:  %-3s        ',tf2yn(intercept));
     if family == 'gaussian'
@@ -336,29 +346,44 @@ function fit = varbvs (X, Z, y, family, options)
     end
   end
   
+  % (4) INITIALIZE STORAGE FOR THE OUTPUTS
+  % --------------------------------------
+  % Initialize storage for the variational estimate of the marginal
+  % log-likelihood for each hyperparameter setting (logw), and the variances
+  % of the regression coefficients (s).
+  logw = zeros(1,ns);
+  s    = zeros(p,ns);
+
   % (5) FIT BAYESIAN VARIABLE SELECTION MODEL TO DATA
   % -------------------------------------------------
   if ns == 1
 
     % TO DO: Implement special case when there is only one hyperparameter
     % setting.
-    
   else
       
     % If a good initialization isn't already provided, find a good
     % initialization for the variational parameters. Repeat for each
     % candidate setting of the hyperparameters.
     if initialize_params
-      fprintf('Finding best initialization for %d combinations of ',ns);
-      fprintf('hyperparameters.\n');
-      for i = 1:ns
-
-        % Find a set of parameters that locally minimize the K-L
-        % divergence between the approximating distribution and the exact
-        % posterior.
-        % TO DO. 
+      if verbose
+        fprintf('Finding best initialization for %d combinations of ',ns);
+        fprintf('hyperparameters.\n');
+        fprintf('-iteration-   variational    max.   incl variance params\n');
+        fprintf('outer inner   lower bound  change   vars   sigma      sa\n');
       end
-    
+      
+      % Repeat for each setting of the hyperparameters.
+      for i = 1:ns
+        [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
+            outerloop(X,Z,y,family,sigma(i),sa(i),logodds(:,i),alpha(:,i),...
+                      mu(:,i),eta(:,i),tol,maxiter,verbose,i,update_sigma,...
+                      update_sa,optimize_eta,n0,sa0);
+      end
+      if verbose
+        fprintf('\n');
+      end
+
       % Choose an initialization common to all the runs of the coordinate
       % ascent algorithm. This is chosen from the hyperparameters with
       % the highest variational estimate of the marginal likelihood.
@@ -372,20 +397,34 @@ function fit = varbvs (X, Z, y, family, options)
     % for each candidate setting of the hyperparameters.
     fprintf('Computing marginal likelihood for %d combinations of ',ns);
     fprintf('hyperparameters.\n');
+    fprintf('-iteration-   variational    max.   incl variance params\n');
+    fprintf('outer inner   lower bound  change   vars   sigma      sa\n');
+
+    % Repeat for each setting of the hyperparameters.
     for i = 1:ns
 
       % Find a set of parameters that locally minimize the K-L
       % divergence between the approximating distribution and the exact
       % posterior.
-      % TO DO.
+      [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
+          outerloop(X,Z,y,family,sigma(i),sa(i),logodds(:,i),alpha(:,i),...
+                    mu(:,i),eta(:,i),tol,maxiter,verbose,i,update_sigma,...
+                    update_sa,optimize_eta,n0,sa0);
+    end
+    if verbose
+      fprintf('\n');
     end
   end
 
   % 5. CREATE FINAL OUTPUT
   % ----------------------
   if family == 'gaussian'
-    fit = struct('logw',logw,'sigma',sigma,'sa',sa,'logodds',logodds,...
-                 'alpha',alpha,'mu',mu,'s',s);
+    fit = struct('family',family,'intercept',intercept,'num_covariates',...
+                 max(0,size(Z,2) - intercept),'num_samples',n,'labels',...
+                 {labels},'n0',n0,'sa0',sa0,'update_sigma',update_sigma,...
+                 'update_sa',update_sa,'prior_same',prior_same,'logw',...
+                 {logw},'sigma',{sigma},'sa',sa,'logodds',{logodds},...
+                 'alpha',{alpha},'mu',{mu},'s',{s});
   elseif family == 'binomial'
     fit = struct('logw',logw,'sigma',sigma,'sa',sa,'logodds',logodds,...
                  'alpha',alpha,'mu',mu,'s',s,'eta',eta);
@@ -400,20 +439,11 @@ function y = tf2yn (x)
   end
 
 % ------------------------------------------------------------------
-% TO DO: Explain here what this function does.
-%
-% NOTE: Use base-10 log for logodds.
-%
+% Implements one iteration of the "outer loop".
 function [logw, sigma, sa, alpha, mu, s, eta] = ...
         outerloop (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta, ...
                    tol, maxiter, verbose, outer_iter, update_sigma, ...
                    update_sa, optimize_eta, n0, sa0)
-    
-  if verbose
-    fprintf('       variational    max. incl max.           \n');
-    fprintf('iter   lower bound  change vars E[b] sigma   sd\n');
-  end
-  
   if family == 'gaussian'
     [logw sigma sa alpha mu s] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...

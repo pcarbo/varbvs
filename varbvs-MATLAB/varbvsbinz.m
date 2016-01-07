@@ -90,6 +90,9 @@ function [logw, sa, alpha, mu, s, eta] = ...
     % tolerance, or when the variational lower bound has decreased. I ignore
     % parameters that are very small. If the variational bound decreases,
     % stop.
+    %
+    % TO DO: FIX THIS.
+    %
     params = [alpha; alpha.*mu];
     i      = find(abs(params) > 1e-6);
     err    = relerr(params(i),params0(i));

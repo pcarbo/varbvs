@@ -20,39 +20,6 @@ Strategy for my new implementation of 'varbvs'
 * See glmnet.m for a nice example of how to write detailed description
   of function.
   
-* Note: do I ever use option 'update_vars' in varbvsnorm.m.
-
 * Does not currently allow for sparse matrices X.
 
 * Give platform and MATLAB version used for testing.
-
-Files that are good to go
--------------------------
-* betavar.m
-* diagsq.m
-* diagsqt.m
-* intgamma.m
-* intklbeta.m
-* logdet.m
-* logsigmoid.m
-* logpexp.m
-* normalizelogweights.m
-* qnorm.m
-* relerr.m
-* slope.m
-* varbvsbinupdate.m
-* varbvsbinzupdate.m
-* varbvsnormupdate.m
-
-* doublematrixmex.h
-* doublevectormex.h
-* singlematrixmex.h
-
-* diagsqmex.c
-* diagsqtmex.c
-* doublematrixmex.c
-* doublevectormex.c
-* singlematrixmex.c
-* varbvsbinupdatemex.c
-* varbvsbinzupdatemex.c
-* varbvsnormupdatemex.c
