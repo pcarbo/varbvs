@@ -1,7 +1,42 @@
-% TO DO: Explain here what this function does.
-function varbvsprint (fit, c)
+%--------------------------------------------------------------------------
+% varbvs.m: One-sentence summary of function goes here.
+%--------------------------------------------------------------------------
+%
+% DESCRIPTION:
+%    Overview of function goes here.
+%
+% USAGE:
+%    Summary of usage goes here.
+%
+% INPUT ARGUMENTS:
+% Description of input arguments goes here.
+%
+% OUTPUT ARGUMENTS:
+% Description of output arguments goes here.
+%
+% DETAILS:
+%    Detailed description of function goes here.
+%
+% LICENSE: GPL v3
+%
+% DATE: December 28, 2015
+%
+% AUTHORS:
+%    List contributors here.
+%
+% REFERENCES:
+%    List of references goes here.
+%
+% SEE ALSO:
+%    List related functions here.
+%
+% EXAMPLES:
+%    Give some examples here.
+%
+function varbvsprint (fit, c, n)
 
-  % Get the number of variables (p) and number of hyperparameter settings (ns).
+  % Get the number of variables (p) and number of candidate hyperparameter
+  % settings (ns).
   p  = numel(fit.labels);
   ns = numel(fit.logw);
 
@@ -10,14 +45,25 @@ function varbvsprint (fit, c)
     c = 0.95;
   end
 
+  % Show detailed statistics on n variables. Note that this cannot be
+  % larger than the nubmer of variables.
+  if nargin < 3
+    n = 5;
+  end
+  n = min(n,p);
+
+  % (1) COMPUTE POSTERIOR STATISTICS
+  % --------------------------------
   % Compute the normalized (approximate) importance weights.
   w = normalizelogweights(fit.logw);
 
-  % Compute the posterior inclusion probabilities averaged over settings
-  % of the hyperparameters.
-  % TO DO.
+  % Compute the posterior inclusion probabilities (PIPs) and posterior mean
+  % regression coefficients averaged over settings of the hyperparameters.
+  PIP  = fit.alpha * w(:);
+  beta = fit.mu    * w(:);
   
-  % Summarize the analysis setup.
+  % (2) SUMMARIZE ANALYSIS SETUP
+  % ----------------------------
   fprintf('Summary of fitted Bayesian variable selection model:\n')
   fprintf('family:     %-8s',fit.family); 
   fprintf('   num. hyperparameter settings: %d\n',numel(fit.sa));
@@ -34,14 +80,23 @@ function varbvsprint (fit, c)
   end
   fprintf('intercept:  %-3s        ',tf2yn(fit.intercept));
   fprintf('max. log-likelihood bound: %0.4f\n',max(fit.logw));
-  
+
+  % Compute the correlation between the observed and estimated outcomes.
+  % TO DO.
+
+  % Compute the proportion of variance in Y explained by the regression
+  % model. 
+  % TO DO.
+
+  % (3) SUMMARIZE RESULTS ON HYPERPARAMETERS
+  % ----------------------------------------
   % Summarize the fitted residual variance parameter (sigma).
-  fprintf('---\n');
-  fprintf('         estimate Pr>%0.2f             candidates\n',c);
+  fprintf('Hyperparameters:\n');
+  fprintf('        estimate Pr>%0.2f             candidate values\n',c);
   if (fit.family == 'gaussian')
     x0    = dot(w(:),fit.sigma(:));
     [a b] = cred(fit.sigma,w,x0,c);
-    fprintf('sigma:   %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
+    fprintf('sigma   %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
     if fit.update_sigma
       fprintf('NA\n')
     else
@@ -52,7 +107,7 @@ function varbvsprint (fit, c)
   % Summarize the fitted prior variance parameter (sa).
   x0    = dot(w(:),fit.sa(:));
   [a b] = cred(fit.sa,w,x0,c);
-  fprintf('sa:      %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
+  fprintf('sa      %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
   if fit.update_sa
     fprintf('NA\n')
   else
@@ -64,17 +119,32 @@ function varbvsprint (fit, c)
     x     = min(fit.logodds);
     x0    = dot(w(:),x);
     [a b] = cred(x,w,x0,c);
-    fprintf('logodds: %+8.2f %-19s (%+0.2f)--(%+0.2f)\n',x0,...
+    fprintf('logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n',x0,...
             sprintf('[%+0.2f,%+0.2f]',a,b),min(x),max(x));
   end
 
-  % 
-  fprintf('---\n');
+  % (4) SUMMARIZE VARIABLE SELECTION RESULTS
+  % ----------------------------------------
+  % Summarize the number of variables selected at different PIP thresholds.
+  fprintf('Selected variables:\n');
+  fprintf('prob. >0.10 >0.25 >0.50 >0.75 >0.90 >0.95\n');
+  fprintf('count %5d %5d %5d %5d %5d %5d\n',sum(PIP > 0.1),sum(PIP > 0.25),...
+          sum(PIP > 0.5),sum(PIP > 0.75),sum(PIP > 0.9),sum(PIP > 0.95));
+
+  % Give more detailed statistics about the top n variables by the
+  % probability that they are included.
+  [ans vars] = sort(-PIP);
+  vars       = vars(1:n);
+  vars       = vars(:)';
+  fprintf('Top %d variables by inclusion probability:\n',n);
+  fprintf('variable   prob.  coef. Pr>0.95\n');
+  % TO DO: Show credible intervals for regression coefficients.
+  for i = vars
+    fprintf('%-10s %0.3f %+0.3f\n',fit.labels{i},PIP(i),beta(i));
+  end
 
 % Details to print:
 %
-%   - number of included variables at different probability thresholds.
-%   - top n variables by PIP (+ mean and cred. int. of coefficients).
 %   - Some stats on PVE---need to think about this.
 %   - correlation between true and predicted Y.
 %   

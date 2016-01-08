@@ -65,7 +65,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     labels = [];
   end
   if isempty(labels)
-    labels = cell(p,1);
+    labels = cellfun(@num2str,num2cell(1:p)','UniformOutput',false);
   else
     labels = labels(:);
     if (~iscell(labels) | length(labels) ~= p)
