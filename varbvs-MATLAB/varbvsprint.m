@@ -84,12 +84,15 @@ function varbvsprint (fit, c, n, nr)
     % TO DO: FIX THIS.
     fprintf('fit approx. factors (eta): %s\n',tf2yn(fit.optimize_eta));
   end
-  fprintf('intercept:  %-3s        ',tf2yn(fit.intercept));
-  fprintf('max. log-likelihood bound: %0.4f\n',max(fit.logw));
-
-  % Compute the proportion of variance in Y explained by the regression
-  % model. 
-  % TO DO.
+  fprintf('maximum log-likelihood lower bound: %0.4f\n',max(fit.logw));
+  if fit.family == 'gaussian'
+    x  = sort(fit.model_pve);
+    x0 = mean(x);
+    a  = x(floor((0.5 - c/2)*length(x)));
+    b  = x(ceil((0.5 + c/2)*length(x)));
+    fprintf('proportion of variance explained: ');
+    fprintf('%0.1f%% [%0.1f%%,%0.1f%%]\n',100*x0,100*a,100*b);
+  end
 
   % (3) SUMMARIZE RESULTS ON HYPERPARAMETERS
   % ----------------------------------------
@@ -98,7 +101,7 @@ function varbvsprint (fit, c, n, nr)
   fprintf('        estimate Pr>%0.2f             candidate values\n',c);
   if (fit.family == 'gaussian')
     x0    = dot(w(:),fit.sigma(:));
-    [a b] = cred(fit.sigma,w,x0,c);
+    [a b] = cred(fit.sigma,x0,w,c);
     fprintf('sigma   %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
     if fit.update_sigma
       fprintf('NA\n')
@@ -109,7 +112,7 @@ function varbvsprint (fit, c, n, nr)
 
   % Summarize the fitted prior variance parameter (sa).
   x0    = dot(w(:),fit.sa(:));
-  [a b] = cred(fit.sa,w,x0,c);
+  [a b] = cred(fit.sa,x0,w,c);
   fprintf('sa      %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
   if fit.update_sa
     fprintf('NA\n')
@@ -121,7 +124,7 @@ function varbvsprint (fit, c, n, nr)
   if (fit.prior_same)
     x     = min(fit.logodds);
     x0    = dot(w(:),x);
-    [a b] = cred(x,w,x0,c);
+    [a b] = cred(x,x0,w,c);
     fprintf('logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n',x0,...
             sprintf('[%+0.2f,%+0.2f]',a,b),min(x),max(x));
   end
@@ -140,12 +143,18 @@ function varbvsprint (fit, c, n, nr)
   vars       = vars(1:n);
   vars       = vars(:)';
   fprintf('Top %d variables by inclusion probability:\n',n);
-  fprintf('variable   prob.   coef. Pr(coef.>%0.2f)\n',c);
-  % TO DO: Show credible intervals for regression coefficients.
+  fprintf('index variable   prob.');
+  if fit.family == 'gaussian'
+    fprintf(' -PVE-');
+  end
+  fprintf('   coef. Pr(coef.>%0.2f)\n',c);
   for i = vars
     [a b] = varbvscoefcred(fit,i,c,nr);
-    fprintf('%-10s %0.3f %+7.3f [%+0.3f,%+0.3f]\n',fit.labels{i},PIP(i),...
-            beta(i),a,b);
+    fprintf('%5d %-10s %0.3f',i,fit.labels{i},PIP(i));
+    if fit.family == 'gaussian'
+      fprintf(' %04.1f%%',100*dot(w,fit.pve(i,:)));
+    end
+    fprintf(' %+7.3f [%+0.3f,%+0.3f]\n',beta(i),a,b);
   end
 
 % ------------------------------------------------------------------

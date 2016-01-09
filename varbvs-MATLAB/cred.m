@@ -1,4 +1,4 @@
-% [a,b] = cred(x,w,x0,c) returns a c% credible interval [a,b], in which c is
+% [a,b] = cred(x,x0,w,c) returns a c% credible interval [a,b], in which c is
 % a number between 0 and 1. Precisely, we define the credible interval [a,b]
 % to be the smallest interval containing x0 that contains c% of the
 % probability mass. (Note that the credible interval is not necessarily
@@ -8,7 +8,17 @@
 % Input x is the vector of random variable assignments, and w contains the
 % corresponding probabilities. (These probabilities need not be normalized.)
 % Inputs x and w must be numeric arrays with the same number of elements.
-function [a, b] = cred (x, w, x0, c)
+function [a, b] = cred (x, x0, w, c)
+
+  % Get the number of points.
+  n = numel(x);
+
+  % By default, all samples have the same weight.
+  if nargin < 3
+    w = ones(n,1)/n;
+  elseif isempty(w)
+    w = ones(n,1)/n;
+  end
 
   % Set the size of the credible interval.
   if nargin < 4
@@ -21,9 +31,6 @@ function [a, b] = cred (x, w, x0, c)
 
   % Make sure the importance weights sum to 1.
   w = w/sum(w);
-
-  % Get the number of points.
-  n = length(x);
 
   % Sort the points in increasing order.
   [x i] = sort(x);

@@ -12,9 +12,6 @@ na = 20;   % Number of quantitative trait loci (QTLs).
 se = 4;    % Variance of residual.
 r  = 0.5;  % Proportion of variance in trait explained by QTLs.
 
-% Include an intercept?
-intercept = true;
-
 % Candidate values for the prior log-odds of inclusion.
 logodds = (-3:0.1:-1)';
 
@@ -52,11 +49,7 @@ sb   = double(r/(1-r)/var(X*beta,1));
 beta = sqrt(sb*se) * beta;
 
 % Generate the intercept.
-if intercept
-  mu = randn;
-else
-  mu = 0;
-end
+mu = randn;
 
 % Generate the covariate data (Z), and the linear effects of the
 % covariates (u).
@@ -81,7 +74,7 @@ y = double(y);
 % continuous outcome (quantitiative trait), with spike and slab priors on
 % the coefficients.
 fprintf('2. FITTING MODEL TO DATA.\n')
-fit = varbvs(X,Z,y,labels,[],struct('intercept',intercept,'logodds',logodds));
+fit = varbvs(X,Z,y,labels,[],struct('logodds',logodds));
 
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------

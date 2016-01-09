@@ -23,3 +23,12 @@ Strategy for my new implementation of 'varbvs'
 * Does not currently allow for sparse matrices X.
 
 * Give platform and MATLAB version used for testing.
+
+* Look up PLoS Comp. Bio. papers.
+
+* See here for some data sets that could be used for demos:
+  http://www.jstatsoft.org/article/view/v033i01
+
+* To do: Update comments for varbvspve.m.
+
+* To do: Double-check calculations of PVE against lm() in R.

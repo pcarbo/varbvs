@@ -54,6 +54,9 @@ function fit = varbvs (X, Z, y, labels, family, options)
     Z = double(Z);
   end
 
+  % Add intercept.
+  Z = [ones(n,1) Z];
+
   % Input y must be a double-precision column vector with n elements.
   y = double(y(:));
   if length(y) ~= n
@@ -114,23 +117,6 @@ function fit = varbvs (X, Z, y, labels, family, options)
     verbose = options.verbose;
   else
     verbose = true;
-  end
-
-  % OPTIONS.INTERCEPT
-  % Determine whether to include an intercept in the model. If other
-  % covariates are included, simply treat the intercept as another
-  % covariate. Either an intercept or covariates is required for logistic
-  % regression model.
-  if isfield(options,'intercept')
-    intercept = options.intercept;
-  else
-    intercept = true;
-  end
-  if intercept & ~isempty(Z)
-    Z = [ones(n,1) Z];
-  end
-  if family == 'binomial' & ~intercept & isempty(Z)
-    error('family = binomial requires intercept or non-empty Z')
   end
 
   % OPTIONS.SIGMA
@@ -300,6 +286,15 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isfield(options,'initialize_params')
     initialize_params = options.initialize_params;
   end
+
+  % OPTIONS.NR
+  % This is the number of samples to draw of the proportion of variance
+  % in Y explained by the fitted model.
+  if isfield(options,'nr')
+    nr = options.nr;
+  else
+    nr = 1000;
+  end
   
   % TO DO: Allow specification of summary statistics ('Xb') from "fixed"
   % variational estimates for an external set of variables.
@@ -313,18 +308,20 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % respect to an improper, uniform prior; see Chipman, George and
   % McCulloch, "The Practical Implementation of Bayesian Model
   % Selection," 2001.
-  if family == 'gaussian' & intercept & isempty(Z)
-     X = X - repmat(mean(X),length(y),1);
-     y = y - mean(y);
-  elseif family == 'gaussian' & ~isempty(Z)
+  if family == 'gaussian'
+    if size(Z,2) == 1
+       X = X - repmat(mean(X),length(y),1);
+       y = y - mean(y);
+    else
 
-    % This should give the same result as centering the columns of X and
-    % subtracting the mean from y when we have only one covariate, the
-    % intercept.
-    y = y - Z*((Z'*Z)\(Z'*y));
-    X = X - Z*((Z'*Z)\(Z'*X));
+      % This should give the same result as centering the columns of X and
+      % subtracting the mean from y when we have only one covariate, the
+      % intercept.
+      y = y - Z*((Z'*Z)\(Z'*y));
+      X = X - Z*((Z'*Z)\(Z'*X));
+    end
   end
-  
+
   % Provide a brief summary of the analysis.
   if verbose
     fprintf('Fitting variational approximation for Bayesian variable ');
@@ -335,9 +332,9 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fprintf('     convergence tolerance         %0.1e\n',tol);
     fprintf('variables:  %-6d',p); 
     fprintf('     iid variable selection prior: %s\n',tf2yn(prior_same));
-    fprintf('covariates: %-6d',max(0,size(Z,2) - intercept));
+    fprintf('covariates: %-6d',max(0,size(Z,2) - 1));
     fprintf('     fit prior var. of coefs (sa): %s\n',tf2yn(update_sa));
-    fprintf('intercept:  %-3s        ',tf2yn(intercept));
+    fprintf('                       ');
     if family == 'gaussian'
       fprintf('fit residual var. (sigma):    %s\n',tf2yn(update_sigma));
     elseif family == 'binomial'
@@ -419,23 +416,28 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % 5. CREATE FINAL OUTPUT
   % ----------------------
   if family == 'gaussian'
-    fit = struct('family',family,'intercept',intercept,'num_covariates',...
-                 max(0,size(Z,2) - intercept),'num_samples',n,'labels',...
-                 {labels},'n0',n0,'sa0',sa0,'update_sigma',update_sigma,...
-                 'update_sa',update_sa,'prior_same',prior_same,'logw',...
-                 {logw},'sigma',{sigma},'sa',sa,'logodds',{logodds},...
-                 'alpha',{alpha},'mu',{mu},'s',{s});
+    fit = struct('family',family,'num_covariates',size(Z,2) - 1,...
+                 'num_samples',n,'labels',{labels},'n0',n0,'sa0',sa0,...
+                 'update_sigma',update_sigma,'update_sa',update_sa,...
+                 'prior_same',prior_same,'logw',{logw},'sigma',{sigma},...
+                 'sa',sa,'logodds',{logodds},'alpha',{alpha},'mu',{mu},...
+                 's',{s});
+
+    % Compute the proportion of variance in Y, after removing linear
+    % effects of covariates, explained by the regression model.
+    fit.model_pve = varbvspve(X,fit,nr);
+
+    % Compute the proportion of variance in Y, after removing linear
+    % effects of covariates, explained by each variable.
+    fit.pve = zeros(p,ns);
+    sx      = var1(X);
+    for i = 1:ns
+      sz = sx.*mu(:,i).^2 + s(:,i));
+      fit.pve(:,i) = sz./(sz + sigma(i));
+    end
   elseif family == 'binomial'
     fit = struct('logw',logw,'sigma',sigma,'sa',sa,'logodds',logodds,...
                  'alpha',alpha,'mu',mu,'s',s,'eta',eta);
-  end
-
-% ------------------------------------------------------------------
-function y = tf2yn (x)
-  if x
-    y = 'yes';
-  else
-    y = 'no';
   end
 
 % ------------------------------------------------------------------
@@ -456,4 +458,12 @@ function [logw, sigma, sa, alpha, mu, s, eta] = ...
     [logw sa alpha mu s eta] = ...
         varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,...
                    verbose,outer_iter,update_sa,optimize_eta,n0,sa0);
+  end
+
+% ------------------------------------------------------------------
+function y = tf2yn (x)
+  if x
+    y = 'yes';
+  else
+    y = 'no';
   end

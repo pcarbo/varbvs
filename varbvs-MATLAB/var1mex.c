@@ -1,22 +1,18 @@
 // For a description of this C code, see var1.m.
 #include "types.h"
 #include "vectorops.h"
-#include "doublevectormatlab.h"
-#include "singlematrixmatlab.h"
-
-// These include files have a bunch of definitions to interface C
-// routines to MATLAB.
+#include "doublevectormex.h"
+#include "singlematrixmex.h"
 #include "mex.h"
 #include "matrix.h"
 
-// Function declarations.
+// FUNCTION DECLARATIONS
 // -----------------------------------------------------------------
 // Compute the sample variance.
 double computeVariance (const double* x, Size n);
 
-// Function definitions.
+// FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
-// MEX-file gateway routine.
 void mexFunction (int nlhs, mxArray* plhs[], 
 		  int nrhs, const mxArray* prhs[]) {
 
@@ -47,6 +43,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
   free(x);
 }
 
+// -----------------------------------------------------------------
 // Compute the sample variance.
 double computeVariance (const double* x, Size n) {
   double y = 0;  // The return value.
