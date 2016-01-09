@@ -30,6 +30,7 @@ fprintf('1. GENERATING DATA SET.\n')
 maf = 0.05 + 0.45 * rand(1,p);
 X   = (rand(n,p) < repmat(maf,n,1)) + ...
       (rand(n,p) < repmat(maf,n,1));
+X   = single(X);
 
 % Generate additive effects for the markers so that exactly na of them have
 % a nonzero effect on the trait.
@@ -47,7 +48,7 @@ labels = strcat('rs',labels);
 % explained (r). That is, we adjust beta so that r = a/(a+1), where I've
 % defined a = beta'*cov(X)*beta. Here, sb is the variance of the (nonzero)
 % QTL effects.
-sb   = r/(1-r)/var(X*beta,1);
+sb   = double(r/(1-r)/var(X*beta,1));
 beta = sqrt(sb*se) * beta;
 
 % Generate the intercept.
@@ -71,6 +72,7 @@ y = mu + X*beta + sqrt(se)*randn(n,1);
 if m > 0
   y = y + Z*u;
 end
+y = double(y);
 
 % FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 % ------------------------------------------

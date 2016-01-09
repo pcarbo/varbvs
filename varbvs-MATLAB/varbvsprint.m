@@ -1,5 +1,5 @@
 %--------------------------------------------------------------------------
-% varbvs.m: One-sentence summary of function goes here.
+% varbvsprint.m: One-sentence summary of function goes here.
 %--------------------------------------------------------------------------
 %
 % DESCRIPTION:
@@ -33,7 +33,7 @@
 % EXAMPLES:
 %    Give some examples here.
 %
-function varbvsprint (fit, c, n)
+function varbvsprint (fit, c, n, nr)
 
   % Get the number of variables (p) and number of candidate hyperparameter
   % settings (ns).
@@ -52,6 +52,12 @@ function varbvsprint (fit, c, n)
   end
   n = min(n,p);
 
+  % Draw this many samples to compute the Monte Carlo estimates of the
+  % credible intervals for the regression coefficients.
+  if nargin < 4
+    nr = 1000;
+  end
+  
   % (1) COMPUTE POSTERIOR STATISTICS
   % --------------------------------
   % Compute the normalized (approximate) importance weights.
@@ -80,9 +86,6 @@ function varbvsprint (fit, c, n)
   end
   fprintf('intercept:  %-3s        ',tf2yn(fit.intercept));
   fprintf('max. log-likelihood bound: %0.4f\n',max(fit.logw));
-
-  % Compute the correlation between the observed and estimated outcomes.
-  % TO DO.
 
   % Compute the proportion of variance in Y explained by the regression
   % model. 
@@ -137,17 +140,13 @@ function varbvsprint (fit, c, n)
   vars       = vars(1:n);
   vars       = vars(:)';
   fprintf('Top %d variables by inclusion probability:\n',n);
-  fprintf('variable   prob.  coef. Pr>0.95\n');
+  fprintf('variable   prob.   coef. Pr(coef.>%0.2f)\n',c);
   % TO DO: Show credible intervals for regression coefficients.
   for i = vars
-    fprintf('%-10s %0.3f %+0.3f\n',fit.labels{i},PIP(i),beta(i));
+    [a b] = varbvscoefcred(fit,i,c,nr);
+    fprintf('%-10s %0.3f %+7.3f [%+0.3f,%+0.3f]\n',fit.labels{i},PIP(i),...
+            beta(i),a,b);
   end
-
-% Details to print:
-%
-%   - Some stats on PVE---need to think about this.
-%   - correlation between true and predicted Y.
-%   
 
 % ------------------------------------------------------------------
 function y = tf2yn (x)
