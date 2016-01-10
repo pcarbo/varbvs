@@ -1,5 +1,5 @@
-% VAR1(X) is the same as VAR(X,1)', but does not require storage of any
-% intermediate products of the same size as X.
+% var1(X) produces the same result as var(X,1)', but does not require
+% storage of any intermediate products of the same size as X.
 function y = var1 (X)
   
   % Make sure X is in single precision.
