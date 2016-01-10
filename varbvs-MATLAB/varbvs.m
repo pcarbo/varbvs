@@ -1,37 +1,94 @@
 %--------------------------------------------------------------------------
-% varbvs.m: One-sentence summary of function goes here.
+% varbvs.m: Fit variable selection model using variational approximation.
 %--------------------------------------------------------------------------
 %
 % DESCRIPTION:
-%    Overview of function goes here.
+%
+%   Compute fully-factorized variational approximation for Bayesian variable
+%   selection in linear (family = 'gaussian') or logistic regression (family
+%   = 'binomial'). More precisely, find the "best" fully-factorized
+%   approximation to the posterior distribution of the coefficients, with
+%   spike-and-slab priors on the coefficients. By "best", we mean the
+%   approximating distribution that locally minimizes the Kullback-Leibler
+%   divergence between the approximating distribution and the exact
+%   posterior.
 %
 % USAGE:
-%    Summary of usage goes here.
+%    fit = varbvs(X,Z,y,labels,family,options)
+%    (Use empty matrix [] to apply the default value)
 %
 % INPUT ARGUMENTS:
-% Description of input arguments goes here.
+% X        n x p input matrix, where n is the number of samples,
+%          and p is the number of variables. X cannot be sparse.
+%
+% Z        n x m covariate data matrix, where m is the number of
+%          covariates. Do not supply an intercept as a covariate
+%          (i.e., a column of ones), because an intercept is
+%          automatically included in the regression model. For no
+%          covariates, set Z to the empty matrix [].
+%
+% y        Vector of length n containing observations about binary
+%          (family = 'binomial') or continuous (family = 'gaussian')
+%          outcome. For binary outcomes, all entries of y must be 
+%          0 or 1.
+%
+% labels   Cell array with p entries containing variable labels. By
+%          default, it is set to the empty matrix [].
+%              
+% family   Outcome type, either 'gaussian' or 'binomial'. Default
+%          is 'gaussian'.
+%
+% options  A structure (type 'help struct') containing additional
+%          model parameters and optimization settings. More details about
+%          these options are given below. Fields, with their default
+%          settings given, include:
+%            
+%          options.tol = 1e-4 (convergence tolerance for inner loop)
+%          options.maxiter = 1e4 (maximum number of inner loop iterations)
+%          options.verbose = true (show progress of algorithm on console)
+%          options.sa = 1 (initial value for prior variance parameter, sa)
+%          options.logodds = linspace(-log10(p),-0.3,20) (prior log-odds)
+%          options.update_sa (fit model parameter sa to data)
+%          options.sa0 = 0 (scale parameter for prior on sa)
+%          options.n0 = 0 (degrees of freedom for prior on sa)
+%          options.alpha (initial estimate of variational parameter alpha)
+%          options.mu (initial estimate of variational parameter mu)
+%          options.initialize_params = true (see below)
+%          options.nr = 1000 (samples of PVE to draw from posterior)
+%
+%          For family = 'gaussian' only:
+%          options.sigma = var(y) (initial value for residual variance param.)
+%          options.update_sigma (fit model parameter sigma to data)
+%
+%          For family = 'binomial' only:
+%          options.eta (initial estimate of variational parameter eta)
+%          options.optimize_eta (optimize parameter eta)
 %
 % OUTPUT ARGUMENTS:
 % Description of output arguments goes here.
 %
 % DETAILS:
-%    Detailed description of function goes here.
 %
 % LICENSE: GPL v3
 %
-% DATE: December 28, 2015
+% DATE: January 10, 2015
 %
 % AUTHORS:
-%    List contributors here.
+%    Algorithm was designed by Peter Carbonetto and Matthew Stephens.
+%    R, MATLAB and C code was written by Peter Carbonetto.
+%    Depts. of Statistics and Human Genetics, University of Chicago,
+%    Chicago, IL, USA, and AncestryDNA, San Francisco, CA, USA
 %
 % REFERENCES:
-%    List of references goes here.
+%    P. Carbonetto, M. Stephens (2012). Scalable variational inference
+%    for Bayesian variable selection in regression, and its accuracy in 
+%    genetic association studies. Bayesian Analysis 7: 73-108.
 %
 % SEE ALSO:
-%    List related functions here.
+%    varbvsprint, varbvscoefcred
 %
 % EXAMPLES:
-%    Give some examples here.
+%    See demo_qtl.m and demo_cc.m for examples.
 %
 function fit = varbvs (X, Z, y, labels, family, options)
 

@@ -6,12 +6,12 @@ clear
 
 % SCRIPT PARAMETERS
 % -----------------
-n  = 4000; % Number of samples (subjects).
-p  = 2000; % Number of variables (genetic markers).
-m  = 2;    % Number of covariates (m >= 0).
-na = 20;   % Number of markers that affect the binary outcome.
+n  = 800;   % Number of samples (subjects).
+p  = 2000;  % Number of variables (genetic markers).
+m  = 2;     % Number of covariates (m >= 0).
+na = 20;    % Number of markers that affect the binary outcome.
 sa = 0.15;  % Variance of log-odds ratios.
-p1 = 0.25; % Target proportion of subjects that are cases (y = 1).
+p1 = 0.25;  % Target proportion of subjects that are cases (y = 1).
 
 % Set the random number generator seed.
 rng(1);
