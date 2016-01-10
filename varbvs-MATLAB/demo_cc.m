@@ -8,7 +8,7 @@ clear
 % -----------------
 n  = 800;  % Number of samples (subjects).
 p  = 2000; % Number of variables (genetic markers).
-m  = 2;    % Number of covariates (m >= 0).
+m  = 0;    % Number of covariates (m >= 0).
 na = 20;   % Number of markers that affect the binary outcome.
 sa = 0.2;  % Standard deviation of log-odds ratios.
 p1 = 0.25; % Target proportion of subjects that are cases (y = 1).
@@ -70,5 +70,9 @@ y = rand(n,1) < sigmoid(t);
 % continuous outcome (quantitiative trait), with spike and slab priors on
 % the coefficients.
 fprintf('2. FITTING MODEL TO DATA.\n')
-fit = varbvs(X,Z,y,labels,'binomial',struct('logodds',logodds));
+fit = varbvs(X,Z,y,labels,'binomial',struct('logodds',logodds,'tol',1e-4));
 
+% SUMMARIZE POSTERIOR DISTRIBUTION
+% --------------------------------
+fprintf('3. SUMMARIZING RESULTS.\n')
+varbvsprint(fit);

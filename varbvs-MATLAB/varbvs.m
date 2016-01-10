@@ -100,7 +100,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isfield(options,'tol')
     tol = options.tol;
   else
-    tol = 1e-6;
+    tol = 1e-4;
   end
 
   % OPTIONS.MAXITER
@@ -310,8 +310,8 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % Selection," 2001.
   if family == 'gaussian'
     if size(Z,2) == 1
-       X = X - repmat(mean(X),length(y),1);
-       y = y - mean(y);
+      X = X - repmat(mean(X),length(y),1);
+      y = y - mean(y);
     else
 
       % This should give the same result as centering the columns of X and
@@ -459,7 +459,7 @@ function [logw, sigma, sa, alpha, mu, s, eta] = ...
     [logw sigma sa alpha mu s] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
                    verbose,outer_iter,update_sigma,update_sa,n0,sa0);
-  elseif family == 'binomial' & isempty(Z)
+  elseif family == 'binomial' & size(Z,2) == 1
     [logw sa alpha mu s eta] = ...
         varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...
                   outer_iter,update_sa,optimize_eta,n0,sa0);

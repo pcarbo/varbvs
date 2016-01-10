@@ -17,4 +17,4 @@ function y = diagsqt (X, a)
   end
   
   % Compute the result using the efficient C routine.
-  y = diagsqtmatlab(X,a);
+  y = diagsqtmex(X,a);

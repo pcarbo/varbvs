@@ -53,10 +53,9 @@ function [logw, sa, alpha, mu, s, eta] = ...
   for iter = 1:maxiter
     
     % Save the current variational parameters.
-    alpha0  = alpha;
-    mu0     = mu;
-    eta0    = eta;
-    params0 = [alpha; alpha.*mu];
+    alpha0 = alpha;
+    mu0    = mu;
+    eta0   = eta;
 
     % (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     % --------------------------------------------
@@ -98,7 +97,7 @@ function [logw, sa, alpha, mu, s, eta] = ...
     % that we must also recalculate the variance of the regression
     % coefficients when this parameter is updated. 
     if update_sa
-      sa = (sa0*n0 + dot(alpha,s + mu.^2))/(n0 + sigma*sum(alpha));
+      sa = (sa0*n0 + dot(alpha,s + mu.^2))/(n0 + sum(alpha));
       s  = sa./(sa*stats.xdx + 1);
     end
 
@@ -110,16 +109,17 @@ function [logw, sa, alpha, mu, s, eta] = ...
     % tolerance, or when the variational lower bound has decreased. I ignore
     % parameters that are very small. If the variational bound decreases,
     % stop.
-    %
-    % TO DO: FIX THIS.
-    %
-    params = [alpha; alpha.*mu];
-    i      = find(abs(params) > 1e-6);
-    err    = relerr(params(i),params0(i));
+    err = abs(alpha - alpha0);
     if verbose
-      % TO DO: Fix this.
-      fprintf('%4d %+13.6e %0.1e %4d %0.2f\n',iter,logw,max(err),...
- 	      round(sum(alpha)),max(abs(alpha.*mu)));
+      if isempty(outer_iter)
+        status = '';
+      else
+        status = sprintf('%05d ',outer_iter);
+      end  
+      status = [status sprintf('%05d %+13.6e %0.1e %06.1f    ---  %0.1e',...
+                               iter,logw,max(err),sum(alpha),sa)];
+      fprintf(status);
+      fprintf(repmat('\b',1,length(status)));
     end
     if logw < logw0
       alpha = alpha0;
