@@ -121,7 +121,7 @@ function [logw, sigma, sa, alpha, mu, s] = ...
       if isempty(outer_iter)
         status = '';
       else
-        status = sprintf('%05d',outer_iter);
+        status = sprintf('%05d ',outer_iter);
       end  
       status = [status sprintf('%05d %+13.6e %0.1e %06.1f %0.1e %0.1e',...
                                iter,logw,max(err),sum(alpha),sigma,sa)];

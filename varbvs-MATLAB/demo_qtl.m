@@ -13,8 +13,7 @@ se = 4;    % Variance of residual.
 r  = 0.5;  % Proportion of variance in trait explained by QTLs.
 
 % Candidate values for the prior log-odds of inclusion.
-% logodds = (-3:0.1:-1)';
-logodds = log10(na/p);
+logodds = (-3:0.1:-1)';
 
 % Set the random number generator seed.
 rng(1);

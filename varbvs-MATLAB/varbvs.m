@@ -273,7 +273,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % OPTIONS.OPTIMIZE_ETA
   % Determine whether to update the variational parameter eta. Note this
   % is only relevant for logistic regression.
-  if isfield(options,'eta')
+  if isfield(options,'optimize_eta')
     optimize_eta = options.optimize_eta;
     if family ~= 'binomial'
       error('options.optimize_eta is only valid for family = binomial');
