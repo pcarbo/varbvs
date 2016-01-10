@@ -334,7 +334,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fprintf('     iid variable selection prior: %s\n',tf2yn(prior_same));
     fprintf('covariates: %-6d',max(0,size(Z,2) - 1));
     fprintf('     fit prior var. of coefs (sa): %s\n',tf2yn(update_sa));
-    fprintf('                       ');
+    fprintf('intercept:  yes        ');
     if family == 'gaussian'
       fprintf('fit residual var. (sigma):    %s\n',tf2yn(update_sigma));
     elseif family == 'binomial'
@@ -445,8 +445,12 @@ function fit = varbvs (X, Z, y, labels, family, options)
       fit.pve(:,i) = sz./(sz + sigma(i));
     end
   elseif family == 'binomial'
-    fit = struct('logw',logw,'sigma',sigma,'sa',sa,'logodds',logodds,...
-                 'alpha',alpha,'mu',mu,'s',s,'eta',eta);
+    fit = struct('family',family,'num_covariates',size(Z,2) - 1,...
+                 'num_samples',n,'labels',{labels},'n0',n0,'sa0',sa0,...
+                 'update_sa',update_sa,'optimize_eta',optimize_eta,...
+                 'prior_same',prior_same,'logw',{logw},'sa',sa,...
+                 'logodds',{logodds},'alpha',{alpha},'mu',{mu},'s',{s},...
+                 'eta',{eta});
   end
 
 % ------------------------------------------------------------------

@@ -6,11 +6,11 @@ clear
 
 % SCRIPT PARAMETERS
 % -----------------
-n  = 800;  % Number of samples (subjects).
+n  = 1500; % Number of samples (subjects).
 p  = 2000; % Number of variables (genetic markers).
 m  = 0;    % Number of covariates (m >= 0).
 na = 20;   % Number of markers that affect the binary outcome.
-sa = 0.2;  % Standard deviation of log-odds ratios.
+sa = 0.15;  % Variance of log-odds ratios.
 p1 = 0.25; % Target proportion of subjects that are cases (y = 1).
 
 % Set the random number generator seed.
@@ -35,7 +35,7 @@ X   = single(X);
 i       = randperm(p);
 i       = i(1:na);
 beta    = zeros(p,1);
-beta(i) = sa*randn(na,1);
+beta(i) = sqrt(sa)*randn(na,1);
 
 % Generate random labels for the markers.
 labels = num2cell(randi(max(1e6,p),p,1));
