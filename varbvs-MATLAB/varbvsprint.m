@@ -81,7 +81,6 @@ function varbvsprint (fit, c, n, nr)
   if fit.family == 'gaussian'
     fprintf('fit residual var. (sigma):    %s\n',tf2yn(fit.update_sigma));
   elseif fit.family == 'binomial'
-    % TO DO: FIX THIS.
     fprintf('fit approx. factors (eta):    %s\n',tf2yn(fit.optimize_eta));
   end
   fprintf('maximum log-likelihood lower bound: %0.4f\n',max(fit.logw));
