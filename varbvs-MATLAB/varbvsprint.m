@@ -97,38 +97,53 @@ function varbvsprint (fit, c, n, nr)
   % (3) SUMMARIZE RESULTS ON HYPERPARAMETERS
   % ----------------------------------------
   % Summarize the fitted residual variance parameter (sigma).
-  fprintf('Hyperparameters:\n');
-  fprintf('        estimate Pr>%0.2f             candidate values\n',c);
-  if (fit.family == 'gaussian')
-    x0    = dot(w(:),fit.sigma(:));
-    [a b] = cred(fit.sigma,x0,w,c);
-    fprintf('sigma   %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
-    if fit.update_sigma
+  fprintf('Hyperparameters: ');
+  if ns == 1
+
+    % Summarize the hyperparameter settings when there is only one
+    % candidate setting.
+    if (fit.family == 'gaussian')
+      fprintf('sigma=%0.3g ',fit.sigma);
+    end
+    fprintf('sa=%0.3g ',fit.sa);
+    if (fit.prior_same)
+      fprintf('logodds=%+0.2f',min(fit.logodds));
+    end
+    fprintf('\n');
+  else
+    fprintf('\n');
+    fprintf('        estimate Pr>%0.2f             candidate values\n',c);
+    if (fit.family == 'gaussian')
+      x0    = dot(w(:),fit.sigma(:));
+      [a b] = cred(fit.sigma,x0,w,c);
+      fprintf('sigma   %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
+      if fit.update_sigma
+        fprintf('NA\n')
+      else
+        fprintf('%0.3g--%0.3g\n',min(fit.sigma(:)),max(fit.sigma(:)));
+      end
+    end
+ 
+    % Summarize the fitted prior variance parameter (sa).
+    x0    = dot(w(:),fit.sa(:));
+    [a b] = cred(fit.sa,x0,w,c);
+    fprintf('sa      %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
+    if fit.update_sa
       fprintf('NA\n')
     else
-      fprintf('%0.3g--%0.3g\n',min(fit.sigma(:)),max(fit.sigma(:)));
+      fprintf('%0.3g--%0.3g\n',min(fit.sa(:)),max(fit.sa(:)));
+    end
+
+    % Summarize the fitted prior log-odds of inclusion (logodds).
+    if (fit.prior_same)
+      x     = min(fit.logodds);
+      x0    = dot(w(:),x);
+      [a b] = cred(x,x0,w,c);
+      fprintf('logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n',x0,...
+              sprintf('[%+0.2f,%+0.2f]',a,b),min(x),max(x));
     end
   end
-
-  % Summarize the fitted prior variance parameter (sa).
-  x0    = dot(w(:),fit.sa(:));
-  [a b] = cred(fit.sa,x0,w,c);
-  fprintf('sa      %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
-  if fit.update_sa
-    fprintf('NA\n')
-  else
-    fprintf('%0.3g--%0.3g\n',min(fit.sa(:)),max(fit.sa(:)));
-  end
-
-  % Summarize the fitted prior log-odds of inclusion (logodds).
-  if (fit.prior_same)
-    x     = min(fit.logodds);
-    x0    = dot(w(:),x);
-    [a b] = cred(x,x0,w,c);
-    fprintf('logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n',x0,...
-            sprintf('[%+0.2f,%+0.2f]',a,b),min(x),max(x));
-  end
-
+  
   % (4) SUMMARIZE VARIABLE SELECTION RESULTS
   % ----------------------------------------
   % Summarize the number of variables selected at different PIP thresholds.

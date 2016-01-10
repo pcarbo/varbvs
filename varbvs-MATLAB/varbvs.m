@@ -338,8 +338,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     if family == 'gaussian'
       fprintf('fit residual var. (sigma):    %s\n',tf2yn(update_sigma));
     elseif family == 'binomial'
-      % TO DO: FIX THIS.
-      fprintf('fit approx. factors (eta): %s\n',tf2yn(optimize_eta));
+      fprintf('fit approx. factors (eta):    %s\n',tf2yn(optimize_eta));
     end
   end
   
@@ -354,9 +353,19 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % (5) FIT BAYESIAN VARIABLE SELECTION MODEL TO DATA
   % -------------------------------------------------
   if ns == 1
-
-    % TO DO: Implement special case when there is only one hyperparameter
-    % setting.
+    % Find a set of parameters that locally minimize the K-L
+    % divergence between the approximating distribution and the exact
+    % posterior.
+    if verbose
+      fprintf('        variational    max.   incl variance params\n');
+      fprintf(' iter   lower bound  change   vars   sigma      sa\n');
+    end
+    [logw sigma sa alpha mu s eta] = ...
+        outerloop(X,Z,y,family,sigma,sa,logodds,alpha,mu,eta,tol,maxiter,...
+                  verbose,[],update_sigma,update_sa,optimize_eta,n0,sa0);
+    if verbose
+      fprintf('\n');
+    end
   else
       
     % If a good initialization isn't already provided, find a good

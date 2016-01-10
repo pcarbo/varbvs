@@ -1,23 +1,23 @@
-% This script illustrates 'varbvs' for genome-wide mapping of a quantitative
-% trait in a simulated data set in which all the genetic markers are
-% uncorrelated with each other (i.e., they are "unlinked").
+% This script illustrates 'varbvs' for genome-wide mapping of a binary
+% (e.g., case-control) trait in a simulated data set in which all the
+% genetic markers are uncorrelated with each other (i.e., they are
+% "unlinked").
 clear
 
 % SCRIPT PARAMETERS
 % -----------------
-n  = 800;  % Number of samples.
+n  = 800;  % Number of samples (subjects).
 p  = 2000; % Number of variables (genetic markers).
-m  = 3;    % Number of covariates (m >= 0).
-na = 20;   % Number of quantitative trait loci (QTLs).
-se = 4;    % Variance of residual.
-r  = 0.5;  % Proportion of variance in trait explained by QTLs.
-
-% Candidate values for the prior log-odds of inclusion.
-% logodds = (-3:0.1:-1)';
-logodds = log10(na/p);
+m  = 2;    % Number of covariates (m >= 0).
+na = 20;   % Number of markers that affect the binary outcome.
+sa = 0.2;  % Standard deviation of log-odds ratios.
+p1 = 0.25; % Target proportion of subjects that are cases (y = 1).
 
 % Set the random number generator seed.
 rng(1);
+
+% Candidate values for the prior log-odds of inclusion.
+logodds = (-3:0.1:-1)';
 
 % GENERATE DATA SET
 % -----------------
@@ -30,27 +30,17 @@ X   = (rand(n,p) < repmat(maf,n,1)) + ...
       (rand(n,p) < repmat(maf,n,1));
 X   = single(X);
 
-% Generate additive effects for the markers so that exactly na of them have
-% a nonzero effect on the trait.
+% Generate additive effects for the markers so that exactly na of them
+% have a nonzero effect on the trait.
 i       = randperm(p);
 i       = i(1:na);
 beta    = zeros(p,1);
-beta(i) = randn(na,1);
+beta(i) = sa*randn(na,1);
 
 % Generate random labels for the markers.
 labels = num2cell(randi(max(1e6,p),p,1));
 labels = cellfun(@num2str,labels,'UniformOutput',false);
 labels = strcat('rs',labels);
-
-% Adjust the QTL effects so that we control for the proportion of variance
-% explained (r). That is, we adjust beta so that r = a/(a+1), where I've
-% defined a = beta'*cov(X)*beta. Here, sb is the variance of the (nonzero)
-% QTL effects.
-sb   = double(r/(1-r)/var(X*beta,1));
-beta = sqrt(sb*se) * beta;
-
-% Generate the intercept.
-mu = randn;
 
 % Generate the covariate data (Z), and the linear effects of the
 % covariates (u).
@@ -60,13 +50,18 @@ if m > 0
 else
   Z = [];
 end
-  
-% Generate the quantitative trait measurements.
-y = mu + X*beta + sqrt(se)*randn(n,1);
+
+% For each sample, calculate the probability of being a case (y = 1).
+mu = logit(p1);
+t  = mu + X*beta;
 if m > 0
-  y = y + Z*u;
+  t = t + Z*u;
 end
-y = double(y);
+t = double(t);
+
+% Simulate the binary trait (case-control status) as a coin toss with
+% success rates given by the logistic regression.
+y = rand(n,1) < sigmoid(t);
 
 % FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 % ------------------------------------------
@@ -75,9 +70,5 @@ y = double(y);
 % continuous outcome (quantitiative trait), with spike and slab priors on
 % the coefficients.
 fprintf('2. FITTING MODEL TO DATA.\n')
-fit = varbvs(X,Z,y,labels,[],struct('logodds',logodds));
+fit = varbvs(X,Z,y,labels,'binomial',struct('logodds',logodds));
 
-% SUMMARIZE POSTERIOR DISTRIBUTION
-% --------------------------------
-fprintf('3. SUMMARIZING RESULTS.\n')
-varbvsprint(fit);

@@ -118,8 +118,13 @@ function [logw, sigma, sa, alpha, mu, s] = ...
     % decreased. 
     err = abs(alpha - alpha0);
     if verbose
-      status = sprintf('%05d %05d %+13.6e %0.1e %06.1f %0.1e %0.1e',...
-                       outer_iter,iter,logw,max(err),sum(alpha),sigma,sa);
+      if isempty(outer_iter)
+        status = '';
+      else
+        status = sprintf('%05d',outer_iter);
+      end  
+      status = [status sprintf('%05d %+13.6e %0.1e %06.1f %0.1e %0.1e',...
+                               iter,logw,max(err),sum(alpha),sigma,sa)];
       fprintf(status);
       fprintf(repmat('\b',1,length(status)));
     end
