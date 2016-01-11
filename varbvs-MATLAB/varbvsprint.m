@@ -106,7 +106,7 @@ function varbvsprint (fit, c, n, nr)
     end
     fprintf('sa=%0.3g ',fit.sa);
     if (fit.prior_same)
-      fprintf('logodds=%+0.2f',min(fit.logodds));
+      fprintf('logodds=%+0.2f',fit.logodds);
     end
     fprintf('\n');
   else
@@ -135,7 +135,7 @@ function varbvsprint (fit, c, n, nr)
 
     % Summarize the fitted prior log-odds of inclusion (logodds).
     if (fit.prior_same)
-      x     = min(fit.logodds);
+      x     = fit.logodds;
       x0    = dot(w(:),x);
       [a b] = cred(x,x0,w,c);
       fprintf('logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n',x0,...

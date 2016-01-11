@@ -46,8 +46,8 @@
 %          options.tol = 1e-4 (convergence tolerance for inner loop)
 %          options.maxiter = 1e4 (maximum number of inner loop iterations)
 %          options.verbose = true (show progress of algorithm on console)
-%          options.sa = 1 (initial value for prior variance parameter, sa)
-%          options.logodds = linspace(-log10(p),-0.3,20) (prior log-odds)
+%          options.sa = 1 (prior variance parameter settings)
+%          options.logodds = linspace(-log10(p),-0.3,20) (log-odds settings)
 %          options.update_sa (fit model parameter sa to data)
 %          options.sa0 = 0 (scale parameter for prior on sa)
 %          options.n0 = 0 (degrees of freedom for prior on sa)
@@ -57,7 +57,7 @@
 %          options.nr = 1000 (samples of PVE to draw from posterior)
 %
 %          For family = 'gaussian' only:
-%          options.sigma = var(y) (initial value for residual variance param.)
+%          options.sigma = var(y) (residual variance parameter settings)
 %          options.update_sigma (fit model parameter sigma to data)
 %
 %          For family = 'binomial' only:
@@ -65,13 +65,22 @@
 %          options.optimize_eta (optimize parameter eta)
 %
 % OUTPUT ARGUMENTS:
-% Description of output arguments goes here.
+% fit                 A structure (type 'help struct').
+% fit.family          Either 'gaussian' or 'binomial'.
+% fit.num_samples     Number of training samples, n.
+% fit.num_covariates  Number of covariates (columnx of Z).
+% fit.labels          Variable names.
+% fit.sigma           settings of sigma (family = 'gaussian' only).
+% fit.sa              settings of prior variance parameter, sa.
+% fit.logodds         p x ns matrix settings of prior log-odds 
+% fit.n0
+% fit.s0
 %
-% DETAILS:
+% DETAILS: 
 %
 % LICENSE: GPL v3
 %
-% DATE: January 10, 2015
+% DATE: January 10, 2016
 %
 % AUTHORS:
 %    Algorithm was designed by Peter Carbonetto and Matthew Stephens.
@@ -210,8 +219,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % each variable. A default setting is only available if the number of
   % other hyperparameter settings is 1, in which case we select 20 candidate
   % settings for the prior log-odds, evenly spaced between log10(1/p) and
-  % log10(0.5). If necessary, I convert the prior log-odds settings to an p
-  % x ns matrix.
+  % log10(0.5).
   if isfield(options,'logodds')
     logodds = double(options.logodds);
   elseif isscalar(sigma) & isscalar(sa)
@@ -219,11 +227,11 @@ function fit = varbvs (X, Z, y, labels, family, options)
   else
     error('options.logodds must be specified')
   end
-  if ismatrix(logodds) & size(logodds,1) == p
+  if size(logodds,1) == p
     prior_same = false;
   else
     prior_same = true;
-    logodds    = repmat(logodds(:)',p,1);
+    logodds    = logodds(:)';
   end
 
   % Here is where I ensure that the numbers of candidate hyperparameter
@@ -511,11 +519,15 @@ function fit = varbvs (X, Z, y, labels, family, options)
   end
 
 % ------------------------------------------------------------------
-% Implements one iteration of the "outer loop".
+% This function implements one iteration of the "outer loop".
 function [logw, sigma, sa, alpha, mu, s, eta] = ...
         outerloop (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta, ...
                    tol, maxiter, verbose, outer_iter, update_sigma, ...
                    update_sa, optimize_eta, n0, sa0)
+  p = length(alpha);
+  if isscalar(logodds)
+    logodds = repmat(logodds,p,1);
+  end
   if family == 'gaussian'
     [logw sigma sa alpha mu s] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...

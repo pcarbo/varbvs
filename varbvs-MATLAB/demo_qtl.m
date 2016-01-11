@@ -5,12 +5,12 @@ clear
 
 % SCRIPT PARAMETERS
 % -----------------
-n  = 800;  % Number of samples.
-p  = 2000; % Number of variables (genetic markers).
-m  = 3;    % Number of covariates (m >= 0).
-na = 20;   % Number of quantitative trait loci (QTLs).
-se = 4;    % Variance of residual.
-r  = 0.5;  % Proportion of variance in trait explained by QTLs.
+n  = 800;   % Number of samples.
+p  = 2000;  % Number of variables (genetic markers).
+m  = 3;     % Number of covariates (m >= 0).
+na = 20;    % Number of quantitative trait loci (QTLs).
+se = 4;     % Variance of residual.
+r  = 0.5;   % Proportion of variance in trait explained by QTLs.
 
 % Candidate values for the prior log-odds of inclusion.
 logodds = (-3:0.1:-1)';
