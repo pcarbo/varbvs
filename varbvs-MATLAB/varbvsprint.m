@@ -18,7 +18,40 @@
 %      intervals for the coefficients. Default is nr = 1000.
 %
 % DETAILS:
-%    Detailed description of function goes here.
+%
+%    varbvsprint generates a four-part summary of the fitted Bayesian
+%    variable selection model. The first part summarizes the analysis setup,
+%    including the number of samples used to fit the model, the number of
+%    covariates, and additional optimization settings. For the linear
+%    regression model only, the "proportion of variance explained" (PVE) is
+%    the posterior mean estimate of the proportion of variance in Y
+%    explained by the variable selection model, along with a c% credible
+%    interval of the PVE.
+%
+%    The second part summarizes the posterior distribution of the
+%    hyperparameters by reporting the mean, the c% credible interval, and
+%    the range of settings provided as input to varbvs (or NA when
+%    options.sa or options.sigma is not set). These statistics are computed
+%    by interpreting fit.logw as log-importance weights (see function varbvs
+%    for details, and how to adjust fit.logw to account for different priors
+%    on the hyperparameters). Summary statistics for logodds are only shown
+%    if the prior log-odds is identical for all variables.
+%
+%    The third part summarizes the variable selection results. Again, all
+%    these statistics are computed by averaging over the hyperparameter
+%    settings according to fit.logw. The number variables included at
+%    different probability thresholds are given in the "count" row.
+%
+%    Finally, the fourth part gives more detailed statistics about the
+%    variables that are most likely to be included in the regression model
+%    (the 'prob.' column gives the posterior inclusion probability). Column
+%    'coef' gives the posterior mean estimate of the regression coefficient
+%    conditioned on being included in the model, and the next column gives
+%    the c% credible interval. For the logistic regression model, the
+%    coefficient is the same as the (natural) logarithm of the odds
+%    ratio. For the linear regression model (family = 'gaussian'), the
+%    posterior mean estimate of the proportion of variance in Y explained by
+%    the variable ('PVE') is also provided.
 %
 % LICENSE: GPL v3
 %
@@ -165,14 +198,14 @@ function varbvsprint (fit, c, n, nr)
   vars       = vars(1:n);
   vars       = vars(:)';
   fprintf('Top %d variables by inclusion probability:\n',n);
-  fprintf('index variable   prob.');
+  fprintf(' index variable   prob.');
   if fit.family == 'gaussian'
     fprintf(' -PVE-');
   end
   fprintf('   coef. Pr(coef.>%0.2f)\n',c);
   for i = vars
     [a b] = varbvscoefcred(fit,i,c,nr);
-    fprintf('%5d %-10s %0.3f',i,fit.labels{i},PIP(i));
+    fprintf('%6d %-10s %0.3f',i,fit.labels{i},PIP(i));
     if fit.family == 'gaussian'
       fprintf(' %04.1f%%',100*dot(w,fit.pve(i,:)));
     end
