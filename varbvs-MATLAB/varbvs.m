@@ -70,11 +70,23 @@
 % fit.num_samples     Number of training samples, n.
 % fit.num_covariates  Number of covariates (columnx of Z).
 % fit.labels          Variable names.
-% fit.sigma           settings of sigma (family = 'gaussian' only).
-% fit.sa              settings of prior variance parameter, sa.
-% fit.logodds         p x ns matrix settings of prior log-odds 
-% fit.n0
-% fit.s0
+% fit.sigma           settings for sigma (family = 'gaussian' only).
+% fit.sa              settings for prior variance parameter, sa.
+% fit.logodds         prior log-odds settings.
+% fit.prior_same      true if prior is identical for all variables.
+% fit.sa0             scale parameter for prior on sa.
+% fit.n0              degrees of freedom for prior on sa.
+% fit.update_sigma    whether sigma was fit to data (family = 'gaussian' only).
+% fit.update_sa       whether hyperparameter sa was fit to data.
+% fit.logw            approximate marginal log-likelihood for each
+%                     setting of hyperparameters.
+% fit.alpha           Variational estimates of posterior inclusion probs.
+% fit.mu              Variational estimates of posterior mean coefficients.
+% fit.s               Variational estimates of posterior variances.
+% fit.pve             Estimated PVE per variable (family = 'gaussian' only).
+% fit.model_pve       Posterior samples of proportion of variance in Y
+%                     explained by variable selection model (only for
+%                     family = 'gaussian').
 %
 % DETAILS: 
 %
