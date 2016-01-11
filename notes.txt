@@ -34,7 +34,6 @@ Strategy for my new implementation of 'varbvs'
 * To do: Double-check calculations of PVE against lm() in R.
 
 * To do:
-   - Write help for varbvs.m.
    - Write help for varbvsprint.m.
    - Write help for varbvscoefcred.m.
     

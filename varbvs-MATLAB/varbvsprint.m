@@ -1,5 +1,5 @@
 %--------------------------------------------------------------------------
-% varbvsprint.m: One-sentence summary of function goes here.
+% varbvsprint.m: Print a summary of a model fitted by varbvs.
 %--------------------------------------------------------------------------
 %
 % DESCRIPTION:
@@ -11,27 +11,29 @@
 % INPUT ARGUMENTS:
 % Description of input arguments goes here.
 %
-% OUTPUT ARGUMENTS:
-% Description of output arguments goes here.
-%
 % DETAILS:
 %    Detailed description of function goes here.
 %
 % LICENSE: GPL v3
 %
-% DATE: December 28, 2015
+% DATE: January 10, 2016
 %
 % AUTHORS:
-%    List contributors here.
+%    Algorithm was designed by Peter Carbonetto and Matthew Stephens.
+%    R, MATLAB and C code was written by Peter Carbonetto.
+%    Depts. of Statistics and Human Genetics, University of Chicago,
+%    Chicago, IL, USA, and AncestryDNA, San Francisco, CA, USA
 %
 % REFERENCES:
-%    List of references goes here.
+%    P. Carbonetto, M. Stephens (2012). Scalable variational inference
+%    for Bayesian variable selection in regression, and its accuracy in 
+%    genetic association studies. Bayesian Analysis 7: 73-108.
 %
 % SEE ALSO:
-%    List related functions here.
+%    varbvs.
 %
 % EXAMPLES:
-%    Give some examples here.
+%    See demo_qtl.m and demo_cc.m for examples.
 %
 function varbvsprint (fit, c, n, nr)
 
