@@ -45,7 +45,7 @@
 %            
 %          options.tol = 1e-4 (convergence tolerance for inner loop)
 %          options.maxiter = 1e4 (maximum number of inner loop iterations)
-%          options.verbose = true (show progress of algorithm on console)
+%          options.verbose = true (print progress of algorithm to console)
 %          options.sa = 1 (prior variance parameter settings)
 %          options.logodds = linspace(-log10(p),-0.3,20) (log-odds settings)
 %          options.update_sa (fit model parameter sa to data)
@@ -88,7 +88,83 @@
 %                     explained by variable selection model (only for
 %                     family = 'gaussian').
 %
-% DETAILS: 
+% DETAILS:
+%    Two types of outcomes Y are modeled: (1) a continuous outcome, which
+%    is also referred to as a "quantitative trait" in the genetics
+%    literature; or (2) a binary outcome with possible values 0 and 1. Y is
+%    modeled as a continuous outcome by setting family = 'gaussian'. In this
+%    case, Y is i.i.d. normal with mean u0 + Z*u + X*b and variance sigma,
+%    in which u and b are vectors of regresion coefficients, and u0 is the
+%    intercept. In the second case, we use logistic regression to model Y,
+%    in which the probability that Y = 1 is given by
+%
+%        Pr(Y = 1) = sigmoid(u0 + Z*u + X*b).
+%
+%    See 'help sigmoid' for a description of the sigmoid function. Note
+%    that the regression always includes an intercept term (u0).
+%
+%    For both regression models, the fitting procedure consists of an inner
+%    loop and an outer loop. The outer loop iterates over each of the
+%    hyperparameter settings. The hyperparameters sa, sigma and logodds are
+%    specified by three arrays with the same number of elements, in which
+%    options.sa(i), options.sigma(i) and options.logodds(i) specify the ith
+%    hyperparameter setting. Note that sigma is only used for the linear
+%    regression model, and will generate an error if family = 'binomial'.
+%
+%    Hyperparameter sa is the prior variance of regression coefficients for
+%    variables that are included in the model. Hyperparameter logodds is the
+%    prior log-odds that a variable is included in the regression model; it
+%    is defined as logodds = log10(q/(1-q)), where q is the prior
+%    probability that a variable is included in the regression model.
+%
+%    The prior log-odds may also be specified separately for each variable,
+%    which is useful is there is prior information about which variables are
+%    most relevant to the outcome Y. This is accomplished by setting
+%    options.logodds to a p x ns matrix, where p is the number of
+%    variables, and ns is the number of hyperparameter settings. In this
+%    case, fit.prior_same = false.
+% 
+%    Given a setting of the hyperparameters, options.sa(i), options.sigma(i)
+%    and options.logodds(:,i), the inner loop cycles through coordinate
+%    ascent updates to tighten the lower bound on the marginal likelihood,
+%
+%        Pr(Y | X, sigma, sa, logodds),
+%
+%    The inner loop coordinate ascent updates terminate when either (1) the
+%    maximum number of inner loop iterations is reached, as specified by
+%    options.maxiter, or (2) the maximum difference between the estimated
+%    posterior inclusion probabilities (see below) is less than options.tol.
+%
+%    It is possible to optimize hyperparameter sa (and sigma for family =
+%    'gaussian') as part of the inner loop fitting procedure. Parameters sa
+%    and sigma will automatically be fitted to the data, separately for each
+%    hyperparameter setting, when options.sa and options.sigma are not
+%    specified. Alternatively, this can be achieved by setting
+%    options.update_sa = true and options.update_sigma = true, in which case
+%    options.sa and options.sigma are treated as initial estimates of these
+%    parameters if they are provided. These parameters are fitted by
+%    computing approximate maximum-likelihood (ML) estimates. Optionally, an
+%    approximate maximum a posteriori (MAP) estimate of sa is computed by
+%    setting options.sa0 and options.n0 to positive scalars; these two
+%    numbers specify the scale parameter and number of degrees of freedom
+%    for a scaled inverse chi-square prior on sa. Note it is not possible to
+%    fit the logodds parameter; if options.logodds is not provided, then it
+%    is set to the default value when options.sa and options.sigma are
+%    scalars, and otherwise an error is generated.
+%
+%    Outputs fit.alpha, fit.mu and fit.s specify the approximate posterior
+%    distribution of the regression coefficients. Each of these outputs is a
+%    p x ns matrix. For the ith hyperparameter setting, alpha(:,i) is the
+%    variational estimate of the posterior inclusion probability (PIP) for
+%    each variable; mu(:,i) is the variational estimate of the posterior
+%    mean coefficient given that it is included in the model; and s(:,i) is
+%    the estimated posterior variance of the coefficient given that it is
+%    included in the model. These are also the quantities that are optimized
+%    as part of the inner loop coordinate ascent updates.
+%
+% Additional details:
+%   * Why X is single-precision. Discuss computation involving X.
+%   * What are logw? How to get importance weights.
 %
 % LICENSE: GPL v3
 %
