@@ -1,37 +1,57 @@
 %--------------------------------------------------------------------------
-% varbvscoefcred.m: One-sentence summary of function goes here.
+% varbvscoefcred.m: Compute credible intervals for posterior coefficients.
 %--------------------------------------------------------------------------
 %
 % DESCRIPTION:
-%    Overview of function goes here.
+%    Compute Monte Carlo estimates of credible intervals for posterior mean
+%    coefficients in the fitted variable selection model. This function is
+%    used by varbvsprint to generate credible intervals for coefficients of
+%    top-ranked variables.
 %
 % USAGE:
-%    Summary of usage goes here.
+%    [a, b] = varbvscoefcred(fit, vars, c, nr)
 %
 % INPUT ARGUMENTS:
-% Description of input arguments goes here.
+% fit   Output of function varbvs.
+% vars  Compute c% credible intervals (CIs) for these variables.
+%       By default, vars = 1:numel(fit.labels).
+% c     Compute c% CIs. By default, c = 0.95.
+% nr    Draw nr samples from posterior. Default is nr = 1000.
 %
 % OUTPUT ARGUMENTS:
-% Description of output arguments goes here.
+% a     p x 1 array of CI lower bounds, where p = numel(vars).
+% b     p x 1 array of CI upper bounds, where p = numel(vars). 
 %
 % DETAILS:
-%    Detailed description of function goes here.
+%    A c% credible interval (CI) is an interval [a,b] such that all values
+%    between a and b account for >c% of the probability mass. This
+%    description doesn't unique define the CI, and there are several ways to
+%    arrive at a unique definition. Here, we define the CI by the (0.5 -
+%    c/2)th and (0.5 + c/2)th quantiles of the posterior distribution.
+%    Monte Carlo estimates of these quantiles are quickly computed by
+%    drawing nr samples from the posterior.
+%
+%    Since these are Monte Carlo estimates, the output will differ
+%    slightly for each call to varbvscoefcred. Larger nr will result in
+%    more consistent outputs, but will also result in slower computation.
 %
 % LICENSE: GPL v3
 %
-% DATE: December 28, 2015
+% DATE: January 11, 2016
 %
 % AUTHORS:
-%    List contributors here.
+%    Algorithm was designed by Peter Carbonetto and Matthew Stephens.
+%    R, MATLAB and C code was written by Peter Carbonetto.
+%    Depts. of Statistics and Human Genetics, University of Chicago,
+%    Chicago, IL, USA, and AncestryDNA, San Francisco, CA, USA
 %
 % REFERENCES:
-%    List of references goes here.
+%    P. Carbonetto, M. Stephens (2012). Scalable variational inference
+%    for Bayesian variable selection in regression, and its accuracy in 
+%    genetic association studies. Bayesian Analysis 7: 73-108.
 %
 % SEE ALSO:
-%    List related functions here.
-%
-% EXAMPLES:
-%    Give some examples here.
+%    varbvs, varbvsprint
 %
 function [a, b] = varbvscoefcred (fit, vars, c, nr)
 

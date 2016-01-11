@@ -11,14 +11,13 @@
 %    varbvsprint(fit, c, n, nr)
 %
 % INPUT ARGUMENTS:
-% fit  Output from function varbvs.
+% fit  Output of function varbvs.
 % c    Compute c% credible intervals. By default, c = 0.95.
 % n    Show detailed statistics on n variables. By default, n = 5.
 % nr   Draw nr samples for Monte Carlo estimates of the credible
 %      intervals for the coefficients. Default is nr = 1000.
 %
 % DETAILS:
-%
 %    varbvsprint generates a four-part summary of the fitted Bayesian
 %    variable selection model. The first part summarizes the analysis setup,
 %    including the number of samples used to fit the model, the number of

@@ -3,7 +3,6 @@
 %--------------------------------------------------------------------------
 %
 % DESCRIPTION:
-%
 %   Compute fully-factorized variational approximation for Bayesian variable
 %   selection in linear (family = 'gaussian') or logistic regression (family
 %   = 'binomial'). More precisely, find the "best" fully-factorized
