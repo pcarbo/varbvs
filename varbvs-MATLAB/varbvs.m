@@ -80,11 +80,13 @@
 % fit.update_sa       whether hyperparameter sa was fit to data.
 % fit.logw            approximate marginal log-likelihood for each
 %                     setting of hyperparameters.
-% fit.alpha           Variational estimates of posterior inclusion probs.
-% fit.mu              Variational estimates of posterior mean coefficients.
-% fit.s               Variational estimates of posterior variances.
-% fit.pve             Estimated PVE per variable (family = 'gaussian' only).
-% fit.model_pve       Posterior samples of proportion of variance in Y
+% fit.alpha           variational estimates of posterior inclusion probs.
+% fit.mu              variational estimates of posterior mean coefficients.
+% fit.s               variational estimates of posterior variances.
+% fit.eta             variational parameters for family = 'binomial' only.
+% fit.optimize_eta    whether eta was fit to data (family = 'binomial' only).
+% fit.pve             estimated PVE per variable (family = 'gaussian' only).
+% fit.model_pve       posterior samples of proportion of variance in Y
 %                     explained by variable selection model (only for
 %                     family = 'gaussian').
 %
@@ -154,17 +156,83 @@
 %
 %    Outputs fit.alpha, fit.mu and fit.s specify the approximate posterior
 %    distribution of the regression coefficients. Each of these outputs is a
-%    p x ns matrix. For the ith hyperparameter setting, alpha(:,i) is the
-%    variational estimate of the posterior inclusion probability (PIP) for
-%    each variable; mu(:,i) is the variational estimate of the posterior
-%    mean coefficient given that it is included in the model; and s(:,i) is
-%    the estimated posterior variance of the coefficient given that it is
-%    included in the model. These are also the quantities that are optimized
-%    as part of the inner loop coordinate ascent updates.
+%    p x ns matrix. For the ith hyperparameter setting, fit.alpha(:,i) is
+%    the variational estimate of the posterior inclusion probability (PIP)
+%    for each variable; fit.mu(:,i) is the variational estimate of the
+%    posterior mean coefficient given that it is included in the model; and
+%    fit.s(:,i) is the estimated posterior variance of the coefficient given
+%    that it is included in the model. These are also the quantities that
+%    are optimized as part of the inner loop coordinate ascent updates. From
+%    these quantities, we also provide fit.pve for family = 'gaussian'. This
+%    output provides, for each hyperparameter setting, the mean estimate of
+%    the proportion of variance in Y explained by each of the variables
+%    conditioned on being included in the model.
 %
-% Additional details:
-%   * Why X is single-precision. Discuss computation involving X.
-%   * What are logw? How to get importance weights.
+%    An additional variational parameter, denoted by 'eta', is needed for
+%    fast computation with the logistic regression model (family =
+%    'binomial'). The fitted value of eta is returned as an n x ns matrix
+%    fit.eta. If a good estimate of eta is already available (e.g., in a
+%    previous call to varbvs on the same data, provide this estimate in
+%    options.eta, in which case eta is not fitted to the data during fthe
+%    inner loop coordinate ascent updates (to override this behaviour, set
+%    options.optimize_eta = true, in which case options.eta is treated as an
+%    initial estimate).
+%
+%    To provide a more accurate variational approximation of the posterior
+%    distribution, by default the fitting procedure has two stages. In the
+%    first stage, the entire fitting procedure is run to completion, and the
+%    variational parameters (alpha, mu, s, eta) corresponding to the maximum
+%    lower bound are then used to initialize the coordinate ascent updates
+%    in a second stage. Although this has the effect of doubling the
+%    computation time (in the worst case), the final posterior estimates
+%    tend to be more accurate with this two-stage fitting procedure. The
+%    initial stage will be automatically skipped if initial estimates of the
+%    variational parameters are provided in options.alpha, options.mu and/or
+%    options.s, unless options.initialize_params = true.
+%
+%    Output fit.logw is an array with ns elements, in which fit.logw(i) is
+%    the variational lower bound on the marginal log-likelihood for the ith
+%    setting of the hyperparameters. In many settings, it is good practice
+%    to account for uncertainty in the hyperparameters when reporting final
+%    posterior quantities. Provided that (1) the hyperparameter settings
+%    options.sigma, options.sa and options.logodds adequately represent the
+%    space of possible hyperparameter settings with high posterior mass, (2)
+%    the hyperparameter settings are drawn from the same distribution as the
+%    prior, and (3) the fully-factorized variational approximation closely
+%    approximates the true posterior distribution, then final posterior
+%    quantities can be calculated by using fit.logw as (unnormalized)
+%    log-importance weights. Even when conditions (1), (2) and/or (3) are
+%    not satisfied, this can approach can still often yield reasonable
+%    estimates of averaged posterior quantities. For example, do the
+%    following to compute posterior inclusion probabilities (PIPs) averaged
+%    over the hyperparameter settings:
+%
+%        w   = normalizelogweights(fit.logw);
+%        PIP = fit.alpha * w(:);
+%
+%    And do the following to compute the posterior mean estimate of sa:
+%
+%        w       = normalizelogweights(fit.logw);
+%        mean_sa = dot(fit.sa(:),w(:));
+%
+%    This is precisely how final posterior quantities are reported by
+%    varbvsprint (type 'help varbvsprint' for more details). To account for
+%    discrepancies between the prior on (sigma,sa,logodds) and the sampling
+%    density used to draw candidate settings of the hyperparameters, adjust
+%    the log-importance weights by setting fit.logw = fit.logw + logp/logq,
+%    where logp is the log-density of the prior distribution, and logq is
+%    the log-density of the sampling distribution.
+%
+%    Finally, we point out that the optimization procedures were carefully
+%    designed so that they can be applied to very large data sets; to date,
+%    this code has been tested on data sets with >500,000 variables and
+%    >10,000 samples. An important limiting factor is the ability to store
+%    the data matrix X in memory. To reduce memory requirements, in the
+%    MATLAB interface we require that X be single precision (type 'help
+%    single'). Additionally, we mostly avoid generating intermediate
+%    products that are of the same size as X. Only one such intermediate
+%    product is generated when family = 'gaussian', and none for family =
+%    'binomial'.
 %
 % LICENSE: GPL v3
 %
