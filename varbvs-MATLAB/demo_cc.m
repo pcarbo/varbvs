@@ -6,7 +6,7 @@ clear
 
 % SCRIPT PARAMETERS
 % -----------------
-n  = 800;   % Number of samples (subjects).
+n  = 1500;  % Number of samples (subjects).
 p  = 2000;  % Number of variables (genetic markers).
 m  = 2;     % Number of covariates (m >= 0).
 na = 20;    % Number of markers that affect the binary outcome.
