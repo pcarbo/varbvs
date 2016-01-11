@@ -3,13 +3,19 @@
 %--------------------------------------------------------------------------
 %
 % DESCRIPTION:
-%    Overview of function goes here.
+%    Print a summary of a Bayesian variable selection model fitted using 
+%    variational approximation methods (see function varbvs).
 %
 % USAGE:
-%    Summary of usage goes here.
+%    varbvsprint(fit)
+%    varbvsprint(fit, c, n, nr)
 %
 % INPUT ARGUMENTS:
-% Description of input arguments goes here.
+% fit  Output from function varbvs.
+% c    Compute c% credible intervals. By default, c = 0.95.
+% n    Show detailed statistics on n variables. By default, n = 5.
+% nr   Draw nr samples for Monte Carlo estimates of the credible
+%      intervals for the coefficients. Default is nr = 1000.
 %
 % DETAILS:
 %    Detailed description of function goes here.

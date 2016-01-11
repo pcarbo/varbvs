@@ -14,7 +14,8 @@
 %   posterior.
 %
 % USAGE:
-%    fit = varbvs(X,Z,y,labels,family,options)
+%    fit = varbvs(X, Z, y)
+%    fit = varbvs(X, Z, y, labels, family, options)
 %    (Use empty matrix [] to apply the default value)
 %
 % INPUT ARGUMENTS:
