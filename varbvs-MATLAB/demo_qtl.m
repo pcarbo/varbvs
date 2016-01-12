@@ -1,6 +1,7 @@
-% This script illustrates 'varbvs' for genome-wide mapping of a quantitative
-% trait in a simulated data set in which all the genetic markers are
-% uncorrelated with each other (i.e., they are "unlinked").
+% This script illustrates usage of the function varbvs for genome-wide
+% mapping of a quantitative trait. The data set is simulated assuming that
+% all the genetic markers are uncorrelated with each other (i.e., they are
+% "unlinked").
 clear
 
 % SCRIPT PARAMETERS

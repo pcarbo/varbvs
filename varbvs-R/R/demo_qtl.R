@@ -1,0 +1,77 @@
+# This script illustrates usage of the function varbvs for genome-wide
+# mapping of a quantitative trait. The data set is simulated assuming
+# that all the genetic markers are uncorrelated with each other (i.e.,
+# they are "unlinked").
+#
+# NOTE: Move this file later to the "demo" directory.
+#
+source("varbvs.R")
+
+# SCRIPT PARAMETERS
+# -----------------
+n  <- 800   # Number of samples.
+p  <- 2000  # Number of variables (genetic markers).
+m  <- 3     # Number of covariates (m >= 0).
+na <- 20    # Number of quantitative trait loci (QTLs).
+se <- 4     # Variance of residual
+r  <- 0.5   # Proportion of variance in trait explained by QTLs.
+
+# Candidate values for the prior log-odds of inclusion.
+logodds <- seq(-3,-1,0.1)
+
+# Set the random number generator seed.
+set.seed(1)
+
+# GENERATE DATA SET
+# -----------------
+# Generate the minor allele frequencies so that they are uniform over range
+# [0.05,0.5]. Then simulate genotypes assuming all markers are uncorrelated
+# (i.e., unlinked), according to the specified minor allele frequencies.
+cat("1. GENERATING DATA SET.\n")
+maf <- 0.05 + 0.45*runif(p)
+X   <- matrix(0,n,p)
+for (i in 1:p)
+  X[,i] <- (runif(n) < maf[i]) + (runif(n) < maf[i])
+
+# Generate additive effects for the markers so that exactly na of them have
+# a nonzero effect on the trait.
+i       <- sample(p,na)
+beta    <- rep(0,p)
+beta[i] <- rnorm(na)
+
+# Generate random labels for the markers.
+colnames(X) <- paste0("rs",sample(1e6,p))
+
+# Adjust the QTL effects so that we control for the proportion of variance
+# explained (r). That is, we adjust beta so that r = a/(a+1), where I've
+# defined a = beta'*cov(X)*beta. Here, sb is the variance of the (nonzero)
+# QTL effects.
+sb   <- r/(1-r)/var(c(X %*% beta))
+beta <- sqrt(sb*se) * beta
+
+# Generate a random intercept
+mu <- rnorm(1)
+
+# Generate the covariate data (Z), and the linear effects of the
+# covariates (u).
+if (m > 0) {
+  Z <- matrix(rnorm(n*m),n,m)
+  u <- rnorm(m)
+} else {
+  Z <- NULL
+}
+
+# Generate the quantitative trait measurements.
+y <- mu + X %*% beta + sqrt(se)*rnorm(n)
+if (m > 0)
+  y <- y + Z %*% u
+y <- c(y)
+
+# FIT VARIATIONAL APPROXIMATION TO POSTERIOR
+# ------------------------------------------
+# Fit the fully-factorized variational approximation to the posterior
+# distribution of the coefficients for a linear regression model of a
+# continuous outcome (quantitiative trait), with spike and slab priors on
+# the coefficients.
+cat("2. FITTING MODEL TO DATA.\n")
+# TO DO.
