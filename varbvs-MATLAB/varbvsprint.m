@@ -118,13 +118,13 @@ function varbvsprint (fit, c, n, nr)
   fprintf('variables:  %-6d',p); 
   fprintf('     fit prior var. of coefs (sa): %s\n',tf2yn(fit.update_sa));
   fprintf('covariates: %-6d     ',fit.num_covariates);
-  if fit.family == 'gaussian'
+  if strcmp(fit.family,'gaussian')
     fprintf('fit residual var. (sigma):    %s\n',tf2yn(fit.update_sigma));
-  elseif fit.family == 'binomial'
+  elseif strcmp(fit.family,'binomial')
     fprintf('fit approx. factors (eta):    %s\n',tf2yn(fit.optimize_eta));
   end
   fprintf('maximum log-likelihood lower bound: %0.4f\n',max(fit.logw));
-  if fit.family == 'gaussian'
+  if strcmp(fit.family,'gaussian')
     x  = sort(fit.model_pve);
     x0 = mean(x);
     a  = x(floor((0.5 - c/2)*length(x)));
@@ -141,7 +141,7 @@ function varbvsprint (fit, c, n, nr)
 
     % Summarize the hyperparameter settings when there is only one
     % candidate setting.
-    if (fit.family == 'gaussian')
+    if strcmp(fit.family,'gaussian')
       fprintf('sigma=%0.3g ',fit.sigma);
     end
     fprintf('sa=%0.3g ',fit.sa);
@@ -152,7 +152,7 @@ function varbvsprint (fit, c, n, nr)
   else
     fprintf('\n');
     fprintf('        estimate Pr>%0.2f             candidate values\n',c);
-    if (fit.family == 'gaussian')
+    if strcmp(fit.family,'gaussian')
       x0    = dot(w(:),fit.sigma(:));
       [a b] = cred(fit.sigma,x0,w,c);
       fprintf('sigma   %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
@@ -198,14 +198,14 @@ function varbvsprint (fit, c, n, nr)
   vars       = vars(:)';
   fprintf('Top %d variables by inclusion probability:\n',n);
   fprintf(' index variable   prob.');
-  if fit.family == 'gaussian'
+  if strcmp(fit.family,'gaussian')
     fprintf(' -PVE-');
   end
   fprintf('   coef. Pr(coef.>%0.2f)\n',c);
   for i = vars
     [a b] = varbvscoefcred(fit,i,c,nr);
     fprintf('%6d %-10s %0.3f',i,fit.labels{i},PIP(i));
-    if fit.family == 'gaussian'
+    if strcmp(fit.family,'gaussian')
       fprintf(' %04.1f%%',100*dot(w,fit.pve(i,:)));
     end
     fprintf(' %+7.3f [%+0.3f,%+0.3f]\n',beta(i),a,b);

@@ -305,7 +305,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isempty(family)
     family = 'gaussian';
   end
-  if ~(family == 'gaussian' | family == 'binomial')
+  if ~(strcmp(family,'gaussian') | strcmp(family,'binomial'))
     error('family must be gaussian or binomial');
   end
   
@@ -347,7 +347,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isfield(options,'sigma')
     sigma        = double(options.sigma(:)');
     update_sigma = false;
-    if family == 'binomial'
+    if strcmp(family,'binomial')
       error('options.sigma is not valid with family = binomial')
     end
   else
@@ -408,7 +408,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % that this option is not valid for a binary trait.
   if isfield(options,'update_sigma')
     update_sigma = options.update_sigma;
-    if family == 'binomial'
+    if strcmp(family,'binomial')
       error('options.update_sigma is not valid with family = binomial')
     end
   end
@@ -476,7 +476,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     eta               = double(options.eta);
     initialize_params = false;
     optimize_eta      = false;
-    if family ~= 'binomial'
+    if ~strcmp(family,'binomial')
       error('options.eta is only valid for family = binomial');
     end
     if size(eta,1) ~= n
@@ -486,9 +486,8 @@ function fit = varbvs (X, Z, y, labels, family, options)
       eta = repmat(eta,1,ns);
     end
   else
-    eta               = ones(n,ns);
-    optimize_eta      = true;
-    initialize_params = true;  
+    eta          = ones(n,ns);
+    optimize_eta = true;
   end
 
   % OPTIONS.OPTIMIZE_ETA
@@ -496,7 +495,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % is only relevant for logistic regression.
   if isfield(options,'optimize_eta')
     optimize_eta = options.optimize_eta;
-    if family ~= 'binomial'
+    if ~strcmp(family,'binomial')
       error('options.optimize_eta is only valid for family = binomial');
     end
   end
@@ -529,7 +528,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % respect to an improper, uniform prior; see Chipman, George and
   % McCulloch, "The Practical Implementation of Bayesian Model
   % Selection," 2001.
-  if family == 'gaussian'
+  if strcmp(family,'gaussian')
     if size(Z,2) == 1
       X = X - repmat(mean(X),length(y),1);
       y = y - mean(y);
@@ -556,9 +555,9 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fprintf('covariates: %-6d',max(0,size(Z,2) - 1));
     fprintf('     fit prior var. of coefs (sa): %s\n',tf2yn(update_sa));
     fprintf('intercept:  yes        ');
-    if family == 'gaussian'
+    if strcmp(family,'gaussian')
       fprintf('fit residual var. (sigma):    %s\n',tf2yn(update_sigma));
-    elseif family == 'binomial'
+    elseif strcmp(family,'binomial')
       fprintf('fit approx. factors (eta):    %s\n',tf2yn(optimize_eta));
     end
   end
@@ -645,7 +644,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
 
   % 5. CREATE FINAL OUTPUT
   % ----------------------
-  if family == 'gaussian'
+  if strcmp(family,'gaussian')
     fit = struct('family',family,'num_covariates',size(Z,2) - 1,...
                  'num_samples',n,'labels',{labels},'n0',n0,'sa0',sa0,...
                  'update_sigma',update_sigma,'update_sa',update_sa,...
@@ -665,7 +664,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
       sz = sx.*(mu(:,i).^2 + s(:,i));
       fit.pve(:,i) = sz./(sz + sigma(i));
     end
-  elseif family == 'binomial'
+  elseif strcmp(family,'binomial')
     fit = struct('family',family,'num_covariates',size(Z,2) - 1,...
                  'num_samples',n,'labels',{labels},'n0',n0,'sa0',sa0,...
                  'update_sa',update_sa,'optimize_eta',optimize_eta,...
@@ -684,15 +683,15 @@ function [logw, sigma, sa, alpha, mu, s, eta] = ...
   if isscalar(logodds)
     logodds = repmat(logodds,p,1);
   end
-  if family == 'gaussian'
+  if strcmp(family,'gaussian')
     [logw sigma sa alpha mu s] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
                    verbose,outer_iter,update_sigma,update_sa,n0,sa0);
-  elseif family == 'binomial' & size(Z,2) == 1
+  elseif strcmp(family,'binomial') & size(Z,2) == 1
     [logw sa alpha mu s eta] = ...
         varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...
                   outer_iter,update_sa,optimize_eta,n0,sa0);
-  elseif family == 'binomial'
+  elseif strcmp(family,'binomial')
     [logw sa alpha mu s eta] = ...
         varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,...
                    verbose,outer_iter,update_sa,optimize_eta,n0,sa0);
