@@ -117,7 +117,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   else
     initialize.params.default <- FALSE    
   if (nrow(mu) != p)
-    error("'Input mu must have as many rows as X has columns")
+    error("Input mu must have as many rows as X has columns")
   if (ncol(mu) == 1)
     mu <- matrix(rep(mu,1,ns),p,ns)
 
@@ -200,7 +200,76 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   logw <- rep(0,ns)
   s    <- matrix(0,p,ns)
     
-  # 5. CREATE FINAL OUTPUT
+  # (5) FIT BAYESIAN VARIABLE SELECTION MODEL TO DATA
+  # -------------------------------------------------
+  if (ns == 1) {
+    
+    # Find a set of parameters that locally minimize the K-L
+    # divergence between the approximating distribution and the exact
+    # posterior.
+    if (verbose) {
+      cat("        variational    max.   incl variance params\n")
+      cat(" iter   lower bound  change   vars   sigma      sa\n")
+    }
+    # [logw sigma sa alpha mu s eta] = ...
+    #     outerloop(X,Z,y,family,sigma,sa,logodds,alpha,mu,eta,tol,maxiter,...
+    #               verbose,[],update_sigma,update_sa,optimize_eta,n0,sa0);
+    if (verbose)
+      cat("\n")
+  } else {
+
+    # If a good initialization isn't already provided, find a good
+    # initialization for the variational parameters. Repeat for each
+    # candidate setting of the hyperparameters.
+    if (initialize.params) {
+      if (verbose) {
+        cat("Finding best initialization for",ns,"combinations of",
+            "hyperparameters.\n");
+        cat("-iteration-   variational    max.   incl variance params\n");
+        cat("outer inner   lower bound  change   vars   sigma      sa\n");
+      }
+      
+      # Repeat for each setting of the hyperparameters.
+      for (i in 1:ns) {
+        # [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
+        #     outerloop(X,Z,y,family,sigma(i),sa(i),logodds(:,i),alpha(:,i),...
+        #               mu(:,i),eta(:,i),tol,maxiter,verbose,i,update_sigma,...
+        #               update_sa,optimize_eta,n0,sa0)
+      }
+      if (verbose)
+        cat("\n")
+
+      # Choose an initialization common to all the runs of the
+      # coordinate ascent algorithm. This is chosen from the
+      # hyperparameters with the highest variational estimate of the
+      # marginal likelihood.
+      i     <- which.max(logw)
+      alpha <- matrix(rep(alpha[,i],ns),p,ns)
+      mu    <- matrix(rep(mu[,i],ns),p,ns)
+      eta   <- matrix(rep(eta[,i],ns),n,ns)
+    }
+
+    # Compute a variational approximation to the posterior distribution
+    # for each candidate setting of the hyperparameters.
+    cat("Computing marginal likelihood for",ns,"combinations of",
+        "hyperparameters.\n")
+    cat("-iteration-   variational    max.   incl variance params\n")
+    cat("outer inner   lower bound  change   vars   sigma      sa\n")
+
+    # For each setting of the hyperparameters, find a set of
+    # parameters that locally minimize the K-L divergence between the
+    # approximating distribution and the exact posterior.
+    for (i in 1:ns) {
+      # [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
+      #     outerloop(X,Z,y,family,sigma(i),sa(i),logodds(:,i),alpha(:,i),...
+      #               mu(:,i),eta(:,i),tol,maxiter,verbose,i,update_sigma,...
+      #               update_sa,optimize_eta,n0,sa0)
+    }
+    if (verbose)
+      cat("\n")
+  }
+    
+  # (6) CREATE FINAL OUTPUT
   # ----------------------
   if (family =='gaussian') {
     fit <- list(family = family,ncov = ncol(Z) - 1,n = n,n0 = n0,sa0 = sa0,
@@ -210,4 +279,27 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   }
 
   return(fit)
+}
+
+# ----------------------------------------------------------------------
+# This function implements one iteration of the "outer loop".
+outerloop <- function (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta,
+                       tol, maxiter, verbose, outer.iter, update.sigma,
+                       update.sa, optimize.eta, n0, sa0) {
+  p <- length(alpha)
+  if (length(logodds) == 1)
+    logodds <- matrix(logodds,p,1)
+  if (family == "gaussian") {
+    # out <- c(varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
+    #                   verbose,outer_iter,update_sigma,update_sa,n0,sa0)
+  } else if (family == "binomial" & ncol(Z) == 1) {
+    # [logw sa alpha mu s eta] = ...
+    #     varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...
+    #               outer_iter,update_sa,optimize_eta,n0,sa0)
+  } else if (family == "binomial") {
+    # [logw sa alpha mu s eta] = ...
+    #     varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,...
+    #               verbose,outer_iter,update_sa,optimize_eta,n0,sa0)
+  }
+  return(out)
 }

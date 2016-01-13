@@ -573,6 +573,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % (5) FIT BAYESIAN VARIABLE SELECTION MODEL TO DATA
   % -------------------------------------------------
   if ns == 1
+
     % Find a set of parameters that locally minimize the K-L
     % divergence between the approximating distribution and the exact
     % posterior.
@@ -642,8 +643,8 @@ function fit = varbvs (X, Z, y, labels, family, options)
     end
   end
 
-  % 5. CREATE FINAL OUTPUT
-  % ----------------------
+  % (6) CREATE FINAL OUTPUT
+  % -----------------------
   if strcmp(family,'gaussian')
     fit = struct('family',family,'ncov',size(Z,2) - 1,'n',n,'labels',...
                  {labels},'n0',n0,'sa0',sa0,'update_sigma',update_sigma,...
