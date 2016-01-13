@@ -49,19 +49,3 @@ intklbetamix <- function (alpha, mu1, mu2, s1, s2, sa1, sa2) {
   
   return(f)
 }
-
-intgamma <- function (logodds, alpha) {
-  # Computes an integral that appears in the variational lower bound
-  # of the marginal log-likelihood. This integral is the expectation
-  # on the prior inclusion probabilities taken with respect to the
-  # variational approximation. The input arguments are: logodds, a
-  # sqcalar, or a vector, specifying the prior log-odds; alpha,
-  # mixture weights for the variational approximation. See function
-  # ‘varbvsoptimize’ for details on the input arguments.
-
-  # This is the same as 
-  #
-  #    sum(alpha*log(q) + (1-alpha)*log(1-q)).
-  #  
-  return(sum((alpha-1) * logodds + logsigmoid(logodds)))
-}

@@ -1,15 +1,73 @@
+# SUMMARY
+# -------
+
+# This file contains various functions to implement the variational
+# methods for large-scale Bayesian variational selection. Here is an
+# overview of the functions defined in this file:
+#
+#   tf2yn(x)
+#   diagsq(X,a)
+#   logpexp(x)
+#   logsigmoid(x)
+#   int.gamma(logodds,alpha)
+#
+# FUNCTION DEFINITIONS
+# ----------------------------------------------------------------------
+tf2yn <- function (x) {
+  if (x)
+    return("yes")
+  else
+    return("no")
+}
+
+# ----------------------------------------------------------------------
+# diagsq(X) is the same as diag(X'*X), but the computation is done more
+# efficiently, and without having to store an intermediate matrix of the
+# same size as X. diag(X,a) efficiently computes diag(X'*diag(a)*X).
+diagsq <- function (X, a = NULL) {
+
+  # If input a is not provided, set it to a vector of ones.
+  if (is.null(a))
+    a <- rep(1,nrow(X))
+  else
+    a <- c(a)
+  
+  # Compute the result using the efficient C routine.
+  #
+  # TO DO: Implement the efficient C routine.
+  #
+  return(a %*% X^2)
+}
+
+# ----------------------------------------------------------------------
+# logpexp(x) returns log(1 + exp(x)). The computation is performed in a
+# numerically stable manner. For large entries of x, log(1 + exp(x)) is
+# effectively the same as x.
+logpexp <- function (x) {
+  y    <- x
+  i    <- which(x < 16)
+  y[i] <- log(1 + exp(x[i]))
+  return(y)
+}
+
+# ----------------------------------------------------------------------
+# Use this instead of log(sigmoid(x)) to avoid loss of numerical precision.
+logsigmoid <- function (x)
+  -logpexp(-x)
+
+# ----------------------------------------------------------------------
+# Computes an integral that appears in the variational lower bound of
+# the marginal log-likelihood. This integral is the expectation on the
+# prior inclusion probabilities taken with respect to the variational
+# approximation. This returns the same result as sum(alpha*log(q) +
+# (1-alpha)*log(1-q)).
+int.gamma <- function (logodds, alpha)
+  sum((alpha-1)*logodds + logsigmoid(logodds))
+
+# ****** OLD STUFF ******
+
 # Shorthand constant for machine precision.
 eps <- .Machine$double.eps
-
-is.scalar <- function (x) {
-  # Returns TRUE if and only if x is a (numeric) scalar.
-  return(length(x) == 1 && is.numeric(x))
-}
-
-is.odd <- function (x) {
-  # Returns TRUE if and only if x is odd.
-  return(x %% 2)
-}
 
 dot <- function (x,y) {
   # Returns the dot product of vectors x and y.
@@ -29,20 +87,6 @@ qnorm <- function (x, a) {
   return(sqrt(dot(x*a,x)))
 }
 
-diagsq <- function (X, a = NULL) {
-  # diagsq(X) returns diag(X'*X).
-  # diagsq(X,a) returns diag(X'*diag(a)*X).
-  if (is.null(a)) {
-    n <- nrow(X)
-    a <- rep(1,n)
-  }
-
-  # Compute y = (X.^2)'*a.
-  a <- c(a)
-  y <- c(a %*% X^2)  
-  return(y)
-}
-
 diagsqt <- function (X, a = NULL) {
   # diagsqt(x) returns diag(X*X').  
   # diagsqt(X,a) returns diag(X*diag(a)*X').
@@ -54,33 +98,6 @@ diagsqt <- function (X, a = NULL) {
   # Compute y = X^2*a.
   a <- c(a)
   y <- c(X^2 %*% a)
-  return(y)
-}
-
-repmat <- function (A,m,n) {
-  # Does the same thing as repmat(A,m,n) in MATLAB.
-  if (!is.matrix(A))
-    stop("Invalid 'A' argument")
-  return(kronecker(matrix(1,m,n),A))
-}
-
-center.columns <- function (X) {
-  # Centers the columns of matrix X so that the entries in each column
-  # of X add up to zero.
-  if (!is.matrix(X))
-    stop("Invalid 'X' argument")
-  mu <- matrix(colMeans(X),1,ncol(X))
-  X  <- X - repmat(mu,nrow(X),1)
-  return(X)
-}
-
-
-relerr <- function (x1, x2) {
-  # Returns the absolute relative error.
-  if (length(x1) == 0 || length(x2) == 0)
-    y <- 0
-  else
-    y <- abs(x1 - x2) / (abs(x1) + abs(x2) + eps)
   return(y)
 }
 
@@ -114,25 +131,6 @@ betavar <- function (p, mu, s) {
   return(p*(s + (1 - p)*mu^2))
 }
 
-betameanmix <- function (p, mu1, mu2) {
-  # betameanmix(p,mu1,mu2) returns the mean of X, in which X is drawn
-  # from a mixture of two normals. Inputs mu1 and mu2 specify the
-  # means of the two normal densities, and p specifies the probability
-  # of drawing x from the first mixture component. Inputs p, mu1 and
-  # mu2 must be vectors of the same length.
-  return(p*mu1 + (1-p)*mu2)
-}
-
-betavarmix <- function (p, mu1, mu2, s1, s2) {
-  # betavarmix(p,mu1,mu2,s1,s2) returns the variance of X, in which X
-  # is drawn from a mixture of two normals. Inputs mu1, mu2, s1 and s2
-  # specify the means and variances of the two normal densities, and p
-  # specifies the probability of drawing X from the first mixture
-  # component. Inputs p, mu1, mu2, s1 and s2 must be vectors of the
-  # same length.
-  return(p*(s1 + mu1^2) + (1-p)*(s2 + mu2^2) - betameanmix(p,mu1,mu2)^2)
-}
-
 sigmoid <- function (x) {
   # Returns the sigmoid of x. The sigmoid function is also known as
   # the logistic link function. It is the inverse of logit(x).
@@ -144,30 +142,3 @@ logit <- function (x) {
   return(log((x + eps)/((1 - x) + eps)))
 }
   
-logpexp <- function (x) {
-  # logpexp(x) returns log(1 + exp(x)). For large x, logpexp(x) should
-  # be approximately x. The computation is performed in a numerically
-  # stable manner.
-
-  # For large entries, log(1 + exp(x)) is effectively the same as x.
-  y <- x
-
-  # Find entries of x that are not large. For these entries, compute
-  # log(1 + exp(x)).
-  S    <- which(x < 16)
-  y[S] <- log(1 + exp(x[S]))
-  return(y)
-}
-
-logsigmoid <- function (x) {
-  # Returns the logarithm of the sigmoid. Use this instead of
-  # log(sigmoid(x)) to avoid loss of numerical precision.
-  return(-logpexp(-x))
-}
-
-tf2yn <- function (x) {
-  if (x)
-    return("yes")
-  else
-    return("no")
-}

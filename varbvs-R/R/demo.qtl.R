@@ -5,16 +5,20 @@
 #
 # NOTE: Move this file later to the "demo" directory.
 #
+source("misc.R")
+source("varbvsnorm.R")
 source("varbvs.R")
 
 # SCRIPT PARAMETERS
 # -----------------
 n  <- 800   # Number of samples.
 p  <- 2000  # Number of variables (genetic markers).
-m  <- 3     # Number of covariates (m >= 0).
 na <- 20    # Number of quantitative trait loci (QTLs).
 se <- 4     # Variance of residual
 r  <- 0.5   # Proportion of variance in trait explained by QTLs.
+
+# Names of covariates.
+covariates <- c("age","weight","glucose")
 
 # Candidate values for the prior log-odds of inclusion.
 logodds <- seq(-3,-1,0.1)
@@ -54,9 +58,11 @@ mu <- rnorm(1)
 
 # Generate the covariate data (Z), and the linear effects of the
 # covariates (u).
+m <- length(covariates)
 if (m > 0) {
   Z <- matrix(rnorm(n*m),n,m)
   u <- rnorm(m)
+  colnames(Z) <- covariates
 } else {
   Z <- NULL
 }
@@ -74,4 +80,4 @@ y <- c(y)
 # continuous outcome (quantitiative trait), with spike and slab priors on
 # the coefficients.
 cat("2. FITTING MODEL TO DATA.\n")
-# TO DO.
+fit <- varbvs(X,Z,y,"gaussian",logodds = logodds)

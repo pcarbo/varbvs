@@ -11,21 +11,21 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   n <- nrow(X)
   p <- ncol(X)
 
-  browser()
-  
   # (1) CHECK INPUTS
   # ----------------
   # If input Z is not NULL, it must have as many rows as X.
   if (!is.null(Z) & nrow(Z) != n)
-      stop("Inputs X and Z do not match")
+    stop("Inputs X and Z do not match")
 
   # Add intercept.
-  Z <- cbind(matrix(1,n,1),Z)
-
+  Z <- cbind(1,Z)
+  colnames(Z)[1] <- "intercept"
+  
   # Input y must have n entries.
   if (length(y) != n)
     stop("Inputs X and y do not match")
-
+  y <- c(y)
+  
   # Check choice of regression model.
   if (family != "gaussian" & family != "binomial")
     stop("family must be gaussian or binomial")
@@ -40,7 +40,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   } else {
     sigma <- c(sigma)
     update.sigma.default <- FALSE
-    else if (family == "binomial")
+    if (family == "binomial")
       stop("Input sigma is not allowed for family = binomial")
   }
   
@@ -70,12 +70,14 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     else
       stop("logodds can only be NULL when length(sigma) = length(sa) = 1")
   }
-  if (is.matrix(logodds) & nrow(logodds) == p)
-    prior.same <- FALSE
-  else {
+  if (!is.matrix(logodds)) {
     prior.same <- TRUE
     logodds    <- t(matrix(logodds))
-  }
+  } else if (nrow(logodds) != p) {
+    prior.same <- TRUE
+    logodds    <- t(matrix(logodds))
+  } else
+    prior.same <- FALSE
 
   # Here is where I ensure that the numbers of candidate hyperparameter
   # settings are consistent.
@@ -86,8 +88,6 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     sa <- rep(sa,ns)
   if (length(sigma) != ns | length(sa) != ns | ncol(logodds) != ns)
     stop("options.sigma, options.sa and options.logodds are inconsistent")
-  if (nrow(logodds) == 1)
-    logodds <- c(logodds)
 
   # Determine whether to update the residual variance parameter. Note
   # that this option is only relevant for a binary trait.
@@ -101,10 +101,9 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   
   # Set initial estimates of variational parameter alpha.
   initialize.params.default <- TRUE
-  if (is.null(alpha)) {
-    alpha <- matrix(runif(p*ns),p,ns)
-    alpha <- alpha / colSums(alpha)
-  } else
+  if (is.null(alpha))
+    alpha <- apply(matrix(runif(p*ns),p,ns),2,function(x) x/sum(x))
+  else
     initialize.params.default <- FALSE
   if (nrow(alpha) != p)
     stop("Input alpha must have as many rows as X has columns")
@@ -156,8 +155,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   # Selection," 2001.
   if (family == "gaussian") {
     if (ncol(Z) == 1) {
-      # TO DO: Verify this.
-      X <- X - colMeans(X)
+      X <- apply(X,2,function(x) x - mean(x))
       y <- y - mean(y)
     } else {
 
@@ -182,7 +180,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     cat("   num. hyperparameter settings:",length(sa),"\n")
     cat(sprintf("samples:    %-6d",n))
     cat(sprintf("     convergence tolerance         %0.1e\n",tol))
-    cat("variables:  %-6d",p) 
+    cat(sprintf("variables:  %-6d",p))
     cat("     iid variable selection prior:",tf2yn(prior.same),"\n")
     cat(sprintf("covariates: %-6d",max(0,ncol(Z) - 1)))
     cat("     fit prior var. of coefs (sa):",tf2yn(update.sa),"\n")
@@ -191,6 +189,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       cat("fit residual var. (sigma):   ",tf2yn(update.sigma),"\n")
     else if (family == "binomial")
       cat("fit approx. factors (eta):   ",tf2yn(optimize.eta),"\n")
+  }
 
   # (4) INITIALIZE STORAGE FOR THE OUTPUTS
   # --------------------------------------
@@ -211,6 +210,9 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       cat("        variational    max.   incl variance params\n")
       cat(" iter   lower bound  change   vars   sigma      sa\n")
     }
+    #
+    # TO DO: FIX THIS.
+    #
     # [logw sigma sa alpha mu s eta] = ...
     #     outerloop(X,Z,y,family,sigma,sa,logodds,alpha,mu,eta,tol,maxiter,...
     #               verbose,[],update_sigma,update_sa,optimize_eta,n0,sa0);
@@ -278,6 +280,11 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
                 logodds = logodds,alpha = alpha,mu = mu,s = s)
   }
 
+  # NOTE: Do some final post-processing here, such as adding names of
+  # variables and covariates to data structures.
+  if (prior.same)
+    fit.logodds <- c(fit.logodds)
+  
   return(fit)
 }
 
@@ -290,8 +297,8 @@ outerloop <- function (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta,
   if (length(logodds) == 1)
     logodds <- matrix(logodds,p,1)
   if (family == "gaussian") {
-    # out <- c(varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
-    #                   verbose,outer_iter,update_sigma,update_sa,n0,sa0)
+    return(varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,
+                      verbose,outer.iter,update_sigma,update.sa,n0,sa0))
   } else if (family == "binomial" & ncol(Z) == 1) {
     # [logw sa alpha mu s eta] = ...
     #     varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...
