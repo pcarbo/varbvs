@@ -165,3 +165,9 @@ logsigmoid <- function (x) {
   return(-logpexp(-x))
 }
 
+tf2yn <- function (x) {
+  if (x)
+    return("yes")
+  else
+    return("no")
+}

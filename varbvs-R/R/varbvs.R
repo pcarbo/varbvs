@@ -145,4 +145,69 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   # option is only relevant for logistic regression.
   if (is.null(optimize.eta))
     optimize.eta <- optimize.eta.default
+
+  # (3) PREPROCESSING STEPS
+  # -----------------------
+  # Adjust the genotypes and phenotypes so that the linear effects of
+  # the covariates are removed. This is equivalent to integrating out
+  # the regression coefficients corresponding to the covariates with
+  # respect to an improper, uniform prior; see Chipman, George and
+  # McCulloch, "The Practical Implementation of Bayesian Model
+  # Selection," 2001.
+  if (family == "gaussian") {
+    if (ncol(Z) == 1) {
+      # TO DO: Verify this.
+      X <- X - colMeans(X)
+      y <- y - mean(y)
+    } else {
+
+      # The equivalent expressions in MATLAB are  
+      #
+      #   y = y - Z*((Z'*Z)\(Z'*y))
+      #   X = X - Z*((Z'*Z)\(Z'*X))  
+      #
+      # This should give the same result as centering the columns of X
+      # and subtracting the mean from y when we have only one
+      # covariate, the intercept.
+      y <- y - c(Z %*% solve(crossprod(Z),t(y %*% Z)))
+      X <- X - Z %*% solve(crossprod(Z),t(Z) %*% X)
+    }
+  }
+
+  # Provide a brief summary of the analysis.
+  if (verbose) {
+    cat("Fitting variational approximation for Bayesian variable",
+        "selection model.\n")
+    cat(sprintf("family:     %-8s",family))
+    cat("   num. hyperparameter settings:",length(sa),"\n")
+    cat(sprintf("samples:    %-6d",n))
+    cat(sprintf("     convergence tolerance         %0.1e\n",tol))
+    cat("variables:  %-6d",p) 
+    cat("     iid variable selection prior:",tf2yn(prior.same),"\n")
+    cat(sprintf("covariates: %-6d",max(0,ncol(Z) - 1)))
+    cat("     fit prior var. of coefs (sa):",tf2yn(update.sa),"\n")
+    cat("intercept:  yes        ")
+    if (family == "gaussian")
+      cat("fit residual var. (sigma):   ",tf2yn(update.sigma),"\n")
+    else if (family == "binomial")
+      cat("fit approx. factors (eta):   ",tf2yn(optimize.eta),"\n")
+
+  # (4) INITIALIZE STORAGE FOR THE OUTPUTS
+  # --------------------------------------
+  # Initialize storage for the variational estimate of the marginal
+  # log-likelihood for each hyperparameter setting (logw), and the
+  # variances of the regression coefficients (s).
+  logw <- rep(0,ns)
+  s    <- matrix(0,p,ns)
+    
+  # 5. CREATE FINAL OUTPUT
+  # ----------------------
+  if (family =='gaussian') {
+    fit <- list(family = family,ncov = ncol(Z) - 1,n = n,n0 = n0,sa0 = sa0,
+                update.sigma = update.sigma,update.sa = update.sa,
+                prior.same = prior.same,logw = logw,sigma = sigma,sa = sa,
+                logodds = logodds,alpha = alpha,mu = mu,s = s)
+  }
+
+  return(fit)
 }

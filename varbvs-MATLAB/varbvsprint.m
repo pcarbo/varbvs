@@ -113,11 +113,11 @@ function varbvsprint (fit, c, n, nr)
   fprintf('Summary of fitted Bayesian variable selection model:\n')
   fprintf('family:     %-8s',fit.family); 
   fprintf('   num. hyperparameter settings: %d\n',numel(fit.sa));
-  fprintf('samples:    %-6d',fit.num_samples); 
+  fprintf('samples:    %-6d',fit.n); 
   fprintf('     iid variable selection prior: %s\n',tf2yn(fit.prior_same));
   fprintf('variables:  %-6d',p); 
   fprintf('     fit prior var. of coefs (sa): %s\n',tf2yn(fit.update_sa));
-  fprintf('covariates: %-6d     ',fit.num_covariates);
+  fprintf('covariates: %-6d     ',fit.ncov);
   if strcmp(fit.family,'gaussian')
     fprintf('fit residual var. (sigma):    %s\n',tf2yn(fit.update_sigma));
   elseif strcmp(fit.family,'binomial')
