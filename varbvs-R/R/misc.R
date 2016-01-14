@@ -9,6 +9,10 @@
 #   dot(x,y)
 #   norm2(x)
 #   qnorm(x,a)
+#   rep.col(x,n)
+#   rep.row(x,n)
+#   rand(m,n)
+#   randn(m,n)
 #   diagsq(X,a)
 #   diagsq2(X,A)
 #   sigmoid(x)
@@ -63,7 +67,29 @@ qnorm <- function (x, a) {
     y <- sqrt(dot(x*a,x))
   return(y)
 }
-  
+
+# ----------------------------------------------------------------------
+# Replicate vector x to create an m x n matrix, where m = length(x).
+rep.col <- function (x, n)
+  matrix(x,length(x),n,byrow = FALSE)
+
+# ----------------------------------------------------------------------
+# Replicate vector x to create an n x m matrix, where m = length(x).
+rep.row <- function (x, n)
+  matrix(x,n,length(x),byrow = TRUE)
+
+# ----------------------------------------------------------------------
+# Return matrix containing pseudorandom values drawn from the standard
+# uniform distribution.
+rand <- function (m, n)
+  matrix(runif(m*n),m,n)
+
+# ----------------------------------------------------------------------
+# Return matrix containing pseudorandom values drawn from the standard
+# normal distribution.
+randn <- function (m, n)
+  matrix(rnorm(m*n),m,n)
+
 # ----------------------------------------------------------------------
 # diagsq(X) is the same as diag(X'*X), but the computation is done more
 # efficiently, and without having to store an intermediate matrix of the

@@ -101,24 +101,25 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   
   # Set initial estimates of variational parameter alpha.
   initialize.params.default <- TRUE
-  if (is.null(alpha))
-    alpha <- apply(matrix(runif(p*ns),p,ns),2,function(x) x/sum(x))
-  else
+  if (is.null(alpha)) {
+    alpha <- rand(p,ns)
+    alpha <- alpha / rep.row(colSums(alpha),p)
+  } else
     initialize.params.default <- FALSE
   if (nrow(alpha) != p)
     stop("Input alpha must have as many rows as X has columns")
   if (ncol(alpha) == 1)
-    alpha <- matrix(rep(alpha,1,ns),p,ns)
+    alpha <- rep.col(alpha,ns)
 
   # Set initial estimates of variational parameter mu.
   if (is.null(mu))
-    mu <- matrix(rnorm(p*ns),p,ns)
+    mu <- randn(p,ns)
   else
     initialize.params.default <- FALSE    
   if (nrow(mu) != p)
     error("Input mu must have as many rows as X has columns")
   if (ncol(mu) == 1)
-    mu <- matrix(rep(mu,1,ns),p,ns)
+    mu <- rep.col(mu,ns)
 
   # Determine whether to find a good initialization for the
   # variational parameters.
@@ -138,7 +139,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   if (nrow(eta) != n)
     stop("Input eta must have as many rows as X")
   if (ncol(eta) == 1)
-    eta <- matrix(rep(eta,ns),n,ns)
+    eta <- rep.col(eta,ns)
 
   # Determine whether to update the variational parameter eta. Note this
   # option is only relevant for logistic regression.
@@ -155,8 +156,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   # Selection," 2001.
   if (family == "gaussian") {
     if (ncol(Z) == 1) {
-      # TO DO: Make this step more elegant.
-      X <- apply(X,2,function(x) x - mean(x))
+      X <- X - rep.row(colMeans(X),p)
       y <- y - mean(y)
     } else {
 
@@ -247,9 +247,9 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       # hyperparameters with the highest variational estimate of the
       # marginal likelihood.
       i     <- which.max(logw)
-      alpha <- matrix(rep(alpha[,i],ns),p,ns)
-      mu    <- matrix(rep(mu[,i],ns),p,ns)
-      eta   <- matrix(rep(eta[,i],ns),n,ns)
+      alpha <- rep.col(alpha[,i],ns)
+      mu    <- rep.col(mu[,i],ns)
+      eta   <- rep.col(eta[,i],ns)
     }
 
     # Compute a variational approximation to the posterior distribution
