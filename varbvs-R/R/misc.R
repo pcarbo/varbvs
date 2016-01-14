@@ -14,6 +14,7 @@
 #   rand(m,n)
 #   randn(m,n)
 #   diagsq(X,a)
+#   diagsqt(X,a)
 #   diagsq2(X,A)
 #   sigmoid(x)
 #   logit(x)
@@ -95,17 +96,12 @@ randn <- function (m, n)
 # efficiently, and without having to store an intermediate matrix of the
 # same size as X. diag(X,a) efficiently computes diag(X'*diag(a)*X).
 #
-# This function calls "admixture_labeled_Estep_Call", a function
-# compiled from C code, using the .Call interface. To load the C
-# function into R, first build the "shared object" (.so) file using
-# command
-#
-#   R CMD SHLIB diagsqr.c diagsq.c misc.c
-#
-# Next, load the shared objects into R using the R function dyn.load:
-#
-#   dyn.load("../src/diagsqr.so")
-#
+# This function calls "diag_Call", a function compiled from C code,
+# using the .Call interface. To load the C function into R, first
+# build the "shared object" (.so) file using the following command in
+# the "src" directory: R CMD SHLIB diagsqr.c diagsq.c misc.c. Next,
+# load the shared objects into R using the R function dyn.load:
+# dyn.load("../src/diagsqr.so").
 diagsq <- function (X, a = NULL) {
 
   # If input a is not provided, set it to a vector of ones.
@@ -121,6 +117,33 @@ diagsq <- function (X, a = NULL) {
   # for using .Call interface is that there is less of a constraint on
   # the size of the input matrices.
   out <- .Call("diagsq_Call",X = X,a = a,y = y)
+  return(y)
+}
+
+# ----------------------------------------------------------------------
+# diagsqt(X) returns the same result as diag(X*X'), but the
+# computation is done more efficiently, and without having to store an
+# intermediate result of the same size as X. diagsqt(X,a) efficiently
+# computes diag(X*diag(a)*X').
+#
+# This function calls "diagt_Call", a function compiled from C code,
+# using the .Call interface. See function "diagsq" for instructions on
+# compiling and loading this C function into R.
+diagsqt <- function (X, a = NULL) {
+
+  # If input a is not provided, set it to a vector of ones.
+  if (is.null(a))
+    a <- rep(1,ncol(X))
+  else
+    a <- as.double(a)
+
+  # Initialize the result.
+  y <- rep(0,nrow(X))
+  
+  # Execute the C routine using the .Call interface. The main reason
+  # for using .Call interface is that there is less of a constraint on
+  # the size of the input matrices.
+  out <- .Call("diagsqt_Call",X = X,a = a,y = y)
   return(y)
 }
 
@@ -186,7 +209,6 @@ int.klbeta <- function (alpha, mu, s, sa)
   (sum(alpha) + dot(alpha,log(s/sa)) - dot(alpha,s + mu^2)/sa)/2 -
     dot(alpha,log(alpha + eps)) - dot(1 - alpha,log(1 - alpha + eps))
 
-
 # ----------------------------------------------------------------------
 # Compute the variance of X, in which X is drawn from the normal
 # distribution with probability p, and X is 0 with probability
@@ -216,20 +238,4 @@ normalizelogweights <- function (logw) {
 
   # Normalize the importance weights.
   return(w/sum(w))
-}
-
-# ****** OLD STUFF ******
-
-diagsqt <- function (X, a = NULL) {
-  # diagsqt(x) returns diag(X*X').  
-  # diagsqt(X,a) returns diag(X*diag(a)*X').
-  if (is.null(a)) {
-    n <- ncol(X)
-    a <- rep(1,n)
-  }
-
-  # Compute y = X^2*a.
-  a <- c(a)
-  y <- c(X^2 %*% a)
-  return(y)
 }

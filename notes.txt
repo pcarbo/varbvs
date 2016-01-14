@@ -33,8 +33,6 @@ Strategy for my new implementation of 'varbvs'
 
 * To do: Double-check calculations of PVE against lm() in R.
     
-* To do: Implement diagsq.m in R.
-
 * To do: Implement diagsqt.m in R.
 
 * To do: Implement var1.m in R.
