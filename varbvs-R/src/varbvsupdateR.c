@@ -1,6 +1,6 @@
 // For a description of this C code, see the help for function
 // 'varbvsupdate' in R.
-#include "vectorops.h"
+#include "misc.h"
 #include "varbvs.h"
 
 // These include files have a bunch of definitions to interface C

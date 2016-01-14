@@ -11,11 +11,13 @@ typedef mwIndex Index;
 typedef float   MatrixElem;
 
 #else
+#include <R.h>
+#include <Rinternals.h>
 
 // These type definitions are used to build the C routines for R. 
-typedef int    Size;
-typedef int    Index;
-typedef double MatrixElem;
+typedef R_xlen_t Size;
+typedef R_xlen_t Index;
+typedef double   MatrixElem;
 
 #endif
 

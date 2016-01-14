@@ -94,19 +94,34 @@ randn <- function (m, n)
 # diagsq(X) is the same as diag(X'*X), but the computation is done more
 # efficiently, and without having to store an intermediate matrix of the
 # same size as X. diag(X,a) efficiently computes diag(X'*diag(a)*X).
+#
+# This function calls "admixture_labeled_Estep_Call", a function
+# compiled from C code, using the .Call interface. To load the C
+# function into R, first build the "shared object" (.so) file using
+# command
+#
+#   R CMD SHLIB diagsqr.c diagsq.c misc.c
+#
+# Next, load the shared objects into R using the R function dyn.load:
+#
+#   dyn.load("../src/diagsqr.so")
+#
 diagsq <- function (X, a = NULL) {
 
   # If input a is not provided, set it to a vector of ones.
   if (is.null(a))
     a <- rep(1,nrow(X))
   else
-    a <- c(a)
+    a <- as.double(a)
+
+  # Initialize the result.
+  y <- rep(0,ncol(X))
   
-  # Compute the result using the efficient C routine.
-  #
-  # TO DO: Implement the efficient C routine.
-  #
-  return(a %*% X^2)
+  # Execute the C routine using the .Call interface. The main reason
+  # for using .Call interface is that there is less of a constraint on
+  # the size of the input matrices.
+  out <- .Call("diagsq_Call",X = X,a = a,y = y)
+  return(y)
 }
 
 # ----------------------------------------------------------------------
