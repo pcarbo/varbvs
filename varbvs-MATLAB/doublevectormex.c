@@ -1,5 +1,5 @@
 #include "doublevectormex.h"
-#include "vectorops.h"
+#include "misc.h"
 
 // FUNCTION DEFINITIONS
 // -----------------------------------------------------------------

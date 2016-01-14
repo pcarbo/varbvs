@@ -2,7 +2,7 @@
 #include "types.h"
 #include "doublevectormex.h"
 #include "singlematrixmex.h"
-#include "vectorops.h"
+#include "misc.h"
 #include "mex.h"
 #include "matrix.h"
 

@@ -1,10 +1,20 @@
-#ifndef INCLUDE_VECTOROPS
-#define INCLUDE_VECTOROPS
+#ifndef INCLUDE_MISC
+#define INCLUDE_MISC
 
 #include "types.h"
 
 // FUNCTION DECLARATIONS
 // -----------------------------------------------------------------
+// Compute log(1 + exp(x)) in a numerically stable manner.
+double logpexp (double x);
+
+// Return the sigmoid function at x.
+double sigmoid (double x);
+
+// Return the logarithm of the sigmoid function at x. Computation is
+// performed in a numerically stable manner.
+double logsigmoid (double x);
+
 // Copy entries of one vector to another vector.
 void copy (const double* source, double* dest, Size n);
 

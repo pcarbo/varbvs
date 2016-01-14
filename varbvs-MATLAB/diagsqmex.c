@@ -2,16 +2,9 @@
 #include "types.h"
 #include "doublevectormex.h"
 #include "singlematrixmex.h"
+#include "diagsq.h"
 #include "mex.h"
 #include "matrix.h"
-
-// FUNCTION DECLARATIONS
-// -----------------------------------------------------------------
-// Compute (X.^2)'*a and store the result in vector y. X is an m x n
-// matrix in which the entries in each column are stored consecutively
-// in memory.
-void diagsq (const MatrixElem* X, const double* a, double* y, 
-	     Size m, Size n);
 
 // FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
@@ -28,27 +21,4 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[]) {
   
   // Compute y = (X.^2)'*a.
   diagsq(X.elems,a.elems,y.elems,X.nr,X.nc);
-}
-
-// ---------------------------------------------------------------------
-// Compute (X.^2)'*a and store the result in vector y.
-void diagsq (const MatrixElem* X, const double* a, double* y, 
-	     Size m, Size n) {
-  double t;
-
-  // Repeat for each column of X.
-  for (Index j = 0; j < n; j++, y++) {
-    
-    // Initialize the jth entry of the result.
-    *y = 0;
-
-    // Repeat for each row of X.
-    const double* ai = a;
-    for (Index i = 0; i < m; i++, X++, ai++) {
-
-      // Add X(i,j)^2 * a(i) to the jth entry of y.
-      t   = (double) *X;
-      *y += t * t * (*ai);
-    }
-  }
 }

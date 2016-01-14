@@ -1,8 +1,24 @@
-#include "vectorops.h"
+#include "misc.h"
 #include <string.h>
+#include <math.h>
 
 // FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
+// Computes log(1 + exp(x)).
+double logpexp (double x) {
+  return (x >= 16) * x + (x < 16)  * log(1 + exp(x));
+}
+
+// Return the sigmoid function at x.
+double sigmoid (double x) {
+  return 1/(1 + exp(-x));
+}
+
+// Return the logarithm of the sigmoid function at x.
+double logsigmoid (double x) {
+  return -logpexp(-x);
+}
+
 // Copy entries of one vector to another vector.
 void copy (const double* source, double* dest, Size n) {
   memcpy(dest,source,sizeof(double)*n);
