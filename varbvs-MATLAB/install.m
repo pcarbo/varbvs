@@ -30,14 +30,14 @@ fprintf('\n');
 % Build varbvsbinupdatemex MEX file.
 fprintf('Building varbvsbinupdatemex MEX file.\n');
 eval(['mex ',opts,' varbvsbinupdatemex.c doublevectormex.c ',...
-      'singlematrixmex.c ../varbvs-R/src/misc.c ../varbvs-R/src/varbvsbin.c']);
+      'singlematrixmex.c ../varbvs-R/src/misc.c ../varbvs-R/src/varbvs.c']);
 fprintf('\n');
 
 % Build varbvsbinzupdatemex MEX file.
 fprintf('Building varbvsbinzupdatemex MEX file.\n');
 eval(['mex ',opts,' varbvsbinzupdatemex.c doublevectormex.c ',...
       'singlematrixmex.c doublematrixmex.c ../varbvs-R/src/misc.c ',...
-      '../varbvs-R/src/varbvsbin.c']);
+      '../varbvs-R/src/varbvs.c']);
 fprintf('\n');
 
 fprintf('Compilation of MEX files is complete.\n');

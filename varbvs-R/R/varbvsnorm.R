@@ -63,8 +63,8 @@ varbvsnorm <-
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
     logw0 <- int_linear(Xr,d,y,sigma,alpha,mu,s) ...
-            + int_gamma(logodds,alpha) ...
-            + int_klbeta(alpha,mu,s,sigma*sa);
+             + int_gamma(logodds,alpha) ...
+             + int_klbeta(alpha,mu,s,sigma*sa);
   }
 }
   

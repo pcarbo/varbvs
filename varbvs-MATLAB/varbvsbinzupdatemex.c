@@ -4,7 +4,7 @@
 #include "doublevectormex.h"
 #include "singlematrixmex.h"
 #include "doublematrixmex.h"
-#include "varbvsbin.h"
+#include "varbvs.h"
 #include "mex.h"
 #include "matrix.h"
 
