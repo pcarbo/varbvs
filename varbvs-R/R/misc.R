@@ -1,16 +1,29 @@
 # SUMMARY
 # -------
-
 # This file contains various functions to implement the variational
 # methods for large-scale Bayesian variational selection. Here is an
 # overview of the functions defined in this file:
 #
 #   tf2yn(x)
+#   caterase(s)
+#   dot(x,y)
+#   norm2(x)
+#   qnorm(x,a)
 #   diagsq(X,a)
+#   diagsq2(X,A)
+#   sigmoid(x)
+#   logit(x)
 #   logpexp(x)
 #   logsigmoid(x)
+#   slope(x)
 #   int.gamma(logodds,alpha)
+#   int.klbeta(alpha,mu,s,sa)
+#   betavar(p,mu,s)
+#   normalizelogweights(logw)
 #
+# Shorthand for machine precision.
+eps <- .Machine$double.eps
+
 # FUNCTION DEFINITIONS
 # ----------------------------------------------------------------------
 tf2yn <- function (x) {
@@ -20,6 +33,37 @@ tf2yn <- function (x) {
     return("no")
 }
 
+# ----------------------------------------------------------------------
+# Output the string using 'cat', then move the cursor back to the
+# beginning of the string so that subsequent output will overwrite
+# this string.
+caterase <- function (s)
+  cat(s,rep("\b",nchar(s)),sep = "")
+
+# ----------------------------------------------------------------------
+# Return the dot product of vectors x and y.
+dot <- function (x,y)
+  sum(x*y)
+
+# ----------------------------------------------------------------------
+# Return the quadratic norm (2-norm) of vector x.
+norm2 <- function (x)
+  sqrt(dot(x,x))
+
+# ----------------------------------------------------------------------
+# When input a is a matrix, this function returns the quadratic norm
+# of vector x with respect to matrix a. When a is not a matrix, this
+# function returns the norm of x with respect to A = diag(a). For a
+# definition of the quadratic norm, see p. 635 of Convex Optimization
+# (2004) by Boyd & Vandenberghe.
+qnorm <- function (x, a) {
+  if (is.matrix(a))
+    y <- sqrt(c(x %*% a %*% x))
+  else
+    y <- sqrt(dot(x*a,x))
+  return(y)
+}
+  
 # ----------------------------------------------------------------------
 # diagsq(X) is the same as diag(X'*X), but the computation is done more
 # efficiently, and without having to store an intermediate matrix of the
@@ -40,6 +84,25 @@ diagsq <- function (X, a = NULL) {
 }
 
 # ----------------------------------------------------------------------
+# diagsq2(X) is the same as diag(X'*A*X), but the computation is done
+# more efficiently.
+diagsq2 <- function (X, A)
+  rowSums((X %*% A) * X)
+
+# ----------------------------------------------------------------------
+# sigmoid(x) returns the sigmoid of the elements of x. The sigmoid
+# function is also known as the logistic link function. It is the
+# inverse of logit(x).
+sigmoid <- function (x)
+  1/(1 + exp(-x))
+
+# ----------------------------------------------------------------------
+# logit(x) returns the logit of the elements of X. It is the inverse of
+# sigmoid(x).
+logit <- function (x)
+  log((x + eps)/((1 - x) + eps))
+  
+# ----------------------------------------------------------------------
 # logpexp(x) returns log(1 + exp(x)). The computation is performed in a
 # numerically stable manner. For large entries of x, log(1 + exp(x)) is
 # effectively the same as x.
@@ -56,6 +119,14 @@ logsigmoid <- function (x)
   -logpexp(-x)
 
 # ----------------------------------------------------------------------
+# slope(x) returns (sigmoid(x) - 1/2)/x, the slope of the conjugate to the
+# log-sigmoid function at x, times 2. For details, see Bishop (2006), or the
+# Bayesian Analysis paper. This is useful for working with the variational
+# approximation for logistic regression.
+slope <- function (x)
+  (sigmoid(x) - 0.5)/(x + eps)
+
+# ----------------------------------------------------------------------
 # Computes an integral that appears in the variational lower bound of
 # the marginal log-likelihood. This integral is the expectation on the
 # prior inclusion probabilities taken with respect to the variational
@@ -64,28 +135,49 @@ logsigmoid <- function (x)
 int.gamma <- function (logodds, alpha)
   sum((alpha-1)*logodds + logsigmoid(logodds))
 
+# ----------------------------------------------------------------------
+# Computes an integral that appears in the variational lower bound of
+# the marginal log-likelihood. This integral is the negative K-L
+# divergence between the approximating distribution and the prior of
+# the coefficients. Note that this sa is not the same as the sa used
+# as an input to varbvsnorm.
+int.klbeta <- function (alpha, mu, s, sa)
+  (sum(alpha) + dot(alpha,log(s/sa)) - dot(alpha,s + mu^2)/sa)/2 -
+    dot(alpha,log(alpha + eps)) - dot(1 - alpha,log(1 - alpha + eps))
+
+
+# ----------------------------------------------------------------------
+# Compute the variance of X, in which X is drawn from the normal
+# distribution with probability p, and X is 0 with probability
+# 1-p. Inputs mu and s specify the mean and variance of the normal
+# density. Inputs p, mu and s must be arrays of the same
+# dimension. This function is useful for calculating the variance of
+# the coefficients under the fully-factorized variational
+# approximation.
+#
+# Note that this is the same as 
+# 
+#    v = p*(s + mu^2) - (p*mu)^2.
+#
+betavar <- function (p, mu, s)
+  p*(s + (1 - p)*mu^2)
+
+# ----------------------------------------------------------------------
+# normalizelogweights(logw) takes as input an array of unnormalized
+# log-importance weights logw and returns normalized importance weights such
+# that the sum of the normalized importance weights is equal to one.
+normalizelogweights <- function (logw) {
+
+  # Guard against underflow or overflow by adjusting the log-importance
+  # weights so that the largest importance weight is one.
+  c <- max(logw)
+  w <- exp(logw - c)
+
+  # Normalize the importance weights.
+  return(w/sum(w))
+}
+
 # ****** OLD STUFF ******
-
-# Shorthand constant for machine precision.
-eps <- .Machine$double.eps
-
-dot <- function (x,y) {
-  # Returns the dot product of vectors x and y.
-  return(sum(x*y))
-}
-
-norm2 <- function (x) {
-  # Returns the quadratic norm (2-norm) of vector x.
-  return(sqrt(dot(x,x)))
-}
-
-qnorm <- function (x, a) {
-  # Returns the quadratic norm of vector x with respect to positive
-  # definite matrix with diagonal entries a. For a definition of the
-  # quadratic norm, see p. 635 of Convex Optimization (2004) by Boyd &
-  # Vandenberghe.
-  return(sqrt(dot(x*a,x)))
-}
 
 diagsqt <- function (X, a = NULL) {
   # diagsqt(x) returns diag(X*X').  
@@ -100,45 +192,3 @@ diagsqt <- function (X, a = NULL) {
   y <- c(X^2 %*% a)
   return(y)
 }
-
-normalizelogweights <- function (logw) {
-  # Takes as input an array of unnormalized log-importance weights and
-  # returns normalized importance weights such that the sum of the
-  # normalized importance weights is equal to one.
-
-  # We guard against underflow or overflow by adjusting the log-importance
-  # weights so that the largest importance weight is one.
-  c <- max(logw)
-  w <- exp(logw - c)
-
-  # Normalize the importance weights.
-  w <- w / sum(w)
-}
-
-betavar <- function (p, mu, s) {
-  # betavar(p,mu,s) returns the variance of random vector X, in which
-  # X[i] is drawn from the normal distribution with probability p[i],
-  # and X[i] is zero with probability 1-p[i]. Inputs mu and s specify
-  # the mean and variance of the normal density. Inputs p, mu and s
-  # must be vectors of the same length. This function is useful for
-  # calculating the variance of the coefficients under the
-  # fully-factorized variational approximation.
-
-  # Note that this is the same as 
-  # 
-  #    v = p*(s + mu^2) - (p*mu)^2.
-  #
-  return(p*(s + (1 - p)*mu^2))
-}
-
-sigmoid <- function (x) {
-  # Returns the sigmoid of x. The sigmoid function is also known as
-  # the logistic link function. It is the inverse of logit(x).
-  return(1/(1 + exp(-x)))
-}
-
-logit <- function (x) {
-  # The logit function, which is the reverse of the sigmoid function.
-  return(log((x + eps)/((1 - x) + eps)))
-}
-  

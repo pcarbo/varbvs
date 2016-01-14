@@ -1,8 +1,8 @@
-% intgamma(logodds,alpha) computes an integral that appears in the
+% int_gamma(logodds,alpha) computes an integral that appears in the
 % variational lower bound of the marginal log-likelihood. This integral is
 % the expectation on the prior inclusion probabilities taken with respect to
-% the variational approximation. 
-function I = intgamma (logodds, alpha)
+% the variational approximation.
+function I = int_gamma (logodds, alpha)
 
   % This is the same as 
   %

@@ -155,6 +155,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   # Selection," 2001.
   if (family == "gaussian") {
     if (ncol(Z) == 1) {
+      # TO DO: Make this step more elegant.
       X <- apply(X,2,function(x) x - mean(x))
       y <- y - mean(y)
     } else {

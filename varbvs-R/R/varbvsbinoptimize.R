@@ -152,14 +152,6 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
   return(list(alpha=alpha,mu=mu,s=s,eta=eta,lnZ=lnZ))
 }
 
-slope <- function (x) {
-  # Compute (sigmoid(x) - 1/2)/x, the slope of the conjugate to the
-  # log-sigmoid function at x, times 2. For details, see Bishop
-  # (2006), or the Bayesian Analysis paper. This is useful for working
-  # with the variational approximation to the logistic regression.
-  return((sigmoid(x) - 0.5)/(x + eps))
-}
-
 updatestats <- function (X, y, eta) {
   # Calculate some useful quantities for updating the variational
   # approximation to the logistic regression factors. Inputs X and y

@@ -33,9 +33,9 @@ set.seed(1)
 # (i.e., unlinked), according to the specified minor allele frequencies.
 cat("1. GENERATING DATA SET.\n")
 maf <- 0.05 + 0.45*runif(p)
-X   <- matrix(0,n,p)
-for (i in 1:p)
-  X[,i] <- (runif(n) < maf[i]) + (runif(n) < maf[i])
+X   <- (runif(n*p) < maf) +
+       (runif(n*p) < maf)
+X  <- matrix(X,n,p,byrow = TRUE)
 
 # Generate additive effects for the markers so that exactly na of them have
 # a nonzero effect on the trait.
