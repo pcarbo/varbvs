@@ -1,6 +1,6 @@
 // For a description of this C code, see varbvsnormupdate.m.
 #include "types.h"
-#include "vectorops.h"
+#include "misc.h"
 #include "doublevectormex.h"
 #include "singlematrixmex.h"
 #include "varbvs.h"

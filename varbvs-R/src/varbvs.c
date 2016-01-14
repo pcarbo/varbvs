@@ -1,6 +1,6 @@
 #include "varbvs.h"
-#include "sigmoid.h"
-#include "vectorops.h"
+#include "misc.h"
+#include <math.h>
 
 // FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
