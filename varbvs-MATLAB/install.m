@@ -4,8 +4,8 @@
 opts = sprintf('-O -largeArrayDims -DMATLAB_MEX_FILE -I../varbvs-R/src');
 
 % Build diagsqmex MEX file.
-% eval(['mex ',opts,'diagsqmex.c doublevectormex.c singlematrixmex.c ',...
-%       '../varbvs-R/src/misc.c');
+eval(['mex ',opts,' diagsqmex.c doublevectormex.c singlematrixmex.c ',...
+      '../varbvs-R/src/misc.c ../varbvs-R/src/diagsq.c']);
 
 % Build diagsqtmex MEX file.
 eval(['mex ',opts,' diagsqtmex.c doublevectormex.c singlematrixmex.c ',...
