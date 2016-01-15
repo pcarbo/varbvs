@@ -28,44 +28,62 @@
 # variational parameters, and Xr = X*(alpha*mu). The computational
 # complexity is O(n*length(i)).
 #
-# TO DO: Explain how to compile C function, and load it into R.
+# This function calls "varbvsnormupdate_Call", a function compiled
+# from C code, using the .Call interface. To load the C function into
+# R, first build the "shared object" (.so) file using the following
+# command in the "src" directory:
 #
-varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d, alpha0, mu0,
-                              Xr0, i) {
+# R CMD SHLIB varbvsr.c varbvs.c misc.c.
+# 
+# Next, load the shared objects into R using the R function dyn.load:
+# dyn.load("../src/diagsqr.so").
+varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
+                              alpha0, mu0, Xr0, i) {
 
   # Get the number of samples (n) and variables (p).
-  [n p] = size(X);
+  n <- nrow(X)
+  p <- ncol(X)
 
-  # X must be single precision.
-  if ~isa(X,'single')
-    error('Input X must be SINGLE')
-  end
-
-  # Check inputs sigma and sa.
-  if ~isscalar(sigma) | ~isscalar(sa)
-    error('Inputs sigma and sa must be scalars');
-  end
-   
-  # Check input logodds, xy, d, alpha0 and mu0.
-  if ~(length(logodds) == p & length(xy) == p & length(d) == p & ...
-       length(alpha0) == p & length(mu0) == p)
-    error('logodds, xy, d, alpha0 and mu0 must have length = size(X,2).')
-  end
-   
-  # Check input Xr0.
-  if length(Xr0) ~= n
-    error('length(Xr0) must be equal to size(X,1)');
-  end
-   
-  # Check input i.
-  if sum(i < 1 | i > p)
-    error('Input i contains invalid variable indices');
-  end
+  # Check input X.
+  if (!is.double(X) || !is.matrix(X))
+    stop("Input X must be a double-precision matrix")
   
-  # Execute the C routine. I subtract 1 from the indices because MATLAB
-  # arrays start at 1, but C arrays start at 0.
-  [alpha mu Xr] = ...
-      varbvsnormupdatemex(X,double(sigma),double(sa),double(logodds),...
-                          double(xy),double(d),double(alpha0),double(mu0),...
-                          double(Xr0),double(i-1));
+  # Check inputs sigma and sa.
+  if (length(sigma) != 1 | length(sa) != 1)
+    stop("Inputs sigma and sa must be scalars")
+  
+  # Check input logodds, xy, d, alpha0 and mu0.
+  if (!(length(logodds) == p & length(xy) == p & length(d) == p & ...
+       length(alpha0) == p & length(mu0) == p))
+    stop("logodds, xy, d, alpha0 and mu0 must have length = ncol(X)")
+
+   # Check input Xr0.
+  if (length(Xr0) != n)
+    stop("length(Xr0) must be equal to nrow(X)")
+
+  # Check input i.
+  if (sum(i < 1 | i > p) > 0)
+    stop("Input i contains invalid variable indices")
+
+  # Initialize the results.
+  alpha <- matrix(alpha0,p,1)
+  mu    <- matrix(mu0,p,1)
+  Xr    <- matrix(Xr0,n,1)
+
+  browser()
+  
+  # Execute the C routine using the .Call interface, and return the
+  # updated variational parameters statistics in a list object. The
+  # main reason for using .Call interface is that there is less of a
+  # constraint on the size of the input matrices. The only components
+  # that change are alpha, mu and Xr. Note that I need to subtract 1
+  # from the indices because R vectors start at 1, and C arrays start
+  # at 0.
+  out <- .Call("varbvsnormupdate_Call",X = X,sigma = as.double(sigma),
+               sa = as.double(sa),logodds = as.double(logodds),
+               xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
+               Xr = Xr,i = as.double(i))
+  return(list(alpha = result$alpha,
+              mu    = result$mu,
+              Xr    = result$Xr))
 }

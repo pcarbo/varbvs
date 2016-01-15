@@ -8,7 +8,7 @@
 // in R using the .Call interface.
 SEXP diagsq_Call (SEXP Xp, SEXP ap, SEXP yp) {
 
-  // Get the inputs.
+  // Get the inputs and outputs.
   double* X = REAL(Xp);  // Input X.
   double* a = REAL(ap);  // Input a.
   double* y = REAL(yp);  // Output y.
@@ -29,7 +29,7 @@ SEXP diagsq_Call (SEXP Xp, SEXP ap, SEXP yp) {
 // in R using the .Call interface.
 SEXP diagsqt_Call (SEXP Xp, SEXP ap, SEXP yp) {
 
-  // Get the inputs.
+  // Get the inputs and outputs.
   double* X = REAL(Xp);  // Input X.
   double* a = REAL(ap);  // Input a.
   double* y = REAL(yp);  // Output y.

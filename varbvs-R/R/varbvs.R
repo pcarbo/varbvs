@@ -175,6 +175,16 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
 
   # Provide a brief summary of the analysis.
   if (verbose) {
+    cat("Welcome to           ")
+    cat("--       *                              *               \n")
+    cat("VARBVS version 0.9.0 ")
+    cat("--       |              |               |               \n")
+    cat("large-scale Bayesian ")
+    cat("--       ||           | |    |          || |     |   |  \n")
+    cat("variable selection   ")
+    cat("-- |     || | |    |  | ||  ||        |||| ||    |   || \n")
+    cat("*********************")
+    cat("*******************************************************\n")
     cat("Fitting variational approximation for Bayesian variable",
         "selection model.\n")
     cat(sprintf("family:     %-8s",family))
@@ -231,7 +241,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
         cat("-iteration-   variational    max.   incl variance params\n");
         cat("outer inner   lower bound  change   vars   sigma      sa\n");
       }
-      
+
       # Repeat for each setting of the hyperparameters.
       for (i in 1:ns) {
         # [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
@@ -296,8 +306,9 @@ outerloop <- function (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta,
                        update.sa, optimize.eta, n0, sa0) {
   p <- length(alpha)
   if (length(logodds) == 1)
-    logodds <- matrix(logodds,p,1)
+    logodds <- rep(logodds,p)
   if (family == "gaussian") {
+    # TO DO: FIX THIS.
     return(varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,
                       verbose,outer.iter,update_sigma,update.sa,n0,sa0))
   } else if (family == "binomial" & ncol(Z) == 1) {

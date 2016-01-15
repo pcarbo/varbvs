@@ -14,9 +14,9 @@
 // of samples; alpha and mu are the variational parameters that will
 // be updated; and Xr is the matrix-vector product X'*r which will be
 // updated to reflect the change to alpha and mu.
-void varbvsupdate (const double* x, double xy, double d, double sigma, 
-		   double sa, double logodds, double* alpha, double* mu, 
-		   double* Xr, Size n);
+void varbvsnormupdate (const double* x, double xy, double d, double sigma, 
+		       double sa, double logodds, double* alpha, double* mu, 
+		       double* Xr, Size n);
 
 // -----------------------------------------------------------------
 // Execute a single coordinate ascent update to maximize the
@@ -35,6 +35,7 @@ void varbvsbinupdate (const double* x, double xy, double xd, double xdx,
 		      const double* d, double sa, double logodds, 
 		      double* alpha, double* mu, double* Xr, Size n);
 
+// -----------------------------------------------------------------
 // Execute a single coordinate ascent update to maximize the
 // variational lower bound for Bayesian variable selection in logistic
 // regression, allowing for covariates. The inputs are as follows: x

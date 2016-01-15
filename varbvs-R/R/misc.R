@@ -104,7 +104,7 @@ randn <- function (m, n)
 # efficiently, and without having to store an intermediate matrix of the
 # same size as X. diag(X,a) efficiently computes diag(X'*diag(a)*X).
 #
-# This function calls "diag_Call", a function compiled from C code,
+# This function calls "diagsq_Call", a function compiled from C code,
 # using the .Call interface. To load the C function into R, first
 # build the "shared object" (.so) file using the following command in
 # the "src" directory: R CMD SHLIB diagsqr.c diagsq.c misc.c. Next,
@@ -134,7 +134,7 @@ diagsq <- function (X, a = NULL) {
 # intermediate result of the same size as X. diagsqt(X,a) efficiently
 # computes diag(X*diag(a)*X').
 #
-# This function calls "diagt_Call", a function compiled from C code,
+# This function calls "diagsqt_Call", a function compiled from C code,
 # using the .Call interface. See function "diagsq" for instructions on
 # compiling and loading this C function into R.
 diagsqt <- function (X, a = NULL) {

@@ -52,8 +52,8 @@ void mexFunction (int nlhs, mxArray* plhs[],
     copyColumn(X.elems,x,k,n);
 
     // Perform the update.
-    varbvsupdate(x,xy.elems[k],d.elems[k],sigma,sa,logodds.elems[k],
-		 alpha.elems+k,mu.elems+k,Xr.elems,n);
+    varbvsnormupdate(x,xy.elems[k],d.elems[k],sigma,sa,logodds.elems[k],
+		     alpha.elems+k,mu.elems+k,Xr.elems,n);
   }
 
   // Free the dynamically allocated memory.

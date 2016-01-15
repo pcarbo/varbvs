@@ -6,8 +6,10 @@
 # NOTE: Move this file later to the "demo" directory.
 #
 source("misc.R")
-source("varbvsnorm.R")
 source("varbvs.R")
+source("varbvsnorm.R")
+source("varbvsnormupdate.R")
+dyn.load("../src/diagsqr.so")
 
 # SCRIPT PARAMETERS
 # -----------------

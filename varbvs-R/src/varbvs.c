@@ -6,9 +6,9 @@
 // ---------------------------------------------------------------------
 // Execute a single coordinate ascent update to maximize the variational 
 // lower bound for Bayesian variable selection in linear regression.
-void varbvsupdate (const double* x, double xy, double d, double sigma, 
-		   double sa, double logodds, double* alpha, double* mu, 
-		   double* Xr, Size n) {
+void varbvsnormupdate (const double* x, double xy, double d, double sigma, 
+		       double sa, double logodds, double* alpha, double* mu, 
+		       double* Xr, Size n) {
 
   // Compute the variational estimate of the posterior variance.
   double s = sa*sigma/(sa*d + 1);
