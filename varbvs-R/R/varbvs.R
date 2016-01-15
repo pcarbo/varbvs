@@ -244,10 +244,9 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
 
       # Repeat for each setting of the hyperparameters.
       for (i in 1:ns) {
-        # [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
-        #     outerloop(X,Z,y,family,sigma(i),sa(i),logodds(:,i),alpha(:,i),...
-        #               mu(:,i),eta(:,i),tol,maxiter,verbose,i,update_sigma,...
-        #               update_sa,optimize_eta,n0,sa0)
+        out <- outerloop(X,Z,y,family,sigma[i],sa[i],logodds[,i],alpha[,i],
+                         mu[,i],eta[,i],tol,maxiter,verbose,outer.iter,
+                         update.sigma,update.sa,optimize.eta, n0,sa0)
       }
       if (verbose)
         cat("\n")
@@ -273,6 +272,9 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     # parameters that locally minimize the K-L divergence between the
     # approximating distribution and the exact posterior.
     for (i in 1:ns) {
+      #
+      # TO DO: FIX THIS.
+      #
       # [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
       #     outerloop(X,Z,y,family,sigma(i),sa(i),logodds(:,i),alpha(:,i),...
       #               mu(:,i),eta(:,i),tol,maxiter,verbose,i,update_sigma,...

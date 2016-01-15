@@ -53,11 +53,11 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
     stop("Inputs sigma and sa must be scalars")
   
   # Check input logodds, xy, d, alpha0 and mu0.
-  if (!(length(logodds) == p & length(xy) == p & length(d) == p & ...
+  if (!(length(logodds) == p & length(xy) == p & length(d) == p & 
        length(alpha0) == p & length(mu0) == p))
     stop("logodds, xy, d, alpha0 and mu0 must have length = ncol(X)")
 
-   # Check input Xr0.
+  # Check input Xr0.
   if (length(Xr0) != n)
     stop("length(Xr0) must be equal to nrow(X)")
 
@@ -66,12 +66,13 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
     stop("Input i contains invalid variable indices")
 
   # Initialize the results.
-  alpha <- matrix(alpha0,p,1)
-  mu    <- matrix(mu0,p,1)
-  Xr    <- matrix(Xr0,n,1)
+  alpha   <- rep(0,p)
+  mu      <- rep(0,p)
+  Xr      <- rep(0,n)
+  alpha[] <- alpha0
+  mu[]    <- mu0
+  Xr[]    <- Xr0
 
-  browser()
-  
   # Execute the C routine using the .Call interface, and return the
   # updated variational parameters statistics in a list object. The
   # main reason for using .Call interface is that there is less of a
@@ -82,7 +83,7 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
   out <- .Call("varbvsnormupdate_Call",X = X,sigma = as.double(sigma),
                sa = as.double(sa),logodds = as.double(logodds),
                xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
-               Xr = Xr,i = as.double(i))
+               Xr = Xr,i = as.double(i-1))
   return(list(alpha = result$alpha,
               mu    = result$mu,
               Xr    = result$Xr))

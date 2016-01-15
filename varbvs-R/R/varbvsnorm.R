@@ -31,8 +31,9 @@
 # parameter (sa), in which sa is drawn from a scaled inverse
 # chi-square distribution with scale sa0 and degrees of freedom n0.
 varbvsnorm <-
-  function varbvsnorm (X, y, sigma, sa, logodds, alpha, mu, tol, maxiter, 
-                       verbose, outer.iter, update.sigma, update.sa, n0, sa0) {
+  function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4, maxiter = 1e4,
+            verbose = TRUE, outer.iter = NULL, update.sigma = TRUE,
+            update.sa = TRUE, n0 = 0, sa0 = 0) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -62,35 +63,39 @@ varbvsnorm <-
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
-    logw0 <- int_linear(Xr,d,y,sigma,alpha,mu,s) ...
-             + int_gamma(logodds,alpha) ...
-             + int_klbeta(alpha,mu,s,sigma*sa);
+    logw0 <- int.linear(Xr,d,y,sigma,alpha,mu,s) +
+             int.gamma(logodds,alpha) +
+             int.klbeta(alpha,mu,s,sigma*sa)
+
+    # (2b) UPDATE VARIATIONAL APPROXIMATION
+    # -------------------------------------
+    # Run a forward or backward pass of the coordinate ascent updates.
+    if (iter %% 2)
+      i <- 1:p
+    else
+      i <- p:1
+    out   <- varbvsnormupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,i)
+    alpha <- out$alpha
+    mu    <- out$mu
+    Xr    <- out$Xr
+    rm(out)
+
+    # (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
+    # --------------------------------------------
+    # Compute the lower bound to the marginal log-likelihood.
+    logw <- int.linear(Xr,d,y,sigma,alpha,mu,s) +
+            int.gamma(logodds,alpha) +
+            int.klbeta(alpha,mu,s,sigma*sa)
   }
 }
-  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ----------------------------------------------------------------------
+# Computes an integral that appears in the variational lower bound of
+# the marginal log-likelihood. This integral is the expectation of the
+# linear regression log-likelihood taken with respect to the
+# variational approximation.
+int.linear <- function (Xr, d, y, sigma, alpha, mu, s) {
+  n <- length(y)
+  return(-length(y)/2*log(2*pi*sigma) - norm2(y - Xr)^2/(2*sigma) 
+         - dot(d,betavar(alpha,mu,s))/(2*sigma))
+}
