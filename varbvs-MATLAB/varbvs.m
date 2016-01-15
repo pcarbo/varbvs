@@ -544,6 +544,16 @@ function fit = varbvs (X, Z, y, labels, family, options)
 
   % Provide a brief summary of the analysis.
   if verbose
+    fprintf('Welcome to           ');
+    fprintf('--       o                              o               \n');
+    fprintf('VARBVS version 0.9.0 ');
+    fprintf('--       |              |               |               \n');
+    fprintf('large-scale Bayesian ');
+    fprintf('--       ||           | |    |          || |     |   |  \n');
+    fprintf('variable selection   ');
+    fprintf('-- |     || | |    |  | ||  ||        |||| ||    |   || \n');
+    fprintf('*********************');
+    fprintf('********************************************************\n');
     fprintf('Fitting variational approximation for Bayesian variable ');
     fprintf('selection model.\n');
     fprintf('family:     %-8s',family); 
