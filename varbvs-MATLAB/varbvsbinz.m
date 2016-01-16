@@ -33,10 +33,11 @@ function [logw, sa, alpha, mu, s, eta] = ...
   logw = -Inf;
   for iter = 1:maxiter
     
-    % Save the current variational parameters.
+    % Save the current variational parameters and model parameters.
     alpha0 = alpha;
     mu0    = mu;
     eta0   = eta;
+    sa0    = sa;
 
     % (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     % --------------------------------------------
@@ -102,10 +103,11 @@ function [logw, sa, alpha, mu, s, eta] = ...
       fprintf(repmat('\b',1,length(status)));
     end
     if logw < logw0
+      logw  = logw0;
+      sa    = sa0;
       alpha = alpha0;
       mu    = mu0;
       eta   = eta0;
-      logw  = logw0;
       break
     elseif max(err) < tol
       break

@@ -56,9 +56,10 @@ varbvsnorm <-
   logw <- (-Inf)
   for (iter in 1:maxiter) {
 
-    # Save the current variational parameters.
+    # Save the current variational and model parameters.
     alpha0 <- alpha
     mu0    <- mu
+    sigma0 <- sigma
 
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
@@ -86,6 +87,55 @@ varbvsnorm <-
     logw <- int.linear(Xr,d,y,sigma,alpha,mu,s) +
             int.gamma(logodds,alpha) +
             int.klbeta(alpha,mu,s,sigma*sa)
+
+    # (2d) UPDATE RESIDUAL VARIANCE
+    # -----------------------------
+    # Compute the maximum likelihood estimate of sigma, if requested.
+    # Note that we must also recalculate the variance of the regression
+    # coefficients when this parameter is updated.
+    if (update.sigma) {
+      sigma <- (norm2(y - Xr)^2 + dot(d,betavar(alpha,mu,s)) +
+                dot(alpha,(s + mu^2)/sa))/(n + sum(alpha))
+      s     <- sa*sigma/(sa*d + 1)
+    }
+    
+    # (2e) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
+    # -----------------------------------------------------
+    # Compute the maximum a posteriori estimate of sa, if requested.
+    # Note that we must also recalculate the variance of the
+    # regression coefficients when this parameter is updated.
+    if (update.sa) {
+      sa <- (sa0*n0 + dot(alpha,s + mu^2))/(n0 + sigma*sum(alpha))
+      s  <- sa*sigma/(sa*d + 1)
+    }
+
+    # (2f) CHECK CONVERGENCE
+    # ----------------------
+    # Print the status of the algorithm and check the convergence
+    # criterion. Convergence is reached when the maximum difference
+    # between the posterior probabilities at two successive iterations
+    # is less than the specified tolerance, or when the variational
+    # lower bound has decreased.
+    err <- abs(alpha - alpha0)
+    if (verbose) {
+      if (isempty(outer.iter))
+        status <- ""
+      else
+        status <- sprintf("%05d ",outer.iter)
+      status <- paste(status,sprintf("%05d %+13.6e %0.1e %06.1f %0.1e %0.1e",
+                                     iter,logw,max(err),sum(alpha),
+                                     sigma,sa),sep="")
+      caterase(status)
+    }
+    if (logw < logw0) {
+      logw  <- logw0
+      sa    <- sa0
+      alpha <- alpha0
+      mu    <- mu0;
+      break
+    else if (max(err) < tol) {
+      return(list(logw = logw,sigma = sigma,sa = sa,alpha = alpha, alpha, mu, s]
+    }
   }
 }
 

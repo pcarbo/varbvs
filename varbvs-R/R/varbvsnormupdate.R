@@ -31,12 +31,9 @@
 # This function calls "varbvsnormupdate_Call", a function compiled
 # from C code, using the .Call interface. To load the C function into
 # R, first build the "shared object" (.so) file using the following
-# command in the "src" directory:
-#
-# R CMD SHLIB varbvsr.c varbvs.c misc.c.
-# 
-# Next, load the shared objects into R using the R function dyn.load:
-# dyn.load("../src/diagsqr.so").
+# command in the "src" directory: R CMD SHLIB varbvsr.c varbvs.c
+# misc.c. Next, load the shared objects into R using the R function
+# dyn.load: dyn.load("../src/varbvsr.so").
 varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
                               alpha0, mu0, Xr0, i) {
 
@@ -65,13 +62,10 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
   if (sum(i < 1 | i > p) > 0)
     stop("Input i contains invalid variable indices")
 
-  # Initialize the results.
-  alpha   <- rep(0,p)
-  mu      <- rep(0,p)
-  Xr      <- rep(0,n)
-  alpha[] <- alpha0
-  mu[]    <- mu0
-  Xr[]    <- Xr0
+  # Initialize storage for the results.
+  alpha <- c(alpha0)
+  mu    <- c(mu0)
+  Xr    <- c(Xr0)
 
   # Execute the C routine using the .Call interface, and return the
   # updated variational parameters statistics in a list object. The
@@ -84,7 +78,5 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
                sa = as.double(sa),logodds = as.double(logodds),
                xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
                Xr = Xr,i = as.double(i-1))
-  return(list(alpha = result$alpha,
-              mu    = result$mu,
-              Xr    = result$Xr))
+  return(list(alpha = alpha,mu = mu,Xr = Xr))
 }
