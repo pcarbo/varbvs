@@ -28,8 +28,6 @@
 # variational parameters, and Xr = X*(alpha*mu). The computational
 # complexity is O(n*length(i)).
 #
-# TO DO: Update this last paragraph.
-#
 # This function calls "varbvsbinupdate_Call", a function compiled from
 # C code, using the .Call interface. See the comments accompanying
 # function 'varbvsnormupdate' for instructions on building and loading
@@ -68,9 +66,9 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
   # subtract 1 from the indices because R vectors start at 1, and C
   # arrays start at 0.
   out <- .Call("varbvsbinupdate_Call",X = X,sa = as.double(sa),
-               logodds = as.double(logodds),u = as.double(stats$u),
-               xy = as.double(stats$u),xu = as.double(stats$xu),
-               d = as.double(stats$d),alpha = alpha,mu = mu,
-               Xr = Xr,i = as.integer(i-1))
+               logodds = as.double(logodds),d = as.double(stats$d),
+               xdx = as.double(stats.xdx),xy = as.double(stats.xy),
+               xd = as.double(stats.xd),alpha = alpha,mu = mu,Xr = Xr,
+               i = as.integer(i-1))
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }

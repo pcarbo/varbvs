@@ -27,14 +27,21 @@
 # model. Output eta is the vector of free parameters that specify the
 # variational approximation to the likelihood factors in the logistic
 # regression.
-varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
-                               eta0 = NULL, fixed.eta = FALSE,
-                               verbose = TRUE) {
+varbvsbin <-
+  function (X, y, sa, logodds, alpha, mu, eta, tol = 1e-4, maxiter = 1e4,
+            verbose = TRUE, outer.iter = NULL,update.sa = TRUE,
+            optimize.eta = TRUE,n0 = 0,sa0 = 0) {
 
-  # Convergence is reached when the maximum relative distance between
-  # successive updates of the variational parameters is less than this
-  # quantity.
-  tolerance <- 1e-4  
+  # Get the number of samples (n) and variables (p).
+  n <- nrow(X)
+  p <- ncol(X)
+
+  # (1) INITIAL STEPS
+  # -----------------
+  # Compute a few useful quantities.
+  Xr    <- c(X %*% (alpha*mu))
+  stats <- updatestats.varbvsbin(X,y,eta)
+  s     <- sa/(sa*stats$xdx + 1)
 
   # CHECK INPUTS.
   # Check input X.
@@ -42,10 +49,6 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
     stop("Input argument 'X' must be a matrix")
   if (!is.double(X))
     storage.mode(X) <- "double"
-
-  # Get the number of samples (n) and variables (p).
-  n <- nrow(X)
-  p <- ncol(X)
 
   # Check input y.
   y <- c(y)
@@ -172,44 +175,42 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
   return(list(alpha=alpha,mu=mu,s=s,eta=eta,lnZ=lnZ))
 }
 
+# ----------------------------------------------------------------------
+# Calculates useful quantities for updating the variational approximation
+# to the logistic regression factors.
 updatestats.varbvsbin <- function (X, y, eta) {
-  # Calculate some useful quantities for updating the variational
-  # approximation to the logistic regression factors. Inputs X and y
-  # specify the data, and eta is the vector of free parameters. It is
-  # a column vector of length equal to the number of samples. This
-  # function should be called whenever the free parameters are
-  # modified.
 
   # Compute the slope of the conjugate.
-  u <- slope(eta)
+  d <- slope(eta)
 
-  # Compute 'beta0' and 'yhat'. See the journal paper for an
-  # explanation of these two variables.
-  beta0 <- sum(y - 0.5)/sum(u)
-  yhat  <- y - 0.5 - beta0*u
+  # Compute beta0 and yhat. See the journal paper for an explanation
+  # of these two variables.
+  beta0 <- sum(y - 0.5)/sum(d)
+  yhat  <- y - 0.5 - beta0*d
 
-  # Calculate a couple useful matrix-vector products.
-  xy <- c(y %*% X)  # xy = X'*y.
-  xu <- c(u %*% X)  # xu = X'*u.
+  # Calculate xy = X'*yhat and xd = X'*d.
+  xy <- c(yhat %*% X)
+  xd <- c(d %*% X)
 
-  # Compute the diagonal entries of X'*Uhat*X. For a definition of
-  # matrix Uhat, see the journal paper.
-  d <- diagsq(X,u) - xu^2/sum(u)
+  # Compute the diagonal entries of X'*dhat*X. For a definition of
+  # dhat, see the Bayesian Analysis journal paper.
+  xdx <- diagsq(X,d) - xd^2/sum(d)
 
-  # Return the quantities as a list.
-  return(list(u=u,yhat=yhat,xy=xy,xu=xu,d=d))
+  # Return the result.
+  return(list(d = d,yhat = yhat,xy = xy,xd = xd,xdx = xdx))
 }
 
+# ----------------------------------------------------------------------
+# Returns the M-step update for the parameters specifying the
+# variational lower bound to the logistic regression factors. Input
+# Xr must be Xr = X*r, where r is the posterior mean of the
+# coefficients. Note that under the fully-factorized variational
+# approximation, r = alpha.*mu. Input v is the posterior variance of
+# the coefficients. For this update to be valid, it is required that
+# the posterior covariance of the coefficients is equal to
+# diag(v). Input d must be d = slope(eta); see function slope for
+# details.
 update.eta <- function (X, y, v, Xr, u) {
-  # Returns the M-step update for the parameters specifying the
-  # variational lower bound to the logistic regression factors. Input
-  # Xr be equal to Xr = X*(alpha*mu). Input v is the posterior
-  # variance of the coefficients. For this update to be valid, the
-  # posterior covariance of the coefficients must equal to diag(v).
-  # Input u must be u = slope(eta), where u is the current estimate of
-  # the free parameters; see function 'slope' for details.
-  # 
-  # Note that vector y and matrix X must *not* be centered.  
   
   # Compute 'mu0', the posterior mean of the intercept in the logistic
   # regression under the variational approximation. Here, 'a' is the

@@ -69,6 +69,11 @@ if (m > 0)
 y <- runif(n) < sigmoid(w)
 y <- as.double(y)
 
+# TEMPORARY.
+out <- varbvsbin(X,y,1,log10(),runif(p),rnorm(p),rep(1,n))
+
+stop()
+
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 # Fit the fully-factorized variational approximation to the posterior
