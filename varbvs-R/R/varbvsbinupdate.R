@@ -27,6 +27,13 @@
 # There are three outputs. Output vectors alpha and mu are the updated
 # variational parameters, and Xr = X*(alpha*mu). The computational
 # complexity is O(n*length(i)).
+#
+# TO DO: Update this last paragraph.
+#
+# This function calls "varbvsbinupdate_Call", a function compiled from
+# C code, using the .Call interface. See the comments accompanying
+# function 'varbvsnormupdate' for instructions on building and loading
+# the shared objects (.so) file into R.
 varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
 
   # Get the number of samples (n) and variables (p).
@@ -60,30 +67,10 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
   # components that change are alpha, mu and Xr. Note that I need to
   # subtract 1 from the indices because R vectors start at 1, and C
   # arrays start at 0.
-  # TO DO.
+  out <- .Call("varbvsbinupdate_Call",X = X,sa = as.double(sa),
+               logodds = as.double(logodds),u = as.double(stats$u),
+               xy = as.double(stats$u),xu = as.double(stats$xu),
+               d = as.double(stats$d),alpha = alpha,mu = mu,
+               Xr = Xr,i = as.integer(i-1))
   return(list(alpha = alpha,mu = mu,Xr = Xr))
-
-  # Execute the C routine, and return the results in a list object.
-  # The only components of the list that change are alpha, mu and Xr.
-  # We need to subtract 1 from the indices because R vector start at
-  # 1, but C arrays start at 0. Note that I do not attempt to coerce X
-  # here; if X is large, it could use a lot of memory to duplicate
-  # this matrix. For this same reason, I set DUP = FALSE so that the
-  # input arguments are not duplicated.
-  result <- .C("varbvsbinupdateR",
-               X       = X,                   # Matrix of samples.
-               sa      = as.double(sa),       # Prior variance of coefficients.
-               logodds = as.double(logodds),  # Prior log-odds.
-               u       = as.double(stats$u),  # u = slope(eta).
-               xy      = as.double(stats$xy), # xy = X'*yhat.
-               xu      = as.double(stats$xu), # xu = X'*u.
-               d       = as.double(stats$d),  # d = diag(X'*Uhat*X).
-               alpha   = as.double(alpha0),   # Posterior inclusion prob's.
-               mu      = as.double(mu0),      # Posterior mean coefficients.
-               Xr      = as.double(Xr0),      # Xr = X*(alpha*mu).
-               S       = as.integer(S-1),     # Updates to perform.
-               DUP     = FALSE)
-  return(list(alpha = result$alpha,
-              mu    = result$mu,
-              Xr    = result$Xr))
 }
