@@ -168,7 +168,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       # This should give the same result as centering the columns of X
       # and subtracting the mean from y when we have only one
       # covariate, the intercept.
-      y <- y - c(Z %*% solve(crossprod(Z),t(y %*% Z)))
+      y <- y - c(Z %*% solve(crossprod(Z),c(y %*% Z)))
       X <- X - Z %*% solve(crossprod(Z),t(Z) %*% X)
     }
   }
