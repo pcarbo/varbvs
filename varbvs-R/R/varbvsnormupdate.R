@@ -2,10 +2,10 @@
 # maximize the variational lower bound for Bayesian variable selection
 # in linear regression.
 #
-# Input X is an n x p matrix of observations about the variables (or
+# Input X is an n x p matrix of observations of the variables (or
 # features), where n is the number of samples, and p is the number of
-# variables. Input xy = X'*y, where y is the vector of observations
-# about the continuous outcome.
+# variables. Input xy = X'*y, where y is the vector of samples of the
+# continuous outcome.
 #
 # Inputs sigma, sa and logodds specify other model parameters. sigma
 # and sa are scalars. sigma specifies the variance of the residual,

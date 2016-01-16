@@ -7,10 +7,10 @@
 # distribution that locally minimizes the K-L divergence between the
 # approximating distribution and the exact posterior.
 #
-# Input X is an n x p matrix of observations about the variables (or
+# Input X is an n x p matrix of observations of the variables (or
 # features), where n is the number of samples, and p is the number of
-# variables. Input y is the vector of observations about the outcome;
-# it is a vector of length n.
+# variables. Input y contains samples of the outcome; it is a vector
+# of length n.
 #
 # Inputs sigma, sa and logodds are additional model parameters; sigma
 # and sa are scalars. Input sigma specifies the variance of the
@@ -23,7 +23,7 @@
 # are the parameters of the variational approximation and,
 # equivalently, variational estimates of posterior quantites: under
 # the variational approximation, the ith regression coefficient is
-# normal with probability alpha(i); mu(i) and s(i) are the mean and
+# normal with probability alpha(i); mu[i] and s(i) are the mean and
 # variance of the coefficient given that it is included in the model.
 #
 # When update.sa = TRUE, there is the additional option of computing

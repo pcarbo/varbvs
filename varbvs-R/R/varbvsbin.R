@@ -9,8 +9,8 @@
 #
 # Input X is the n x p matrix of variable (or feature) observations,
 # where n is the number of samples, and p is the number of variables.
-# Input vector Y contains samples of the binary outcome; it is a
-# vector of length n.
+# Input y contains samples of the binary outcome; it is a vector of
+# length n.
 #
 # Inputs sa and logodds are the hyperparameters. Scalar sa is the
 # prior variance of the coefficients. Input logodds is the prior
@@ -30,15 +30,6 @@
 varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
                                eta0 = NULL, fixed.eta = FALSE,
                                verbose = TRUE) {
-  # Implements the fully-factorized variational approximation for
-  # Bayesian variable selection in logistic regression. It finds the
-  # "best" fully-factorized variational approximation to the posterior
-  # distribution of the coefficients in a logistic regression model of
-  # a binary outcome or trait (e.g. disease status in a case-control
-  # study), with spike and slab priors on the coefficients. By "best",
-  # we mean the approximating distribution that locally minimizes the
-  # Kullback-Leibler divergence between the approximating distribution
-  # and the exact posterior.
 
   # Convergence is reached when the maximum relative distance between
   # successive updates of the variational parameters is less than this
