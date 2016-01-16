@@ -16,7 +16,7 @@
 # Inputs alpha0, mu0 are the current parameters of the variational
 # approximation. Under the variational approximation, the ith
 # regression coefficient is included in the model with probability
-# alpha0(i), and mu0(i) is the mean of the coefficient given that it
+# alpha0[i], and mu0(i) is the mean of the coefficient given that it
 # is included in the model. Inputs Xr0 and d must be Xr0 =
 # X*(alpha0*mu0) and d = diag(X'*X).
 #
@@ -69,11 +69,11 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
 
   # Execute the C routine using the .Call interface, and return the
   # updated variational parameters statistics in a list object. The
-  # main reason for using .Call interface is that there is less of a
-  # constraint on the size of the input matrices. The only components
-  # that change are alpha, mu and Xr. Note that I need to subtract 1
-  # from the indices because R vectors start at 1, and C arrays start
-  # at 0.
+  # main reason for using the .Call interface is that there is less of
+  # a constraint on the size of the input matrices. The only
+  # components that change are alpha, mu and Xr. Note that I need to
+  # subtract 1 from the indices because R vectors start at 1, and C
+  # arrays start at 0.
   out <- .Call("varbvsnormupdate_Call",X = X,sigma = as.double(sigma),
                sa = as.double(sa),logodds = as.double(logodds),
                xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,

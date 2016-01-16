@@ -66,9 +66,9 @@ y = rand(n,1) < sigmoid(t);
 % FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 % ------------------------------------------
 % Fit the fully-factorized variational approximation to the posterior
-% distribution of the coefficients for a linear regression model of a
-% continuous outcome (quantitiative trait), with spike and slab priors on
-% the coefficients.
+% distribution of the coefficients for a logistic regression model of a
+% binary outcome (case-control status), with spike and slab priors on the
+% coefficients.
 fprintf('2. FITTING MODEL TO DATA.\n')
 fit = varbvs(X,Z,y,labels,'binomial',struct('logodds',logodds,'tol',1e-4));
 

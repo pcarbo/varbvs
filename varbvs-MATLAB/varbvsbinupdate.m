@@ -5,7 +5,7 @@
 %
 % Input X is an n x p matrix of observations about the variables (or
 % features), where n is the number of samples, and p is the number of
-% variables. Input y is the vector of observations about the binary outcome;
+% variables. Input vector y contains samples of the binary outcome;
 % it is a vector of length n. X must be a single precision matrix.
 %
 % Input sa specifies the prior variance of the coefficients. Input logodds
@@ -22,7 +22,7 @@
 %
 % Input i specifies the order in which the coordinates are updated. It may
 % be a vector of any length. Each entry of i must be an integer between 1
-% and P.
+% and p.
 %
 % There are three outputs. Output vectors alpha and mu are the updated
 % variational parameters, and Xr = X*(alpha.*mu). The computational

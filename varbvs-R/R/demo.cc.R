@@ -69,3 +69,10 @@ if (m > 0)
 y <- runif(n) < sigmoid(w)
 y <- as.double(y)
 
+# FIT VARIATIONAL APPROXIMATION TO POSTERIOR
+# ------------------------------------------
+# Fit the fully-factorized variational approximation to the posterior
+# distribution of the coefficients for a logistic regression model of
+# a binary outcome (case-control status), with spike and slab priors
+# on the coefficients.
+# TO DO.

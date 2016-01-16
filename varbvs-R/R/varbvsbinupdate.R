@@ -1,52 +1,67 @@
-varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, S) {
-  # Runs a single iteration of the coordinate ascent updates to
-  # maximize the variational lower bound for Bayesian variable
-  # selection in logistic regression. It adjusts the fully-factorized
-  # variational approximation to the posterior distribution of the
-  # coefficients in a logistic regression model of a binary outcome or
-  # trait, with spike and slab priors on the coefficients.
+# Execute a single iteration of the coordinate ascent updates to
+# maximize the variational lower bound for Bayesian variable selection
+# in logistic regression.
+#
+# Input X is an n x p matrix of observations about the variables (or
+# features), where n is the number of samples, and p is the number of
+# variables. Input vector y contains samples of the binary outcome; it
+# is a vector of length n.
+#
+# Input sa specifies the prior variance of the coefficients. Input
+# logodds is the prior log-odds of inclusion for each variable. It
+# must be a vector of length p. Note that a residual variance
+# parameter (sigma) is not needed to model a binary outcome. See
+# function 'updatestats.varbvsbin' for more information about input
+# 'stats'.
+#
+# Inputs alpha0, mu0 are the current parameters of the variational
+# approximation; under the variational approximation, the ith
+# regression coefficient is normal with probability alpha0[i], and
+# mu0[i] is the mean of the coefficient given that it is included in
+# the model. Input Xr0 must be Xr0 = X*(alpha0*mu0).
+#
+# Input i specifies the order in which the coordinates are updated. It
+# may be a vector of any length. Each entry of i must be an integer
+# between 1 and p.
+#
+# There are three outputs. Output vectors alpha and mu are the updated
+# variational parameters, and Xr = X*(alpha*mu). The computational
+# complexity is O(n*length(i)).
+varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
 
-  # CHECK THE INPUTS.
+  # Get the number of samples (n) and variables (p).
+  n <- nrow(X)
+  p <- ncol(X)
+
   # Check input X.
   if (!is.double(X) || !is.matrix(X))
     stop("Input argument 'X' must be a double-precision matrix")
-
-  # Get the number of samples (n), the number of variables (p), and
-  # the number of updates to execute (m).
-  n <- nrow(X)
-  p <- ncol(X)
-  m <- length(S)
-
-  # Check inputs sigma and sa.
+  
+  # Check input sa.
   if (!is.scalar(sa))
-    stop("Input arguments 'sa' must be a scalar")
+    stop("Input sa must be a scalar")
 
-  # Check input logodds.
-  if (length(logodds) == 1)
-    logodds <- rep(logodds,p)
-  if (length(logodds) != p)
-    stop("Input 'logodds' must be a scalar or a vector of length 'p'")
-
-  # Check input stats.
-  if (!is.list(stats) || is.null(stats$u) || is.null(stats$xy) ||
-      is.null(stats$xu) || is.null(stats$d))
-    stop("Invalid 'stats' argument")
-  if (length(stats$u) != n)
-    stop("'stats$u' must be a vector of length 'n'")
-  if (length(stats$xy) != p || length(stats$d) != p || length(stats$xu) != p)
-    stop("'stats$xy', 'stats$xu' and 'stats$d' must be vectors of length 'p'")
-
-  # Check inputs alpha0 and mu0.
-  if (length(alpha0) != p || length(mu0) != p)
-    stop("Inputs 'alpha0' and 'mu0' must be vectors of length 'p'")
+  # Check input logodds, alpha0 and mu0.
+  if (!(length(logodds) == p & length(alpha0) == p & length(mu0) == p))
+    stop("logodds, alpha0 and mu0 must have length = ncol(X)")
 
   # Check input Xr0.
   if (length(Xr0) != n)
-    stop("Input 'Xr0' must be a vector of length 'n'")
+    stop("length(Xr0) must be equal to nrow(X)")
 
-  # Check input S.
-  if (sum(S < 1 | S > p) > 0)
-      stop("Input 'S' contains invalid variable indices")
+  # Check input i.
+  if (sum(i < 1 | i > p) > 0)
+    stop("Input i contains invalid variable indices")
+
+  # Execute the C routine using the .Call interface, and return the
+  # updated variational parameters statistics in a list object. The
+  # main reason for using the .Call interface is that there is less of
+  # a constraint on the size of the input matrices. The only
+  # components that change are alpha, mu and Xr. Note that I need to
+  # subtract 1 from the indices because R vectors start at 1, and C
+  # arrays start at 0.
+  # TO DO.
+  return(list(alpha = alpha,mu = mu,Xr = Xr))
 
   # Execute the C routine, and return the results in a list object.
   # The only components of the list that change are alpha, mu and Xr.
@@ -56,8 +71,6 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, S) {
   # this matrix. For this same reason, I set DUP = FALSE so that the
   # input arguments are not duplicated.
   result <- .C("varbvsbinupdateR",
-               n       = as.integer(n),       # Number of samples.
-               m       = as.integer(m),       # Number of updates.
                X       = X,                   # Matrix of samples.
                sa      = as.double(sa),       # Prior variance of coefficients.
                logodds = as.double(logodds),  # Prior log-odds.

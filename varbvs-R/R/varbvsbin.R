@@ -152,7 +152,7 @@ varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
   return(list(alpha=alpha,mu=mu,s=s,eta=eta,lnZ=lnZ))
 }
 
-updatestats <- function (X, y, eta) {
+updatestats.varbvsbin <- function (X, y, eta) {
   # Calculate some useful quantities for updating the variational
   # approximation to the logistic regression factors. Inputs X and y
   # specify the data, and eta is the vector of free parameters. It is
