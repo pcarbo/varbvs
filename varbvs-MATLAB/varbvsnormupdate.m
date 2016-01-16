@@ -1,12 +1,12 @@
-% [alpha,mu,Xy] = varbvsnormupdate(X,sigma,sa,logodds,xy,d,alpha0,mu0,Xr0,i)
+% [alpha,mu,Xr] = varbvsnormupdate(X,sigma,sa,logodds,xy,d,alpha0,mu0,Xr0,i)
 % runs a single iteration of the coordinate ascent updates to maximize the
 % variational lower bound for Bayesian variable selection in linear
 % regression. 
 %
-% Input X is an n x p matrix of observations about the variables (or
-% features), where n is the number of samples, and p is the number of
-% variables. Input xy = X'*y, where y is the vector of observations about
-% the continuous outcome. X must be a single precision matrix.
+% Input X is an n x p matrix of variable (or feature) observations, where n
+% is the number of samples, and p is the number of variables. Input xy =
+% X'*y, where y is the vector of samples of the continuous outcome. X must
+% be a single precision matrix.
 %
 % Inputs sigma, sa and logodds specify other model parameters. sigma and sa
 % are scalars. sigma specifies the variance of the residual, and sa is the

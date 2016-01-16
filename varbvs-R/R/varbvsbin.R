@@ -1,3 +1,32 @@
+# Implements the fully-factorized variational approximation for
+# Bayesian variable selection in logistic regression. It finds the
+# "best" fully-factorized variational approximation to the posterior
+# distribution of the coefficients in a logistic regression model of a
+# binary outcome, with spike and slab priors on the coefficients. By
+# "best", we mean the approximating distribution that locally
+# minimizes the K-L divergence between the approximating distribution
+# and the exact posterior.
+#
+# Input X is the n x p matrix of variable (or feature) observations,
+# where n is the number of samples, and p is the number of variables.
+# Input vector Y contains samples of the binary outcome; it is a
+# vector of length n.
+#
+# Inputs sa and logodds are the hyperparameters. Scalar sa is the
+# prior variance of the coefficients. Input logodds is the prior
+# log-odds of inclusion for each variable. Note that the residual
+# variance parameter (sigma) is not needed to model a binary outcome.
+#
+# Output logw is the variational estimate of the marginal
+# log-likelihood given the hyperparameters sa and logodds. Outputs
+# alpha, mu and s are the parameters of the variational approximation
+# and, equivalently, variational estimates of posterior quantites:
+# under the variational approximation, the ith regression coefficient
+# is normal with probability alpha[i]; mu[i] and s[i] are the mean and
+# variance of the coefficient given that it is included in the
+# model. Output eta is the vector of free parameters that specify the
+# variational approximation to the likelihood factors in the logistic
+# regression.
 varbvsbinoptimize <- function (X, y, sa, logodds, alpha0 = NULL, mu0 = NULL,
                                eta0 = NULL, fixed.eta = FALSE,
                                verbose = TRUE) {

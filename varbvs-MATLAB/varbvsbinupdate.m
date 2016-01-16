@@ -3,10 +3,10 @@
 % variational lower bound for Bayesian variable selection in logistic
 % regression.
 %
-% Input X is an n x p matrix of observations about the variables (or
-% features), where n is the number of samples, and p is the number of
-% variables. Input vector y contains samples of the binary outcome;
-% it is a vector of length n. X must be a single precision matrix.
+% Input X is an n x p matrix of observations of the variables (or features),
+% where n is the number of samples, and p is the number of variables. Input
+% y contains samples of the binary outcome; it is a vector of length n. X
+% must be a single precision matrix.
 %
 % Input sa specifies the prior variance of the coefficients. Input logodds
 % is the prior log-odds of inclusion for each variable. It must be a vector

@@ -1,4 +1,4 @@
-% [logw,sa,alpha,mu,s,eta] = varbvsbin(X,y,sa,logodds,...)  implements the
+% [logw,sa,alpha,mu,s,eta] = varbvsbin(X,y,sa,logodds,...) implements the
 % fully-factorized variational approximation for Bayesian variable selection
 % in logistic regression. It finds the "best" fully-factorized variational
 % approximation to the posterior distribution of the coefficients in a
@@ -7,10 +7,9 @@
 % distribution that locally minimizes the K-L divergence between the
 % approximating distribution and the exact posterior.
 %
-% Input X is an n x p matrix of observations about the variables (or
-% features), where n is the number of samples, and p is the number of
-% variables. Input Y is the vector of observations about the binary outcome;
-% it is a vector of length n.
+% Input X is an n x p matrix variable (or feature) observations, where n is
+% the number of samples, and p is the number of variables. Input y contains
+% samples of the binary outcome; it is a vector of length n.
 %
 % Inputs sa and logodds are the hyperparameters. Scalar sa is the prior
 % variance of the coefficients. logodds is the prior log-odds of inclusion

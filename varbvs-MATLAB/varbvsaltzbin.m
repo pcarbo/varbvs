@@ -1,3 +1,5 @@
+% NOTE: This code has not yet been incorporated into varbvs.m.
+%
 % [LNZ,ALPHA,MU,S] = VARBVSALTZBIN(X,Z,Y,SA,LOGODDS,ETA,OPTIONS) is exactly
 % equivalent to VARBVSZBIN with the same inputs, except that ETA, the vector
 % of free parameters specifying the variational approximation to the
@@ -9,8 +11,8 @@
 %
 % One advantage of this implementation is that it is easy to correct Y for
 % other effects (assuming they are independent of the effects you are
-% estimating). To accomplish this, set OPTIONS.XB0 = X0*B0,where X0 is the
-% matrix of observations about an additional set of variables (that are
+% estimating). To accomplish this, set OPTIONS.XB0 = X0*B0, where X0 is the
+% matrix of observations of an additional set of variables (that are
 % independent of the variables X), and B0 is the set of regression
 % coefficients ("effects") corresponding to these variables. You simply need
 % to subtract the effects from the vector Y and all the calculations will

@@ -8,10 +8,9 @@
 % K-L divergence between the approximating distribution and the exact
 % posterior.
 %
-% Input X is an n x p matrix of observations about the variables (or
-% features), where n is the number of samples, and p is the number of
-% variables. Input y is the vector of observations about the outcome; it is
-% a vector of length n.
+% Input X is an n x p matrix of variable (or feature) observations, where n
+% is the number of samples, and p is the number of variables. Input y
+% contains observations of the outcome; it is a vector of length n.
 %
 % Inputs sigma, sa and logodds are additional model parameters; sigma and sa
 % are scalars. Input sigma specifies the variance of the residual, and sa

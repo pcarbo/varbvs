@@ -27,7 +27,7 @@
 %          automatically included in the regression model. For no
 %          covariates, set Z to the empty matrix [].
 %
-% y        Vector of length n containing observations about binary
+% y        Vector of length n containing observations of binary
 %          (family = 'binomial') or continuous (family = 'gaussian')
 %          outcome. For binary outcomes, all entries of y must be 
 %          0 or 1.
