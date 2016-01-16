@@ -77,6 +77,6 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
   out <- .Call("varbvsnormupdate_Call",X = X,sigma = as.double(sigma),
                sa = as.double(sa),logodds = as.double(logodds),
                xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
-               Xr = Xr,i = as.double(i-1))
+               Xr = Xr,i = as.integer(i-1))
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }

@@ -36,6 +36,7 @@ function [logw, sa, alpha, mu, s, eta] = ...
     % Save the current variational parameters and model parameters.
     alpha0 = alpha;
     mu0    = mu;
+    s0     = s;
     eta0   = eta;
     sa0    = sa;
 
@@ -107,6 +108,7 @@ function [logw, sa, alpha, mu, s, eta] = ...
       sa    = sa0;
       alpha = alpha0;
       mu    = mu0;
+      s     = s0;
       eta   = eta0;
       break
     elseif max(err) < tol

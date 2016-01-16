@@ -13,9 +13,6 @@ SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp,
 
   // (1) GET INPUTS AND OUTPUTS
   // --------------------------
-  //
-  // TO DO: Try to represent input 'i' as an integer.
-  //
   double* X       = REAL(Xp);        // Input X.
   double  sigma   = *REAL(sigmap);   // Input sigma.
   double  sa      = *REAL(sap);      // Input sa.
@@ -25,12 +22,11 @@ SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp,
   double* alpha   = REAL(alphap);    // Input and output alpha.
   double* mu      = REAL(mup);       // Input and output mu.
   double* Xr      = REAL(Xrp);       // Input and output Xr.
-  double* i       = REAL(ip);        // Input i.
+  int*    i       = INTEGER(ip);     // Input i.
 
   // Get the number of samples (n) and the number of coordinate ascent
   // updates (m).
-  SEXP     t = getAttrib(Xp,R_DimSymbol);
-  R_xlen_t n = INTEGER(t)[0];
+  R_xlen_t n = length(Xrp);
   R_xlen_t m = length(ip);
 
   // (2) CYCLE THROUGH COORDINATE ASCENT UPDATES

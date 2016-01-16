@@ -81,6 +81,8 @@ varbvsnorm <-
     Xr    <- out$Xr
     rm(out)
 
+    browser()
+    
     # (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
@@ -128,14 +130,16 @@ varbvsnorm <-
       caterase(status)
     }
     if (logw < logw0) {
+      return(list(logw = logw0,sigma = sigma0,sa = sa0,
+                  alpha = alpha0,mu = mu0,s = s))
       logw  <- logw0
       sa    <- sa0
       alpha <- alpha0
-      mu    <- mu0;
+      mu    <- mu0
       break
-    else if (max(err) < tol) {
-      return(list(logw = logw,sigma = sigma,sa = sa,alpha = alpha, alpha, mu, s]
-    }
+    } else if (max(err) < tol)
+      return(list(logw = logw,sigma = sigma,sa = sa,
+                  alpha = alpha,mu = mu,s = s))
   }
 }
 
