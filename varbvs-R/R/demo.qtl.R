@@ -76,18 +76,6 @@ if (m > 0)
   y <- y + Z %*% u
 y <- c(y)
 
-# TEMPORARY.
-Z <- cbind(1,Z)
-colnames(Z)[1] <- "intercept"
-y <- y - c(Z %*% solve(crossprod(Z),c(y %*% Z)))
-X <- X - Z %*% solve(crossprod(Z),t(Z) %*% X)
-
-# TEMPORARY.
-fit <- varbvsnorm(X,y,var(y),1,rep(log(na/p),p),runif(p),rnorm(p,1))
-cat("\n")
-
-stop()
-
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 # Fit the fully-factorized variational approximation to the posterior
