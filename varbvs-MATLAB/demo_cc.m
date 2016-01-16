@@ -13,11 +13,11 @@ na = 20;    % Number of markers that affect the binary outcome.
 sa = 0.15;  % Variance of log-odds ratios.
 p1 = 0.25;  % Target proportion of subjects that are cases (y = 1).
 
-% Set the random number generator seed.
-rng(1);
-
 % Candidate values for the prior log-odds of inclusion.
 logodds = (-3:0.1:-1)';
+
+% Set the random number generator seed.
+rng(1);
 
 % GENERATE DATA SET
 % -----------------

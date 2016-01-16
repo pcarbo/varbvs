@@ -38,7 +38,7 @@ cat("1. GENERATING DATA SET.\n")
 maf <- 0.05 + 0.45*runif(p)
 X   <- (runif(n*p) < maf) +
        (runif(n*p) < maf)
-X  <- matrix(X,n,p,byrow = TRUE)
+X   <- matrix(X,n,p,byrow = TRUE)
 
 # Generate additive effects for the markers so that exactly na of them have
 # a nonzero effect on the trait.
@@ -56,14 +56,14 @@ colnames(X) <- paste0("rs",sample(1e6,p))
 sb   <- r/(1-r)/var(c(X %*% beta))
 beta <- sqrt(sb*se) * beta
 
-# Generate a random intercept
+# Generate a random intercept.
 mu <- rnorm(1)
 
 # Generate the covariate data (Z), and the linear effects of the
 # covariates (u).
 m <- length(covariates)
 if (m > 0) {
-  Z <- matrix(rnorm(n*m),n,m)
+  Z <- randn(n,m)
   u <- rnorm(m)
   colnames(Z) <- covariates
 } else {
