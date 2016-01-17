@@ -23,11 +23,14 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
   stats <- updatestats.varbvsbinz(X,Z,y,eta)
   s     <- sa/(sa*stats$xdx + 1)
 
+  # Initialize storage for outputs logw and err.
+  logw <- rep(0,maxiter)
+  err  <- rep(0,maxiter)
+  
   # (2) MAIN LOOP
   # -------------
   # Repeat until convergence criterion is met, or until the maximum
   # number of iterations is reached.
-  logw <- (-Inf)
   for (iter in 1:maxiter) {
     
     # Save the current variational parameters and model parameters.
@@ -69,9 +72,9 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
     # (2d) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute variational lower bound to marginal log-likelihood.
-    logw <- int.logitz(Z,y,stats,alpha,mu,s,Xr,eta) +
-            int.gamma(logodds,alpha) +
-            int.klbeta(alpha,mu,s,sa)
+    logw[iter] <- int.logitz(Z,y,stats,alpha,mu,s,Xr,eta) +
+                  int.gamma(logodds,alpha) +
+                  int.klbeta(alpha,mu,s,sa)
 
     # (2e) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
     # -----------------------------------------------------
@@ -91,31 +94,32 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
     # is less than the specified tolerance, or when the variational
     # lower bound has decreased. I ignore parameters that are very
     # small. If the variational bound decreases, stop.
-    err <- abs(alpha - alpha0)
+    err[iter] <- max(abs(alpha - alpha0))
     if (verbose) {
       if (is.null(outer.iter))
         status <- NULL
       else
         status <- sprintf("%05d ",outer.iter)
-      cat(paste(status,sprintf("%05d %+13.6e %0.1e %06.1f    ---  %0.1e",
-                                    iter,logw,max(err),sum(alpha),sa),sep=""))
-      cat("\n")
+      caterase(paste(status,sprintf("%05d %+13.6e %0.1e %06.1f      NA  %0.1e",
+                                    iter,logw[iter],err[iter],sum(alpha),
+                                    sa),sep=""))
     }
-    if (logw < logw0) {
-      browser()
-      logw  <- logw0
-      sa    <- sa0
-      alpha <- alpha0
-      mu    <- mu0
-      s     <- s0
-      eta   <- eta0
+    if (logw[iter] < logw0) {
+      logw[iter]  <- logw0
+      err[iter]   <- 0
+      sa          <- sa0
+      alpha       <- alpha0
+      mu          <- mu0
+      s           <- s0
+      eta         <- eta0
       break
-    } else if (max(err) < tol)
+    } else if (err[iter] < tol)
       break
   }
     
   # Return the variational estimates.
-  return(list(logw = logw,sa = sa,alpha = alpha,mu = mu,s = s,eta = eta))
+  return(list(logw = logw[1:iter],err = err[1:iter],sa = sa,
+              alpha = alpha,mu = mu,s = s,eta = eta))
 }
 
 # ----------------------------------------------------------------------

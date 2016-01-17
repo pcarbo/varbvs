@@ -8,7 +8,7 @@ clear
 % -----------------
 n  = 1500;  % Number of samples (subjects).
 p  = 2000;  % Number of variables (genetic markers).
-m  = 0;     % Number of covariates (m >= 0).
+m  = 2;     % Number of covariates (m >= 0).
 na = 20;    % Number of markers that affect the binary outcome.
 sa = 0.15;  % Variance of log-odds ratios.
 p1 = 0.25;  % Target proportion of subjects that are cases (y = 1).
@@ -66,10 +66,10 @@ y = rand(n,1) < sigmoid(t);
 % TEMPORARY.
 alpha0 = rand(p,1)/p;
 mu0    = randn(p,1);
-save('cc.mat','X','y','alpha0','mu0','-v6');
+save('cc.mat','X','Z','y','alpha0','mu0','-v6');
 [logw err sa alpha mu s eta] = ...
-    varbvsbin(X,y,1,repmat(log(na/p),p,1),alpha0,mu0,ones(n,1),...
-              1e-4,1e4,true,[],true,true,0,0);
+    varbvsbinz(X,Z,y,1,repmat(log(na/p),p,1),alpha0,mu0,ones(n,1),...
+               1e-4,1e4,true,[],true,true,0,0);
 fprintf('\n');
 
 return
