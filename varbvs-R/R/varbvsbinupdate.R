@@ -43,7 +43,7 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
     stop("Input argument 'X' must be a double-precision matrix")
   
   # Check input sa.
-  if (!is.scalar(sa))
+  if (length(sa) != 1)
     stop("Input sa must be a scalar")
 
   # Check input logodds, alpha0 and mu0.
@@ -58,6 +58,11 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
   if (sum(i < 1 | i > p) > 0)
     stop("Input i contains invalid variable indices")
 
+  # Initialize storage for the results.
+  alpha <- c(alpha0)
+  mu    <- c(mu0)
+  Xr    <- c(Xr0)
+  
   # Execute the C routine using the .Call interface, and return the
   # updated variational parameters statistics in a list object. The
   # main reason for using the .Call interface is that there is less of
@@ -67,8 +72,8 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
   # arrays start at 0.
   out <- .Call("varbvsbinupdate_Call",X = X,sa = as.double(sa),
                logodds = as.double(logodds),d = as.double(stats$d),
-               xdx = as.double(stats.xdx),xy = as.double(stats.xy),
-               xd = as.double(stats.xd),alpha = alpha,mu = mu,Xr = Xr,
+               xdx = as.double(stats$xdx),xy = as.double(stats$xy),
+               xd = as.double(stats$xd),alpha = alpha,mu = mu,Xr = Xr,
                i = as.integer(i-1))
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }

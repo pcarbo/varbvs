@@ -312,7 +312,7 @@ outerloop <- function (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta,
   if (family == "gaussian") {
     # TO DO: FIX THIS.
     return(varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,
-                      verbose,outer.iter,update_sigma,update.sa,n0,sa0))
+                      verbose,outer.iter,update.sigma,update.sa,n0,sa0))
   } else if (family == "binomial" & ncol(Z) == 1) {
     # [logw sa alpha mu s eta] = ...
     #     varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...

@@ -63,7 +63,7 @@ SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
   double* alpha   = REAL(alphap);    // Input and output alpha.
   double* mu      = REAL(mup);       // Input and output mu.
   double* Xr      = REAL(Xrp);       // Input and output Xr.
-  double* i       = REAL(ip);        // Input i.
+  int*    i       = INTEGER(ip);     // Input i.
 
   // Get the number of samples (n) and the number of coordinate ascent
   // updates (m).

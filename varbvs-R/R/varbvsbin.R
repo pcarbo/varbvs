@@ -43,136 +43,98 @@ varbvsbin <-
   stats <- updatestats.varbvsbin(X,y,eta)
   s     <- sa/(sa*stats$xdx + 1)
 
-  # CHECK INPUTS.
-  # Check input X.
-  if (!is.matrix(X))
-    stop("Input argument 'X' must be a matrix")
-  if (!is.double(X))
-    storage.mode(X) <- "double"
+  # (2) MAIN LOOP
+  # -------------
+  # Repeat until convergence criterion is met, or until the maximum
+  # number of iterations is reached.
+  logw <- (-Inf)
+  for (iter in 1:maxiter) {
 
-  # Check input y.
-  y <- c(y)
-  if (length(y) != n)
-    stop("Data 'X' and 'y' do not match")
+    # Save the current variational parameters and model parameters.
+    alpha0 <- alpha
+    mu0    <- mu
+    s0     <- s
+    eta0   <- eta
+    sa0    <- sa
 
-  # Check inputs sigma and sa.
-  if (!is.scalar(sa))
-    stop("Input argument 'sa' must be a scalar")
+    # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
+    # --------------------------------------------
+    # Compute variational lower bound to marginal log-likelihood.
+    logw0 <- int.logit(y,stats,alpha,mu,s,Xr,eta) +
+             int.gamma(logodds,alpha) +
+             int.klbeta(alpha,mu,s,sa)
 
-  # Check input logodds.
-  if (is.scalar(logodds))
-    logodds <- rep(logodds,p)
-  if (length(logodds) != p)
-    stop("Input 'logodds' must be a scalar or a vector of length 'p'")
-
-  # TAKE CARE OF OPTIONAL INPUTS.
-  # Set initial estimates of variational parameters.
-  if (is.null(alpha0)) {
-    alpha <- runif(p)
-    alpha <- alpha / sum(alpha)
-  }
-  else
-    alpha <- c(alpha0)
-  if (is.null(mu0))
-    mu <- rnorm(p)
-  else
-    mu <- c(mu0)
-  if (length(alpha) != p || length(mu) != p)
-    stop("'alpha0' and 'mu0' must be NULL or vectors of length 'p'")
-
-  # Determine whether to update the variational approximation to the
-  # logistic regression.
-  if (fixed.eta && is.null(eta0))
-    stop("'fixed.eta = TRUE' requires specification of argument 'eta0'")
-  
-  # Initialize the free parameters specifying the variational
-  # approximation to the logistic regression factors.
-  if (is.null(eta0))
-    eta <- rep(1,n)
-  else
-    eta <- c(eta0)
-  if (length(eta) != n)
-    stop("Input argument 'eta' must NULL or a vector of length 'n'")
-
-  # INITIAL STEPS.
-  # Compute a few useful quantities.
-  Xr    <- c(X %*% (alpha*mu))  # Xr = X*(alpha*mu).
-  stats <- updatestats(X,y,eta)
-
-  # MAIN LOOP.
-  # Repeat until convergence criterion is met.
-  lnZ  <- -Inf
-  iter <- 0
-  if (verbose) {
-    cat("       variational    max. incl max.\n")
-    cat("iter   lower bound  change vars E[b]\n")
-  }
-  while (TRUE) {
-
-    # Go to the next iteration.
-    iter <- iter + 1
-
-    # Save the current variational parameters and lower bound.
-    alpha0  <- alpha
-    mu0     <- mu
-    lnZ0    <- lnZ
-    eta0    <- eta
-    params0 <- c(alpha,alpha*mu)
-
-    # UPDATE VARIATIONAL APPROXIMATION.
+    # (2b) UPDATE VARIATIONAL APPROXIMATION
+    # -------------------------------------
     # Run a forward or backward pass of the coordinate ascent updates.
-    if (is.odd(iter))
-      S <- seq(1,p)
+    if (iter %% 2)
+      i <- 1:p
     else
-      S <- seq(p,1,-1)
-    result <- varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,S)
-    alpha  <- result$alpha
-    mu     <- result$mu
-    Xr     <- result$Xr
+      i <- p:1
+    out   <- varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,i)
+    alpha <- out$alpha
+    mu    <- out$mu
+    Xr    <- out$Xr
+    rm(out)
 
-    # Recalculate the posterior variance of the coefficients.
-    s <- sa/(sa*stats$d + 1)
-
-    # UPDATE ETA.
+    # (2c) UPDATE ETA
+    # ---------------
     # Update the free parameters specifying the variational approximation
     # to the logistic regression factors.
-    if (!fixed.eta) {
-      eta   <- update.eta(X,y,betavar(alpha,mu,s),Xr,stats$u);
-      stats <- updatestats(X,y,eta)
+    if (optimize.eta) {
+      eta   <- update.eta(X,y,betavar(alpha,mu,s),Xr,stats$d)
+      stats <- updatestats.varbvsbin(X,y,eta)
+      s     <- sa/(sa*stats$xdx + 1)
     }
 
-    # COMPUTE VARIATIONAL LOWER BOUND.
+    # (2d) COMPUTE UPDATED VARIATIONAL LOWER BOUND
+    # --------------------------------------------
     # Compute variational lower bound to marginal log-likelihood.
-    lnZ <- (intlogit(y,stats,alpha,mu,s,Xr,eta)
-            + intgamma(logodds,alpha)
-            + intklbeta(alpha,mu,s,sa))
+    logw <- int.logit(y,stats,alpha,mu,s,Xr,eta) +
+            int.gamma(logodds,alpha) +
+            int.klbeta(alpha,mu,s,sa)
 
-    # CHECK CONVERGENCE.
+    # (2e) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
+    # -----------------------------------------------------
+    # Compute the maximum a posteriori estimate of sa, if requested.
+    # Note that we must also recalculate the variance of the
+    # regression coefficients when this parameter is updated.
+    if (update.sa) {
+      sa <- (sa0*n0 + dot(alpha,s + mu^2))/(n0 + sum(alpha))
+      s  <- sa/(sa*stats$xdx + 1)
+    }
+
+    # (2f) CHECK CONVERGENCE
+    # ----------------------
     # Print the status of the algorithm and check the convergence
     # criterion. Convergence is reached when the maximum relative
     # difference between the parameters at two successive iterations
     # is less than the specified tolerance, or when the variational
     # lower bound has decreased. I ignore parameters that are very
-    # small.
-    params <- c(alpha,alpha*mu)
-    S      <- which(abs(params) > 1e-6)
-    err    <- relerr(params[S],params0[S])
-    if (verbose)
-      cat(sprintf('%4d %+13.6e %0.1e %4d %0.2f\n',iter,lnZ,max(err),
-                  round(sum(alpha)),max(abs(alpha*mu))))
-    if (lnZ < lnZ0) {
+    # small. If the variational bound decreases, stop.
+    err <- abs(alpha - alpha0)
+    if (verbose) {
+      if (is.null(outer.iter))
+        status <- NULL
+      else
+        status <- sprintf("%05d ",outer.iter)
+      caterase(paste(status,sprintf("%05d %+13.6e %0.1e %06.1f    ---  %0.1e",
+                                    iter,logw,max(err),sum(alpha),sa),sep=""))
+    }
+    if (logw < logw0) {
+      logw  <- logw0
+      sa    <- sa0
       alpha <- alpha0
       mu    <- mu0
+      s     <- s0
       eta   <- eta0
-      lnZ   <- lnZ0
       break
-    }
-    else if (max(err) < tolerance)
+    } else if (max(err) < tol)
       break
   }
 
   # Return the variational estimates.
-  return(list(alpha=alpha,mu=mu,s=s,eta=eta,lnZ=lnZ))
+  return(list(logw = logw,sa = sa,alpha = alpha,mu = mu,s = s,eta = eta))
 }
 
 # ----------------------------------------------------------------------
@@ -201,52 +163,53 @@ updatestats.varbvsbin <- function (X, y, eta) {
 }
 
 # ----------------------------------------------------------------------
-# Returns the M-step update for the parameters specifying the
-# variational lower bound to the logistic regression factors. Input
-# Xr must be Xr = X*r, where r is the posterior mean of the
-# coefficients. Note that under the fully-factorized variational
-# approximation, r = alpha.*mu. Input v is the posterior variance of
-# the coefficients. For this update to be valid, it is required that
-# the posterior covariance of the coefficients is equal to
-# diag(v). Input d must be d = slope(eta); see function slope for
-# details.
-update.eta <- function (X, y, v, Xr, u) {
+# Computes the M-step update for the parameters specifying the
+# variational lower bound to the logistic regression factors. Input Xr
+# must be Xr = X*r, where r is the posterior mean of the coefficients.
+# Note that under the fully-factorized variational approximation, r =
+# alpha*mu. Input v is the posterior variance of the coefficients. For
+# this update to be valid, it is required that the posterior
+# covariance of the coefficients is equal to diag(v). Input d must be
+# d = slope(eta); see function 'slope' for details.
+update.eta <- function (X, y, v, Xr, d) {
   
-  # Compute 'mu0', the posterior mean of the intercept in the logistic
-  # regression under the variational approximation. Here, 'a' is the
-  # variance of the intercept given the other coefficients.
-  a   <- 1/sum(u)
-  mu0 <- a*(sum(y - 0.5) - dot(u,Xr))
+  # Compute mu0, the posterior mean of the intercept in the logistic
+  # regression under the variational approximation. Here, a is the
+  # conditional variance of the intercept given the other coefficients.
+  a   <- 1/sum(d)
+  mu0 <- a*(sum(y - 0.5) - dot(d,Xr))
 
-  # Compute 's0', the (marginal) posterior variance of the intercept in
-  # the logistic regression.
-  xu <- c(u %*% X)  # xu = X'*u.
-  s0 <- a*(1 + a*dot(v,xu^2))
+  # Compute s0, the (marginal) posterior variance of the intercept in the
+  # logistic regression.
+  xd <- c(d %*% X)
+  s0 <- a*(1 + a*dot(v,xd^2))
   
   # Calculate the covariance between the intercept and coefficients.
-  c0 <- -a*xu*v
+  c <- (-a*xd*v)
   
   # This is the M-step update for the free parameters.
-  eta <- sqrt((mu0 + Xr)^2 + s0 + diagsqt(X,v) + 2*c(X %*% c0))
-  return(eta)
+  return(sqrt((mu0 + Xr)^2 + s0 + diagsqt(X,v) + 2*c(X %*% c)))
 }
 
-intlogit <- function (y, stats, alpha, mu, s, Xr, eta) {
-  # Computes an integral that appears in the variational lower bound
-  # of the marginal log-likelihood for the logistic regression
-  # model. This integral is an approximation to the expectation of the
-  # logistic regression log-likelihood taken with respect to the
-  # variational approximation. Input argument 'stats' must be the
-  # return argument to updatestats(X,y,eta). Input Xr be equal to Xr
-  # = X*(alpha*mu).
+# ----------------------------------------------------------------------
+# Computes an integral that appears in the variational lower bound of
+# the marginal log-likelihood for the logistic regression model. This
+# integral is an approximation to the expectation of the logistic
+# regression log-likelihood taken with respect to the variational
+# approximation.
+int.logit <- function (y, stats, alpha, mu, s, Xr, eta) {
+
+  # Get some of the statistics.
+  yhat <- stats$yhat
+  xdx  <- stats$xdx
+  d    <- stats$d
 
   # Get the variance of the intercept given the other coefficients.
-  u <- stats$u
-  a <- 1/sum(u)
+  a <- 1/sum(d)
 
   # Compute the variational approximation to the expectation of the
   # log-likelihood with respect to the variational approximation.
-  return(sum(logsigmoid(eta)) + dot(eta,u*eta - 1)/2 + log(a)/2
-         + a*sum(y - 0.5)^2/2 + dot(stats$yhat,Xr) - qnorm(Xr,u)^2/2
-         + a/2*dot(u,Xr)^2 - dot(stats$d,betavar(alpha,mu,s))/2)
+  return(sum(logsigmoid(eta)) + dot(eta,d*eta - 1)/2 + log(a)/2 +
+         a*sum(y - 0.5)^2/2 + dot(yhat,Xr) - qnorm(Xr,d)^2/2 +
+         a*dot(d,Xr)^2/2 - dot(xdx,betavar(alpha,mu,s))/2)
 }

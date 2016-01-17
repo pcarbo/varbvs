@@ -7,6 +7,8 @@
 #
 source("misc.R")
 source("varbvs.R")
+source("varbvsbin.R")
+source("varbvsbinupdate.R")
 dyn.load("../src/diagsqr.so")
 dyn.load("../src/varbvsr.so")
 
@@ -39,6 +41,7 @@ maf <- 0.05 + 0.45*runif(p)
 X   <- (runif(n*p) < maf) +
        (runif(n*p) < maf)
 X   <- matrix(X,n,p,byrow = TRUE)
+storage.mode(X) <- "double"
 
 # Generate additive effects for the markers so that exactly na of them
 # have a nonzero effect on the trait.
@@ -70,9 +73,7 @@ y <- runif(n) < sigmoid(w)
 y <- as.double(y)
 
 # TEMPORARY.
-out <- varbvsbin(X,y,1,log10(),runif(p),rnorm(p),rep(1,n))
-
-stop()
+out <- varbvsbin(X,y,1,rep(log10(na/p),p),runif(p),rnorm(p),rep(1,n))
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------

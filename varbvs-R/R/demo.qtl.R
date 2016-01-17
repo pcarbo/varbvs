@@ -39,6 +39,7 @@ maf <- 0.05 + 0.45*runif(p)
 X   <- (runif(n*p) < maf) +
        (runif(n*p) < maf)
 X   <- matrix(X,n,p,byrow = TRUE)
+storage.mode(X) <- "double"
 
 # Generate additive effects for the markers so that exactly na of them have
 # a nonzero effect on the trait.
@@ -83,4 +84,5 @@ y <- c(y)
 # continuous outcome (quantitiative trait), with spike and slab priors on
 # the coefficients.
 cat("2. FITTING MODEL TO DATA.\n")
-fit <- varbvs(X,Z,y,"gaussian",logodds = logodds)
+# TO DO.
+# fit <- varbvs(X,Z,y,"gaussian",logodds = logodds)
