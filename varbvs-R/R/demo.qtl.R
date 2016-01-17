@@ -77,6 +77,10 @@ if (m > 0)
   y <- y + Z %*% u
 y <- c(y)
 
+y <- y - c(Z %*% solve(crossprod(Z),c(y %*% Z)))
+X <- X - Z %*% solve(crossprod(Z),t(Z) %*% X)
+out <- varbvsnorm(X,y,1,1,rep(log(na/p),p),runif(p),rnorm(p))
+
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 # Fit the fully-factorized variational approximation to the posterior

@@ -16,13 +16,13 @@ dyn.load("../src/varbvsr.so")
 # -----------------
 n  <- 1500  # Number of samples (subjects).
 p  <- 2000  # Number of variables (genetic markers).
-m  <- 0     # Number of covariates (m >= 0).
+m  <- 2     # Number of covariates (m >= 0).
 na <- 20    # Number of markers that affect the binary outcome.
 sa <- 0.15  # Variance of log-odds ratios.
 p1 <- 0.25  # Target proportion of subjects that are cases (y = 1).
 
 # Names of covariates.
-covariates <- NULL
+covariates <- c("age","weight")
 
 # Candidate values for the prior log-odds of inclusion.
 logodds <- seq(-3,-1,0.1)
@@ -57,6 +57,7 @@ colnames(X) <- paste0("rs",sample(1e6,p))
 if (m > 0) {
   Z <- randn(n,m)
   u <- rnorm(m)
+  colnames(Z) <- covariates
 } else {
   Z <- NULL
 }
@@ -73,7 +74,7 @@ y <- runif(n) < sigmoid(w)
 y <- as.double(y)
 
 # TEMPORARY.
-out <- varbvsbin(X,y,1,rep(log10(na/p),p),runif(p),rnorm(p),rep(1,n))
+out <- varbvsbin(X,y,1,rep(log(na/p),p),runif(p),rnorm(p),rep(1,n))
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
