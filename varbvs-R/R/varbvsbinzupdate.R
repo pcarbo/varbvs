@@ -32,7 +32,7 @@ varbvsbinzupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
   alpha <- c(alpha0)
   mu    <- c(mu0)
   Xr    <- c(Xr0)
-  
+
   # Execute the C routine using the .Call interface, and return the
   # updated variational parameters statistics in a list object. The
   # main reason for using the .Call interface is that there is less of
@@ -43,7 +43,7 @@ varbvsbinzupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
   out <- .Call("varbvsbinzupdate_Call",X = X,sa = as.double(sa),
                logodds = as.double(logodds),d = as.double(stats$d),
                xdx = as.double(stats$xdx),xy = as.double(stats$xy),
-               dzr = as.double(stats$dzr),alpha = alpha,mu = mu,Xr = Xr,
+               dzr = stats$dzr,alpha = alpha,mu = mu,Xr = Xr,
                i = as.integer(i-1))
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }

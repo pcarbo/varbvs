@@ -185,10 +185,10 @@ update.eta <- function (X, y, v, Xr, d) {
   s0 <- a*(1 + a*dot(v,xd^2))
   
   # Calculate the covariance between the intercept and coefficients.
-  c <- (-a*xd*v)
-  
+  w <- (-a*xd*v)
+
   # This is the M-step update for the free parameters.
-  return(sqrt((mu0 + Xr)^2 + s0 + diagsqt(X,v) + 2*c(X %*% c)))
+  return(sqrt((mu0 + Xr)^2 + s0 + diagsqt(X,v) + 2*c(X %*% w)))
 }
 
 # ----------------------------------------------------------------------

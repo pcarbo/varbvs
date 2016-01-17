@@ -117,7 +117,7 @@ function [logw, sa, alpha, mu, s, eta] = ...
   end
 
 % ----------------------------------------------------------------------
-% diagprod(A,B) efficiently computes diagprod(A*B').
+% diagprod(A,B) efficiently computes diag(A*B').
 function y = diagprod (A, B)
   y = double(sum(A.*B,2));
   

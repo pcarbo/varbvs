@@ -97,8 +97,9 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
         status <- NULL
       else
         status <- sprintf("%05d ",outer.iter)
-      caterase(paste(status,sprintf("%05d %+13.6e %0.1e %06.1f    ---  %0.1e",
+      cat(paste(status,sprintf("%05d %+13.6e %0.1e %06.1f    ---  %0.1e",
                                     iter,logw,max(err),sum(alpha),sa),sep=""))
+      cat("\n")
     }
     if (logw < logw0) {
       logw  <- logw0
@@ -115,6 +116,11 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
   # Return the variational estimates.
   return(list(logw = logw,sa = sa,alpha = alpha,mu = mu,s = s,eta = eta))
 }
+
+# ----------------------------------------------------------------------
+# diagprod(A,B) efficiently computes diag(A*B').
+diagprod <- function (A, B)
+  rowSums(A * B)
 
 # ----------------------------------------------------------------------
 # This function returns useful quantities for updating the variational
@@ -160,22 +166,18 @@ update.etaz <- function (X, Z, y, v, Xr, d) {
   # equivalent to MATLAB expression S = inv(Z'*diag(d)*Z).
   S <- solve(t(Z) %*% (Z * d))
 
-  browser()
-  
   # Compute the posterior mean of the regression coefficients
   # corresponding to the covariates.
-  muz <- S %*% t(Z) %*% (y - 0.5 - d %*% Xr)
+  muz <- c(S %*% t(Z) %*% (y - 0.5 - d %*% Xr))
 
   # Calculate the covariance between the coefficients u and beta.
-  D <- diag(d)
-  V <- diag(v)
-  C <- (-((S %*% t(Z) %*% D) %*% X) %*% V)
-
+  W <- (-t((S %*% (t(Z) * d)) %*% X) * v)
+  
   # This is the M-step update for the free parameters.
-  U <- t((S %*% t(Z) %*% D) %*% X)
-  return(sqrt((Z %*% muz + Xr)^2 + diagsq2(Z,S) +
-              diagsq2(Z,t(U) %*% V %*% U) + diagsqt(X,v) +
-              2*diagprod(X %*% t(C),Z)))
+  U <- t((S %*% (t(Z) * d)) %*% X)
+  return(sqrt(c(Z %*% muz + Xr)^2 + diagsq2(Z,S) +
+              diagsq2(Z,t(U) %*% (U * v)) + diagsqt(X,v) +
+              2*diagprod(X %*% W,Z)))
 }
 
 # -----------------------------------------------------------------------
@@ -190,7 +192,7 @@ int.logitz <- function (Z, y, stats, alpha, mu, s, Xr, eta) {
   # Compute the variational approximation to the expectation of the
   # log-likelihood with respect to the approximate posterior distribution.
   return(sum(logsigmoid(eta)) + dot(eta,d*eta - 1)/2 +
-         determinant(S,logarithm = TRUE)/2 +
+         determinant(S,logarithm = TRUE)$modulus/2 +
          qnorm(t(Z) %*% (y - 0.5),S)^2/2 + dot(yhat,Xr) - qnorm(Xr,d)^2/2 +
          qnorm(t(Z) %*% (Xr * d),S)^2/2 - dot(xdx,betavar(alpha,mu,s))/2)
 }

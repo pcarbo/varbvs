@@ -70,6 +70,7 @@ norm2 <- function (x)
 # definition of the quadratic norm, see p. 635 of Convex Optimization
 # (2004) by Boyd & Vandenberghe.
 qnorm <- function (x, a) {
+  x <- c(x)
   if (is.matrix(a))
     y <- sqrt(c(x %*% a %*% x))
   else
