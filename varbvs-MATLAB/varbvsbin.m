@@ -17,15 +17,18 @@
 % not needed to model a binary outcome.
 %
 % Output logw is the variational estimate of the marginal log-likelihood
-% given the hyperparameters sa and logodds. Outputs alpha, mu and s are the
-% parameters of the variational approximation and, equivalently, variational
-% estimates of posterior quantites: under the variational approximation, the
-% ith regression coefficient is normal with probability alpha(i); mu(i) and
-% s(i) are the mean and variance of the coefficient given that it is
-% included in the model. Output eta is the vector of free parameters that
-% specify the variational approximation to the likelihood factors in the
-% logistic regression.
-function [logw, sa, alpha, mu, s, eta] = ...
+% given the hyperparameters at each iteration of the co-ordinate ascent
+% optimization procedure. Output err is the maximum difference between the
+% approximate posterior probabilities (alpha) at successive iterations.
+% Outputs alpha, mu and s are the parameters of the variational
+% approximation and, equivalently, variational estimates of posterior
+% quantites: under the variational approximation, the ith regression
+% coefficient is normal with probability alpha(i); mu(i) and s(i) are the
+% mean and variance of the coefficient given that it is included in the
+% model. Output eta is the vector of free parameters that specify the
+% variational approximation to the likelihood factors in the logistic
+% regression.
+function [logw, err, sa, alpha, mu, s, eta] = ...
         varbvsbin (X, y, sa, logodds, alpha, mu, eta, tol, maxiter, ...
                    verbose, outer_iter, update_sa, optimize_eta, n0, sa0)
 
@@ -44,11 +47,14 @@ function [logw, sa, alpha, mu, s, eta] = ...
   stats = update_stats(X,y,eta);
   s     = sa./(sa*stats.xdx + 1);  
 
+  % Initialize storage for outputs logw and err.
+  logw = zeros(1,maxiter);
+  err  = zeros(1,maxiter);
+  
   % (2) MAIN LOOP
   % -------------
   % Repeat until convergence criterion is met, or until the maximum
   % number of iterations is reached.
-  logw = -Inf;
   for iter = 1:maxiter
     
     % Save the current variational parameters and model parameters.
@@ -88,9 +94,9 @@ function [logw, sa, alpha, mu, s, eta] = ...
     % (2d) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute variational lower bound to marginal log-likelihood.
-    logw = int_logit(y,stats,alpha,mu,s,Xr,eta) ...
-           + int_gamma(logodds,alpha) ...
-           + int_klbeta(alpha,mu,s,sa);
+    logw(iter) = int_logit(y,stats,alpha,mu,s,Xr,eta) ...
+                 + int_gamma(logodds,alpha) ...
+                 + int_klbeta(alpha,mu,s,sa);
     
     % (2e) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
     % -----------------------------------------------------
@@ -110,7 +116,7 @@ function [logw, sa, alpha, mu, s, eta] = ...
     % tolerance, or when the variational lower bound has decreased. I ignore
     % parameters that are very small. If the variational bound decreases,
     % stop.
-    err = abs(alpha - alpha0);
+    err(iter) = max(abs(alpha - alpha0));
     if verbose
       if isempty(outer_iter)
         status = '';
@@ -118,23 +124,29 @@ function [logw, sa, alpha, mu, s, eta] = ...
         status = sprintf('%05d ',outer_iter);
       end  
       status = [status sprintf('%05d %+13.6e %0.1e %06.1f    ---  %0.1e',...
-                               iter,logw,max(err),sum(alpha),sa)];
+                               iter,logw(iter),err(iter),sum(alpha),sa)];
       fprintf(status);
       fprintf(repmat('\b',1,length(status)));
     end
-    if logw < logw0
-      logw  = logw0;
-      sa    = sa0;
-      alpha = alpha0;
-      mu    = mu0;
-      s     = s0;
-      eta   = eta0;
+    if logw(iter) < logw0
+      logw(iter) = logw0;
+      err(iter)  = 0;
+      sa         = sa0;
+      alpha      = alpha0;
+      mu         = mu0;
+      s          = s0;
+      eta        = eta0;
       break
-    elseif max(err) < tol
+    elseif err(iter) < tol
       break
     end
   end
 
+  % Return the variational lower bound (logw) and "delta" in successive
+  % iterates (err).
+  logw = logw(1:iter);
+  err  = err(1:iter);
+  
 % ----------------------------------------------------------------------
 % Calculates useful quantities for updating the variational approximation
 % to the logistic regression factors.

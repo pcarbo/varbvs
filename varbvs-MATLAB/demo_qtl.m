@@ -75,10 +75,6 @@ y = double(y);
 % continuous outcome (quantitiative trait), with spike and slab priors on
 % the coefficients.
 fprintf('2. FITTING MODEL TO DATA.\n')
-
-% TEMPORARY.
-logodds = log10(na/p);
-
 fit = varbvs(X,Z,y,labels,[],struct('logodds',logodds));
 
 % Compute final estimates of the posterior inclusion probabilities
