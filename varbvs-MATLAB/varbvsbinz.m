@@ -7,7 +7,7 @@
 % is the number of samples, and m is the number of covariates. This function
 % is equivalent to varbvsbin when only one covariate is specified, the
 % intercept, and Z = ones(n,1).
-function [logw, sa, alpha, mu, s, eta] = ...
+function [logw, err, sa, alpha, mu, s, eta] = ...
         varbvsbinz (X, Z, y, sa, logodds, alpha, mu, eta, tol, maxiter, ...
                    verbose, outer_iter, update_sa, optimize_eta, n0, sa0)
   
@@ -26,11 +26,14 @@ function [logw, sa, alpha, mu, s, eta] = ...
   stats = update_stats(X,Z,y,eta);
   s     = sa./(sa*stats.xdx + 1);
 
+  % Initialize storage for outputs logw and err.
+  logw = zeros(1,maxiter);
+  err  = zeros(1,maxiter);
+
   % (2) MAIN LOOP
   % -------------
   % Repeat until convergence criterion is met, or until the maximum
   % number of iterations is reached.
-  logw = -Inf;
   for iter = 1:maxiter
     
     % Save the current variational parameters and model parameters.
@@ -69,9 +72,9 @@ function [logw, sa, alpha, mu, s, eta] = ...
     % (2d) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute variational lower bound to marginal log-likelihood.
-    logw = int_logit(Z,y,stats,alpha,mu,s,Xr,eta) ...
-           + int_gamma(logodds,alpha) ...
-           + int_klbeta(alpha,mu,s,sa);
+    logw(iter) = int_logit(Z,y,stats,alpha,mu,s,Xr,eta) ...
+                 + int_gamma(logodds,alpha) ...
+                 + int_klbeta(alpha,mu,s,sa);
     
     % (2e) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
     % -----------------------------------------------------
@@ -91,31 +94,37 @@ function [logw, sa, alpha, mu, s, eta] = ...
     % tolerance, or when the variational lower bound has decreased. I ignore
     % parameters that are very small. If the variational bound decreases,
     % stop.
-    err = abs(alpha - alpha0);
+    err(iter) = max(abs(alpha - alpha0));
     if verbose
       if isempty(outer_iter)
         status = '';
       else
         status = sprintf('%05d ',outer_iter);
       end  
-      status = [status sprintf('%05d %+13.6e %0.1e %06.1f    ---  %0.1e',...
-                               iter,logw,max(err),sum(alpha),sa)];
+      status = [status sprintf('%05d %+13.6e %0.1e %06.1f      NA %0.1e',...
+                               iter,logw(iter),err(iter),sum(alpha),sa)];
       fprintf(status);
       fprintf(repmat('\b',1,length(status)));
     end
-    if logw < logw0
-      logw  = logw0;
-      sa    = sa0;
-      alpha = alpha0;
-      mu    = mu0;
-      s     = s0;
-      eta   = eta0;
+    if logw(iter) < logw0
+      logw(iter) = logw0;
+      err(iter)  = 0; 
+      sa         = sa0;
+      alpha      = alpha0;
+      mu         = mu0;
+      s          = s0;
+      eta        = eta0;
       break
-    elseif max(err) < tol
+    elseif err(iter) < tol
       break
     end
   end
 
+  % Return the variational lower bound (logw) and "delta" in successive
+  % iterates (err).
+  logw = logw(1:iter);
+  err  = err(1:iter);
+  
 % ----------------------------------------------------------------------
 % diagprod(A,B) efficiently computes diag(A*B').
 function y = diagprod (A, B)
