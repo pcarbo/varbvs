@@ -19,12 +19,15 @@
 # variable.
 #
 # Output logw is the variational estimate of the marginal
-# log-likelihood given the hyperparameters. Outputs alpha, mu and s
-# are the parameters of the variational approximation and,
-# equivalently, variational estimates of posterior quantites: under
-# the variational approximation, the ith regression coefficient is
-# normal with probability alpha(i); mu[i] and s(i) are the mean and
-# variance of the coefficient given that it is included in the model.
+# log-likelihood given the hyperparameters at each iteration of the
+# co-ordinate ascent optimization procedure. Output err is the maximum
+# difference between the approximate posterior probabilities (alpha)
+# at successive iterations. Outputs alpha, mu and s are the
+# parameters of the variational approximation and, equivalently,
+# variational estimates of posterior quantites: under the variational
+# approximation, the ith regression coefficient is normal with
+# probability alpha(i); mu[i] and s(i) are the mean and variance of
+# the coefficient given that it is included in the model.
 #
 # When update.sa = TRUE, there is the additional option of computing
 # the maximum a posteriori (MAP) estimate of the prior variance
@@ -49,11 +52,14 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4,
   # Calculate the variance of the coefficients.
   s <- sa*sigma/(sa*d + 1)
 
+  # Initialize storage for outputs logw and err.
+  logw <- rep(0,maxiter)
+  err  <- rep(0,maxiter)
+  
   # (2) MAIN LOOP
   # -------------
   # Repeat until convergence criterion is met, or until the maximum
   # number of iterations is reached.
-  logw <- (-Inf)
   for (iter in 1:maxiter) {
 
     # Save the current variational and model parameters.
@@ -84,9 +90,9 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4,
     # (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
-    logw <- int.linear(Xr,d,y,sigma,alpha,mu,s) +
-            int.gamma(logodds,alpha) +
-            int.klbeta(alpha,mu,s,sigma*sa)
+    logw[iter] <- int.linear(Xr,d,y,sigma,alpha,mu,s) +
+                  int.gamma(logodds,alpha) +
+                  int.klbeta(alpha,mu,s,sigma*sa)
 
     # (2d) UPDATE RESIDUAL VARIANCE
     # -----------------------------
@@ -116,29 +122,31 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4,
     # between the posterior probabilities at two successive iterations
     # is less than the specified tolerance, or when the variational
     # lower bound has decreased.
-    err <- abs(alpha - alpha0)
+    err[iter] <- max(abs(alpha - alpha0))
     if (verbose) {
       if (is.null(outer.iter))
         status <- NULL
       else
         status <- sprintf("%05d ",outer.iter)
       caterase(paste(status,sprintf("%05d %+13.6e %0.1e %06.1f %0.1e %0.1e",
-                                    iter,logw,max(err),sum(alpha),
+                                    iter,logw[iter],err[iter],sum(alpha),
                                     sigma,sa),sep=""))
     }
-    if (logw < logw0) {
-      logw  <- logw0
-      sigma <- sigma0
-      sa    <- sa0
-      alpha <- alpha0
-      mu    <- mu0
-      s     <- s0
+    if (logw[iter] < logw0) {
+      logw[iter] <- logw0
+      err[iter]  <- 0
+      sigma      <- sigma0
+      sa         <- sa0
+      alpha      <- alpha0
+      mu         <- mu0
+      s          <- s0
       break
-    } else if (max(err) < tol)
+    } else if (err[iter] < tol)
       break
   }
   
-  return(list(logw = logw,sigma = sigma,sa = sa,alpha = alpha,mu = mu,s = s))
+  return(list(logw = logw[1:iter],err = err[1:iter],sigma = sigma,sa = sa,
+              alpha = alpha,mu = mu,s = s))
 }
 
 # ----------------------------------------------------------------------

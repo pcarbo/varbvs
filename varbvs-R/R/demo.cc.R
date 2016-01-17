@@ -7,8 +7,8 @@
 #
 source("misc.R")
 source("varbvs.R")
-source("varbvsbinz.R")
-source("varbvsbinzupdate.R")
+source("varbvsbin.R")
+source("varbvsbinupdate.R")
 dyn.load("../src/diagsqr.so")
 dyn.load("../src/varbvsr.so")
 
@@ -75,9 +75,10 @@ y <- as.double(y)
 
 # TEMPORARY.
 matlab.data <- readMat("../../varbvs-MATLAB/cc.mat")
-out <- varbvsbinz(matlab.data$X,matlab.data$Z,c(matlab.data$y),1,
-                  rep(log(na/p),p),matlab.data$alpha0,matlab.data$mu0,
-                  rep(1,n))
+out <- varbvsbin(matlab.data$X,c(matlab.data$y),1,
+                 rep(log(na/p),p),c(matlab.data$alpha0),
+                 c(matlab.data$mu0),rep(1,n))
+cat("\n")
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
