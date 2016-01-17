@@ -78,8 +78,8 @@ if (m > 0)
 y <- c(y)
 
 # TEMPORARY.
-y <- y - c(Z %*% solve(crossprod(Z),c(y %*% Z)))
-X <- X - Z %*% solve(crossprod(Z),t(Z) %*% X)
+y   <- y - c(Z %*% solve(crossprod(Z),c(y %*% Z)))
+X   <- X - Z %*% solve(crossprod(Z),t(Z) %*% X)
 out <- varbvsnorm(X,y,1,1,rep(log(na/p),p),runif(p),rnorm(p))
 
 stop()

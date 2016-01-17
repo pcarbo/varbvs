@@ -16,7 +16,7 @@ dyn.load("../src/varbvsr.so")
 # -----------------
 n  <- 1500  # Number of samples (subjects).
 p  <- 2000  # Number of variables (genetic markers).
-m  <- 2     # Number of covariates (m >= 0).
+m  <- 0     # Number of covariates (m >= 0).
 na <- 20    # Number of markers that affect the binary outcome.
 sa <- 0.15  # Variance of log-odds ratios.
 p1 <- 0.25  # Target proportion of subjects that are cases (y = 1).
