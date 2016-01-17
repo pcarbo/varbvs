@@ -74,7 +74,10 @@ y <- runif(n) < sigmoid(w)
 y <- as.double(y)
 
 # TEMPORARY.
-out <- varbvsbinz(X,Z,y,1,rep(log(na/p),p),runif(p),rnorm(p),rep(1,n))
+matlab.data <- readMat("../../varbvs-MATLAB/cc.mat")
+out <- varbvsbinz(matlab.data$X,matlab.data$Z,c(matlab.data$y),1,
+                  rep(log(na/p),p),matlab.data$alpha0,matlab.data$mu0,
+                  rep(1,n))
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------

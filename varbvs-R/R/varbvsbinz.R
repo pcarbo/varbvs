@@ -102,6 +102,7 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
       cat("\n")
     }
     if (logw < logw0) {
+      browser()
       logw  <- logw0
       sa    <- sa0
       alpha <- alpha0
@@ -168,8 +169,8 @@ update.etaz <- function (X, Z, y, v, Xr, d) {
 
   # Compute the posterior mean of the regression coefficients
   # corresponding to the covariates.
-  muz <- c(S %*% t(Z) %*% (y - 0.5 - d %*% Xr))
-
+  muz <- S %*% t(Z) %*% (y - 0.5 - d*Xr)
+  
   # Calculate the covariance between the coefficients u and beta.
   W <- (-t((S %*% (t(Z) * d)) %*% X) * v)
   
@@ -192,7 +193,7 @@ int.logitz <- function (Z, y, stats, alpha, mu, s, Xr, eta) {
   # Compute the variational approximation to the expectation of the
   # log-likelihood with respect to the approximate posterior distribution.
   return(sum(logsigmoid(eta)) + dot(eta,d*eta - 1)/2 +
-         determinant(S,logarithm = TRUE)$modulus/2 +
+         c(determinant(S,logarithm = TRUE)$modulus/2) +
          qnorm(t(Z) %*% (y - 0.5),S)^2/2 + dot(yhat,Xr) - qnorm(Xr,d)^2/2 +
          qnorm(t(Z) %*% (Xr * d),S)^2/2 - dot(xdx,betavar(alpha,mu,s))/2)
 }
