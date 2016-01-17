@@ -155,7 +155,6 @@ function stats = update_stats (X, y, eta)
 
   % Compute the diagonal entries of X'*dhat*X. For a definition of dhat, see
   % the Bayesian Analysis journal paper.
-  % xdx = diagsq(X,d) - xd.^2/sum(d);
   dzr = d/sqrt(sum(d));
   xdx = diagsq(X,d) - double((dzr'*X).^2)';
 

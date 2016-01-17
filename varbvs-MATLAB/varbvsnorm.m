@@ -18,18 +18,21 @@
 % log-odds of inclusion for each variable. 
 %
 % Output logw is the variational estimate of the marginal log-likelihood
-% given the hyperparameters. Outputs alpha, mu and s are the parameters of
-% the variational approximation and, equivalently, variational estimates of
-% posterior quantites: under the variational approximation, the ith
-% regression coefficient is normal with probability alpha(i); mu(i) and s(i)
-% are the mean and variance of the coefficient given that it is included in
-% the model. 
+% given the hyperparameters at each iteration of the co-ordinate ascent
+% optimization procedure. Output err is the maximum difference between the
+% approximate posterior probabilities (alpha) at successive iterations.
+% Outputs alpha, mu and s are the parameters of the variational
+% approximation and, equivalently, variational estimates of posterior
+% quantites: under the variational approximation, the ith regression
+% coefficient is normal with probability alpha(i); mu(i) and s(i) are the
+% mean and variance of the coefficient given that it is included in the
+% model.
 %
 % When update_sa = true, there is the additional option of computing the
 % maximum a posteriori (MAP) estimate of the prior variance parameter (sa),
 % in which sa is drawn from a scaled inverse chi-square distribution with
 % scale sa0 and degrees of freedom n0.
-function [logw, sigma, sa, alpha, mu, s] = ...
+function [logw, err, sigma, sa, alpha, mu, s] = ...
         varbvsnorm (X, y, sigma, sa, logodds, alpha, mu, tol, maxiter, ...
                     verbose, outer_iter, update_sigma, update_sa, n0, sa0)
 
@@ -51,12 +54,15 @@ function [logw, sigma, sa, alpha, mu, s] = ...
   
   % Calculate the variance of the coefficients.
   s = sa*sigma./(sa*d + 1);
+
+  % Initialize storage for outputs logw and err.
+  logw = zeros(1,maxiter);
+  err  = zeros(1,maxiter);
   
   % (2) MAIN LOOP
   % -------------
   % Repeat until convergence criterion is met, or until the maximum
   % number of iterations is reached.
-  logw = -Inf;
   for iter = 1:maxiter
 
     % Save the current variational parameters and model parameters.
@@ -86,9 +92,9 @@ function [logw, sigma, sa, alpha, mu, s] = ...
     % (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute the lower bound to the marginal log-likelihood.
-    logw = int_linear(Xr,d,y,sigma,alpha,mu,s) ...
-           + int_gamma(logodds,alpha) ...
-           + int_klbeta(alpha,mu,s,sigma*sa);
+    logw(iter) = int_linear(Xr,d,y,sigma,alpha,mu,s) ...
+                 + int_gamma(logodds,alpha) ...
+                 + int_klbeta(alpha,mu,s,sigma*sa);
     
     % (2d) UPDATE RESIDUAL VARIANCE
     % -----------------------------
@@ -118,7 +124,7 @@ function [logw, sigma, sa, alpha, mu, s] = ...
     % posterior probabilities at two successive iterations is less than the
     % specified tolerance, or when the variational lower bound has
     % decreased. 
-    err = abs(alpha - alpha0);
+    err(iter) = max(abs(alpha - alpha0));
     if verbose
       if isempty(outer_iter)
         status = '';
@@ -126,22 +132,28 @@ function [logw, sigma, sa, alpha, mu, s] = ...
         status = sprintf('%05d ',outer_iter);
       end  
       status = [status sprintf('%05d %+13.6e %0.1e %06.1f %0.1e %0.1e',...
-                               iter,logw,max(err),sum(alpha),sigma,sa)];
+                               iter,logw(iter),err(iter),sum(alpha),sigma,sa)];
       fprintf(status);
       fprintf(repmat('\b',1,length(status)));
     end
-    if logw < logw0
-      logw  = logw0;
-      sigma = sigma0;
-      sa    = sa0;
-      alpha = alpha0;
-      mu    = mu0;
-      s     = s0;
+    if logw(iter) < logw0
+      logw(iter) = logw0;
+      err(iter)  = 0;
+      sigma      = sigma0;
+      sa         = sa0;
+      alpha      = alpha0;
+      mu         = mu0;
+      s          = s0;
       break
-    elseif max(err) < tol
+    elseif err(iter) < tol
       break
     end
   end
+
+  % Return the variational lower bound (logw) and "delta" in successive
+  % iterates (err).
+  logw = logw(1:iter);
+  err  = err(1:iter);
 
 % ----------------------------------------------------------------------
 % intlinear(Xr,d,y,sigma,alpha,mu,s) computes an integral that appears in

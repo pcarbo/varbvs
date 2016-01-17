@@ -575,10 +575,10 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % (4) INITIALIZE STORAGE FOR THE OUTPUTS
   % --------------------------------------
   % Initialize storage for the variational estimate of the marginal
-  % log-likelihood for each hyperparameter setting (logw), and the variances
+  % log-likelihood for each hyperparameter setting (logw) and the variances
   % of the regression coefficients (s).
   logw = zeros(1,ns);
-  s    = zeros(p,ns);
+  s   = zeros(p,ns);
 
   % (5) FIT BAYESIAN VARIABLE SELECTION MODEL TO DATA
   % -------------------------------------------------
@@ -693,18 +693,19 @@ function [logw, sigma, sa, alpha, mu, s, eta] = ...
     logodds = repmat(logodds,p,1);
   end
   if strcmp(family,'gaussian')
-    [logw sigma sa alpha mu s] = ...
+    [logw err sigma sa alpha mu s] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
                    verbose,outer_iter,update_sigma,update_sa,n0,sa0);
   elseif strcmp(family,'binomial') & size(Z,2) == 1
-    [logw sa alpha mu s eta] = ...
+    [logw err sa alpha mu s eta] = ...
         varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...
                   outer_iter,update_sa,optimize_eta,n0,sa0);
   elseif strcmp(family,'binomial')
-    [logw sa alpha mu s eta] = ...
+    [logw err sa alpha mu s eta] = ...
         varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,...
                    verbose,outer_iter,update_sa,optimize_eta,n0,sa0);
   end
+  logw = logw(end);
 
 % ------------------------------------------------------------------
 function y = tf2yn (x)
