@@ -7,8 +7,8 @@
 #
 source("misc.R")
 source("varbvs.R")
-source("varbvsbin.R")
-source("varbvsbinupdate.R")
+source("varbvsbinz.R")
+source("varbvsbinzupdate.R")
 dyn.load("../src/diagsqr.so")
 dyn.load("../src/varbvsr.so")
 
@@ -74,7 +74,7 @@ y <- runif(n) < sigmoid(w)
 y <- as.double(y)
 
 # TEMPORARY.
-out <- varbvsbin(X,y,1,rep(log(na/p),p),runif(p),rnorm(p),rep(1,n))
+out <- varbvsbinz(X,Z,y,1,rep(log(na/p),p),runif(p),rnorm(p),rep(1,n))
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------

@@ -27,10 +27,10 @@
 # model. Output eta is the vector of free parameters that specify the
 # variational approximation to the likelihood factors in the logistic
 # regression.
-varbvsbin <-
-  function (X, y, sa, logodds, alpha, mu, eta, tol = 1e-4, maxiter = 1e4,
-            verbose = TRUE, outer.iter = NULL,update.sa = TRUE,
-            optimize.eta = TRUE,n0 = 0,sa0 = 0) {
+varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
+                       maxiter = 1e4, verbose = TRUE, outer.iter = NULL,
+                       update.sa = TRUE, optimize.eta = TRUE,n0 = 0,
+                       sa0 = 0) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)

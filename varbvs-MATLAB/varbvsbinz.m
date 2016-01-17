@@ -140,7 +140,7 @@ function stats = update_stats (X, Z, y, eta)
   R   = chol(S);
   dzr = D*(Z*R');
 
-  % Compute yhatT. 
+  % Compute yhat. 
   yhat = y - 0.5 - dzr*R*(Z'*(y - 0.5));
 
   % Here, I calculate xy = X'*yhat as (yhat'*X)' and xd = X'*d as (d'*X)' to
@@ -161,9 +161,9 @@ function stats = update_stats (X, Z, y, eta)
 % allowing for additional covariates.
 function eta = update_eta (X, Z, y, v, Xr, d)
 
-  % Compute MUZ, the posterior mean of u, the regression coefficients
-  % corresponding to the covariates. Here, S is the posterior covariance of
-  % u given beta.
+  % Compute muz, the posterior mean of the regression coefficients
+  % corresponding to the covariates (u). Here, S is the posterior
+  % covariance of u given beta.
   D   = diag(sparse(d));
   S   = inv(Z'*D*Z);
   muz = S*Z'*(y - 0.5 - d.*Xr);

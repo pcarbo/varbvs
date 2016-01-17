@@ -30,10 +30,10 @@
 # the maximum a posteriori (MAP) estimate of the prior variance
 # parameter (sa), in which sa is drawn from a scaled inverse
 # chi-square distribution with scale sa0 and degrees of freedom n0.
-varbvsnorm <-
-  function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4, maxiter = 1e4,
-            verbose = TRUE, outer.iter = NULL, update.sigma = TRUE,
-            update.sa = TRUE, n0 = 0, sa0 = 0) {
+varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4,
+                        maxiter = 1e4, verbose = TRUE, outer.iter = NULL,
+                        update.sigma = TRUE, update.sa = TRUE, n0 = 0,
+                        sa0 = 0) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
