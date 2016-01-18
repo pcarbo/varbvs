@@ -10,6 +10,7 @@ source("varbvs.R")
 source("varbvsnorm.R")
 source("varbvsnormupdate.R")
 source("varbvspve.R")
+source("print.varbvs.R")
 dyn.load("../src/diagsqr.so")
 dyn.load("../src/varbvsr.so")
 
@@ -86,3 +87,13 @@ y <- c(y)
 # the coefficients.
 cat("2. FITTING MODEL TO DATA.\n")
 fit <- varbvs(X,Z,y,"gaussian",logodds = logodds)
+
+# Compute final estimates of the posterior inclusion probabilities
+# averaged over the hyperparameter settings.
+w   <- c(normalizelogweights(fit$logw))
+PIP <- c(fit$alpha %*% w)
+
+# SUMMARIZE POSTERIOR DISTRIBUTION
+# --------------------------------
+cat("3. SUMMARIZING RESULTS.\n")
+print(fit)

@@ -339,7 +339,10 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   if (prior.same)
     fit$logodds <- c(fit$logodds)
   else
-    rownames(fit$logodds) <- colnames(X)  
+    rownames(fit$logodds) <- colnames(X)
+
+  # Declare the return value as an instance of class 'varbvs'.
+  class(fit) <- c("varbvs","list")
   return(fit)
 }
 
