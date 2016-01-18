@@ -4,7 +4,7 @@
 % linear regression model (family = 'gaussian') with an intercept.
 function pve = varbvspve (X, fit, nr)
 
-  % Take care of the option inputs.
+  % Take care of the optional inputs.
   if nargin < 3
     nr = 1000;
   end

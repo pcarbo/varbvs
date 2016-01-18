@@ -9,6 +9,7 @@ source("misc.R")
 source("varbvs.R")
 source("varbvsnorm.R")
 source("varbvsnormupdate.R")
+source("varbvspve.R")
 dyn.load("../src/diagsqr.so")
 dyn.load("../src/varbvsr.so")
 

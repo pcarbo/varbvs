@@ -306,7 +306,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     
   # (6) CREATE FINAL OUTPUT
   # ----------------------
-  if (family == 'gaussian') {
+  if (family == "gaussian") {
     fit <- list(family = family,ncov = ncol(Z) - 1,n = n,n0 = n0,sa0 = sa0,
                 update.sigma = update.sigma,update.sa = update.sa,
                 prior.same = prior.same,logw = logw,sigma = sigma,sa = sa,
@@ -314,16 +314,14 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
 
     # Compute the proportion of variance in Y, after removing linear
     # effects of covariates, explained by the regression model.
-    #
-    # TO DO: FIX THIS.
-    #
-    fit$model.pve <- runif(nr);
+    cat("Estimating proportion of variance in Y explained by model.\n");
+    fit$model.pve <- varbvspve(X,fit,nr)
 
     # Compute the proportion of variance in Y, after removing linear
     # effects of covariates, explained by each variable.
     fit$pve           <- matrix(0,p,ns)
     rownames(fit$pve) <- colnames(X)
-    sx                <- var1(X)
+    sx                <- var1.cols(X)
     for (i in 1:ns) {
       sz          <- sx*(mu[,i]^2 + s[,i])
       fit$pve[,i] <- sz/(sz + sigma[i])

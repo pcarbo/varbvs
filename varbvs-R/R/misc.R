@@ -6,7 +6,8 @@
 #
 #   tf2yn(x)
 #   caterase(s)
-#   var1(X)
+#   var1(x)
+#   var1.cols(X)
 #   dot(x,y)
 #   norm2(x)
 #   qnorm(x,a)
@@ -47,11 +48,16 @@ caterase <- function (s)
   cat(s,rep("\b",nchar(s)),sep = "")
 
 # ----------------------------------------------------------------------
-# Return the second moment of each column of X about its mean.
-var1 <- function (X) {
-  n <- nrow(X)
-  return(apply(X,2,function(x) var(x)*(n-1)/n))
+# Return the second moment of x about its mean.
+var1 <- function (x) {
+  n <- length(x)
+  return(var(x)*(n-1)/n)
 }
+
+# ----------------------------------------------------------------------
+# Return the second moment of each column of X about its mean.
+var1.cols <- function (X)
+  return(apply(X,2,var1))
 
 # ----------------------------------------------------------------------
 # Return the dot product of vectors x and y.

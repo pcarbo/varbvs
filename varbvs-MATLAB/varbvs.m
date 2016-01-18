@@ -672,6 +672,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
 
     % Compute the proportion of variance in Y, after removing linear
     % effects of covariates, explained by the regression model.
+    fprintf('Estimating proportion of variance in Y explained by model.\n');
     fit.model_pve = varbvspve(X,fit,nr);
 
     % Compute the proportion of variance in Y, after removing linear
