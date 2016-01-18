@@ -3,6 +3,6 @@ export(print.varbvs,logit,logpexp,logsigmoid,sigmoid,normalizelogweights,
        diagsq,diagsqt,cred,updatestats.varbvsbin,updatestats.varbvsbinz,
        update.eta,update.etaz,varbvs,varbvsnorm,varbvsbin,varbvsbinz,
        varbvsnormupdate,varbvsbinupdate,varbvsbinzupdate,varbvscoefcred,
-       varbvspve)
+       varbvspve,rand,randn)
 
 S3method("print","varbvs")

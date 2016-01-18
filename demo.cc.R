@@ -2,19 +2,7 @@
 # (e.g., case-control) trait in a simulated data set in which all the
 # genetic markers are uncorrelated with each other (i.e., they are
 # "unlinked").
-#
-# NOTE: Move this file later to the "demo" directory.
-#
-source("misc.R")
-source("varbvs.R")
-source("varbvsbin.R")
-source("varbvsbinz.R")
-source("varbvsbinupdate.R")
-source("varbvsbinzupdate.R")
-source("varbvscoefcred.R")
-source("print.varbvs.R")
-dyn.load("../src/diagsqr.so")
-dyn.load("../src/varbvsr.so")
+library(varbvs)
 
 # SCRIPT PARAMETERS
 # -----------------

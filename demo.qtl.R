@@ -2,18 +2,7 @@
 # mapping of a quantitative trait. The data set is simulated assuming
 # that all the genetic markers are uncorrelated with each other (i.e.,
 # they are "unlinked").
-#
-# NOTE: Move this file later to the "demo" directory.
-#
-source("misc.R")
-source("varbvs.R")
-source("varbvsnorm.R")
-source("varbvsnormupdate.R")
-source("varbvspve.R")
-source("varbvscoefcred.R")
-source("print.varbvs.R")
-dyn.load("../src/diagsqr.so")
-dyn.load("../src/varbvsr.so")
+library(varbvs)  
 
 # SCRIPT PARAMETERS
 # -----------------
