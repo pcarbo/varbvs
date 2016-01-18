@@ -1,12 +1,13 @@
 useDynLib(varbvs)
-export(varbvsoptimize,
-       varbvsupdate,
-       varsimbvs,
-       varbvsmixupdate,
-       varbvsmixoptimize,
+export(print.varbvs,
+       varbvs,
+       varbvsnorm,
+       varbvsbin,
+       varbvsbinz,
+       varbvsnormupdate,
        varbvsbinupdate,
-       varbvsbinoptimize,
-       updatestats,
-       grid3d,
-       "create.snps",
-       "create.data")
+       varbvsbinzupdate,
+       varbvscoefcred,
+       varbvspve)
+
+S3method("print","varbvs")

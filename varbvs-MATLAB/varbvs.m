@@ -262,7 +262,10 @@ function fit = varbvs (X, Z, y, labels, family, options)
 
   % (1) CHECK INPUTS
   % ----------------
-  % Input X must be single precision.
+  % Input X must be single precision, and cannot be sparse.
+  if issparse(X)
+    error('Input X cannot be sparse')
+  end
   if ~isa(X,'single')
     X = single(X);
   end
@@ -273,7 +276,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     if size(Z,1) ~= n
       error('Inputs X and Z do not match.');
     end
-    Z = double(Z);
+    Z = double(full(Z));
   end
 
   % Add intercept.
