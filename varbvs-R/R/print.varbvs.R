@@ -41,6 +41,56 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
     cat("proportion of variance explained: ")
     cat(sprintf("%0.1f%% [%0.1f%%,%0.1f%%]\n",100*x0,100*a,100*b))
   }
+
+  # (3) SUMMARIZE RESULTS ON HYPERPARAMETERS
+  # ----------------------------------------
+  # Summarize the fitted residual variance parameter (sigma).
+  cat("Hyperparameters: ")
+  if (ns == 1) {
+
+    # Summarize the hyperparameter settings when there is only one
+    # candidate setting.
+    if (fit$family == "gaussian")
+      cat(sprintf("sigma=%0.3g ",fit$sigma))
+    cat(sprintf("sa=%0.3g ",fit$sa))
+    if (fit$prior.same)
+      cat(sprintf("logodds=%+0.2f",fit$logodds))
+    cat("\n")
+  } else {
+    cat("\n")
+    cat(sprintf("        estimate Pr>%0.2f             candidate values\n",
+                cred.int))
+    if (fit$family == "gaussian") {
+      x0 <- dot(w,fit$sigma)
+      # TO DO: FIX THIS.
+      # [a b] = cred(fit$sigma,x0,w,c)
+      cat(sprintf("sigma   %8.3g %-19s ",x0,sprintf("[%0.3g,%0.3g]",a,b)))
+      if (fit$update.sigma)
+        cat("NA\n")
+      else
+        cat(sprintf("%0.3g--%0.3g\n",min(fit$sigma),max(fit$sigma)))
+    }
+ 
+    # Summarize the fitted prior variance parameter (sa).
+    x0 <- dot(w,fit$sa)
+    # TO DO: FIX THIS.
+    # [a b] = cred(fit$sa,x0,w,c)
+    cat(sprintf("sa      %8.3g %-19s ",x0,sprintf("[%0.3g,%0.3g]",a,b)))
+    if (fit$update.sa)
+      cat("NA\n")
+    else
+      cat(sprintf("%0.3g--%0.3g\n",min(fit$sa),max(fit$sa)))
+
+    # Summarize the fitted prior log-odds of inclusion (logodds).
+    if (fit$prior.same) {
+      x  <- fit$logodds
+      x0 <- dot(w,x)
+      # TO DO: FIX THIS.
+      # [a b] = cred(x,x0,w,c)
+      cat(sprintf("logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n",x0,
+                  sprintf("[%+0.2f,%+0.2f]",a,b),min(x),max(x)))
+    }
+  }
   
   return(invisible(fit))
 }
