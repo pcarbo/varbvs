@@ -1,7 +1,11 @@
 # Generate a four-part summary of the fitted Bayesian variable
 # selection model.
-print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000,...) {
+varbvsprint <- function (fit, cred.int = 0.95, n = 5, nr = 1000,...) {
 
+  # Check that the first input is an instance of class "varbvs".
+  if (!is(fit,"varbvs"))
+    error("Input fit must be an instance of class varbvs")
+  
   # Get the number of variables (p) and number of candidate
   # hyperparameter settings (ns).
   p  <- ncol(fit$alpha)

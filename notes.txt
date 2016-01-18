@@ -44,7 +44,7 @@ DOCUMENTATION
 * normalizelogweights
 * rand
 * randn
-* print.varbvs
+* varbvsprint
 * varbvs
 * varbvscoefcred
 
