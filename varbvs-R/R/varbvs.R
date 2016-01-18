@@ -118,7 +118,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   else
     initialize.params.default <- FALSE    
   if (nrow(mu) != p)
-    error("Input mu must have as many rows as X has columns")
+    stop("Input mu must have as many rows as X has columns")
   if (ncol(mu) == 1)
     mu <- rep.col(mu,ns)
 

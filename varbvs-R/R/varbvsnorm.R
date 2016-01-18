@@ -65,6 +65,7 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4,
     # Save the current variational and model parameters.
     alpha0 <- alpha
     mu0    <- mu
+    s0     <- s
     sigma0 <- sigma
 
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND

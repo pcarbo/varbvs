@@ -6,7 +6,7 @@ varbvscoefcred <- function (fit, vars = NULL, cred.int = 0.95, nr = 1000) {
 
   # Check that the first input is an instance of class "varbvs".
   if (!is(fit,"varbvs"))
-    error("Input fit must be an instance of class varbvs")
+    stop("Input fit must be an instance of class varbvs")
   
   # Get the number of hyperparameter settings.
   ns <- length(fit$logw)
