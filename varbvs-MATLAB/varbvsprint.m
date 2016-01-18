@@ -110,7 +110,7 @@ function varbvsprint (fit, c, n, nr)
   
   % (2) SUMMARIZE ANALYSIS SETUP
   % ----------------------------
-  fprintf('Summary of fitted Bayesian variable selection model:\n')
+  fprintf('Summary of fitted Bayesian variable selection model:\n');
   fprintf('family:     %-8s',fit.family); 
   fprintf('   num. hyperparameter settings: %d\n',numel(fit.sa));
   fprintf('samples:    %-6d',fit.n); 
