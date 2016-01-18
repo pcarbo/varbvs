@@ -68,18 +68,6 @@ if m > 0
 end
 y = double(y);
 
-% TEMPORARY.
-alpha0 = rand(p,1)/p;
-mu0    = randn(p,1);
-y = y - Z*((Z'*Z)\(Z'*y));
-X = X - Z*((Z'*Z)\(Z'*X));
-save('qtl.mat','X','y','alpha0','mu0','-v6');
-[logw err sigma sa alpha mu s] = varbvsnorm(X,y,1,1,repmat(log(na/p),p,1),...
-                                            alpha0,mu0,1e-4,1e4,true,[],...
-                                            true,true,0,0);
-
-return
-
 % FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 % ------------------------------------------
 % Fit the fully-factorized variational approximation to the posterior

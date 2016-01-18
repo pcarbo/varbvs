@@ -77,10 +77,8 @@ if (m > 0)
   y <- y + Z %*% u
 y <- c(y)
 
-# TEMPORARY.
-matlab.data <- readMat("../../varbvs-MATLAB/qtl.mat")
-out <- varbvsnorm(matlab.data$X,c(matlab.data$y),1,1,rep(log(na/p),p),
-                  c(matlab.data$alpha0),c(matlab.data$mu0))
+out <- varbvsnorm(X,y,var(y),1,rep(log(na/p),p),runif(p)/p,rnorm(p))
+cat("\n")
 
 stop()
 

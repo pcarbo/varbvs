@@ -63,17 +63,6 @@ t = double(t);
 % success rates given by the logistic regression.
 y = rand(n,1) < sigmoid(t);
 
-% TEMPORARY.
-alpha0 = rand(p,1)/p;
-mu0    = randn(p,1);
-save('cc.mat','X','Z','y','alpha0','mu0','-v6');
-[logw err sa alpha mu s eta] = ...
-    varbvsbinz(X,Z,y,1,repmat(log(na/p),p,1),alpha0,mu0,ones(n,1),...
-               1e-4,1e4,true,[],true,true,0,0);
-fprintf('\n');
-
-return
-
 % FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 % ------------------------------------------
 % Fit the fully-factorized variational approximation to the posterior

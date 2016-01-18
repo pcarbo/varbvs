@@ -16,7 +16,7 @@ dyn.load("../src/varbvsr.so")
 # -----------------
 n  <- 1500  # Number of samples (subjects).
 p  <- 2000  # Number of variables (genetic markers).
-m  <- 0     # Number of covariates (m >= 0).
+m  <- 2     # Number of covariates (m >= 0).
 na <- 20    # Number of markers that affect the binary outcome.
 sa <- 0.15  # Variance of log-odds ratios.
 p1 <- 0.25  # Target proportion of subjects that are cases (y = 1).
@@ -73,11 +73,7 @@ if (m > 0)
 y <- runif(n) < sigmoid(w)
 y <- as.double(y)
 
-# TEMPORARY.
-matlab.data <- readMat("../../varbvs-MATLAB/cc.mat")
-out <- varbvsbinz(matlab.data$X,matlab.data$Z,c(matlab.data$y),1,
-                  rep(log(na/p),p),c(matlab.data$alpha0),
-                  c(matlab.data$mu0),rep(1,n))
+out <- varbvsbinz(X,Z,y,1,rep(log(na/p),p),runif(p)/p,rnorm(p),rep(1,n))
 cat("\n")
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
