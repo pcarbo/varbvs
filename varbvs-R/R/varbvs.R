@@ -4,7 +4,7 @@
 varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
                     logodds = NULL, alpha = NULL, mu = NULL, eta = NULL,
                     update.sigma = NULL, update.sa = NULL, optimize.eta = NULL,
-                    initialize.params = NULL, nr = 1000, sa0 = 0, n0 = 0,
+                    initialize.params = NULL, nr = 100, sa0 = 0, n0 = 0,
                     tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
 
   # Get the number of samples (n) and variables (p).
@@ -322,10 +322,8 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     fit$pve           <- matrix(0,p,ns)
     rownames(fit$pve) <- colnames(X)
     sx                <- var1.cols(X)
-    for (i in 1:ns) {
-      sz          <- sx*(mu[,i]^2 + s[,i])
-      fit$pve[,i] <- sz/(sz + sigma[i])
-    }
+    for (i in 1:ns) 
+      fit$pve[,i] <- sx*(mu[,i]^2 + s[,i])/var1(y)
   } else if (family == "binomial")
     fit <- list(family = family,ncov = ncol(Z) - 1,n = n,n0 = n0,sa0 = sa0,
                 update.sa = update.sa,optimize.eta = optimize.eta,

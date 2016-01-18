@@ -680,8 +680,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fit.pve = zeros(p,ns);
     sx      = var1(X);
     for i = 1:ns
-      sz = sx.*(mu(:,i).^2 + s(:,i));
-      fit.pve(:,i) = sz./(sz + sigma(i));
+      fit.pve(:,i) = sx.*(mu(:,i).^2 + s(:,i))/var(y,1);
     end
   elseif strcmp(family,'binomial')
     fit = struct('family',family,'ncov',size(Z,2) - 1,'n',n,'labels',...
