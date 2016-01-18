@@ -34,12 +34,11 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
     cat(sprintf("fit approx. factors (eta):    %s\n",tf2yn(fit$optimize.eta)))
   cat(sprintf("maximum log-likelihood lower bound: %0.4f\n",max(fit$logw)))
   if (fit$family == "gaussian") {
-    x  <- sort(fit$model.pve)
-    x0 <- mean(x)
-    a  <- x[floor((0.5 - cred.int/2)*length(x))]
-    b  <- x[ceiling((0.5 + cred.int/2)*length(x))]
+    x <- fit$model.pve
     cat("proportion of variance explained: ")
-    cat(sprintf("%0.1f%% [%0.1f%%,%0.1f%%]\n",100*x0,100*a,100*b))
+    cat(sprintf("%0.1f%% [%0.1f%%,%0.1f%%]\n",100*mean(x),
+                100*quantile(x,0.5 - cred.int/2),
+                100*quantile(x,0.5 + cred.int/2)))
   }
 
   # (3) SUMMARIZE RESULTS ON HYPERPARAMETERS
@@ -61,10 +60,10 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
     cat("        estimate ")
     cat(sprintf("Pr>%0.2f             candidate values\n",cred.int))
     if (fit$family == "gaussian") {
-      x0  <- dot(w,fit$sigma)
-      out <- cred(fit$sigma,x0,w,cred.int)
+      x0 <- dot(w,fit$sigma)
       cat(sprintf("sigma   %8.3g ",x0))
-      cat(sprintf("%-19s ",with(out,sprintf("[%0.3g,%0.3g]",a,b))))
+      cat(sprintf("%-19s ",with(cred(fit$sigma,x0,w,cred.int),
+                                sprintf("[%0.3g,%0.3g]",a,b))))
       if (fit$update.sigma)
         cat("NA\n")
       else
@@ -72,10 +71,10 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
     }
  
     # Summarize the fitted prior variance parameter (sa).
-    x0  <- dot(w,fit$sa)
-    out <- cred(fit$sa,x0,w,cred.int)
+    x0 <- dot(w,fit$sa)
     cat(sprintf("sa      %8.3g ",x0))
-    cat(sprintf("%-19s ",with(out,sprintf("[%0.3g,%0.3g]",a,b))))
+    cat(sprintf("%-19s ",with(cred(fit$sa,x0,w,cred.int),
+                              sprintf("[%0.3g,%0.3g]",a,b))))
     if (fit$update.sa)
       cat("NA\n")
     else
@@ -83,12 +82,11 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
 
     # Summarize the fitted prior log-odds of inclusion (logodds).
     if (fit$prior.same) {
-      x   <- fit$logodds
-      x0  <- dot(w,x)
-      out <- cred(x,x0,w,cred.int)
+      x  <- fit$logodds
+      x0 <- dot(w,x)
       cat(sprintf("logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n",x0,
-                  with(out,sprintf("[%+0.2f,%+0.2f]",a,b)),min(x),
-                  max(x)))
+                  with(cred(x,x0,w,cred.int),
+                       sprintf("[%+0.2f,%+0.2f]",a,b)),min(x),max(x)))
     }
   }
 
@@ -109,12 +107,11 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
     cat(" -PVE-")
   cat(sprintf("   coef. Pr(coef.>%0.2f)\n",cred.int))
   for (i in vars) {
-    # [a b] = varbvscoefcred(fit,i,c,nr);
-    out <- list(a = 0,b = 0)
     cat(sprintf("%6d %-10s %0.3f",i,rownames(fit$alpha)[i],PIP[i]))
     if (fit$family == "gaussian")
       cat(sprintf(" %04.1f%%",100*dot(w,fit$pve[i,])))
-    with(out,cat(sprintf(" %+7.3f [%+0.3f,%+0.3f]\n",beta[i],a,b)))
+    with(varbvscoefcred(fit,i,cred.int,nr),
+         cat(sprintf(" %+7.3f [%+0.3f,%+0.3f]\n",beta[i],a,b)))
   }
 
   return(invisible(fit))

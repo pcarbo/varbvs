@@ -125,12 +125,11 @@ function varbvsprint (fit, c, n, nr)
   end
   fprintf('maximum log-likelihood lower bound: %0.4f\n',max(fit.logw));
   if strcmp(fit.family,'gaussian')
-    x  = sort(fit.model_pve);
-    x0 = mean(x);
-    a  = x(floor((0.5 - c/2)*length(x)));
-    b  = x(ceil((0.5 + c/2)*length(x)));
+    x = sort(fit.model_pve);
+    a = x(floor((0.5 - c/2)*length(x)));
+    b = x(ceil((0.5 + c/2)*length(x)));
     fprintf('proportion of variance explained: ');
-    fprintf('%0.1f%% [%0.1f%%,%0.1f%%]\n',100*x0,100*a,100*b);
+    fprintf('%0.1f%% [%0.1f%%,%0.1f%%]\n',100*mean(x),100*a,100*b);
   end
 
   % (3) SUMMARIZE RESULTS ON HYPERPARAMETERS

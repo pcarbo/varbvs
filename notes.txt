@@ -33,6 +33,9 @@ Strategy for my new implementation of 'varbvs'
 
 * To do: Double-check calculations of PVE against lm() in R.
 
+* To do: Allow specification of summary statistics ('Xb') from "fixed" 
+  variational estimates for an external set of variables.
+
 TESTING
 -------
 family = 'gaussian'
