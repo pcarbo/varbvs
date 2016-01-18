@@ -47,7 +47,7 @@ function [a, b] = cred (x, x0, w, c)
   a = a(i);
   b = b(i);
 
-  % Select only the intervals that c% of the mass.
+  % Select only the intervals that contain c% of the mass.
   P = cumsum(w);
   i = find(P(b) - P(a) + w(a) >= c);
   a = a(i);

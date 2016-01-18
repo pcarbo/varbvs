@@ -61,10 +61,10 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
     cat(sprintf("        estimate Pr>%0.2f             candidate values\n",
                 cred.int))
     if (fit$family == "gaussian") {
-      x0 <- dot(w,fit$sigma)
-      # TO DO: FIX THIS.
-      # [a b] = cred(fit$sigma,x0,w,c)
-      cat(sprintf("sigma   %8.3g %-19s ",x0,sprintf("[%0.3g,%0.3g]",a,b)))
+      x0  <- dot(w,fit$sigma)
+      out <- cred(fit$sigma,x0,w,cred.int)
+      cat(sprintf("sigma   %8.3g %-19s ",x0,sprintf("[%0.3g,%0.3g]",
+                                                    out$a,out$b)))
       if (fit$update.sigma)
         cat("NA\n")
       else
@@ -75,6 +75,8 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
     x0 <- dot(w,fit$sa)
     # TO DO: FIX THIS.
     # [a b] = cred(fit$sa,x0,w,c)
+    a <- 0
+    b <- 0
     cat(sprintf("sa      %8.3g %-19s ",x0,sprintf("[%0.3g,%0.3g]",a,b)))
     if (fit$update.sa)
       cat("NA\n")
@@ -87,6 +89,8 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
       x0 <- dot(w,x)
       # TO DO: FIX THIS.
       # [a b] = cred(x,x0,w,c)
+      a <- 0
+      b <- 0
       cat(sprintf("logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n",x0,
                   sprintf("[%+0.2f,%+0.2f]",a,b),min(x),max(x)))
     }

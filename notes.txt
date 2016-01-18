@@ -34,7 +34,7 @@ Strategy for my new implementation of 'varbvs'
 * To do: Double-check calculations of PVE against lm() in R.
 
 TESTING
-
+-------
 family = 'gaussian'
                 demo_qtl.m  demo.qtl.R
 m = 0, ns = 21      x           x 

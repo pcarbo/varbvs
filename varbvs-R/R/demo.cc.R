@@ -11,6 +11,7 @@ source("varbvsbin.R")
 source("varbvsbinz.R")
 source("varbvsbinupdate.R")
 source("varbvsbinzupdate.R")
+source("print.varbvs.R")
 dyn.load("../src/diagsqr.so")
 dyn.load("../src/varbvsr.so")
 
@@ -72,8 +73,7 @@ if (m > 0)
 
 # Simulate the binary trait (case-control status) as a coin toss with
 # success rates given by the logistic regression.
-y <- runif(n) < sigmoid(w)
-y <- as.double(y)
+y <- as.double(runif(n) < sigmoid(w))
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
@@ -81,5 +81,15 @@ y <- as.double(y)
 # distribution of the coefficients for a logistic regression model of
 # a binary outcome (case-control status), with spike and slab priors
 # on the coefficients.
+cat("2. FITTING MODEL TO DATA.\n")
 fit <- varbvs(X,Z,y,"binomial",logodds = logodds)
 
+# Compute final estimates of the posterior inclusion probabilities
+# averaged over the hyperparameter settings.
+w   <- c(normalizelogweights(fit$logw))
+PIP <- c(fit$alpha %*% w)
+
+# SUMMARIZE POSTERIOR DISTRIBUTION
+# --------------------------------
+cat("3. SUMMARIZING RESULTS.\n")
+print(fit)
