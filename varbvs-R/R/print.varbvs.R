@@ -91,6 +91,31 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
                   max(x)))
     }
   }
-  
+
+  # (4) SUMMARIZE VARIABLE SELECTION RESULTS
+  # ----------------------------------------
+  # Summarize the number of variables selected at different PIP thresholds.
+  cat("Selected variables:\n")
+  cat("prob. >0.10 >0.25 >0.50 >0.75 >0.90 >0.95\n")
+  cat(sprintf("count %5d %5d %5d %5d %5d %5d\n",sum(PIP > 0.1),sum(PIP > 0.25),
+              sum(PIP > 0.5),sum(PIP > 0.75),sum(PIP > 0.9),sum(PIP > 0.95)))
+      
+  # Give more detailed statistics about the top n variables by the
+  # probability that they are included.
+  vars <- order(PIP,decreasing = TRUE)[1:n]
+  cat(sprintf("Top %d variables by inclusion probability:\n",n))
+  cat(" index variable   prob.")
+  if (fit$family == "gaussian")
+    cat(" -PVE-")
+  cat(sprintf("   coef. Pr(coef.>%0.2f)\n",cred.int))
+  for (i in vars) {
+    # [a b] = varbvscoefcred(fit,i,c,nr);
+    out <- list(a = 0,b = 0)
+    cat(sprintf("%6d %-10s %0.3f",i,rownames(fit$alpha)[i],PIP[i]))
+    if (fit$family == "gaussian")
+      cat(sprintf(" %04.1f%%",100*dot(w,fit$pve[i,])))
+    with(out,cat(sprintf(" %+7.3f [%+0.3f,%+0.3f]\n",beta[i],a,b)))
+  }
+
   return(invisible(fit))
 }
