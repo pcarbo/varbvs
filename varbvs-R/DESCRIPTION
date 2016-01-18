@@ -1,11 +1,15 @@
 Package: varbvs
 Type: Package
-Title: Variational inference for Bayesian variable selection
-Version: 1.0
-Date: 2012-03-22
+Title: Large-scale Bayesian variable selection using variational methods
+Version: 2.0
+Date: 2016-01-18
 Author: Peter Carbonetto
-Maintainer: Peter Carbonetto <pcarbo@uchicago.edu>
-Description: Implements the variational inference procedure for Bayesian variable selection, as described in the "Scalable variational inference for Bayesian variable selection in regression, and its accuracy in genetic association studies" (Bayesian Analysis 7, March 2012, pages 73-108). This software has been used to implement Bayesian variable selection for large problems with over a million variables and thousands of samples.
-Suggests: grid, ggplot2
-LazyLoad: yes
-License: GPL (>= 3)
+Maintainer: Peter Carbonetto <peter.carbonetto@gmail.com>
+Description: Fast algorithms for fitting Bayesian variable selection models and computing Bayes factors, in which the outcome (or response variable) is modeled using a linear regression or a logistic regression. The algorithms are based on the variational approximations described in "Scalable variational inference for Bayesian variable selection in regression, and its accuracy in genetic association studies" (P. Carbonetto and M. Stephens, Bayesian Analysis 7, 2012, pages 73-108). This software has been applied to large data sets with over a
+million variables and thousands of samples.  
+Depends: 
+Suggests: glmnet, qtl 
+License: GPL (>= 3) 
+NeedsCompilation: yes 
+Repository: CRAN
+URL: http://github.com/pcarbo/varbvs
