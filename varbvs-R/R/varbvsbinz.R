@@ -176,10 +176,10 @@ update.etaz <- function (X, Z, y, v, Xr, d) {
   muz <- S %*% t(Z) %*% (y - 0.5 - d*Xr)
   
   # Calculate the covariance between the coefficients u and beta.
-  W <- (-t((S %*% (t(Z) * d)) %*% X) * v)
+  W <- (-t((S %*% t(Z * d)) %*% X) * v)
   
   # This is the M-step update for the free parameters.
-  U <- t((S %*% (t(Z) * d)) %*% X)
+  U <- t((S %*% t(Z * d)) %*% X)
   return(sqrt(c(Z %*% muz + Xr)^2 + diagsq2(Z,S) +
               diagsq2(Z,t(U) %*% (U * v)) + diagsqt(X,v) +
               2*diagprod(X %*% W,Z)))
