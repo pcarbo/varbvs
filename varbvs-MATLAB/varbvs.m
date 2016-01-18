@@ -117,7 +117,7 @@
 %    variables that are included in the model. Hyperparameter logodds is the
 %    prior log-odds that a variable is included in the regression model; it
 %    is defined as logodds = log10(q/(1-q)), where q is the prior
-%    probability that a variable is included in the regression model.
+%    probability that a variable is included in the regression model. 
 %
 %    The prior log-odds may also be specified separately for each variable,
 %    which is useful is there is prior information about which variables are
@@ -627,7 +627,15 @@ function fit = varbvs (X, Z, y, labels, family, options)
       [ans i] = max(logw);
       alpha   = repmat(alpha(:,i),1,ns);
       mu      = repmat(mu(:,i),1,ns);
-      eta     = repmat(eta(:,i),1,ns);
+      if optimize_eta
+        eta = repmat(eta(:,i),1,ns);
+      end
+      if update_sigma
+        sigma = repmat(sigma(i),1,ns);
+      end
+      if update_sa
+        sa = repmat(sa(i),1,ns);
+      end
     end
     
     % Compute a variational approximation to the posterior distribution
@@ -692,6 +700,10 @@ function [logw, sigma, sa, alpha, mu, s, eta] = ...
   if isscalar(logodds)
     logodds = repmat(logodds,p,1);
   end
+
+  % Note that we need to multiply the prior log-odds by log(10), because
+  % varbvsnorm, varbvsbin and varbvsbinz define the prior log-odds using
+  % the natural logarithm (base e).
   if strcmp(family,'gaussian')
     [logw err sigma sa alpha mu s] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...

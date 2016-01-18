@@ -7,7 +7,9 @@
 #
 source("misc.R")
 source("varbvs.R")
+source("varbvsbin.R")
 source("varbvsbinz.R")
+source("varbvsbinupdate.R")
 source("varbvsbinzupdate.R")
 dyn.load("../src/diagsqr.so")
 dyn.load("../src/varbvsr.so")
@@ -16,7 +18,6 @@ dyn.load("../src/varbvsr.so")
 # -----------------
 n  <- 1500  # Number of samples (subjects).
 p  <- 2000  # Number of variables (genetic markers).
-m  <- 2     # Number of covariates (m >= 0).
 na <- 20    # Number of markers that affect the binary outcome.
 sa <- 0.15  # Variance of log-odds ratios.
 p1 <- 0.25  # Target proportion of subjects that are cases (y = 1).
@@ -54,6 +55,7 @@ colnames(X) <- paste0("rs",sample(1e6,p))
 
 # Generate the covariate data (Z), and the linear effects of the
 # covariates (u).
+m <- length(covariates)
 if (m > 0) {
   Z <- randn(n,m)
   u <- rnorm(m)
@@ -73,13 +75,11 @@ if (m > 0)
 y <- runif(n) < sigmoid(w)
 y <- as.double(y)
 
-out <- varbvsbinz(X,Z,y,1,rep(log(na/p),p),runif(p)/p,rnorm(p),rep(1,n))
-cat("\n")
-
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 # Fit the fully-factorized variational approximation to the posterior
 # distribution of the coefficients for a logistic regression model of
 # a binary outcome (case-control status), with spike and slab priors
 # on the coefficients.
-# TO DO.
+fit <- varbvs(X,Z,y,"binomial",logodds = logodds)
+

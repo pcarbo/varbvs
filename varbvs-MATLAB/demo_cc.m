@@ -70,7 +70,7 @@ y = rand(n,1) < sigmoid(t);
 % binary outcome (case-control status), with spike and slab priors on the
 % coefficients.
 fprintf('2. FITTING MODEL TO DATA.\n')
-fit = varbvs(X,Z,y,labels,'binomial',struct('logodds',logodds,'tol',1e-4));
+fit = varbvs(X,Z,y,labels,'binomial',struct('logodds',logodds));
 
 % Compute final estimates of the posterior inclusion probabilities
 % averaged over the hyperparameter settings.

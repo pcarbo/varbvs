@@ -4,8 +4,8 @@
 varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
                     logodds = NULL, alpha = NULL, mu = NULL, eta = NULL,
                     update.sigma = NULL, update.sa = NULL, optimize.eta = NULL,
-                    initialize.params = NULL, sa0 = 0, n0 = 0, tol = 1e-4,
-                    maxiter = 1e4, verbose = TRUE) {
+                    initialize.params = NULL, nr = 1000, sa0 = 0, n0 = 0,
+                    tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -14,8 +14,9 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   # (1) CHECK INPUTS
   # ----------------
   # If input Z is not NULL, it must have as many rows as X.
-  if (!is.null(Z) & nrow(Z) != n)
-    stop("Inputs X and Z do not match")
+  if (!is.null(Z))
+    if (nrow(Z) != n)
+      stop("Inputs X and Z do not match")
 
   # Add intercept.
   Z <- cbind(1,Z)
@@ -269,7 +270,12 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       i     <- which.max(logw)
       alpha <- rep.col(alpha[,i],ns)
       mu    <- rep.col(mu[,i],ns)
-      eta   <- rep.col(eta[,i],ns)
+      if (optimize.eta)
+        eta <- rep.col(eta[,i],ns)
+      if (update.sigma)
+        sigma <- rep(sigma[i],ns)
+      if (update.sa)
+        sa <- rep(sa[i],ns)
     }
 
     # Compute a variational approximation to the posterior distribution
@@ -308,7 +314,10 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
 
     # Compute the proportion of variance in Y, after removing linear
     # effects of covariates, explained by the regression model.
-    # TO DO.
+    #
+    # TO DO: FIX THIS.
+    #
+    fit$model.pve <- runif(nr);
 
     # Compute the proportion of variance in Y, after removing linear
     # effects of covariates, explained by each variable.
@@ -319,7 +328,11 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       sz          <- sx*(mu[,i]^2 + s[,i])
       fit$pve[,i] <- sz/(sz + sigma[i])
     }
-  }
+  } else if (family == "binomial")
+    fit <- list(family = family,ncov = ncol(Z) - 1,n = n,n0 = n0,sa0 = sa0,
+                update.sa = update.sa,optimize.eta = optimize.eta,
+                prior.same = prior.same,logw = logw,sa = sa,logodds = logodds,
+                alpha = alpha,mu = mu,s = s,eta = eta)
   
   # Add column names to some of the outputs.
   rownames(fit$alpha) <- colnames(X)
@@ -340,6 +353,10 @@ outerloop <- function (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta,
   p <- ncol(X)
   if (length(logodds) == 1)
     logodds <- rep(logodds,p)
+
+  # Note that we need to multiply the prior log-odds by log(10),
+  # because varbvsnorm, varbvsbin and varbvsbinz define the prior
+  # log-odds using the natural logarithm (base e).
   if (family == "gaussian") {
     out <- varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,
                       verbose,outer.iter,update.sigma,update.sa,n0,sa0)
