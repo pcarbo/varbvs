@@ -1,13 +1,8 @@
 useDynLib(varbvs)
-export(print.varbvs,
-       varbvs,
-       varbvsnorm,
-       varbvsbin,
-       varbvsbinz,
-       varbvsnormupdate,
-       varbvsbinupdate,
-       varbvsbinzupdate,
-       varbvscoefcred,
+export(print.varbvs,logit,logpexp,logsigmoid,sigmoid,normalizelogweights,
+       diagsq,diagsqt,cred,updatestats.varbvsbin,updatestats.varbvsbinz,
+       update.eta,update.etaz,varbvs,varbvsnorm,varbvsbin,varbvsbinz,
+       varbvsnormupdate,varbvsbinupdate,varbvsbinzupdate,varbvscoefcred,
        varbvspve)
 
 S3method("print","varbvs")

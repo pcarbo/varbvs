@@ -35,6 +35,8 @@ Strategy for my new implementation of 'varbvs'
 
 * To do: "Package up" R code (refer to glmnet).
 
+* To do: Add data sets, vignettes and/or demos to R package.
+
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
 
