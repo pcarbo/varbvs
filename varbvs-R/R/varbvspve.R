@@ -1,7 +1,7 @@
 # Samples nr posterior estimates of the proportion of variance in Y
 # explained by the Bayesian variable selection model fitted using a
 # variational approximation. This function is only valid for the
-# linear regression model (family = 'gaussian') with an intercept.
+# linear regression model (family = "gaussian") with an intercept.
 varbvspve <- function (X, fit, nr = 1000) {
 
   # Get the number of variables (p) and the number of hyperparameter

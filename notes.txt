@@ -33,12 +33,20 @@ Strategy for my new implementation of 'varbvs'
 
 * Note that X cannot be sparse.
 
-* To do: "Package up" R code (refer to glmnet).
-
 * To do: Add data sets, vignettes and/or demos to R package.
 
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
+
+DOCUMENTATION
+-------------
+* cred
+* normalizelogweights
+* rand
+* randn
+* print.varbvs
+* varbvs
+* varbvscoefcred
 
 TESTING
 -------
@@ -47,8 +55,6 @@ family = 'gaussian'
 m = 0, ns = 21      x           x 
 m = 3, ns = 21      x           x
 m = 3, ns = 1       x           x
-
-Also check: update.sigma = false and/or update.sa = false
 
 family = 'binomial'
                 demo_cc.m  demo.cc.R
