@@ -77,11 +77,6 @@ if (m > 0)
   y <- y + Z %*% u
 y <- c(y)
 
-out <- varbvsnorm(X,y,var(y),1,rep(log(na/p),p),runif(p)/p,rnorm(p))
-cat("\n")
-
-stop()
-
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 # Fit the fully-factorized variational approximation to the posterior
@@ -89,5 +84,4 @@ stop()
 # continuous outcome (quantitiative trait), with spike and slab priors on
 # the coefficients.
 cat("2. FITTING MODEL TO DATA.\n")
-# TO DO.
-# fit <- varbvs(X,Z,y,"gaussian",logodds = logodds)
+fit <- varbvs(X,Z,y,"gaussian",logodds = logodds)

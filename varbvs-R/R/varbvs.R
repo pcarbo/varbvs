@@ -221,12 +221,16 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       cat("        variational    max.   incl variance params\n")
       cat(" iter   lower bound  change   vars   sigma      sa\n")
     }
-    #
-    # TO DO: FIX THIS.
-    #
-    # [logw sigma sa alpha mu s eta] = ...
-    #     outerloop(X,Z,y,family,sigma,sa,logodds,alpha,mu,eta,tol,maxiter,...
-    #               verbose,[],update_sigma,update_sa,optimize_eta,n0,sa0);
+    out     <- outerloop(X,Z,y,family,sigma,sa,logodds,alpha,mu,eta,tol,
+                         maxiter,verbose,NULL,update.sigma,update.sa,
+                         optimize.eta,n0,sa0)
+    logw    <- out$logw
+    sigma   <- out$sigma
+    sa      <- out$sa
+    alpha[] <- out$alpha
+    mu[]    <- out$mu
+    s[]     <- out$s
+    eta[]   <- out$eta
     if (verbose)
       cat("\n")
   } else {
@@ -245,8 +249,15 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       # Repeat for each setting of the hyperparameters.
       for (i in 1:ns) {
         out <- outerloop(X,Z,y,family,sigma[i],sa[i],logodds[,i],alpha[,i],
-                         mu[,i],eta[,i],tol,maxiter,verbose,outer.iter,
-                         update.sigma,update.sa,optimize.eta, n0,sa0)
+                         mu[,i],eta[,i],tol,maxiter,verbose,i,update.sigma,
+                         update.sa,optimize.eta,n0,sa0)
+        logw[i]   <- out$logw
+        sigma[i]  <- out$sigma
+        sa[i]     <- out$sa
+        alpha[,i] <- out$alpha
+        mu[,i]    <- out$mu
+        s[,i]     <- out$s
+        eta[,i]   <- out$eta
       }
       if (verbose)
         cat("\n")
@@ -272,13 +283,16 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     # parameters that locally minimize the K-L divergence between the
     # approximating distribution and the exact posterior.
     for (i in 1:ns) {
-      #
-      # TO DO: FIX THIS.
-      #
-      # [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
-      #     outerloop(X,Z,y,family,sigma(i),sa(i),logodds(:,i),alpha(:,i),...
-      #               mu(:,i),eta(:,i),tol,maxiter,verbose,i,update_sigma,...
-      #               update_sa,optimize_eta,n0,sa0)
+      out <- outerloop(X,Z,y,family,sigma[i],sa[i],logodds[,i],alpha[,i],
+                       mu[,i],eta[,i],tol,maxiter,verbose,i,update.sigma,
+                       update.sa,optimize.eta,n0,sa0)
+      logw[i]   <- out$logw
+      sigma[i]  <- out$sigma
+      sa[i]     <- out$sa
+      alpha[,i] <- out$alpha
+      mu[,i]    <- out$mu
+      s[,i]     <- out$s
+      eta[,i]   <- out$eta
     }
     if (verbose)
       cat("\n")
@@ -286,18 +300,35 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     
   # (6) CREATE FINAL OUTPUT
   # ----------------------
-  if (family =='gaussian') {
+  if (family == 'gaussian') {
     fit <- list(family = family,ncov = ncol(Z) - 1,n = n,n0 = n0,sa0 = sa0,
                 update.sigma = update.sigma,update.sa = update.sa,
                 prior.same = prior.same,logw = logw,sigma = sigma,sa = sa,
                 logodds = logodds,alpha = alpha,mu = mu,s = s)
-  }
 
-  # NOTE: Do some final post-processing here, such as adding names of
-  # variables and covariates to data structures.
-  if (prior.same)
-    fit.logodds <- c(fit.logodds)
+    # Compute the proportion of variance in Y, after removing linear
+    # effects of covariates, explained by the regression model.
+    # TO DO.
+
+    # Compute the proportion of variance in Y, after removing linear
+    # effects of covariates, explained by each variable.
+    fit$pve           <- matrix(0,p,ns)
+    rownames(fit$pve) <- colnames(X)
+    sx                <- var1(X)
+    for (i in 1:ns) {
+      sz          <- sx*(mu[,i]^2 + s[,i])
+      fit$pve[,i] <- sz/(sz + sigma[i])
+    }
+  }
   
+  # Add column names to some of the outputs.
+  rownames(fit$alpha) <- colnames(X)
+  rownames(fit$mu)    <- colnames(X)
+  rownames(fit$s)     <- colnames(X)
+  if (prior.same)
+    fit$logodds <- c(fit$logodds)
+  else
+    rownames(fit$logodds) <- colnames(X)  
   return(fit)
 }
 
@@ -306,21 +337,23 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
 outerloop <- function (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta,
                        tol, maxiter, verbose, outer.iter, update.sigma,
                        update.sa, optimize.eta, n0, sa0) {
-  p <- length(alpha)
+  p <- ncol(X)
   if (length(logodds) == 1)
     logodds <- rep(logodds,p)
   if (family == "gaussian") {
-    # TO DO: FIX THIS.
-    return(varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,
-                      verbose,outer.iter,update.sigma,update.sa,n0,sa0))
-  } else if (family == "binomial" & ncol(Z) == 1) {
-    # [logw sa alpha mu s eta] = ...
-    #     varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...
-    #               outer_iter,update_sa,optimize_eta,n0,sa0)
+    out <- varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,
+                      verbose,outer.iter,update.sigma,update.sa,n0,sa0)
+    out$eta <- eta
   } else if (family == "binomial") {
-    # [logw sa alpha mu s eta] = ...
-    #     varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,...
-    #               verbose,outer_iter,update_sa,optimize_eta,n0,sa0)
+    if (ncol(Z) == 1)
+      out <- varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,
+                       verbose,outer.iter,update.sa,optimize.eta,n0,sa0)
+    else
+      out <- varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,
+                        verbose,outer.iter,update.sa,optimize.eta,n0,sa0)
+    out$sigma <- sigma
   }
+  numiter  <- length(out$logw)
+  out$logw <- out$logw[numiter]
   return(out)
 }
