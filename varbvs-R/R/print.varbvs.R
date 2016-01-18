@@ -58,41 +58,37 @@ print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
     cat("\n")
   } else {
     cat("\n")
-    cat(sprintf("        estimate Pr>%0.2f             candidate values\n",
-                cred.int))
+    cat("        estimate ")
+    cat(sprintf("Pr>%0.2f             candidate values\n",cred.int))
     if (fit$family == "gaussian") {
       x0  <- dot(w,fit$sigma)
       out <- cred(fit$sigma,x0,w,cred.int)
-      cat(sprintf("sigma   %8.3g %-19s ",x0,sprintf("[%0.3g,%0.3g]",
-                                                    out$a,out$b)))
+      cat(sprintf("sigma   %8.3g ",x0))
+      cat(sprintf("%-19s ",with(out,sprintf("[%0.3g,%0.3g]",a,b))))
       if (fit$update.sigma)
         cat("NA\n")
       else
-        cat(sprintf("%0.3g--%0.3g\n",min(fit$sigma),max(fit$sigma)))
+        with(fit,cat(sprintf("%0.3g--%0.3g\n",min(sigma),max(sigma))))
     }
  
     # Summarize the fitted prior variance parameter (sa).
-    x0 <- dot(w,fit$sa)
-    # TO DO: FIX THIS.
-    # [a b] = cred(fit$sa,x0,w,c)
-    a <- 0
-    b <- 0
-    cat(sprintf("sa      %8.3g %-19s ",x0,sprintf("[%0.3g,%0.3g]",a,b)))
+    x0  <- dot(w,fit$sa)
+    out <- cred(fit$sa,x0,w,cred.int)
+    cat(sprintf("sa      %8.3g ",x0))
+    cat(sprintf("%-19s ",with(out,sprintf("[%0.3g,%0.3g]",a,b))))
     if (fit$update.sa)
       cat("NA\n")
     else
-      cat(sprintf("%0.3g--%0.3g\n",min(fit$sa),max(fit$sa)))
+      with(fit,cat(sprintf("%0.3g--%0.3g\n",min(sa),max(sa))))
 
     # Summarize the fitted prior log-odds of inclusion (logodds).
     if (fit$prior.same) {
-      x  <- fit$logodds
-      x0 <- dot(w,x)
-      # TO DO: FIX THIS.
-      # [a b] = cred(x,x0,w,c)
-      a <- 0
-      b <- 0
+      x   <- fit$logodds
+      x0  <- dot(w,x)
+      out <- cred(x,x0,w,cred.int)
       cat(sprintf("logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n",x0,
-                  sprintf("[%+0.2f,%+0.2f]",a,b),min(x),max(x)))
+                  with(out,sprintf("[%+0.2f,%+0.2f]",a,b)),min(x),
+                  max(x)))
     }
   }
   
