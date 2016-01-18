@@ -42,7 +42,7 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
   # -----------------
   # Compute a few useful quantities.
   Xr    <- c(X %*% (alpha*mu))
-  stats <- updatestats.varbvsbin(X,y,eta)
+  stats <- updatestats_varbvsbin(X,y,eta)
   s     <- sa/(sa*stats$xdx + 1)
 
   # Initialize storage for outputs logw and err.
@@ -87,8 +87,8 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
     # Update the free parameters specifying the variational approximation
     # to the logistic regression factors.
     if (optimize.eta) {
-      eta   <- update.eta(X,y,betavar(alpha,mu,s),Xr,stats$d)
-      stats <- updatestats.varbvsbin(X,y,eta)
+      eta   <- update_eta(X,y,betavar(alpha,mu,s),Xr,stats$d)
+      stats <- updatestats_varbvsbin(X,y,eta)
       s     <- sa/(sa*stats$xdx + 1)
     }
 
@@ -148,7 +148,7 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
 # ----------------------------------------------------------------------
 # Calculates useful quantities for updating the variational approximation
 # to the logistic regression factors.
-updatestats.varbvsbin <- function (X, y, eta) {
+updatestats_varbvsbin <- function (X, y, eta) {
 
   # Compute the slope of the conjugate.
   d <- slope(eta)
@@ -179,7 +179,7 @@ updatestats.varbvsbin <- function (X, y, eta) {
 # this update to be valid, it is required that the posterior
 # covariance of the coefficients is equal to diag(v). Input d must be
 # d = slope(eta); see function 'slope' for details.
-update.eta <- function (X, y, v, Xr, d) {
+update_eta <- function (X, y, v, Xr, d) {
   
   # Compute mu0, the posterior mean of the intercept in the logistic
   # regression under the variational approximation. Here, a is the

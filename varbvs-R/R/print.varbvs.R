@@ -1,6 +1,6 @@
 # Generate a four-part summary of the fitted Bayesian variable
 # selection model.
-print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
+print.varbvs <- function (fit, cred.int = 0.95, n = 5, nr = 1000,...) {
 
   # Get the number of variables (p) and number of candidate
   # hyperparameter settings (ns).

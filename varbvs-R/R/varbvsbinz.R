@@ -20,7 +20,7 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
   # -----------------
   # Compute a few useful quantities.
   Xr    <- c(X %*% (alpha*mu))
-  stats <- updatestats.varbvsbinz(X,Z,y,eta)
+  stats <- updatestats_varbvsbinz(X,Z,y,eta)
   s     <- sa/(sa*stats$xdx + 1)
 
   # Initialize storage for outputs logw and err.
@@ -64,8 +64,8 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
     # Update the free parameters specifying the variational approximation
     # to the logistic regression factors.
     if (optimize.eta) {
-      eta   <- update.etaz(X,Z,y,betavar(alpha,mu,s),Xr,stats$d)
-      stats <- updatestats.varbvsbinz(X,Z,y,eta)
+      eta   <- update_etaz(X,Z,y,betavar(alpha,mu,s),Xr,stats$d)
+      stats <- updatestats_varbvsbinz(X,Z,y,eta)
       s     <- sa/(sa*stats$xdx + 1)
     }
     
@@ -131,7 +131,7 @@ diagprod <- function (A, B)
 # This function returns useful quantities for updating the variational
 # approximation to the logistic regression factors, allowing for
 # covariates.
-updatestats.varbvsbinz <- function (X, Z, y, eta) {
+updatestats_varbvsbinz <- function (X, Z, y, eta) {
 
   # Compute the slope of the conjugate.
   d <- slope(eta)
@@ -165,7 +165,7 @@ updatestats.varbvsbinz <- function (X, Z, y, eta) {
 # Computes the M-step update for the parameters specifying the
 # variational lower bound to the logistic regression factors, allowing
 # for additional covariates.
-update.etaz <- function (X, Z, y, v, Xr, d) {
+update_etaz <- function (X, Z, y, v, Xr, d) {
 
   # Compute the posterior covariance of u given beta. This is
   # equivalent to MATLAB expression S = inv(Z'*diag(d)*Z).

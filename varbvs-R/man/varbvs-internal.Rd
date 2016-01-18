@@ -6,10 +6,10 @@
 \alias{logsigmoid}
 \alias{diagsq}
 \alias{diagsqt}
-\alias{updatestats.varbvsbin}
-\alias{updatestats.varbvsbinz}
-\alias{update.eta}
-\alias{update.etaz}
+\alias{updatestats_varbvsbin}
+\alias{updatestats_varbvsbinz}
+\alias{update_eta}
+\alias{update_etaz}
 \alias{varbvsnorm}
 \alias{varbvsbin}
 \alias{varbvsbinz}

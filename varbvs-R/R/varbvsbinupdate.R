@@ -11,7 +11,7 @@
 # logodds is the prior log-odds of inclusion for each variable. It
 # must be a vector of length p. Note that a residual variance
 # parameter (sigma) is not needed to model a binary outcome. See
-# function 'updatestats.varbvsbin' for more information about input
+# function 'updatestats_varbvsbin' for more information about input
 # 'stats'.
 #
 # Inputs alpha0, mu0 are the current parameters of the variational
