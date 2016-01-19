@@ -1,22 +1,9 @@
 Strategy for my new implementation of 'varbvs'
 ----------------------------------------------
-* Variants of varbvs:
-    (1) Quantitative response variable with 0+ covariates, including
-        an intercept (family = gaussian). See varbvsnorm.m.
-    (2) Binary response variable (0 or 1) with 0+ covariates, always
-        includes an intercept (family = binomial). See varbvsbin.m.
-
 * Options:
    (12) Summary statistics from "fixed" variational estimates for an
         external set of variables.
-
-* The output of 'varbvs' is called 'fit'. It is a structure array
-  (STRUCT) with the following fields:
-    (1) Variational parameters 'alpha'.
-    (2) Variational parameters 'mu'.
-    (3) Variational parameters 's'.
-    (4) Variational parameters 'eta' (logistic link only).
-
+	
 * See glmnet.m for a nice example of how to write detailed description
   of function.
   
