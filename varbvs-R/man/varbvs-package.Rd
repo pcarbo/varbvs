@@ -14,13 +14,13 @@
 \details{
 
 The main functionality of this package is implemented in function
-\code{varbvs}. This function selects the algorithm that is most
-appropriate for the data set and selected model (linear or logistic
-regression). See \code{help(varbvs)} for details. The interface is
-intended to resemble to \pkg{glmnet}, the popular package for fitting
+\code{varbvs}. This function selects the most appropriate algorithm for
+the data set and selected model (linear or logistic regression). See
+\code{help(varbvs)} for details. The varbvs interface is intended to
+resemble interface for \pkg{glmnet}, the popular package for fitting
 genealized linear models.
   
-For more details about the this package, including the license, and a
+For more details about the this package, including the license and a
 list of available functions, see \code{help(package=varbvs)}.
 
 }
