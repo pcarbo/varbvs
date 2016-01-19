@@ -25,7 +25,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   # Input y must have n entries.
   if (length(y) != n)
     stop("Inputs X and y do not match")
-  y <- c(y)
+  y <- c(as.double(y))
   
   # Check choice of regression model.
   if (family != "gaussian" & family != "binomial")

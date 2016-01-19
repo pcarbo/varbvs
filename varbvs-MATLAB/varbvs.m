@@ -54,7 +54,7 @@
 %          options.alpha (initial estimate of variational parameter alpha)
 %          options.mu (initial estimate of variational parameter mu)
 %          options.initialize_params = true (see below)
-%          options.nr = 1000 (samples of PVE to draw from posterior)
+%          options.nr = 100 (samples of PVE to draw from posterior)
 %
 %          For family = 'gaussian' only:
 %          options.sigma = var(y) (residual variance parameter settings)
@@ -110,8 +110,9 @@
 %    hyperparameter settings. The hyperparameters sa, sigma and logodds are
 %    specified by three arrays with the same number of elements, in which
 %    options.sa(i), options.sigma(i) and options.logodds(i) specify the ith
-%    hyperparameter setting. Note that sigma is only used for the linear
-%    regression model, and will generate an error if family = 'binomial'.
+%    hyperparameter setting. (The exception to this is when logodds is a
+%    matrix.) Note that sigma is only used for the linear regression model,
+%    and will generate an error if family = 'binomial'.
 %
 %    Hyperparameter sa is the prior variance of regression coefficients for
 %    variables that are included in the model. Hyperparameter logodds is the
@@ -130,7 +131,7 @@
 %    and options.logodds(:,i), the inner loop cycles through coordinate
 %    ascent updates to tighten the lower bound on the marginal likelihood,
 %
-%        Pr(Y | X, sigma, sa, logodds),
+%        Pr(Y | X, sigma, sa, logodds).
 %
 %    The inner loop coordinate ascent updates terminate when either (1) the
 %    maximum number of inner loop iterations is reached, as specified by
@@ -516,7 +517,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isfield(options,'nr')
     nr = options.nr;
   else
-    nr = 1000;
+    nr = 100;
   end
   
   % TO DO: Allow specification of summary statistics ('Xb') from "fixed"

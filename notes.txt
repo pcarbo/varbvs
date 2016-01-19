@@ -25,9 +25,10 @@ Strategy for my new implementation of 'varbvs'
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
 
+* To do: Add small examples to varbvs.Rd.
+
 DOCUMENTATION
 -------------
-* cred
 * varbvs
 * varbvsprint
 * varbvscoefcred
