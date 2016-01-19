@@ -173,8 +173,8 @@
 %    fast computation with the logistic regression model (family =
 %    'binomial'). The fitted value of eta is returned as an n x ns matrix
 %    fit.eta. If a good estimate of eta is already available (e.g., in a
-%    previous call to varbvs on the same data, provide this estimate in
-%    options.eta, in which case eta is not fitted to the data during fthe
+%    previous call to varbvs on the same data), provide this estimate in
+%    options.eta, in which case eta is not fitted to the data during the
 %    inner loop coordinate ascent updates (to override this behaviour, set
 %    options.optimize_eta = true, in which case options.eta is treated as an
 %    initial estimate).

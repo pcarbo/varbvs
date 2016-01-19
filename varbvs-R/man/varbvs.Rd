@@ -40,8 +40,8 @@
   \item{sigma}{Candidate settings for the residual variance
   parameter. Must be of the same length as inputs sa and logodds (or
   have length equal to the number of columns of logodds). Only used for
-  linear regression, and will generate an error if family =
-  "binomial". If sigma = NULL, residual variance parameter is
+  linear regression, and will generate an error if \code{family =
+  "binomial"}. If sigma = NULL, residual variance parameter is
   automatically fitted to data by computing approximate
   maximum-likelihood (ML) estimate.}
 
@@ -67,11 +67,20 @@
     provided as input, then it is set to the default value when sa and
     sigma are NULL, and otherwise an error is generated.}
 
-  \item{alpha}{Description goes here.}
+  \item{alpha}{Good initial estimate for the variational parameter
+  alpha for each hyperparameter setting. Either NULL, or a p x ns
+  matrix, where p is the number of variables, and ns is the number of
+  hyperparameter settings.}
 
-  \item{mu}{Description goes here.}
+  \item{mu}{Good initial estimate for the variational parameter mu for
+  each hyperparameter setting. Either NULL, or a p x ns matrix, where p
+  is the number of variables, and ns is the number of hyperparameter
+  settings.}
 
-  \item{eta}{Description goes here.}
+  \item{eta}{Good initial estimate of the additional free parameters
+  specifying the variational approximation to the logistic regression
+  factors. Either NULL, or an n x ns matrix, where n is the number of
+  samples, and ns is the number of hyperparameter settings.}
 
   \item{update.sigma}{Setting this to TRUE ensures that sigma is always
   fitted to data, in which case input vector sigma is used to provide
@@ -81,9 +90,11 @@
   fitted to data, in which case input vector sa is used to provide
   initial estimates.}
 
-  \item{optimize.eta}{Description goes here.}
+  \item{optimize.eta}{When optimize.eta = TRUE, eta is fitted to the
+  data during the inner loop coordinate ascent updates.}
 
-  \item{initialize.params}{Description goes here.}
+  \item{initialize.params}{If TRUE, the initialization stage of the
+    variational inference algorithm (see below) will be skipped.}
 
   \item{nr}{Number of samples of "model PVE" to draw from posterior.}
 
@@ -99,57 +110,33 @@
 
   \item{verbose}{If verbose = TRUE, print progress of algorithm to
     console.}
+  
 }
-
-%          options.alpha (initial estimate of variational parameter alpha)
-%          options.mu (initial estimate of variational parameter mu)
-%          options.initialize_params = true (see below)
-
 \details{
   
-    Two types of outcomes (y) are modeled: (1) a continuous outcome,
-    also a "quantitative trait" in the genetics literature; or (2) a
-    binary outcome with possible values 0 and 1. For the former, set
-    \code{family = "gaussian"}, in which case, the outcome is
-    i.i.d. normal with mean \deqn{u0 + Z*u + X*b} and variance sigma, in
-    which u and b are vectors of regresion coefficients, and u0 is the
-    intercept. In the second case, we use logistic regression to model
-    the outcome, in which the probability that y = 1 is equal to
-    \deqn{sigmoid(u0 + Z*u + X*b).} See \code{help(sigmoid)} for a
-    description of the sigmoid function. Note that the regression
-    always includes an intercept term (u0).
+    \bold{Regression models.} Two types of outcomes (y) are modeled: (1)
+    a continuous outcome, also a "quantitative trait" in the genetics
+    literature; or (2) a binary outcome with possible values 0 and
+    1. For the former, set \code{family = "gaussian"}, in which case,
+    the outcome is i.i.d. normal with mean \deqn{u0 + Z*u + X*b} and
+    variance sigma, in which u and b are vectors of regresion
+    coefficients, and u0 is the intercept. In the second case, we use
+    logistic regression to model the outcome, in which the probability
+    that y = 1 is equal to \deqn{sigmoid(u0 + Z*u + X*b).} See
+    \code{help(sigmoid)} for a description of the sigmoid function. Note
+    that the regression always includes an intercept term (u0).
 
-    For both regression models, the fitting procedure consists of an
-    inner loop and an outer loop. The outer loop iterates over each of
-    the hyperparameter settings (sa, sigma and logodds). Given a setting
-    of the hyperparameters, the inner loop cycles through coordinate
-    ascent updates to tighten the lower bound on the marginal
-    likelihood, \deqn{Pr(Y | X, sigma, sa, logodds)}. The inner loop
-    coordinate ascent updates terminate when either (1) the maximum
-    number of inner loop iterations is reached, as specified by
-    options.maxiter, or (2) the maximum difference between the estimated
-    posterior inclusion probabilities is less than \code{tol}.
-
-    Outputs alpha, mu and s specify the approximate posterior
-    distribution of the regression coefficients. Each of these outputs
-    is a p x ns matrix. For the ith hyperparameter setting, alpha[,i] is
-    the variational estimate of the posterior inclusion probability
-    (PIP) for each variable; mu[,i] is the variational estimate of the
-    posterior mean coefficient given that it is included in the model;
-    and s[,i] is the estimated posterior variance of the coefficient
-    given that it is included in the model. These are also the
-    quantities that are optimized as part of the inner loop coordinate
-    ascent updates. 
-
-    An additional variational parameter, denoted by 'eta', is needed for
-    fast computation with the logistic regression model (family =
-    'binomial'). The fitted value of eta is returned as an n x ns matrix
-    fit.eta. If a good estimate of eta is already available (e.g., in a
-    previous call to varbvs on the same data, provide this estimate in
-    options.eta, in which case eta is not fitted to the data during fthe
-    inner loop coordinate ascent updates (to override this behaviour, set
-    options.optimize_eta = true, in which case options.eta is treated as an
-    initial estimate).
+    \bold{Co-ordinate ascent optimization procedure.} For both
+    regression models, the fitting procedure consists of an inner loop
+    and an outer loop. The outer loop iterates over each of the
+    hyperparameter settings (sa, sigma and logodds). Given a setting of
+    the hyperparameters, the inner loop cycles through coordinate ascent
+    updates to tighten the lower bound on the marginal likelihood,
+    \deqn{Pr(Y | X, sigma, sa, logodds)}. The inner loop coordinate
+    ascent updates terminate when either (1) the maximum number of inner
+    loop iterations is reached, as specified by options.maxiter, or (2)
+    the maximum difference between the estimated posterior inclusion
+    probabilities is less than \code{tol}.
 
     To provide a more accurate variational approximation of the posterior
     distribution, by default the fitting procedure has two stages. In the
@@ -158,54 +145,70 @@
     lower bound are then used to initialize the coordinate ascent updates
     in a second stage. Although this has the effect of doubling the
     computation time (in the worst case), the final posterior estimates
-    tend to be more accurate with this two-stage fitting procedure. The
-    initial stage will be automatically skipped if initial estimates of the
-    variational parameters are provided in options.alpha, options.mu and/or
-    options.s, unless options.initialize_params = true.
+    tend to be more accurate with this two-stage fitting procedure. 
+    
+    \bold{Variational approximation.} Outputs alpha, mu and s specify
+    the approximate posterior distribution of the regression
+    coefficients. Each of these outputs is a p x ns matrix. For the ith
+    hyperparameter setting, alpha[,i] is the variational estimate of the
+    posterior inclusion probability (PIP) for each variable; mu[,i] is
+    the variational estimate of the posterior mean coefficient given
+    that it is included in the model; and s[,i] is the estimated
+    posterior variance of the coefficient given that it is included in
+    the model. These are also the quantities that are optimized as part
+    of the inner loop coordinate ascent updates. An additional free
+    parameter, eta, is needed for fast computation with the logistic
+    regression model \code{(family = "binomial")}. The fitted value of
+    eta is returned as an n x ns matrix.
 
-    Output fit.logw is an array with ns elements, in which fit.logw(i) is
-    the variational lower bound on the marginal log-likelihood for the ith
-    setting of the hyperparameters. In many settings, it is good practice
-    to account for uncertainty in the hyperparameters when reporting final
-    posterior quantities. Provided that (1) the hyperparameter settings
-    options.sigma, options.sa and options.logodds adequately represent the
-    space of possible hyperparameter settings with high posterior mass, (2)
-    the hyperparameter settings are drawn from the same distribution as the
-    prior, and (3) the fully-factorized variational approximation closely
-    approximates the true posterior distribution, then final posterior
-    quantities can be calculated by using fit.logw as (unnormalized)
-    log-importance weights. Even when conditions (1), (2) and/or (3) are
-    not satisfied, this can approach can still often yield reasonable
-    estimates of averaged posterior quantities. For example, do the
-    following to compute posterior inclusion probabilities (PIPs) averaged
-    over the hyperparameter settings:
-
-        w   = normalizelogweights(fit.logw);
-        PIP = fit.alpha * w(:);
-
-    And do the following to compute the posterior mean estimate of sa:
-
-        w       = normalizelogweights(fit.logw);
-        mean_sa = dot(fit.sa(:),w(:));
-
+    \bold{Correctly averaging over hyperparameter settings.} In many
+    settings, it is good practice to account for uncertainty in the
+    hyperparameters when reporting final posterior quantities. For
+    example, hyperparameter sa is often estimated with a high degree of
+    uncertainty when only a few variables are included in the model.
+    Provided that (1) the hyperparameter settings sigma, sa and logodds
+    adequately represent the space of possible hyperparameter settings
+    with high posterior mass, (2) the hyperparameter settings are drawn
+    from the same distribution as the prior, and (3) the
+    fully-factorized variational approximation closely approximates the
+    true posterior distribution, then final posterior quantities can be
+    calculated by using logw as (unnormalized) log-importance weights.
+    Even when conditions (1), (2) and/or (3) are not satisfied, this can
+    approach can still often yield reasonable estimates of averaged
+    posterior quantities. For example, do the following to compute
+    posterior inclusion probabilities (PIPs) averaged over the
+    hyperparameter settings:
+    \code{
+      w <- normalizelogweights(fit$logw);\cr
+      PIP <- fit$alpha %*% c(w)
+    }
+    And, for example, do the following to compute the posterior mean
+    estimate of hyperparameter sa:
+    \code{
+        w <- normalizelogweights(fit$logw)
+        mean_sa <- dot(fit$sa,w)
+    }
     This is precisely how final posterior quantities are reported by
-    varbvsprint (type 'help varbvsprint' for more details). To account for
-    discrepancies between the prior on (sigma,sa,logodds) and the sampling
-    density used to draw candidate settings of the hyperparameters, adjust
-    the log-importance weights by setting fit.logw = fit.logw + logp/logq,
-    where logp is the log-density of the prior distribution, and logq is
-    the log-density of the sampling distribution.
+    function \code{varbvsprint} (see \code{help(varbvsprint)}for more
+    details). To account for discrepancies between the prior on
+    (sigma,sa,logodds) and the sampling density used to draw candidate
+    settings of the hyperparameters, adjust the log-importance weights
+    by setting \code{fit$logw <- fit$logw + logp/logq}, where logp is the
+    log-density of the prior distribution, and logq is the log-density
+    of the sampling distribution.
 
-    Finally, we point out that the optimization procedures were carefully
-    designed so that they can be applied to very large data sets; to date,
-    this code has been tested on data sets with >500,000 variables and
-    >10,000 samples. An important limiting factor is the ability to store
-    the data matrix X in memory. To reduce memory requirements, in the
-    MATLAB interface we require that X be single precision (type 'help
-    single'). Additionally, we mostly avoid generating intermediate
-    products that are of the same size as X. Only one such intermediate
-    product is generated when family = 'gaussian', and none for family =
-    'binomial'.
+    \bold{Memory requirements.} Finally, we point out that the
+    optimization procedures were carefully designed so that they can be
+    applied to very large data sets; to date, this code has been tested
+    on data sets with >500,000 variables and >10,000 samples. An
+    important limiting factor is the ability to store the data matrix X
+    in memory. To reduce memory requirements, in the MATLAB interface we
+    require that X be single precision, but this option is not available
+    in R. Additionally, we mostly avoid generating intermediate products
+    that are of the same size as X. Only one such intermediate product
+    is generated when \code{family = "gaussian"}, and none for
+    \code{family = "binomial"}.
+    
 }  
 \value{
 
@@ -235,8 +238,9 @@
   \item{update.sa}{If TRUE, sa was fit to data for each setting of prior
   logodds.}
 
-  \item{logw}{Approximate marginal log-likelihood for each setting of
-  hyperparameters.}
+  \item{logw}{An array with ns elements, in which \code{logw[i]} is the
+    variational lower bound on the marginal log-likelihood for setting i
+    of the hyperparameters.}
 
   \item{alpha}{Variational estimates of posterior inclusion
     probabilities for each hyperparameter setting.}
