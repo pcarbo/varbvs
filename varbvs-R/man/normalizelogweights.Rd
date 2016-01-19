@@ -15,7 +15,6 @@
 }
 \value{Normalized importance weights such that the sum of the normalized
 importance weights is equal to 1.}
- 
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. Bayesian Analysis 7(1), pages

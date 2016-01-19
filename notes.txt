@@ -27,7 +27,6 @@ Strategy for my new implementation of 'varbvs'
 
 DOCUMENTATION
 -------------
-* normalizelogweights
 * cred
 * varbvs
 * varbvsprint
