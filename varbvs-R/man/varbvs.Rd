@@ -61,15 +61,14 @@
     is useful is there is prior information about which variables are
     most relevant to the outcome. This is accomplished by setting
     logodds to a p x ns matrix, where p is the number of variables, and
-    ns is the number of hyperparameter settings. In this case,
-    \code{prior.same = false} in the return value. Note it is not
-    possible to fit the logodds parameter; if logodds input is not
-    provided as input, then it is set to the default value when sa and
-    sigma are NULL, and otherwise an error is generated.}
+    ns is the number of hyperparameter settings. Note it is not possible
+    to fit the logodds parameter; if logodds input is not provided as
+    input, then it is set to the default value when sa and sigma are
+    NULL, and otherwise an error is generated.}
 
-  \item{alpha}{Good initial estimate for the variational parameter
-  alpha for each hyperparameter setting. Either NULL, or a p x ns
-  matrix, where p is the number of variables, and ns is the number of
+  \item{alpha}{Good initial estimate for the variational parameter alpha
+  for each hyperparameter setting. Either NULL, or a p x ns matrix,
+  where p is the number of variables, and ns is the number of
   hyperparameter settings.}
 
   \item{mu}{Good initial estimate for the variational parameter mu for
@@ -91,10 +90,12 @@
   initial estimates.}
 
   \item{optimize.eta}{When optimize.eta = TRUE, eta is fitted to the
-  data during the inner loop coordinate ascent updates.}
+  data during the inner loop coordinate ascent updates, even when good
+  estimates of eta are provided as input.}
 
   \item{initialize.params}{If TRUE, the initialization stage of the
-    variational inference algorithm (see below) will be skipped.}
+    variational inference algorithm (see below) will be skipped, which
+    saves computation time for large data sets.}
 
   \item{nr}{Number of samples of "model PVE" to draw from posterior.}
 
@@ -118,11 +119,11 @@
     a continuous outcome, also a "quantitative trait" in the genetics
     literature; or (2) a binary outcome with possible values 0 and
     1. For the former, set \code{family = "gaussian"}, in which case,
-    the outcome is i.i.d. normal with mean \deqn{u0 + Z*u + X*b} and
+    the outcome is i.i.d. normal with mean \eqn{u0 + Z*u + X*b} and
     variance sigma, in which u and b are vectors of regresion
     coefficients, and u0 is the intercept. In the second case, we use
     logistic regression to model the outcome, in which the probability
-    that y = 1 is equal to \deqn{sigmoid(u0 + Z*u + X*b).} See
+    that y = 1 is equal to \eqn{sigmoid(u0 + Z*u + X*b).} See
     \code{help(sigmoid)} for a description of the sigmoid function. Note
     that the regression always includes an intercept term (u0).
 
@@ -132,7 +133,7 @@
     hyperparameter settings (sa, sigma and logodds). Given a setting of
     the hyperparameters, the inner loop cycles through coordinate ascent
     updates to tighten the lower bound on the marginal likelihood,
-    \deqn{Pr(Y | X, sigma, sa, logodds)}. The inner loop coordinate
+    \eqn{Pr(Y | X, sigma, sa, logodds)}. The inner loop coordinate
     ascent updates terminate when either (1) the maximum number of inner
     loop iterations is reached, as specified by options.maxiter, or (2)
     the maximum difference between the estimated posterior inclusion
@@ -161,10 +162,10 @@
     regression model \code{(family = "binomial")}. The fitted value of
     eta is returned as an n x ns matrix.
 
-    \bold{Correctly averaging over hyperparameter settings.} In many
-    settings, it is good practice to account for uncertainty in the
-    hyperparameters when reporting final posterior quantities. For
-    example, hyperparameter sa is often estimated with a high degree of
+    \bold{Averaging over hyperparameter settings.} In many settings, it
+    is good practice to account for uncertainty in the hyperparameters
+    when reporting final posterior quantities. For example,
+    hyperparameter sa is often estimated with a high degree of
     uncertainty when only a few variables are included in the model.
     Provided that (1) the hyperparameter settings sigma, sa and logodds
     adequately represent the space of possible hyperparameter settings
@@ -175,25 +176,13 @@
     calculated by using logw as (unnormalized) log-importance weights.
     Even when conditions (1), (2) and/or (3) are not satisfied, this can
     approach can still often yield reasonable estimates of averaged
-    posterior quantities. For example, do the following to compute
-    posterior inclusion probabilities (PIPs) averaged over the
-    hyperparameter settings:
-    \code{
-      w <- normalizelogweights(fit$logw);\cr
-      PIP <- fit$alpha %*% c(w)
-    }
-    And, for example, do the following to compute the posterior mean
-    estimate of hyperparameter sa:
-    \code{
-        w <- normalizelogweights(fit$logw)
-        mean_sa <- dot(fit$sa,w)
-    }
-    This is precisely how final posterior quantities are reported by
-    function \code{varbvsprint} (see \code{help(varbvsprint)}for more
-    details). To account for discrepancies between the prior on
-    (sigma,sa,logodds) and the sampling density used to draw candidate
-    settings of the hyperparameters, adjust the log-importance weights
-    by setting \code{fit$logw <- fit$logw + logp/logq}, where logp is the
+    posterior quantities. The examples below demonstrate how final
+    posterior quantities are reported by function \code{varbvsprint}
+    (see \code{help(varbvsprint)}for more details). To account for
+    discrepancies between the prior on (sigma,sa,logodds) and the
+    sampling density used to draw candidate settings of the
+    hyperparameters, adjust the log-importance weights by setting
+    \code{fit$logw <- fit$logw + logp/logq}, where logp is the
     log-density of the prior distribution, and logq is the log-density
     of the sampling distribution.
 
@@ -212,7 +201,7 @@
 }  
 \value{
 
-  An object with S3 class \code{"varbvs","list"}.
+  An object with S3 class \code{"varbvs", "list"}.
 
   \item{family}{Either "gaussian" or "binomial".}
 
@@ -226,14 +215,15 @@
 
   \item{logodds}{Prior log-odds settings.}
 
-  \item{prior.same}{TRUE if prior is identical for all variables.}
+  \item{prior.same}{TRUE if prior is identical for all variables. When
+        logodds is a p x ns matrix, \code{prior.same = FALSE}.}
 
   \item{sa0}{Scale parameter for prior on hyperparameter sa.}
 
   \item{n0}{Degrees of freedom for prior on hyperparameter sa.}
 
   \item{update.sigma}{If TRUE, sigma was fit to data for each setting of
-    prior logodds (family = "gaussian" only).}
+    prior logodds (\code{family = "gaussian"} only).}
 
   \item{update.sa}{If TRUE, sa was fit to data for each setting of prior
   logodds.}
@@ -251,19 +241,23 @@
   \item{s}{Variational estimates of posterior variances for each
     hyperparameter setting.}
 
-  \item{eta}{Additional variational parameters for family = "binomial"
-    only.}
+  \item{eta}{Additional variational parameters for \code{family =
+    "binomial"} only.}
   
   \item{eta}{If TRUE, eta was fit to data (family = 'binomial' only).}
 
   \item{pve}{For each hyperparameter setting, and for each variable,
     mean estimate of the proportion of variance in outcome explained
-    conditioned on variable being included in the model (family =
-    "gaussian" only).}
+    conditioned on variable being included in the model (\code{family =
+    "gaussian"} only).}
 
-  \item{model.pve}{Samples drawn fom posterior of proportion of variance
-  in outcome explained by variable selection model (only for family =
-  "gaussian").}
+  \item{model.pve}{Samples drawn from posterior distribution giving
+  estimates of proportion of variance in outcome (y) explained by fitted
+  variable selection model. This is for \code{family = "gaussian"}
+  only). To obtain the posterior mean estimate of the proportion of
+  variance explained (PVE), for example, simply type
+  \code{mean(fit$model.pve)}.}
+
 }
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its
@@ -282,6 +276,13 @@ fit1=glmnet(x,y)
 print(fit1)
 coef(fit1,s=0.01) # extract coefficients at a single value of lambda
 predict(fit1,newx=x[1:10,],s=c(0.01,0.005)) # make predictions
-}
 
- 
+# Compute posterior inclusion probabilities (PIPs) averaged over the
+# hyperparameter settings.
+w   <- normalizelogweights(fit$logw);
+pip <- fit$alpha \%*\% c(w)
+
+# Compute the posterior mean estimate of hyperparameter sa.
+w       <- normalizelogweights(fit$logw)
+mean_sa <- dot(fit$sa,w)
+}
