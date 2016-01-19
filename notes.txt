@@ -29,7 +29,6 @@ Strategy for my new implementation of 'varbvs'
 
 DOCUMENTATION
 -------------
-* varbvs
 * varbvsprint
 * varbvscoefcred
 
