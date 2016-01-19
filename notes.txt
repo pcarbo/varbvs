@@ -27,12 +27,10 @@ Strategy for my new implementation of 'varbvs'
 
 DOCUMENTATION
 -------------
-* cred
 * normalizelogweights
-* rand
-* randn
-* varbvsprint
+* cred
 * varbvs
+* varbvsprint
 * varbvscoefcred
 
 TESTING

@@ -1,4 +1,4 @@
-\name{rand}
+\name{rand,randn}
 \alias{rand}
 \alias{randn}
 \title{Return matrices of pseudorandom values.}
@@ -27,4 +27,3 @@ accuracy in genetic association studies. Bayesian Analysis 7(1), pages
   x <- rand(10,5)
   y <- randn(10,5)
 }
-
