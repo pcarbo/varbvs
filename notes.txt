@@ -18,14 +18,14 @@ Strategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
-* Note that X cannot be sparse.
+* To do: Add small examples to varbvs.Rd.
+
+* To do: Test MATLAB and R interfaces on large-scale (GWAS) data set.
 
 * To do: Add data sets, vignettes and/or demos to R package.
 
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
-
-* To do: Add small examples to varbvs.Rd.
 
 DOCUMENTATION
 -------------

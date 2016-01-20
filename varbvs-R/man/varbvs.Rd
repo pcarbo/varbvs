@@ -285,7 +285,7 @@ Z   <- randn(800,3)
 # (X) and additional 3 covariates (Z). Adjust the QTL effects so that
 # the variables (SNPs) explain 50 percent of the variance in the
 # outcome.
-u    <- c(-1,2,0.5)
+u    <- c(-1,2,1)
 beta <- c(rnorm(20),rep(0,1980))
 beta <- 1/sd(c(X \%*\% beta)) * beta
 
@@ -302,4 +302,8 @@ pip <- fit$alpha \%*\% c(w)
 
 # Compute the posterior mean estimate of hyperparameter sa.
 sa <- sum(fit$sa * w)
+
+# LOGISTIC REGRESSION EXAMPLE
+# ---------------------------
+
 }

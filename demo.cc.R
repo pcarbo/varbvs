@@ -2,14 +2,24 @@
 # (e.g., case-control) trait in a simulated data set in which all the
 # genetic markers are uncorrelated with each other (i.e., they are
 # "unlinked").
-library(varbvs)
+# library(varbvs)
+source("varbvs-R/R/misc.R")
+source("varbvs-R/R/varbvs.R")
+source("varbvs-R/R/varbvsbin.R")
+source("varbvs-R/R/varbvsbinz.R")
+source("varbvs-R/R/varbvsbinupdate.R")
+source("varbvs-R/R/varbvsbinzupdate.R")
+source("varbvs-R/R/varbvscoefcred.R")
+source("varbvs-R/R/varbvsprint.R")
+dyn.load("varbvs-R/src/diagsqr.so")
+dyn.load("varbvs-R/src/varbvsr.so")
 
 # SCRIPT PARAMETERS
 # -----------------
 n  <- 1500  # Number of samples (subjects).
 p  <- 2000  # Number of variables (genetic markers).
 na <- 20    # Number of markers that affect the binary outcome.
-sa <- 0.15  # Variance of log-odds ratios.
+sa <- 0.2   # Variance of log-odds ratios.
 p1 <- 0.25  # Target proportion of subjects that are cases (y = 1).
 
 # Names of covariates.
@@ -31,14 +41,13 @@ cat("1. GENERATING DATA SET.\n")
 maf <- 0.05 + 0.45*runif(p)
 X   <- (runif(n*p) < maf) +
        (runif(n*p) < maf)
-X   <- matrix(X,n,p,byrow = TRUE)
-storage.mode(X) <- "double"
+X   <- matrix(as.double(X),n,p,byrow = TRUE)
 
 # Generate additive effects for the markers so that exactly na of them
 # have a nonzero effect on the trait.
 i       <- sample(p,na)
 beta    <- rep(0,p)
-beta[i] <- rnorm(na)
+beta[i] <- sqrt(sa)*rnorm(na)
 
 # Generate random labels for the markers.
 colnames(X) <- paste0("rs",sample(1e6,p))
@@ -81,5 +90,5 @@ PIP <- c(fit$alpha %*% w)
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
 cat("3. SUMMARIZING RESULTS.\n")
-printvarbvs(fit)
+varbvsprint(fit)
 

@@ -22,6 +22,12 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     if (nrow(Z) != n)
       stop("Inputs X and Z do not match")
 
+  # Add intercept.
+  if (is.null(Z))
+    Z <- matrix(1,n,1)
+  else
+    Z <- cbind(1,Z)
+
   # Input y must have n entries.
   if (length(y) != n)
     stop("Inputs X and y do not match")
@@ -214,7 +220,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   # (5) FIT BAYESIAN VARIABLE SELECTION MODEL TO DATA
   # -------------------------------------------------
   if (ns == 1) {
-    
+
     # Find a set of parameters that locally minimize the K-L
     # divergence between the approximating distribution and the exact
     # posterior.
@@ -222,9 +228,9 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       cat("        variational    max.   incl variance params\n")
       cat(" iter   lower bound  change   vars   sigma      sa\n")
     }
-    out     <- outerloop(X,Z,y,family,sigma,sa,logodds,alpha,mu,eta,tol,
-                         maxiter,verbose,NULL,update.sigma,update.sa,
-                         optimize.eta,n0,sa0)
+    out     <- outerloop(X,Z,y,family,c(sigma),c(sa),c(logodds),c(alpha),
+                         c(mu),c(eta),tol,maxiter,verbose,NULL,update.sigma,
+                         update.sa,optimize.eta,n0,sa0)
     logw    <- out$logw
     sigma   <- out$sigma
     sa      <- out$sa
