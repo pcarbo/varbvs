@@ -269,13 +269,31 @@ accuracy in genetic association studies. Bayesian Analysis 7(1), pages
   \code{varbvspve} and \code{normalizelogweights}
 }
 \examples{
-# Gaussian
-x=matrix(rnorm(100*20),100,20)
-y=rnorm(100)
-fit1=glmnet(x,y)
-print(fit1)
-coef(fit1,s=0.01) # extract coefficients at a single value of lambda
-predict(fit1,newx=x[1:10,],s=c(0.01,0.005)) # make predictions
+
+# LINEAR REGRESSION EXAMPLE
+# -------------------------
+# Data are 2,000 uncorrelated ("unlinked") single nucleotide
+# polymorphisms (SNPs) with simulated genotypes, in which the first 20
+# of them have an effect on the outcome. Also generate data for 3
+# covariates. 
+maf <- 0.05 + 0.45*runif(2000)
+X   <- (runif(800*2000) < maf) + (runif(800*2000) < maf)
+X   <- matrix(as.double(X),800,2000,byrow = TRUE)
+Z   <- randn(800,3)
+
+# Generate the ground-truth regression coefficients for the variables
+# (X) and additional 3 covariates (Z). Adjust the QTL effects so that
+# the variables (SNPs) explain 50 percent of the variance in the
+# outcome.
+u    <- c(-1,2,0.5)
+beta <- c(rnorm(20),rep(0,1980))
+beta <- 1/sd(c(X \%*\% beta)) * beta
+
+# Generate the quantitative trait measurements.
+y <- c(-2 + Z \%*\% u + X \%*\% beta + rnorm(800))
+
+fit <- varbvs(X,Z,y,logodds = seq(-3,-1,0.1))
+varbvsprint(fit)
 
 # Compute posterior inclusion probabilities (PIPs) averaged over the
 # hyperparameter settings.
@@ -283,6 +301,5 @@ w   <- normalizelogweights(fit$logw);
 pip <- fit$alpha \%*\% c(w)
 
 # Compute the posterior mean estimate of hyperparameter sa.
-w       <- normalizelogweights(fit$logw)
-mean_sa <- dot(fit$sa,w)
+sa <- sum(fit$sa * w)
 }

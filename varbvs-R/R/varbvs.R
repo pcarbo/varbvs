@@ -13,15 +13,15 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
 
   # (1) CHECK INPUTS
   # ----------------
+  # Add column names to X if they are not provided.
+  if (is.null(colnames(X)))
+    colnames(X) <- paste0("X",1:p)
+  
   # If input Z is not NULL, it must have as many rows as X.
   if (!is.null(Z))
     if (nrow(Z) != n)
       stop("Inputs X and Z do not match")
 
-  # Add intercept.
-  Z <- cbind(1,Z)
-  colnames(Z)[1] <- "intercept"
-  
   # Input y must have n entries.
   if (length(y) != n)
     stop("Inputs X and y do not match")
