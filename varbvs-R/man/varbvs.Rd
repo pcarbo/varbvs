@@ -292,6 +292,7 @@ beta <- 1/sd(c(X \%*\% beta)) * beta
 # Generate the quantitative trait measurements.
 y <- c(-2 + Z \%*\% u + X \%*\% beta + rnorm(800))
 
+# Fit the variable selection model.
 fit <- varbvs(X,Z,y,logodds = seq(-3,-1,0.1))
 varbvsprint(fit)
 
@@ -305,5 +306,25 @@ sa <- sum(fit$sa * w)
 
 # LOGISTIC REGRESSION EXAMPLE
 # ---------------------------
+# Data are 2,000 uncorrelated ("unlinked") single nucleotide
+# polymorphisms (SNPs) with simulated genotypes, in which the first 20
+# of them have an effect on the outcome. Also generate data for 2
+# covariates.
+maf <- 0.05 + 0.45*runif(2000)
+X   <- (runif(1500*2000) < maf) + (runif(1500*2000) < maf)
+X   <- matrix(as.double(X),1500,2000,byrow = TRUE)
+Z   <- randn(1500,2)
 
+# Generate the ground-truth regression coefficients for the variables
+# (X) and additional 2 covariates (Z).
+u    <- c(-1,1)
+beta <- c(0.5*rnorm(20),rep(0,1980))
+
+# Simulate the binary trait (case-control status) as a coin toss with
+# success rates given by the logistic regression.
+y <- as.double(runif(1500) < sigmoid(-1 + Z \%*\% u + X \%*\% beta))
+
+# Fit the variable selection model.
+fit <- varbvs(X,Z,y,"binomial",logodds = seq(-3,-1,0.1))
+varbvsprint(fit)
 }

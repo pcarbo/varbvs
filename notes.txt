@@ -18,7 +18,10 @@ Strategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
-* To do: Add small examples to varbvs.Rd.
+* To do: Create .Rd files for varbvsprint, varbvscoefcred.
+
+* To do: Do one last round of testing with demo.qtl.R and demo.cc.R
+  (see below).
 
 * To do: Test MATLAB and R interfaces on large-scale (GWAS) data set.
 
@@ -26,11 +29,6 @@ Strategy for my new implementation of 'varbvs'
 
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
-
-DOCUMENTATION
--------------
-* varbvsprint
-* varbvscoefcred
 
 TESTING
 -------
