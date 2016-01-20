@@ -1,7 +1,6 @@
 \name{varbvs}
 \alias{varbvs}
 \title{Fit variable selection model using variational approximation methods.}
-
 \description{Compute fully-factorized variational approximation for
   Bayesian variable selection in linear (family = gaussian) or logistic
   regression (family = binomial). More precisely, find the "best"
@@ -296,10 +295,12 @@ y <- c(-2 + Z \%*\% u + X \%*\% beta + rnorm(800))
 fit <- varbvs(X,Z,y,logodds = seq(-3,-1,0.1))
 varbvsprint(fit)
 
-# Compute posterior inclusion probabilities (PIPs) averaged over the
-# hyperparameter settings.
-w   <- normalizelogweights(fit$logw);
-pip <- fit$alpha \%*\% c(w)
+# Compute posterior inclusion probabilities (pip) and posterior mean
+# regression coefficients (beta) averaged over the hyperparameter
+# settings.
+w    <- normalizelogweights(fit$logw);
+pip  <- fit$alpha \%*\% c(w)
+beta <- fit$mu \%*\% c(w)
 
 # Compute the posterior mean estimate of hyperparameter sa.
 sa <- sum(fit$sa * w)

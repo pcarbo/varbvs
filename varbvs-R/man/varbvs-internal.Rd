@@ -32,7 +32,7 @@ varbvsbinz(X,Z,y,sa,logodds,alpha,mu,eta,tol = 1e-4,maxiter = 1e4,
            verbose = TRUE,outer.iter = NULL,update.sa = TRUE,
            optimize.eta = TRUE,n0 = 0,sa0 = 0)
 }
-\author{Peter Carbonetto}
+\author{Peter Carbonetto <peter.carbonetto@gmail.com>}
 \details{These functions are only intended to be used by expert
   users. Here we provide brief descriptions of some of these internal
   functions. \code{diagsq} and \code{diagsqt} compute the diagonal
