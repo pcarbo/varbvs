@@ -22,10 +22,8 @@ varbvscoefcred <- function (fit, vars = NULL, cred.int = 0.95, nr = 1000) {
   w <- normalizelogweights(fit$logw)
 
   # Initialize storage for the result.
-  a        <- rep(0,p)
-  b        <- rep(0,p)
-  names(a) <- rownames(fit$mu)
-  names(b) <- rownames(fit$mu)
+  a <- rep(0,p)
+  b <- rep(0,p)
   
   # Repeat for each selected variable.
   for (i in 1:p) {
