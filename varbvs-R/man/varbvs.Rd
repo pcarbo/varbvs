@@ -265,7 +265,7 @@ accuracy in genetic association studies. Bayesian Analysis 7(1), pages
 \author{Peter Carbonetto <peter.carbonetto@gmail.com>}
 \seealso{\code{varbvsprint}, \code{varbvscoefcred}, \code{varbvspve},
   \code{varbvsnorm}, \code{varbvsbin}, \code{varbvsbinz},
-  \code{varbvspve} and \code{normalizelogweights}
+  \code{normalizelogweights}
 }
 \examples{
 

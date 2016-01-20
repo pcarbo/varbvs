@@ -15,12 +15,10 @@
   \item{n}{Show detailed statistics for top n > 0 variables, ranked
   according to their posterior inclusion probabilities.}
 
-  \item{nr}{Number of Monte Carlo samples to draw to estimate the
-                proportion of variance in the outcome explained by the
-                fitted model.}
+  \item{nr}{Number of Monte Carlo samples to draw to estimate credible
+    intervals for coefficients of selected variables.}
 }
 \details{
-
   The printed summary is divided into three parts. The first part
   summarizes the data and optimization settings. It also reports the
   hyperparameter setting that yields the largest marginal
@@ -47,8 +45,11 @@
   the estimated proportion of variance in the outcome explained by the
   variable (conditioned on being included in the model). Again, this is
   the PVE after removing variance in the outcome due to linear effects
-  of the covariates.
-  
+  of the covariates. Finally, note that the credible intervals reported
+  in the right-most column are Monte Carlo estimates, so the interval
+  will be slightly different each time \code{varbvsprint} is called; a
+  more accurate estimate can be obtained by setting input \code{nr} to a
+  larger number, at the cost of increased computation time.  
 }  
 \value{
   Input \code{fit} is silently returned.
@@ -58,9 +59,7 @@ inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. Bayesian Analysis 7(1), pages
 73-108.}
 \author{Peter Carbonetto <peter.carbonetto@gmail.com>}
-\seealso{\code{varbvsprint}, \code{varbvscoefcred}, \code{varbvspve},
-  \code{varbvsnorm}, \code{varbvsbin}, \code{varbvsbinz},
-  \code{varbvspve} and \code{normalizelogweights}
+\seealso{\code{varbvs}, \code{varbvscoefcred}
 }
 \examples{
 See help(varbvs) for examples.

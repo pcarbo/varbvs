@@ -1,7 +1,7 @@
-# Compute Monte Carlo estimates of credible intervals for posterior
-# mean coefficients in the fitted variable selection model. This
-# function is used by varbvsprint to generate credible intervals for
-# coefficients of top-ranked variables.
+# Compute Monte Carlo estimates of credible intervals for coefficients
+# in the fitted variable selection model. This function is used by
+# varbvsprint to generate credible intervals for coefficients of
+# top-ranked variables.
 varbvscoefcred <- function (fit, vars = NULL, cred.int = 0.95, nr = 1000) {
 
   # Check that the first input is an instance of class "varbvs".
@@ -22,8 +22,10 @@ varbvscoefcred <- function (fit, vars = NULL, cred.int = 0.95, nr = 1000) {
   w <- normalizelogweights(fit$logw)
 
   # Initialize storage for the result.
-  a <- rep(0,p)
-  b <- rep(0,p)
+  a        <- rep(0,p)
+  b        <- rep(0,p)
+  names(a) <- rownames(fit$mu)
+  names(b) <- rownames(fit$mu)
   
   # Repeat for each selected variable.
   for (i in 1:p) {

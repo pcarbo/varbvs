@@ -1,14 +1,9 @@
 Strategy for my new implementation of 'varbvs'
 ----------------------------------------------
-* Options:
-   (12) Summary statistics from "fixed" variational estimates for an
-        external set of variables.
-	
-* See glmnet.m for a nice example of how to write detailed description
-  of function.
-  
-* Does not currently allow for sparse matrices X.
 
+* Options: Summary statistics from "fixed" variational estimates for
+  an external set of variables.
+	
 * Give platform and MATLAB version used for testing.
 
 * For PLoS Comp. Bio. software section, see:
@@ -17,8 +12,6 @@ Strategy for my new implementation of 'varbvs'
   
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
-
-* To do: Create .Rd files for varbvsprint, varbvscoefcred.
 
 * To do: Do one last round of testing with demo.qtl.R and demo.cc.R
   (see below).
