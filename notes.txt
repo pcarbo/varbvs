@@ -13,28 +13,9 @@ Strategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
-* To do: Do one last round of testing with demo.qtl.R and demo.cc.R
-  (see below).
-
 * To do: Test MATLAB and R interfaces on large-scale (GWAS) data set.
 
 * To do: Add data sets, vignettes and/or demos to R package.
 
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
-
-TESTING
--------
-family = 'gaussian'
-                demo_qtl.m  demo.qtl.R
-m = 0, ns = 21      y           y
-m = 3, ns = 21      y           y
-m = 3, ns = 1       y           y
-
-family = 'binomial'
-                demo_cc.m  demo.cc.R
-m = 0, ns = 21      x          x 
-m = 2, ns = 21      x          x
-m = 2, ns = 1       x          x
-
-Also check: update.sigma = false and/or update.sa = false
