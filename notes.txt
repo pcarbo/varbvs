@@ -27,9 +27,9 @@ TESTING
 -------
 family = 'gaussian'
                 demo_qtl.m  demo.qtl.R
-m = 0, ns = 21      x           x 
-m = 3, ns = 21      x           x
-m = 3, ns = 1       x           x
+m = 0, ns = 21      y           y
+m = 3, ns = 21      y           y
+m = 3, ns = 1       y           y
 
 family = 'binomial'
                 demo_cc.m  demo.cc.R

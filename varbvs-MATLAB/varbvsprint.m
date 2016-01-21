@@ -152,33 +152,47 @@ function varbvsprint (fit, c, n, nr)
     fprintf('\n');
     fprintf('        estimate Pr>%0.2f             candidate values\n',c);
     if strcmp(fit.family,'gaussian')
-      x0    = dot(w(:),fit.sigma(:));
-      [a b] = cred(fit.sigma,x0,w,c);
-      fprintf('sigma   %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
-      if fit.update_sigma
-        fprintf('NA\n')
+      x = fit.sigma(:);
+      if length(unique(x)) == 1
+        fprintf('sigma   %8.3g NA                  %0.3g\n',x(1),x(1));
       else
-        fprintf('%0.3g--%0.3g\n',min(fit.sigma(:)),max(fit.sigma(:)));
+        x0    = dot(w(:),x);
+        [a b] = cred(x,x0,w,c);
+        fprintf('sigma   %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
+        if fit.update_sigma
+          fprintf('NA\n');
+        else
+          fprintf('%0.3g--%0.3g\n',min(x),max(x));
+        end
       end
     end
  
     % Summarize the fitted prior variance parameter (sa).
-    x0    = dot(w(:),fit.sa(:));
-    [a b] = cred(fit.sa,x0,w,c);
-    fprintf('sa      %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
-    if fit.update_sa
-      fprintf('NA\n')
+    x = fit.sa(:);
+    if length(unique(x)) == 1
+      fprintf('sa      %8.3g NA                  %0.3g\n',x(1),x(1));
     else
-      fprintf('%0.3g--%0.3g\n',min(fit.sa(:)),max(fit.sa(:)));
-    end
-
-    % Summarize the fitted prior log-odds of inclusion (logodds).
-    if (fit.prior_same)
-      x     = fit.logodds;
       x0    = dot(w(:),x);
       [a b] = cred(x,x0,w,c);
-      fprintf('logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n',x0,...
-              sprintf('[%+0.2f,%+0.2f]',a,b),min(x),max(x));
+      fprintf('sa      %8.3g %-19s ',x0,sprintf('[%0.3g,%0.3g]',a,b));
+      if fit.update_sa
+        fprintf('NA\n')
+      else
+        fprintf('%0.3g--%0.3g\n',min(x),max(x));
+      end
+    end
+    
+    % Summarize the fitted prior log-odds of inclusion (logodds).
+    if (fit.prior_same)
+      x = fit.logodds(:);
+      if length(unique(x)) == 1
+        fprintf('logodds %8.2f NA                  %0.2f\n',x(1),x(1));
+      else
+        x0    = dot(w(:),x);
+        [a b] = cred(x,x0,w,c);
+        fprintf('logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n',x0,...
+                sprintf('[%+0.2f,%+0.2f]',a,b),min(x),max(x));
+      end
     end
   end
   

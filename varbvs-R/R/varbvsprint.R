@@ -64,33 +64,47 @@ varbvsprint <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
     cat("        estimate ")
     cat(sprintf("Pr>%0.2f             candidate values\n",cred.int))
     if (fit$family == "gaussian") {
-      x0 <- dot(w,fit$sigma)
-      cat(sprintf("sigma   %8.3g ",x0))
-      cat(sprintf("%-19s ",with(cred(fit$sigma,x0,w,cred.int),
-                                sprintf("[%0.3g,%0.3g]",a,b))))
-      if (fit$update.sigma)
-        cat("NA\n")
-      else
-        with(fit,cat(sprintf("%0.3g--%0.3g\n",min(sigma),max(sigma))))
+      x <- fit$sigma
+      if (length(unique(x)) == 1) 
+        cat(sprintf("sigma   %8.3g NA                  %0.3g\n",x[1],x[1]))
+      else {
+        x0 <- dot(w,x)
+        cat(sprintf("sigma   %8.3g ",x0))
+        cat(sprintf("%-19s ",with(cred(x,x0,w,cred.int),
+                                  sprintf("[%0.3g,%0.3g]",a,b))))
+        if (fit$update.sigma)
+          cat("NA\n")
+        else
+          cat(sprintf("%0.3g--%0.3g\n",min(x),max(x)))
+      }
     }
  
     # Summarize the fitted prior variance parameter (sa).
-    x0 <- dot(w,fit$sa)
-    cat(sprintf("sa      %8.3g ",x0))
-    cat(sprintf("%-19s ",with(cred(fit$sa,x0,w,cred.int),
-                              sprintf("[%0.3g,%0.3g]",a,b))))
-    if (fit$update.sa)
-      cat("NA\n")
-    else
-      with(fit,cat(sprintf("%0.3g--%0.3g\n",min(sa),max(sa))))
-
+    x <- fit$sa
+    if (length(unique(x)) == 1) 
+      cat(sprintf("sa      %8.3g NA                  %0.3g\n",x[1],x[1]))
+    else {
+      x0 <- dot(w,x)
+      cat(sprintf("sa      %8.3g ",x0))
+      cat(sprintf("%-19s ",with(cred(x,x0,w,cred.int),
+                                sprintf("[%0.3g,%0.3g]",a,b))))
+      if (fit$update.sa)
+        cat("NA\n")
+      else
+        cat(sprintf("%0.3g--%0.3g\n",min(x),max(x)))
+    }
+    
     # Summarize the fitted prior log-odds of inclusion (logodds).
     if (fit$prior.same) {
-      x  <- fit$logodds
-      x0 <- dot(w,x)
-      cat(sprintf("logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n",x0,
-                  with(cred(x,x0,w,cred.int),
-                       sprintf("[%+0.2f,%+0.2f]",a,b)),min(x),max(x)))
+      x <- fit$logodds
+      if (length(unique(x)) == 1)
+        cat(sprintf("logodds %8.2f NA                  %0.2f\n",x[1],x[1]))
+      else {
+        x0 <- dot(w,x)
+        cat(sprintf("logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n",x0,
+                    with(cred(x,x0,w,cred.int),
+                         sprintf("[%+0.2f,%+0.2f]",a,b)),min(x),max(x)))
+      }
     }
   }
 

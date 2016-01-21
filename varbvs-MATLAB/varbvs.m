@@ -403,6 +403,9 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isscalar(sa)
     sa = repmat(sa,1,ns);
   end
+  if size(logodds,2) == 1
+    logodds = repmat(logodds,1,ns);
+  end
   if numel(sigma) ~= ns | numel(sa) ~= ns | size(logodds,2) ~= ns
     error('options.sigma, options.sa and options.logodds are inconsistent')
   end

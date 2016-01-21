@@ -93,6 +93,8 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     sigma <- rep(sigma,ns)
   if (length(sa) == 1)
     sa <- rep(sa,ns)
+  if (ncol(logodds) == 1)
+    logodds <- rep.col(logodds,ns)
   if (length(sigma) != ns | length(sa) != ns | ncol(logodds) != ns)
     stop("options.sigma, options.sa and options.logodds are inconsistent")
 
@@ -163,7 +165,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   # Selection," 2001.
   if (family == "gaussian") {
     if (ncol(Z) == 1) {
-      X <- X - rep.row(colMeans(X),p)
+      X <- X - rep.row(colMeans(X),n)
       y <- y - mean(y)
     } else {
 
