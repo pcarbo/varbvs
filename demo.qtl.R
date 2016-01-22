@@ -75,7 +75,7 @@ y <- c(y)
 # continuous outcome (quantitiative trait), with spike and slab priors on
 # the coefficients.
 cat("2. FITTING MODEL TO DATA.\n")
-fit <- varbvs(X,Z,y,"gaussian",logodds = -2)
+fit <- varbvs(X,Z,y,"gaussian",logodds = logodds)
 
 # Compute final estimates of the posterior inclusion probabilities
 # averaged over the hyperparameter settings.
