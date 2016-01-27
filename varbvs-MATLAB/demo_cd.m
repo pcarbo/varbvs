@@ -1,9 +1,7 @@
-% TO DO: Explain here what this script does.
+% This script fits the Bayesian variable selection model to identify genetic
+% markers associated with Crohn's disease risk. The data consist of 442,001
+% SNPs genotyped for 1,748 cases and 2,938 controls.
 clear
-
-% SCRIPT PARAMETERS
-% -----------------
-logodds = (-6:0.25:-3);
 
 % Initialize the random number generator. 
 rng(1);
@@ -12,6 +10,7 @@ rng(1);
 % --------------------------------
 fprintf('LOADING DATA.\n');
 load('/tmp/pcarbo/cd.mat');
+labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
 
 % FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 % ------------------------------------------
@@ -20,7 +19,7 @@ load('/tmp/pcarbo/cd.mat');
 % binary outcome (case-control status), with spike and slab priors on the
 % coefficients.
 fprintf('FITTING MODEL TO DATA.\n')
-fit = varbvs(X,[],y,labels,struct('logodds',logodds));
+fit = varbvs(X,[],y,labels,'binomial',struct('logodds',-6:0.25:-3));
   
 % SAVE RESULTS
 % ------------
