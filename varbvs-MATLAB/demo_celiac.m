@@ -1,6 +1,8 @@
 % This script fits the Bayesian variable selection model to identify genetic
-% markers associated with Crohn's disease risk. The data consist of 442,001
-% SNPs genotyped for 1,748 cases and 2,938 controls.
+% markers associated with celiac disease risk. After removing all samples
+% from the Finnish cohort, the data consist of 509,314 SNPs genotyped for
+% 3,149 cases and 6,325 controls, and principal components (PCs) which are
+% used as covariates in the logistic regression.
 clear
 
 % Initialize the random number generator. 
@@ -8,9 +10,19 @@ rng(1);
 
 % LOAD GENOTYPE AND PHENOTYPE DATA
 % --------------------------------
+% Also load the principal components.
 fprintf('LOADING DATA.\n');
-load('/tmp/pcarbo/cd.mat');
-labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
+load('/tmp/pcarbo/celiac_nomhc.mat');
+load('/tmp/pcarbo/celiac_pc.mat');
+
+% Select all samples *not* in the Finnish cohort.
+i     = find(~strcmp(study,'Finnish'));
+X     = X(i,:);
+y     = y(i);
+id    = id(i);
+sex   = sex(i);
+study = study(i);
+pc    = pc(i,:);
 
 % FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 % ------------------------------------------
@@ -19,8 +31,10 @@ labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
 % binary outcome (case-control status), with spike and slab priors on the
 % coefficients.
 fprintf('FITTING MODEL TO DATA.\n')
-fit = varbvs(X,[],y,labels,'binomial',struct('logodds',-6:0.25:-3));
+fit = varbvs(X,pc(:,1:2),y,labels,'binomial',struct('logodds',-5.5:0.25:-3));
 
+return
+  
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------
 fprintf('SUMMARIZING RESULTS.\n')
@@ -28,12 +42,7 @@ fprintf('SUMMARIZING RESULTS.\n')
 % summary.
 varbvsprint(fit);
 
-% TO DO: Compute "single-marker" posterior inclusion probabilities.
-
-% TO DO: Show two "genome-wide scans", one using the multi-marker PIPs,
-% and one using the single-marker PIPs.
-  
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('/tmp/pcarbo/varbvs_demo_cd.mat','fit','-v7.3');
+save('/tmp/pcarbo/varbvs_demo_celiac.mat','fit','-v7.3');
