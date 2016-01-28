@@ -9,7 +9,7 @@ rng(1);
 % LOAD GENOTYPE AND PHENOTYPE DATA
 % --------------------------------
 fprintf('LOADING DATA.\n');
-load('/tmp/pcarbo/cd.mat');
+load('/data/internal_restricted/carbonetto_2012_wtccc/MATLAB/cd.mat');
 labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
 
 % FIT VARIATIONAL APPROXIMATION TO POSTERIOR
@@ -26,14 +26,15 @@ fit = varbvs(X,[],y,labels,'binomial',struct('logodds',-6:0.25:-3));
 fprintf('SUMMARIZING RESULTS.\n')
 % TO DO: Find an appropriate number of top-ranked variables to show in the
 % summary.
-varbvsprint(fit);
+varbvsprint(fit,0.95,10);
 
 % TO DO: Compute "single-marker" posterior inclusion probabilities.
 
 % TO DO: Show two "genome-wide scans", one using the multi-marker PIPs,
-% and one using the single-marker PIPs.
+% and one using the single-marker PIPs. In the scan, label the top n SNPs
+% by PIP.
   
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('/tmp/pcarbo/varbvs_demo_cd.mat','fit','-v7.3');
+save('/tmp/pcarbo/varbvs_demo_cd.mat','fit','chr','pos','-v7.3');

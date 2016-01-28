@@ -16,6 +16,9 @@ Strategy for my new implementation of 'varbvs'
 * To do: Test MATLAB and R interfaces on large-scale (GWAS) data sets
   (Crohn's, celiac).
 
+* To do: Implement varbvsnorm_indep.m, varbvsbinz_indep.m and
+  varbvsindep.m.
+
 * To do: Add data sets, vignettes and/or demos to R package.
 
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 

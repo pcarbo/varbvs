@@ -32,17 +32,21 @@ pc    = pc(i,:);
 % coefficients.
 fprintf('FITTING MODEL TO DATA.\n')
 fit = varbvs(X,pc(:,1:2),y,labels,'binomial',struct('logodds',-5.5:0.25:-3));
-
-return
   
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------
 fprintf('SUMMARIZING RESULTS.\n')
 % TO DO: Find an appropriate number of top-ranked variables to show in the
 % summary.
-varbvsprint(fit);
+varbvsprint(fit,0.95,10);
+
+% TO DO: Compute "single-marker" posterior inclusion probabilities.
+
+% TO DO: Show two "genome-wide scans", one using the multi-marker PIPs,
+% and one using the single-marker PIPs. In the scan, label the top n SNPs
+% by PIP.
 
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('/tmp/pcarbo/varbvs_demo_celiac.mat','fit','-v7.3');
+save('/tmp/pcarbo/varbvs_demo_celiac.mat','fit','chr','pos','-v7.3');
