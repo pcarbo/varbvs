@@ -12,8 +12,8 @@ rng(1);
 % --------------------------------
 % Also load the principal components.
 fprintf('LOADING DATA.\n');
-load('/tmp/pcarbo/celiac_nomhc.mat');
-load('/tmp/pcarbo/celiac_pc.mat');
+load('~pcarbo/data/celiac_nomhc.mat');
+load('~pcarbo/data/celiac_pc.mat');
 
 % Select all samples *not* in the Finnish cohort.
 i     = find(~strcmp(study,'Finnish'));
