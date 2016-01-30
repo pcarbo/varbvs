@@ -16,11 +16,10 @@ Strategy for my new implementation of 'varbvs'
 * To do: Test MATLAB and R interfaces on large-scale (GWAS) data sets
   (Crohn's, celiac).
 
-* To do: Implement functions varbvsnormindep.m, varbvsbinzindep.m
-  and varbvsindep.m to compute "single-marker" statistics so that
-  genome-wide scans can easily be plotted.
+* To do: Implement function varbvsindep.m to compute "single-marker"
+  statistics so that genome-wide scans can easily be plotted.
 
-* To do: Add description to varbvsnormindep.m.
+* To do: Add description to varbvsindep.m.
 
 * To do: Add data sets, vignettes and/or demos to R package.
 
