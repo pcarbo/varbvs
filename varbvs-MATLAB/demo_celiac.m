@@ -36,9 +36,7 @@ fit = varbvs(X,pc(:,1:2),y,labels,'binomial',struct('logodds',-5.5:0.25:-3));
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------
 fprintf('SUMMARIZING RESULTS.\n')
-% TO DO: Find an appropriate number of top-ranked variables to show in the
-% summary.
-varbvsprint(fit,0.95,10);
+varbvsprint(fit,0.95,14);
 
 % TO DO: Compute "single-marker" posterior inclusion probabilities.
 
