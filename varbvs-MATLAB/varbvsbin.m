@@ -44,7 +44,7 @@ function [logw, err, sa, alpha, mu, s, eta] = ...
 
   % Compute a few useful quantities.
   Xr    = double(X*(alpha.*mu));
-  stats = update_stats(X,y,eta);
+  stats = update_varbvsbin_stats(X,y,eta);
   s     = sa./(sa*stats.xdx + 1);  
 
   % Initialize storage for outputs logw and err.
@@ -87,7 +87,7 @@ function [logw, err, sa, alpha, mu, s, eta] = ...
     % to the logistic regression factors.
     if optimize_eta
       eta   = update_eta(X,y,betavar(alpha,mu,s),Xr,stats.d);
-      stats = update_stats(X,y,eta);
+      stats = update_varbvsbin_stats(X,y,eta);
       s     = sa./(sa*stats.xdx + 1);
     end
 
@@ -146,32 +146,6 @@ function [logw, err, sa, alpha, mu, s, eta] = ...
   % iterates (err).
   logw = logw(1:iter);
   err  = err(1:iter);
-  
-% ----------------------------------------------------------------------
-% Calculates useful quantities for updating the variational approximation
-% to the logistic regression factors.
-function stats = update_stats (X, y, eta)
-
-  % Compute the slope of the conjugate.
-  d = slope(eta);
-
-  % Compute beta0 and yhat. See the journal paper for an explanation of
-  % these two variables.
-  beta0 = sum(y - 0.5)/sum(d);
-  yhat  = y - 0.5 - beta0*d;
-
-  % Calculate xy = X'*yhat as (yhat'*X)' and xd = X'*d as (d'*X)' to
-  % avoid storing the transpose of X, since X may be large.
-  xy = double(yhat'*X)';
-  xd = double(d'*X)';
-
-  % Compute the diagonal entries of X'*dhat*X. For a definition of dhat, see
-  % the Bayesian Analysis journal paper.
-  dzr = d/sqrt(sum(d));
-  xdx = diagsq(X,d) - double((dzr'*X).^2)';
-
-  % Return the result.
-  stats = struct('d',d,'yhat',yhat,'xy',xy,'xd',xd,'xdx',xdx);
 
 % ----------------------------------------------------------------------
 % update_eta(X,y,v,Xr,d) returns the M-step update for the parameters

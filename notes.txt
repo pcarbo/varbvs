@@ -4,7 +4,7 @@ Strategy for my new implementation of 'varbvs'
 * Options: Summary statistics from "fixed" variational estimates for
   an external set of variables.
 	
-* Give platform and MATLAB version used for testing.
+* Give platform, R version and MATLAB version used for testing.
 
 * For PLoS Comp. Bio. software section, see:
   doi:10.1371/journal.pcbi.1002799
@@ -16,8 +16,11 @@ Strategy for my new implementation of 'varbvs'
 * To do: Test MATLAB and R interfaces on large-scale (GWAS) data sets
   (Crohn's, celiac).
 
-* To do: Implement varbvsnorm_indep.m, varbvsbinz_indep.m and
-  varbvsindep.m.
+* To do: Implement functions varbvsnormindep.m, varbvsbinzindep.m
+  and varbvsindep.m to compute "single-marker" statistics so that
+  genome-wide scans can easily be plotted.
+
+* To do: Add description to varbvsnormindep.m.
 
 * To do: Add data sets, vignettes and/or demos to R package.
 
