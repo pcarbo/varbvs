@@ -28,7 +28,7 @@ function [alpha, mu, s] = varbvsindep (fit, X, Z, y)
 
   % If necessary, convert the prior log-odds to a p x ns matrix.
   if fit.prior_same
-    logodds = repmat(logodds,p,1);
+    fit.logodds = repmat(fit.logodds,p,1);
   end
   
   % Adjust the genotypes and phenotypes so that the linear effects of
@@ -37,7 +37,7 @@ function [alpha, mu, s] = varbvsindep (fit, X, Z, y)
   % respect to an improper, uniform prior; see Chipman, George and
   % McCulloch, "The Practical Implementation of Bayesian Model
   % Selection," 2001.
-  if strcmp(family,'gaussian')
+  if strcmp(fit.family,'gaussian')
     if size(Z,2) == 1
       X = X - repmat(mean(X),length(y),1);
       y = y - mean(y);
@@ -61,12 +61,12 @@ function [alpha, mu, s] = varbvsindep (fit, X, Z, y)
   % probabilities (alpha), ignoring correlations between variables. Repeat
   % for each combination of the hyperparameters.
   for i = 1:ns
-    if strcmp(family,'gaussian')
+    if strcmp(fit.family,'gaussian')
       [alpha(:,i) mu(:,i) s(:,i)] = ...
-        varbvsnormindep(X,y,sigma(i),sa(i),log(10)*logodds(:,i));
-    elseif strcmp(family,'binomial')
+        varbvsnormindep(X,y,fit.sigma(i),fit.sa(i),log(10)*fit.logodds(:,i));
+    elseif strcmp(fit.family,'binomial')
       [alpha(:,i) mu(:,i) s(:,i)] = ...
-        varbvsbinzindep(X,Z,y,eta(:,i),sa(i),log(10)*logodds(:,i));
+        varbvsbinzindep(X,Z,y,fit.eta(:,i),fit.sa(i),log(10)*fit.logodds(:,i));
     end
   end
   

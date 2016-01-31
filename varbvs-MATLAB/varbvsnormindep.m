@@ -4,6 +4,6 @@
 % correlations between variables. This function is used in varbvsindep.m.
 function [alpha, mu, s] = varbvsnormindep (X, y, sigma, sa, logodds)
   s     = sa*sigma./(sa*diagsq(X) + 1);
-  mu    = s.*double(y'*X')/sigma;
+  mu    = s.*double(y'*X)'/sigma;
   alpha = sigmoid(logodds + (log(s/(sa*sigma)) + mu.^2./s)/2);
 
