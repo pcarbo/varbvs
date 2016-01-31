@@ -1,4 +1,65 @@
-% TO DO: Add description of this function (see varbvscoefcred.m).
+%--------------------------------------------------------------------------
+% varbvsindep.m: Compute posterior statistics, ignoring correlations.
+%--------------------------------------------------------------------------
+%
+% DESCRIPTION:
+%    This function computes the mean and variance of the coefficients, and
+%    the posterior inclusion probabilities (PIPs), ignoring correlations
+%    between variables. This is useful for inspecting or visualizing
+%    groups of correlated variables (e.g., genetic markers in linkage
+%    disequilibrium).
+%
+% USAGE:
+%    [alpha, mu, s] = varbvsindep(fit, X, Z, y)
+%
+% INPUT ARGUMENTS:
+% fit   Output of function varbvs.
+%
+% X     n x p input matrix, where n is the number of samples,
+%       and p is the number of variables. X cannot be sparse.
+%
+% Z     n x m covariate data matrix, where m is the number of
+%       covariates. Do not supply an intercept as a covariate
+%       (i.e., a column of ones), because an intercept is
+%       automatically included in the regression model. For no
+%       covariates, set Z to the empty matrix [].
+%
+% y     Vector of length n containing observations of binary
+%       (family = 'binomial') or continuous (family = 'gaussian')
+%       outcome. For binary outcomes, all entries of y must be 
+%       0 or 1.
+%
+% OUTPUT ARGUMENTS:
+% alpha  Variational estimates of posterior inclusion probabilities.
+% mu     Variational estimates of posterior mean coefficients.
+% s      Variational estimates of posterior variances.
+%
+% DETAILS:
+%    For the ith hyperparameter setting, alpha(:,i) is the variational
+%    estimate of the posterior inclusion probability (PIP) for each
+%    variable; mu(:,i) is the variational estimate of the posterior mean
+%    coefficient given that it is included in the model; and s(:,i) is the
+%    estimated posterior variance of the coefficient given that it is
+%    included in the model.
+%
+% LICENSE: GPL v3
+%
+% DATE: January 31, 2016
+%
+% AUTHORS:
+%    Algorithm was designed by Peter Carbonetto and Matthew Stephens.
+%    R, MATLAB and C code was written by Peter Carbonetto.
+%    Depts. of Statistics and Human Genetics, University of Chicago,
+%    Chicago, IL, USA, and AncestryDNA, San Francisco, CA, USA
+%
+% REFERENCES:
+%    P. Carbonetto, M. Stephens (2012). Scalable variational inference
+%    for Bayesian variable selection in regression, and its accuracy in 
+%    genetic association studies. Bayesian Analysis 7: 73-108.
+%
+% SEE ALSO:
+%    varbvs
+%
 function [alpha, mu, s] = varbvsindep (fit, X, Z, y)
 
   % Get the number of samples (n), variables (p) and hyperparameter

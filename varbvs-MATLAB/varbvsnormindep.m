@@ -1,5 +1,5 @@
 % This function computes the mean (mu) and variance (s) of the coefficients
-% given that they are included in the linear regressio model, then it
+% given that they are included in the linear regression model, then it
 % computes the posterior inclusion probabilities (alpha), ignoring
 % correlations between variables. This function is used in varbvsindep.m.
 function [alpha, mu, s] = varbvsnormindep (X, y, sigma, sa, logodds)

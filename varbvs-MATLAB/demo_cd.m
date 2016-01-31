@@ -26,7 +26,8 @@ fit = varbvs(X,[],y,labels,'binomial',struct('logodds',-6:0.25:-3));
 fprintf('SUMMARIZING RESULTS.\n')
 varbvsprint(fit,0.95,9);
 
-% TO DO: Compute "single-marker" posterior inclusion probabilities.
+% Compute "single-marker" posterior inclusion probabilities.
+alpha = varbvsindep(fit,X,Z,y);
 
 % TO DO: Show two "genome-wide scans", one using the multi-marker PIPs,
 % and one using the single-marker PIPs. In the scan, label the top n SNPs
