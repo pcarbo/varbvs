@@ -1,9 +1,13 @@
 % TO DO: Add description for this function here (see varbvsprint.m).
+%
+% NOTE: Order of variables shown is based on order in which the groups
+% are assigned to the variables.
+%
 function varbvsplot (fit, options)
 
   % Plot settings.
   marker_color = [0.10 0.10 0.44];  % Midnight blue.
-  label_color  = [1.00 0.55 0.00];  % Dark orange.
+  label_color  = [1.00 0.00 1.00];  % Magenta.
   marker_size  = 6;
     
   % PROCESS OPTIONS
@@ -15,7 +19,8 @@ function varbvsplot (fit, options)
   end
 
   % OPTIONS.PIP
-  % -----------
+  % Calculate the posterior inclusion probabilities (PIPs) if they aren't
+  % provided as input.
   if isfield(options,'pip')
     pip = options.pip;
   else
@@ -24,12 +29,12 @@ function varbvsplot (fit, options)
   end
   p = numel(pip);
   
-  % OPTIONS.N
-  % The number of variables to label in the plot.
-  if isfield(options,'n')
-    n = options.n;
+  % OPTIONS.VARS
+  % Get the variables to be highlighted and labeled in the plot.
+  if isfield(options,'vars')
+    vars = options.vars;
   else
-    n = 0;
+    vars = [];
   end
   
   % OPTIONS.GROUP
@@ -54,17 +59,9 @@ function varbvsplot (fit, options)
 
   % (3) GENERATE GENOME-WIDE SCAN PLOT
   % ----------------------------------
-  % Get the variables to be labeled in the plot.
-  if n == 0
-    vars = [];
-  else
-    [ans vars] = sort(-pip);
-    vars       = vars(1:n);
-    vars       = vars(:)';
-  end
-  
   % Draw the posterior probabilities. Repeat for each group.
-  pos = 0;
+  pos    = 0;
+  xticks = [];
   for i = group_labels
 
     % Plot the variables assigned to group i.
@@ -73,29 +70,29 @@ function varbvsplot (fit, options)
     plot(pos + (1:m),pip(j),'o','MarkerFaceColor',marker_color,...
          'MarkerEdgeColor','none','MarkerSize',marker_size);
 
-    % Add the group label.
-    text(pos + m/2,-0.125,num2str(i),'Color','black','HorizontalAlignment',...
-         'center','VerticalAlignment','bottom','FontSize',12);
-
-    % Add labels to the variables.
+    % Highlight the selected variables, and add labels to them.
+    hold on
     [j k] = intersect(j,vars);
+    plot(pos + k,pip(j),'o','MarkerFaceColor',label_color,...
+         'MarkerEdgeColor','none','MarkerSize',marker_size);
     text(pos + k,pip(j),strcat(repmat({' '},length(j),1),fit.labels(j)),...
          'Color',label_color,'HorizontalAlignment','left',...
          'VerticalAlignment','bottom','FontSize',10);
+
+    % Add the group label.
+    xticks = [xticks pos+m/2];
     
     pos = pos + m + gap;
-    hold on
   end
   hold off
-  a      = gca;
-  set(a,'TickDir','out','YLim',[-0.15 1.05],'YTick',0:0.25:1,'XTick',[]);
-  set(a,'XLim',[0 pos-gap+1]);
-  set(a,'FontSize',12,'FontName','Arial');
-  ylabel('posterior probability');
+  a = gca;
+  set(a,'XLim',[0 pos-gap+1],'XTick',xticks,'XTickLabel',group_labels);
+  set(a,'TickLength',[0.005 0.005],'FontSize',12,'FontName','Arial');
+  set(a,'TickDir','out');
   drawnow;
   xruler = a.XRuler;
   yruler = a.YRuler;
   xruler.Axle.Visible = 'off';
   yruler.Axle.Visible = 'off';
-  
+
   

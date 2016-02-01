@@ -27,17 +27,22 @@ fprintf('SUMMARIZING RESULTS.\n')
 varbvsprint(fit,0.95,9);
 
 % Compute "single-marker" posterior inclusion probabilities.
-alpha = varbvsindep(fit,X,Z,y);
+w   = normalizelogweights(fit.logw);
+pip = varbvsindep(fit,X,[],y) * w(:);
 
 % Show two "genome-wide scans", one using the posterior inclusion
 % probabilities (PIPs) computed in the joint analysis of all variables, and
 % one using the PIPs that ignore correlations between the variables.
+i = find(fit.alpha*w(:) > 0.5);
+set(gcf,'Color','white');
 subplot(2,1,1);
-varbvsplot(fit,struct('groups',chr,'n',9,'gap',5000));
+varbvsplot(fit,struct('groups',chr,'vars',i,'gap',5000));
+ylabel('posterior probability');
 subplot(2,1,2);
-varbvsplot(fit,struct('groups',chr,'n',9,'gap',5000));
-  
+varbvsplot(fit,struct('groups',chr,'pip',log10(pip+0.001),'vars',i,'gap',5e3));
+ylabel('log10 posterior prob.');
+
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('varbvs_demo_cd.mat','fit','alpha','chr','pos','-v7.3');
+save('varbvs_demo_cd.mat','fit','pip','chr','pos','-v7.3');

@@ -41,6 +41,7 @@ varbvsprint(fit,0.95,14);
 % Compute "single-marker" posterior inclusion probabilities.
 alpha = varbvsindep(fit,X,Z,y);
 
+
 % TO DO: Show two "genome-wide scans", one using the multi-marker PIPs,
 % and one using the single-marker PIPs. In the scan, label the top n SNPs
 % by PIP.
@@ -48,4 +49,4 @@ alpha = varbvsindep(fit,X,Z,y);
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('varbvs_demo_celiac.mat','fit','chr','pos','-v7.3');
+save('varbvs_demo_celiac.mat','fit','alpha','chr','pos','-v7.3');
