@@ -12,8 +12,8 @@ rng(1);
 % --------------------------------
 % Also load the principal components.
 fprintf('LOADING DATA.\n');
-load('~pcarbo/data/celiac_nomhc.mat');
-load('~pcarbo/data/celiac_pc.mat');
+load('~/data/celiac_nomhc.mat');
+load('~/data/celiac_pc.mat');
 
 % Select all samples *not* in the Finnish cohort.
 i     = find(~strcmp(study,'Finnish'));
@@ -48,4 +48,4 @@ alpha = varbvsindep(fit,X,Z,y);
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('/tmp/pcarbo/varbvs_demo_celiac.mat','fit','chr','pos','-v7.3');
+save('varbvs_demo_celiac.mat','fit','chr','pos','-v7.3');

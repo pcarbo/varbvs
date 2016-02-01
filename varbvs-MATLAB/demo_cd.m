@@ -40,4 +40,4 @@ varbvsplot(fit,struct('groups',chr,'n',9,'gap',5000));
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('/tmp/pcarbo/varbvs_demo_cd.mat','fit','alpha','chr','pos','-v7.3');
+save('varbvs_demo_cd.mat','fit','alpha','chr','pos','-v7.3');

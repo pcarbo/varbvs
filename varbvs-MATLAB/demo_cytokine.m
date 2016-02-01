@@ -12,7 +12,7 @@ labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
 
 % LOAD PATHWAY ANNOTATION
 % -----------------------
-load('~pcarbo/data/cytokine.mat');
+load('~/data/cytokine.mat');
 
 % FIT VARIATIONAL APPROXIMATION
 % -----------------------------
@@ -38,4 +38,4 @@ fit_cytokine = varbvs(X,[],y,labels,'binomial',struct('logodds',logodds));
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('/tmp/pcarbo/varbvs_demo_cytokine.mat','fit','a','chr','pos','-v7.3');
+save('varbvs_demo_cytokine.mat','fit','a','chr','pos','-v7.3');
