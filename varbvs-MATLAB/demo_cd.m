@@ -29,11 +29,15 @@ varbvsprint(fit,0.95,9);
 % Compute "single-marker" posterior inclusion probabilities.
 alpha = varbvsindep(fit,X,Z,y);
 
-% TO DO: Show two "genome-wide scans", one using the multi-marker PIPs,
-% and one using the single-marker PIPs. In the scan, label the top n SNPs
-% by PIP.
+% Show two "genome-wide scans", one using the posterior inclusion
+% probabilities (PIPs) computed in the joint analysis of all variables, and
+% one using the PIPs that ignore correlations between the variables.
+subplot(2,1,1);
+varbvsplot(fit,struct('groups',chr,'n',9,'gap',5000));
+subplot(2,1,2);
+varbvsplot(fit,struct('groups',chr,'n',9,'gap',5000));
   
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('/tmp/pcarbo/varbvs_demo_cd.mat','fit','chr','pos','-v7.3');
+save('/tmp/pcarbo/varbvs_demo_cd.mat','fit','alpha','chr','pos','-v7.3');
