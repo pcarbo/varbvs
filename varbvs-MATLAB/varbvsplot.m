@@ -16,18 +16,42 @@
 %
 % INPUT ARGUMENTS:
 % fit      Output of function varbvs.
-
 % options  A structure (type 'help struct') specifying some plot
 %          settings. More details about these options are given
 %          below. Fields, with their default settings given, include:
 %
-%          options.groups
-%          options.gap
-%          options.vars
-%          options.pip
+%          options.groups (grouping of variables)
+%          options.gap (size of gap between each group in plot)
+%          options.vars (variables to highlight and label)
+%          options.score (precomputed posterior probabilities, or "score")
 %
 % DETAILS:
-%    <Details go here>
+%    Optional input options.groups specifies the grouping of the
+%    variables. This must be an array with as many entry as variables, in
+%    which each entry is a unique number specifying the group assignment. In
+%    the plot, the groups are shown in the same order that they appear in
+%    this array. By default, all variables are assigned to a single group.
+%    options.gap specifies how much space to leave in between each group
+%    of variables in the plot.
+%
+%    The variables are draw along the horizontal axis, grouped according to
+%    options.groups. By default, the vertical axis shows the posterior
+%    inclusion probability (PIP), averaged over the hyperparameter settings
+%    (see 'help varbvsprint' for more details about how the averaged
+%    posterior probabilities are calculated). An alternative statistic for
+%    each variable may be provided for the vertical axis in options.score.
+%    For example, to more closely reproduce a "Manhattan plot" for a
+%    genome-wide association study, compute the PIPs that ignore
+%    correlations between variables, then set options.score to these PIPs
+%    on the log-scale:
+%
+%      w = normalizelogweights(fit.logw);
+%      options.score = log10(varbvsindep(fit,X,Z,y) * w(:) + 1e-5);
+%
+%    Finally, options.vars can be used to highlight and label variables in
+%    the plot. This must be an array containing the indices of the variables
+%    to be highlighted. The labels used are those provided by fit.labels.
+%    By default, no variables are highlighted.
 %
 % LICENSE: GPL v3
 %
@@ -45,13 +69,7 @@
 %    genetic association studies. Bayesian Analysis 7: 73-108.
 %
 % SEE ALSO:
-%    varbvs.
-%
-
-% TO DO: Add description for this function here (see varbvsprint.m).
-%
-% NOTE: Order of variables shown is based on order in which the groups
-% are assigned to the variables.
+%    varbvs, varbvsprint.
 %
 function varbvsplot (fit, options)
 
@@ -68,16 +86,16 @@ function varbvsplot (fit, options)
     options = [];
   end
 
-  % OPTIONS.PIP
-  % Calculate the posterior inclusion probabilities (PIPs) if they aren't
-  % provided as one of the inputs.
-  if isfield(options,'pip')
-    pip = options.pip;
+  % OPTIONS.SCORE
+  % Calculate the posterior inclusion probabilities (PIPs) if a "score"
+  % isn't provided as one of the inputs. 
+  if isfield(options,'score')
+    y = options.score;
   else
-    w   = normalizelogweights(fit.logw);
-    pip = fit.alpha * w(:);
+    w = normalizelogweights(fit.logw);
+    y = fit.alpha * w(:);
   end
-  p = numel(pip);
+  p = numel(y);
   
   % OPTIONS.VARS
   % Get the variables to be highlighted and labeled in the plot.
@@ -118,15 +136,15 @@ function varbvsplot (fit, options)
     % Plot the variables assigned to the ith group.
     j = find(groups == i);
     m = length(j);
-    plot(pos + (1:m),pip(j),'o','MarkerFaceColor',marker_color,...
+    plot(pos + (1:m),y(j),'o','MarkerFaceColor',marker_color,...
          'MarkerEdgeColor','none','MarkerSize',marker_size);
 
     % Highlight the selected variables, and add labels to them.
     hold on
     [j k] = intersect(j,vars);
-    plot(pos + k,pip(j),'o','MarkerFaceColor',label_color,...
+    plot(pos + k,y(j),'o','MarkerFaceColor',label_color,...
          'MarkerEdgeColor','none','MarkerSize',marker_size);
-    text(pos + k,pip(j),strcat(repmat({' '},length(j),1),fit.labels(j)),...
+    text(pos + k,y(j),strcat(repmat({' '},length(j),1),fit.labels(j)),...
          'Color',label_color,'HorizontalAlignment','left',...
          'VerticalAlignment','bottom','FontSize',10);
 

@@ -42,7 +42,8 @@ subplot(2,1,1);
 varbvsplot(fit,struct('groups',chr,'vars',i,'gap',5000));
 ylabel('posterior probability');
 subplot(2,1,2);
-varbvsplot(fit,struct('groups',chr,'pip',log10(pip+0.001),'vars',i,'gap',5e3));
+varbvsplot(fit,struct('groups',chr,'score',log10(pip + 0.001),'vars',i,...
+                      'gap',5000));
 ylabel('log10 posterior prob.');
 
 % SAVE RESULTS
