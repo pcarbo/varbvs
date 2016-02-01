@@ -31,7 +31,8 @@ pc    = pc(i,:);
 % binary outcome (case-control status), with spike and slab priors on the
 % coefficients.
 fprintf('FITTING MODEL TO DATA.\n')
-fit = varbvs(X,pc(:,1:2),y,labels,'binomial',struct('logodds',-5.5:0.25:-3));
+Z   = pc(:,1:2);
+fit = varbvs(X,Z,y,labels,'binomial',struct('logodds',-5.5:0.25:-3));
   
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------
@@ -39,14 +40,25 @@ fprintf('SUMMARIZING RESULTS.\n')
 varbvsprint(fit,0.95,14);
 
 % Compute "single-marker" posterior inclusion probabilities.
-alpha = varbvsindep(fit,X,Z,y);
+w   = normalizelogweights(fit.logw);
+pip = varbvsindep(fit,X,Z,y) * w(:);
 
-
-% TO DO: Show two "genome-wide scans", one using the multi-marker PIPs,
-% and one using the single-marker PIPs. In the scan, label the top n SNPs
-% by PIP.
+% Show two "genome-wide scans", one using the posterior inclusion
+% probabilities (PIPs) computed in the joint analysis of all variables, and
+% one using the PIPs that ignore correlations between the variables. The
+% latter is meant to look like a typical genome-wide "Manhattan" plot used
+% to summarize the results of a genome-wide association study. Variables
+% with PIP > 0.5 are highlighted.
+i = find(fit.alpha*w(:) > 0.5);
+set(gcf,'Color','white');
+subplot(2,1,1);
+varbvsplot(fit,struct('groups',chr,'vars',i,'gap',5000));
+ylabel('posterior probability');
+subplot(2,1,2);
+varbvsplot(fit,struct('groups',chr,'pip',log10(pip+0.001),'vars',i,'gap',5e3));
+ylabel('log10 posterior prob.');
 
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('varbvs_demo_celiac.mat','fit','alpha','chr','pos','-v7.3');
+save('varbvs_demo_celiac.mat','fit','pip','chr','pos','-v7.3');
