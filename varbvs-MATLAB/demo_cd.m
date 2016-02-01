@@ -33,6 +33,7 @@ pip = varbvsindep(fit,X,[],y) * w(:);
 % Show two "genome-wide scans", one using the posterior inclusion
 % probabilities (PIPs) computed in the joint analysis of all variables, and
 % one using the PIPs that ignore correlations between the variables.
+% Variables with PIP > 0.5 are highlighted.
 i = find(fit.alpha*w(:) > 0.5);
 set(gcf,'Color','white');
 subplot(2,1,1);
