@@ -17,6 +17,8 @@ Strategy for my new implementation of 'varbvs'
 
 * To do: Write function 'varbvsindep' for the R package.
 
+* To do: Write manual page for function 'varbvsindep'.
+
 * To do: Write function 'varbvsplot' for the R package.
 
 * To do: Test MATLAB and R interfaces on large-scale (GWAS) data sets
