@@ -53,15 +53,14 @@ varbvsindep <- function (fit, X, Z, y) {
   # probabilities (alpha), ignoring correlations between variables. Repeat
   # for each combination of the hyperparameters.
   for (i = 1:ns) {
-    if (fit$family == "gaussian") {
-      out <- with(fit,varbvsnormindep(X,y,sigma[i],sa[i],log(10)*logodds))
-      alpha[,i] <- out$alpha
-      mu[,i]    <- out$mu
-      s[,i]     <- out$s
-      rm(out)
-    } else if (fit$family == "binomial") {
-      # TO DO.
-    }
+    if (fit$family == "gaussian")
+      out <- with(fit,varbvsnormindep(X,y,sigma[i],sa[i],log(10)*logodds[,i]))
+    else if (fit$family == "binomial")
+      out <- with(fit,varbvsbinzindep(X,Z,y,eta[,i],sa[i],log(10)*logodds[,i]))
+    alpha[,i] <- out$alpha
+    mu[,i]    <- out$mu
+    s[,i]     <- out$s
+    rm(out)
   }
 
   return(list(alpha = alpha,mu = mu,s = s))
@@ -81,3 +80,14 @@ varbvsnormindep <- function (X, y, sigma, sa, logodds) {
 }
 
 # ----------------------------------------------------------------------
+# This function computes the mean (mu) and variance (s) of the coefficients
+# given that they are included in the logistic regression model, then it
+# computes the posterior inclusion probabilities (alpha), ignoring
+# correlations between variables. This function is used in varbvsindep.m.
+varbvsbinzindep <- function (X, Z, y, eta, sa, logodds) {
+  stats <- updatestats_varbvsbinz(X,Z,y,eta)
+  s     <- sa/(sa*stats$xdx + 1)
+  mu    <- s * stats$xy;
+  alpha <- sigmoid(logodds + (log(s/sa) + mu^2/s)/2)
+  return(list(alpha = alpha,mu = mu,s = s))
+}
