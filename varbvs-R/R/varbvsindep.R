@@ -53,9 +53,31 @@ varbvsindep <- function (fit, X, Z, y) {
   # probabilities (alpha), ignoring correlations between variables. Repeat
   # for each combination of the hyperparameters.
   for (i = 1:ns) {
-    if (fit$family == "gaussian")
+    if (fit$family == "gaussian") {
+      out <- with(fit,varbvsnormindep(X,y,sigma[i],sa[i],log(10)*logodds))
+      alpha[,i] <- out$alpha
+      mu[,i]    <- out$mu
+      s[,i]     <- out$s
+      rm(out)
+    } else if (fit$family == "binomial") {
       # TO DO.
-    else if (fit$family == "binomial")
-      # TO DO.
-  }  
+    }
+  }
+
+  return(list(alpha = alpha,mu = mu,s = s))
 }
+
+# ----------------------------------------------------------------------
+# This function computes the mean (mu) and variance (s) of the
+# coefficients given that they are included in the linear regression
+# model, then it computes the posterior inclusion probabilities
+# (alpha), ignoring correlations between variables. This function is
+# used in 'varbvsindep', above.
+varbvsnormindep <- function (X, y, sigma, sa, logodds) {
+  s     <- sa*sigma/(sa*diagsq(X) + 1)
+  mu    <- s*c(y %*% X)/sigma
+  alpha <- sigmoid(logodds + (log(s/(sa*sigma)) + mu^2/s)/2)
+  return(list(alpha = alpha,mu = mu,s = s))
+}
+
+# ----------------------------------------------------------------------
