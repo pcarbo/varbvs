@@ -16,8 +16,8 @@ varbvsindep <- function (fit, X, Z, y) {
   
   # If necessary, convert the prior log-odds to a p x ns matrix.
   if (fit$prior.same)
-    fit$logodds <- matrix(repmat(fit$logodds,p,1,byrow = TRUE))
-                        
+    fit$logodds <- matrix(fit$logodds,p,ns,byrow = TRUE)
+  
   # Adjust the genotypes and phenotypes so that the linear effects of
   # the covariates are removed. This is equivalent to integrating out
   # the regression coefficients corresponding to the covariates with
@@ -45,14 +45,14 @@ varbvsindep <- function (fit, X, Z, y) {
 
   # Initialize storage for the outputs.
   alpha <- matrix(0,p,ns)
-  mu    <- zeros(0,p,ns)
-  s     <- zeros(0,p,ns)
+  mu    <- matrix(0,p,ns)
+  s     <- matrix(0,p,ns)
 
   # Calculate the mean (mu) and variance (s) of the coefficients given that
   # the coefficients are included in the model, and the posterior inclusion
   # probabilities (alpha), ignoring correlations between variables. Repeat
   # for each combination of the hyperparameters.
-  for (i = 1:ns) {
+  for (i in 1:ns) {
     if (fit$family == "gaussian")
       out <- with(fit,varbvsnormindep(X,y,sigma[i],sa[i],log(10)*logodds[,i]))
     else if (fit$family == "binomial")
