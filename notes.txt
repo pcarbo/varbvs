@@ -13,6 +13,8 @@ Strategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
+* To do: Implement function varbvsbayesfactor.m.
+
 * To do: Implement MATLAB script demo_cytokine.m.
 
 * To do: Write manual page for function 'varbvsindep'.

@@ -9,7 +9,7 @@ set.seed(1)
 # LOAD GENOTYPE AND PHENOTYPE DATA
 # --------------------------------
 cat("LOADING DATA.\n")
-load("~/data/cd.RData")
+load("/tmp/pcarbo/cd.RData")
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
@@ -24,6 +24,8 @@ fit <- varbvs(X,NULL,y,"binomial",logodds = seq(-6,-3,0.25))
 # --------------------------------
 cat("SUMMARIZING RESULTS.\n")
 varbvsprint(fit,n = 9)
+
+stop()
 
 # Compute "single-marker" posterior inclusion probabilities.
 w <- c(normalizelogweights(fit$logw))

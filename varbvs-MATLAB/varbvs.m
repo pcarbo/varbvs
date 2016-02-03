@@ -53,7 +53,7 @@
 %          options.n0 = 0 (degrees of freedom for prior on sa)
 %          options.alpha (initial estimate of variational parameter alpha)
 %          options.mu (initial estimate of variational parameter mu)
-%          options.initialize_params = true (see below)
+%          options.initialize_params (see below)
 %          options.nr = 100 (samples of PVE to draw from posterior)
 %
 %          For family = 'gaussian' only:

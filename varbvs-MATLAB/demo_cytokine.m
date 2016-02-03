@@ -4,15 +4,12 @@ clear
 % Initialize the random number generator. 
 rng(1);
 
-% LOAD GENOTYPE AND PHENOTYPE DATA
-% --------------------------------
+% LOAD GENOTYPES, PHENOTYPES AND PATHWAY ANNOTATION
+% -------------------------------------------------
 fprintf('LOADING DATA.\n');
-load('/data/internal_restricted/carbonetto_2012_wtccc/MATLAB/cd.mat');
-labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
-
-% LOAD PATHWAY ANNOTATION
-% -----------------------
 load('~/data/cytokine.mat');
+load('/tmp/pcarbo/cd.mat');
+labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
 
 % FIT VARIATIONAL APPROXIMATION
 % -----------------------------
@@ -20,22 +17,36 @@ load('~/data/cytokine.mat');
 % variables (genetic markers) are, *a priori*, equally likely to be included
 % in the model.
 fprintf('FITTING NULL MODEL TO DATA.\n')
-% TO DO: FIX THIS.
-fit_null = varbvs(X,[],y,labels,'binomial',struct('logodds',logodds));
+fit_null = varbvs(X,[],y,labels,'binomial',struct('logodds',-4));
 
 % Compute the variational approximation given the assumption that genetic
 % markers near cytokine signaling genes are more likely to be included in
 % the model.
 fprintf('FITTING PATHWAY ENRICHMENT MODEL TO DATA.\n')
-% TO DO: FIX THIS.
-fit_cytokine = varbvs(X,[],y,labels,'binomial',struct('logodds',logodds));
+logodds           = repmat(-4,442001,13);
+logodds(a == 1,:) = repmat(0:0.25:3,6711,1);
+fit_cytokine = varbvs(X,[],y,labels,'binomial',...
+                      struct('logodds',logodds,'alpha',fit_null.alpha,...
+                             'mu',fit_null.mu,'eta',fit_null.eta,...
+                             'optimize_eta',true));
 
-% TO DO: Compute the Bayes factor.
+% Compute the Bayes factor.
 
-% TO DO: Show a "genome-wide scans" from the multi-marker PIPs, in which
-% we condition on enrichment of cytokine signaling genes.
+% TO DO.
 
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('varbvs_demo_cytokine.mat','fit','a','chr','pos','-v7.3');
+save('/tmp/pcarbo/varbvs_demo_cytokine.mat','fit','a','BF','chr','pos',...
+     '-v7.3');
+
+% Show two "genome-wide scans" from the multi-marker PIPs, with and without
+% conditioning on enrichment of cytokine signaling genes.
+subplot(2,1,1);
+w = normalizelogweights(fit_cytokine.logw);
+i = find(fit_null.alpha > 0.5 | fit_cytokine.alpha*w(:) > 0.5);
+varbvsplot(fit_null,struct('groups',chr,'vars',i,'gap',5000));
+ylabel('posterior probability');
+subplot(2,1,2);
+varbvsplot(fit_cytokine,struct('groups',chr,'vars',i,'gap',5000));
+ylabel('posterior probability');
