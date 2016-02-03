@@ -33,15 +33,20 @@ pc    = pc(i,:);
 fprintf('FITTING MODEL TO DATA.\n')
 Z   = pc(:,1:2);
 fit = varbvs(X,Z,y,labels,'binomial',struct('logodds',-5.5:0.25:-3));
-  
-% SUMMARIZE POSTERIOR DISTRIBUTION
-% --------------------------------
-fprintf('SUMMARIZING RESULTS.\n')
-varbvsprint(fit,0.95,14);
 
 % Compute "single-marker" posterior inclusion probabilities.
 w   = normalizelogweights(fit.logw);
 pip = varbvsindep(fit,X,Z,y) * w(:);
+
+% SAVE RESULTS
+% ------------
+fprintf('SAVING RESULTS.\n');
+save('varbvs_demo_celiac.mat','fit','w','pip','chr','pos','-v7.3');
+
+% SUMMARIZE POSTERIOR DISTRIBUTION
+% --------------------------------
+fprintf('SUMMARIZING RESULTS.\n')
+varbvsprint(fit,0.95,14);
 
 % Show two "genome-wide scans", one using the posterior inclusion
 % probabilities (PIPs) computed in the joint analysis of all variables, and
@@ -50,7 +55,6 @@ pip = varbvsindep(fit,X,Z,y) * w(:);
 % to summarize the results of a genome-wide association study. Variables
 % with PIP > 0.5 are highlighted.
 i = find(fit.alpha*w(:) > 0.5);
-set(gcf,'Color','white');
 subplot(2,1,1);
 varbvsplot(fit,struct('groups',chr,'vars',i,'gap',5000));
 ylabel('posterior probability');
@@ -58,8 +62,3 @@ subplot(2,1,2);
 varbvsplot(fit,struct('groups',chr,'score',log10(pip + 0.001),'vars',i,...
                       'gap',5000));
 ylabel('log10 posterior prob.');
-
-% SAVE RESULTS
-% ------------
-fprintf('SAVING RESULTS.\n');
-save('varbvs_demo_celiac.mat','fit','pip','chr','pos','-v7.3');

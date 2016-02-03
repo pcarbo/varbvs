@@ -21,14 +21,19 @@ labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
 fprintf('FITTING MODEL TO DATA.\n')
 fit = varbvs(X,[],y,labels,'binomial',struct('logodds',-6:0.25:-3));
 
+% Compute "single-marker" posterior inclusion probabilities.
+w   = normalizelogweights(fit.logw);
+pip = varbvsindep(fit,X,[],y) * w(:);
+
+% SAVE RESULTS
+% ------------
+fprintf('SAVING RESULTS.\n');
+save('varbvs_demo_cd.mat','fit','w','pip','chr','pos','-v7.3');
+
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------
 fprintf('SUMMARIZING RESULTS.\n')
 varbvsprint(fit,0.95,9);
-
-% Compute "single-marker" posterior inclusion probabilities.
-w   = normalizelogweights(fit.logw);
-pip = varbvsindep(fit,X,[],y) * w(:);
 
 % Show two "genome-wide scans", one using the posterior inclusion
 % probabilities (PIPs) computed in the joint analysis of all variables, and
@@ -37,7 +42,6 @@ pip = varbvsindep(fit,X,[],y) * w(:);
 % to summarize the results of a genome-wide association study. Variables
 % with PIP > 0.5 are highlighted.
 i = find(fit.alpha*w(:) > 0.5);
-set(gcf,'Color','white');
 subplot(2,1,1);
 varbvsplot(fit,struct('groups',chr,'vars',i,'gap',5000));
 ylabel('posterior probability');
@@ -45,8 +49,3 @@ subplot(2,1,2);
 varbvsplot(fit,struct('groups',chr,'score',log10(pip + 0.001),'vars',i,...
                       'gap',5000));
 ylabel('log10 posterior prob.');
-
-% SAVE RESULTS
-% ------------
-fprintf('SAVING RESULTS.\n');
-save('varbvs_demo_cd.mat','fit','pip','chr','pos','-v7.3');
