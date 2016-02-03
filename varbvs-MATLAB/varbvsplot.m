@@ -158,8 +158,4 @@ function varbvsplot (fit, options)
   set(a,'XLim',[0 pos-gap+1],'XTick',xticks,'XTickLabel',group_labels);
   set(a,'TickLength',[0.005 0.005],'FontSize',12);
   set(a,'TickDir','out');
-  drawnow;
-  xruler = a.XRuler;
-  yruler = a.YRuler;
-  xruler.Axle.Visible = 'off';
-  yruler.Axle.Visible = 'off';
+
