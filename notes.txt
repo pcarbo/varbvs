@@ -20,6 +20,8 @@ Strategy for my new implementation of 'varbvs'
 
 * To do: Write function 'varbvsplot' for the R package.
 
+* To do: Write manual page for R function 'varbvsplot'.
+
 * To do: Implement script demo.celiac.R.
 
 * To do: Test MATLAB and R interfaces on large-scale (GWAS) data sets
