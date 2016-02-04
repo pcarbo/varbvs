@@ -7,7 +7,7 @@ used by varbvsprint to generate credible intervals for coefficients of
 top-ranked variables.
 }
 \usage{
-  varbvscoefcred <- function (fit, vars = NULL, cred.int = 0.95, nr = 1000)
+  varbvscoefcred (fit, vars = NULL, cred.int = 0.95, nr = 1000)
 }
 \arguments{
   \item{fit}{Output of function \code{varbvs}.}

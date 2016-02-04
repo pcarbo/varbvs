@@ -1,6 +1,9 @@
-# This script fits the Bayesian variable selection model to identify genetic
-# markers associated with Crohn's disease risk. The data consist of 442,001
-# SNPs genotyped for 1,748 cases and 2,938 controls.
+# This script fits the Bayesian variable selection model to identify
+# genetic markers associated with celiac disease risk. After removing
+# all samples from the Finnish cohort, the data consist of 509,314
+# SNPs genotyped for 3,149 cases and 6,325 controls, and principal
+# components (PCs) which are used as covariates in the logistic
+# regression.
 library(varbvs)
 
 # Initialize the random number generator. 
@@ -9,7 +12,7 @@ set.seed(1)
 # LOAD GENOTYPE AND PHENOTYPE DATA
 # --------------------------------
 cat("LOADING DATA.\n")
-load("/tmp/pcarbo/cd.RData")
+load("/tmp/pcarbo/celiac.RData")
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
@@ -18,11 +21,13 @@ load("/tmp/pcarbo/cd.RData")
 # a binary outcome (case-control status), with spike and slab priors
 # on the coefficients.
 cat("FITTING MODEL TO DATA.\n")
-fit <- varbvs(X,NULL,y,"binomial",logodds = seq(-6,-3,0.25))
+Z   <- as.matrix(panel[c("PC1","PC2")])
+y   <- panel$pheno
+fit <- varbvs(X,Z,y,"binomial",logodds = -5.5:0.25:-3)
 
 # Compute "single-marker" posterior inclusion probabilities.
 w   <- c(normalizelogweights(fit$logw))
-pip <- varbvsindep(fit,X,NULL,y) %*% w
+pip <- varbvsindep(fit,X,Z,y) %*% w
 
 # SAVE RESULTS
 # ------------
@@ -32,7 +37,7 @@ cat("SAVING RESULTS.\n")
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
 cat("SUMMARIZING RESULTS.\n")
-varbvsprint(fit,n = 9)
+varbvsprint(fit,n = 14)
 
 # Show two "genome-wide scans", one using the posterior inclusion
 # probabilities (PIPs) computed in the joint analysis of all
@@ -42,4 +47,3 @@ varbvsprint(fit,n = 9)
 # genome-wide association study. Variables with PIP > 0.5 are
 # highlighted.
 i <- which(fit$alpha %*% w > 0.5)
-# TO DO.

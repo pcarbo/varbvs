@@ -13,20 +13,18 @@ Strategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
-* To do: Implement function varbvsbayesfactor.m.
-
-* To do: Write description for varbvsbayesfactor.m.
+* To do: Write description for varbvsbayesfactor.m. NOTE: See the
+  "annealed importance sampling" paper.
 
 * To do: Implement MATLAB script demo_cytokine.m.
-
-* To do: Write manual page for function 'varbvsindep'.
 
 * To do: Write function 'varbvsplot' for the R package.
 
 * To do: Implement script demo.celiac.R.
 
 * To do: Test MATLAB and R interfaces on large-scale (GWAS) data sets
-  (Crohn's, celiac).
+  (Crohn's, celiac). Compare posterior statistics and log-importance
+  weights computed in MATLAB and R.
 
 * To do: Add data sets, vignettes and/or demos to R package.
 
