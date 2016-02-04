@@ -27,7 +27,7 @@ pip <- varbvsindep(fit,X,NULL,y) %*% w
 # SAVE RESULTS
 # ------------
 cat("SAVING RESULTS.\n")
-# TO DO.
+save(list = c("fit","map"),file = "/tmp/pcarbo/varbvs.demo.cd.RData")
 
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
