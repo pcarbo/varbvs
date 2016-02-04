@@ -13,8 +13,8 @@ Strategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
-* To do: Write description for varbvsbayesfactor.m. NOTE: See the
-  "annealed importance sampling" paper.
+* To do: Write description for bayesfactor.m. (See the
+  "annealed importance sampling" paper, or my PLoS Genetics paper.)
 
 * To do: Implement MATLAB script demo_cytokine.m.
 

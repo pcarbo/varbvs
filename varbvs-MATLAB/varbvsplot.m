@@ -109,12 +109,12 @@ function varbvsplot (fit, options)
   % Determine the grouping of the variables. By default, all the
   % variables are assigned to a single group.
   if isfield(options,'groups')
-    groups       = options.groups;
-    group_labels = unique(groups,'stable');
-    group_labels = group_labels(:)';
+    groups = options.groups;
   else
     groups = ones(p,1);
   end
+  group_labels = unique(groups,'stable');
+  group_labels = group_labels(:)';
 
   % OPTIONS.GAP
   % Determine how much whitespace to draw in between each group of
@@ -126,36 +126,36 @@ function varbvsplot (fit, options)
   end
   clear options
 
-  % (3) GENERATE GENOME-WIDE SCAN PLOT
-  % ----------------------------------
-  % Draw the posterior probabilities. Repeat for each of the groups.
+  % GENERATE GENOME-WIDE SCAN PLOT
+  % ------------------------------
+  % Determine the positions of the variables along the horizontal axis.
+  x      = zeros(p,1);
   pos    = 0;
   xticks = [];
   for i = group_labels
+    j      = find(groups == i);
+    m      = length(j);
+    x(j)   = pos + (1:m);
+    xticks = [xticks pos+m/2];
+    pos    = pos + m + gap;
+  end
 
-    % Plot the variables assigned to the ith group.
-    j = find(groups == i);
-    m = length(j);
-    plot(pos + (1:m),y(j),'o','MarkerFaceColor',marker_color,...
-         'MarkerEdgeColor','none','MarkerSize',marker_size);
+  % Plot the posterior probabilities.
+  plot(x,y,'o','MarkerFaceColor',marker_color,'MarkerEdgeColor','none',...
+       'MarkerSize',marker_size);
 
-    % Highlight the selected variables, and add labels to them.
+  % Highlight the selected variables, and add labels to them.
+  if length(vars) > 0
     hold on
-    [j k] = intersect(j,vars);
-    plot(pos + k,y(j),'o','MarkerFaceColor',label_color,...
+    plot(x(vars),y(vars),'o','MarkerFaceColor',label_color,...
          'MarkerEdgeColor','none','MarkerSize',marker_size);
-    text(pos + k,y(j),strcat(repmat({' '},length(j),1),fit.labels(j)),...
+    text(x(vars),y(vars),...
+         strcat(repmat({' '},length(vars),1),fit.labels(vars)),...
          'Color',label_color,'HorizontalAlignment','left',...
          'VerticalAlignment','bottom','FontSize',10);
-
-    % Add the group label.
-    xticks = [xticks pos+m/2];
-    
-    pos = pos + m + gap;
+    hold off
   end
-  hold off
-  a = gca;
-  set(a,'XLim',[0 pos-gap+1],'XTick',xticks,'XTickLabel',group_labels);
-  set(a,'TickLength',[0.005 0.005],'FontSize',12);
-  set(a,'TickDir','out');
+  set(gca,'XLim',[0 pos-gap+1],'XTick',xticks,'XTickLabel',group_labels);
+  set(gca,'TickLength',[0.005 0.005],'FontSize',12);
+  set(gca,'TickDir','out');
 
