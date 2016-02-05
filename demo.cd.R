@@ -2,6 +2,8 @@
 # markers associated with Crohn's disease risk. The data consist of 442,001
 # SNPs genotyped for 1,748 cases and 2,938 controls.
 library(varbvs)
+library(lattice)
+library(latticeExtra)
 
 # Initialize the random number generator. 
 set.seed(1)
@@ -27,7 +29,7 @@ pip <- varbvsindep(fit,X,NULL,y) %*% w
 # SAVE RESULTS
 # ------------
 cat("SAVING RESULTS.\n")
-save(list = c("fit","map"),file = "/tmp/pcarbo/varbvs.demo.cd.RData")
+save(list = c("fit","map","pip"),file = "/tmp/pcarbo/varbvs.demo.cd.RData")
 
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
@@ -41,5 +43,7 @@ varbvsprint(fit,n = 9)
 # genome-wide "Manhattan" plot used to summarize the results of a
 # genome-wide association study. Variables with PIP > 0.5 are
 # highlighted.
+trellis.device(height = 3,width = 10)
 i <- which(fit$alpha %*% w > 0.5)
-# TO DO.
+varbvsplot(fit,groups = map$chr,vars = i,gap = 7500,xlab = "posterior prob.")
+

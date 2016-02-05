@@ -13,10 +13,7 @@ eStrategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
-* To do: Write description for bayesfactor.m. (See the
-  "annealed importance sampling" paper, and/or my PLoS Genetics paper.)
-
-* To do: Implement MATLAB script demo_cytokine.m.
+* To do: Implement R script demo.cytokine.R.
 
 * To do: Write function 'varbvsplot' for the R package.
 
