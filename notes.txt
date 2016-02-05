@@ -1,4 +1,4 @@
-Strategy for my new implementation of 'varbvs'
+eStrategy for my new implementation of 'varbvs'
 ----------------------------------------------
 
 * Options: Summary statistics from "fixed" variational estimates for
@@ -23,11 +23,11 @@ Strategy for my new implementation of 'varbvs'
 * To do: Write manual page for R function 'varbvsplot'. Note that it
   requires packages lattice and latticeExtra.
 
-* To do: Implement script demo.celiac.R.
-
 * To do: Test MATLAB and R interfaces on large-scale (GWAS) data sets
   (Crohn's, celiac). Compare posterior statistics and log-importance
   weights computed in MATLAB and R.
+
+* To do: Test R interface on CFW mouse data.
 
 * To do: Add data sets, vignettes and/or demos to R package.
 

@@ -16,15 +16,26 @@
 %    these probabilities cannot be computed analytically because they
 %    involve intractable integrals, we can obtain reasonable estimates of
 %    these probabilities with a simple numerical approximation over some
-%    latent variable, Z. The inputs are the log-probabilities
-%    Pr(data, Z | H0) and Pr(data, Z | H1) at different settings of Z.
+%    latent variable, Z, assuming the prior over Z is uniform. The inputs
+%    are the log-probabilities
+%
+%      Pr(data, Z | H) = Pr(data | Z, H) x Pr(Z | H),
+%
+%    where Pr(Z | H) is uniform over all Z, and H = H0 or H1.
+%
+%    Alternatively, this function can be used to compute an importance
+%    sampling estimate of the Bayes factor; see, for example, R. M. Neal,
+%    "Annealed importance sampling", Statistics and Computing, 2001. This
+%    formulation is equivalent to a simple numerical approximation when
+%    the settings of the latent variable Z are drawn from the same
+%    distribution as the prior Pr(Z | H).
 %
 % USAGE:
 %    BF = varbvsbayesfactor(logw0, logw1)
 %
 % INPUT ARGUMENTS:
-% logw0  log-probabilities under H0.
-% logw1  log-probabilities under H1.
+% logw0  log-probabilities or log-importance weights under H0.
+% logw1  log-probabilities or log-importance weights under H1.
 %
 % OUTPUT ARGUMENTS: The estimated Bayes factor.
 %
