@@ -1,4 +1,11 @@
-% TO DO: Explain here what this script does.
+% This script fits two variable selection models: the first ("null") model
+% has a uniform prior for all variables (the 442,001 genetic markers), and
+% the second model has higher prior probability for genetic markers near
+% cytokine signaling genes. This analysis assess support for enrichment of
+% Crohn's disease risk factors near cytokine signaling genes; a large Bayes
+% factor means greater support for the enrichment hypothesis. The data in
+% this analysis consist of 442,001 SNPs genotyped for 1,748 cases and 2,938
+% controls.
 clear
 
 % Initialize the random number generator. 
@@ -24,21 +31,20 @@ fit_null = varbvs(X,[],y,labels,'binomial',struct('logodds',-4));
 % the model.
 fprintf('FITTING PATHWAY ENRICHMENT MODEL TO DATA.\n')
 logodds           = repmat(-4,442001,13);
-logodds(a == 1,:) = repmat(0:0.25:3,6711,1);
+logodds(a == 1,:) = repmat(-4 + (0:0.25:3),6711,1);
 fit_cytokine = varbvs(X,[],y,labels,'binomial',...
                       struct('logodds',logodds,'alpha',fit_null.alpha,...
                              'mu',fit_null.mu,'eta',fit_null.eta,...
                              'optimize_eta',true));
 
 % Compute the Bayes factor.
-
-% TO DO.
+BF = bayesfactor(fit_null.logw,fit_cytokine.logw);
 
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('/tmp/pcarbo/varbvs_demo_cytokine.mat','fit','a','BF','chr','pos',...
-     '-v7.3');
+save('/tmp/pcarbo/varbvs_demo_cytokine.mat','fit_null','fit_cytokine',...
+     'BF','a','chr','pos','-v7.3');
 
 % Show two "genome-wide scans" from the multi-marker PIPs, with and without
 % conditioning on enrichment of cytokine signaling genes.
