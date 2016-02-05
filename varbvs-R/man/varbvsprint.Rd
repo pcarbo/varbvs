@@ -33,7 +33,7 @@
   The second part summarizes the approximate posterior distribution of
   the hyperparameters (sigma, sa, logodds). The "estimate" column is the
   value averaged over hyperparameter settings, treating \code{fit$logw}
-  as (unnormalized) log-importance weights. The next column, labeled
+  as (unnormalized) log-marginal probabilities. The next column, labeled
   "Pr>x", where \code{x = cred.int} gives the credible interval based on
   these weights (computed using function \code{cred}).
 

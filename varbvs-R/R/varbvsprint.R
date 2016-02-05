@@ -13,7 +13,7 @@ varbvsprint <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
 
   # (1) COMPUTE POSTERIOR STATISTICS
   # --------------------------------
-  # Compute the normalized (approximate) importance weights.
+  # Compute the normalized (approximate) probabilities.
   w <- c(normalizelogweights(fit$logw))
 
   # Compute the posterior inclusion probabilities (PIPs) and posterior

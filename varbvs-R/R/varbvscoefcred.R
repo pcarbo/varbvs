@@ -18,7 +18,7 @@ varbvscoefcred <- function (fit, vars = NULL, cred.int = 0.95, nr = 1000) {
   } else
     p <- length(vars)
 
-  # Compute the normalized (approximate) importance weights.
+  # Compute the normalized (approximate) probabilities.
   w <- normalizelogweights(fit$logw)
 
   # Initialize storage for the result.

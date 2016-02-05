@@ -1,20 +1,19 @@
 \name{normalizelogweights}
 \alias{normalizelogweights}
-\title{Compute normalized importance weights.}
-\description{Compute normalized importance weights from unnormalized
-  log-importance weights.}
+\title{Compute normalized probabilities.}
+\description{Compute normalized probabilities from unnormalized
+  log-probabilities.}
 \usage{
   normalizelogweights(logw)
 }
 \arguments{
-  \item{logw}{Vector of unnormalized log-importance weights.}
+  \item{logw}{Vector of unnormalized log-probabilities.}
 }
 \details{
-  Guards against underflow or overflow by adjusting the log-importance
-  weights so that the largest importance weight is one.
+  Guards against underflow or overflow by adjusting the
+  log-probabilities so that the largest probability is 1.
 }
-\value{Normalized importance weights such that the sum of the normalized
-importance weights is equal to 1.}
+\value{Normalized probabilities such that the sum is equal to 1.}
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. Bayesian Analysis 7(1), pages

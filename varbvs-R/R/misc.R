@@ -242,17 +242,17 @@ betavar <- function (p, mu, s)
   p*(s + (1 - p)*mu^2)
 
 # ----------------------------------------------------------------------
-# normalizelogweights(logw) takes as input an array of unnormalized
-# log-importance weights logw and returns normalized importance weights such
-# that the sum of the normalized importance weights is equal to one.
+# normalizelogweights takes as input an array of unnormalized
+# log-probabilities logw and returns normalized probabilities such
+# that the sum is equal to 1.
 normalizelogweights <- function (logw) {
 
-  # Guard against underflow or overflow by adjusting the log-importance
-  # weights so that the largest importance weight is one.
+  # Guard against underflow or overflow by adjusting the
+  # log-probabilities so that the largest probability is 1.
   c <- max(logw)
   w <- exp(logw - c)
 
-  # Normalize the importance weights.
+  # Normalize the probabilities.
   return(w/sum(w))
 }
 
@@ -281,7 +281,7 @@ cred <- function  (x, x0, w = NULL, cred.int = 0.95) {
   x <- c(x)
   w <- c(w)
 
-  # Make sure the importance weights sum to 1.
+  # Make sure the probabilities sum to 1.
   w <- w/sum(w)
 
   # Sort the points in increasing order.

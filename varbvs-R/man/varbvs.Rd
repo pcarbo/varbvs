@@ -172,18 +172,20 @@
     from the same distribution as the prior, and (3) the
     fully-factorized variational approximation closely approximates the
     true posterior distribution, then final posterior quantities can be
-    calculated by using logw as (unnormalized) log-importance weights.
-    Even when conditions (1), (2) and/or (3) are not satisfied, this can
-    approach can still often yield reasonable estimates of averaged
-    posterior quantities. The examples below demonstrate how final
-    posterior quantities are reported by function \code{varbvsprint}
-    (see \code{help(varbvsprint)}for more details). To account for
-    discrepancies between the prior on (sigma,sa,logodds) and the
-    sampling density used to draw candidate settings of the
-    hyperparameters, adjust the log-importance weights by setting
-    \code{fit$logw <- fit$logw + logp/logq}, where logp is the
+    calculated by using logw as (unnormalized) log-marginal
+    probabilities. Even when conditions (1), (2) and/or (3) are not
+    satisfied, this can approach can still often yield reasonable
+    estimates of averaged posterior quantities. The examples below
+    demonstrate how final posterior quantities are reported by function
+    \code{varbvsprint} (see \code{help(varbvsprint)}for more
+    details). To account for discrepancies between the prior on
+    (sigma,sa,logodds) and the sampling density used to draw candidate
+    settings of the hyperparameters, adjust the log-probabilities by
+    setting \code{fit$logw <- fit$logw + logp/logq}, where logp is the
     log-density of the prior distribution, and logq is the log-density
-    of the sampling distribution.
+    of the sampling distribution. (This is importance sampling; see, for
+    example, R. M. Neal, "Annealed importance sampling", Statistics and
+    Computing, 2001.)
 
     \bold{Memory requirements.} Finally, we point out that the
     optimization procedures were carefully designed so that they can be
