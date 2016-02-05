@@ -31,10 +31,11 @@
 %    hyperparameters by reporting the mean, the c% credible interval, and
 %    the range of settings provided as input to varbvs (or NA when
 %    options.sa or options.sigma is not set). These statistics are computed
-%    by interpreting fit.logw as log-importance weights (see function varbvs
-%    for details, and how to adjust fit.logw to account for different priors
-%    on the hyperparameters). Summary statistics for logodds are only shown
-%    if the prior log-odds is identical for all variables.
+%    by interpreting fit.logw as a vector of log-probabilities. (See
+%    function varbvs for details, and how to adjust fit.logw to account for
+%    different priors on the hyperparameters.) Summary statistics for
+%    logodds are only shown if the prior log-odds is identical for all
+%    variables.
 %
 %    The third part summarizes the variable selection results. Again, all
 %    these statistics are computed by averaging over the hyperparameter
@@ -100,7 +101,7 @@ function varbvsprint (fit, c, n, nr)
   
   % (1) COMPUTE POSTERIOR STATISTICS
   % --------------------------------
-  % Compute the normalized (approximate) importance weights.
+  % Compute the normalized (approximate) probabilities.
   w = normalizelogweights(fit.logw);
 
   % Compute the posterior inclusion probabilities (PIPs) and posterior mean

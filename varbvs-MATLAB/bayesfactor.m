@@ -1,9 +1,9 @@
 %--------------------------------------------------------------------------
-% bayesfactor.m: Compute importance sampling estimate of Bayes factor.
+% bayesfactor.m: Compute numerical estimate of Bayes factor.
 %--------------------------------------------------------------------------
 %
 % DESCRIPTION:
-%    Computes an importance sampling estimate of
+%    Computes numerical estimate of
 %
 %           Pr(data | H1)
 %      BF = ------------- ,
@@ -13,16 +13,18 @@
 %    the probability of the data given the null hypothesis (H0). This is
 %    also known as a Bayes factor (see Kass & Raftery, Journal of the
 %    American Statistical Association, 1995). Here we assume that although
-%    these probabilities cannot be computed analytically, we can obtain
-%    reasonable estimates of these probabilities using importance
-%    sampling.
+%    these probabilities cannot be computed analytically because they
+%    involve intractable integrals, we can obtain reasonable estimates of
+%    these probabilities with a simple numerical approximation over some
+%    latent variable, Z. The inputs are the log-probabilities
+%    Pr(data, Z | H0) and Pr(data, Z | H1) at different settings of Z.
 %
 % USAGE:
 %    BF = varbvsbayesfactor(logw0, logw1)
 %
 % INPUT ARGUMENTS:
-% logw0  log-importance weights ...
-% logw1  log-importance weights ...
+% logw0  log-probabilities under H0.
+% logw1  log-probabilities under H1.
 %
 % OUTPUT ARGUMENTS: The estimated Bayes factor.
 %
@@ -46,13 +48,11 @@
 %
 function BF = varbvsbayesfactor (logw0, logw1)
 
-  % Compute the marginal log-likelihood under the null hypothesis using
-  % importance sampling.
+  % Compute the marginal log-likelihood under the null hypothesis.
   c     = max(logw0(:));
   logz0 = c + log(mean(exp(logw0(:) - c)));
 
-  % Compute the marginal log-likelihood under the alternative hypothesis
-  % using importance sampling.
+  % Compute the marginal log-likelihood under the alternative hypothesis.
   c     = max(logw1(:));
   logz1 = c + log(mean(exp(logw1(:) - c)));
 

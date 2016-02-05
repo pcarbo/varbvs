@@ -78,7 +78,7 @@ function [a, b] = varbvscoefcred (fit, vars, c, nr)
     nr = 1000;
   end
 
-  % Compute the normalized (approximate) importance weights.
+  % Compute the normalized (approximate) probabilities.
   w = normalizelogweights(fit.logw);
 
   % Initialize storage for the result.

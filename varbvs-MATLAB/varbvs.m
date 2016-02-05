@@ -202,8 +202,8 @@
 %    prior, and (3) the fully-factorized variational approximation closely
 %    approximates the true posterior distribution, then final posterior
 %    quantities can be calculated by using fit.logw as (unnormalized)
-%    log-importance weights. Even when conditions (1), (2) and/or (3) are
-%    not satisfied, this can approach can still often yield reasonable
+%    log-marginal probabilities. Even when conditions (1), (2) and/or (3)
+%    are not satisfied, this can approach can still often yield reasonable
 %    estimates of averaged posterior quantities. For example, do the
 %    following to compute posterior inclusion probabilities (PIPs) averaged
 %    over the hyperparameter settings:
@@ -220,9 +220,11 @@
 %    varbvsprint (type 'help varbvsprint' for more details). To account for
 %    discrepancies between the prior on (sigma,sa,logodds) and the sampling
 %    density used to draw candidate settings of the hyperparameters, adjust
-%    the log-importance weights by setting fit.logw = fit.logw + logp/logq,
-%    where logp is the log-density of the prior distribution, and logq is
-%    the log-density of the sampling distribution.
+%    the log-marginal probabilities weights by setting fit.logw = fit.logw +
+%    logp/logq, where logp is the log-density of the prior distribution, and
+%    logq is the log-density of the sampling distribution. (This is
+%    importance sampling; see, for example, R. M. Neal, "Annealed importance
+%    sampling", Statistics and Computing, 2001.)
 %
 %    Finally, we point out that the optimization procedures were carefully
 %    designed so that they can be applied to very large data sets; to date,

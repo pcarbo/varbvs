@@ -1,13 +1,13 @@
 % normalizelogweights(logw) takes as input an array of unnormalized
-% log-importance weights logw and returns normalized importance weights such
-% that the sum of the normalized importance weights is equal to one.
+% log-probabilities logw and returns normalized probabilities such that the
+% sum is equal to 1.
 function w = normalizelogweights (logw)
 
-  % Guard against underflow or overflow by adjusting the log-importance
-  % weights so that the largest importance weight is one.
+  % Guard against underflow or overflow by adjusting the log-probabilities so
+  % that the largest probability is 1.
   c = max(logw(:));
   w = exp(logw - c);
 
-  % Normalize the importance weights.
+  % Normalize the probabilities.
   w = w / sum(w(:));  
   

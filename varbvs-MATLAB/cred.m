@@ -13,7 +13,7 @@ function [a, b] = cred (x, x0, w, c)
   % Get the number of points.
   n = numel(x);
 
-  % By default, all samples have the same weight.
+  % By default, all samples have the same probability.
   if nargin < 3
     w = ones(n,1)/n;
   elseif isempty(w)
@@ -29,7 +29,7 @@ function [a, b] = cred (x, x0, w, c)
   x = x(:);
   w = w(:);
 
-  % Make sure the importance weights sum to 1.
+  % Make sure the probabilities sum to 1.
   w = w/sum(w);
 
   % Sort the points in increasing order.

@@ -14,13 +14,14 @@ Strategy for my new implementation of 'varbvs'
   http://www.jstatsoft.org/article/view/v033i01
 
 * To do: Write description for bayesfactor.m. (See the
-  "annealed importance sampling" paper, or my PLoS Genetics paper.)
+  "annealed importance sampling" paper, and/or my PLoS Genetics paper.)
 
 * To do: Implement MATLAB script demo_cytokine.m.
 
 * To do: Write function 'varbvsplot' for the R package.
 
-* To do: Write manual page for R function 'varbvsplot'.
+* To do: Write manual page for R function 'varbvsplot'. Note that it
+  requires packages lattice and latticeExtra.
 
 * To do: Implement script demo.celiac.R.
 
@@ -29,6 +30,8 @@ Strategy for my new implementation of 'varbvs'
   weights computed in MATLAB and R.
 
 * To do: Add data sets, vignettes and/or demos to R package.
+
+* Remove all references to 'pcarbo' directories.
 
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.

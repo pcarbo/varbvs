@@ -16,7 +16,7 @@ function pve = varbvspve (X, fit, nr)
   % explained.
   pve = zeros(nr,1);
 
-  % Compute the normalized (approximate) importance weights.
+  % Compute the normalized (approximate) probabilities.
   w = normalizelogweights(fit.logw);
 
   % For each sample, compute the proportion of variance explained.
