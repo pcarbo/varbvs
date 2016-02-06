@@ -13,16 +13,11 @@ eStrategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
-* To do: Implement R script demo.cytokine.R.
-
-* To do: Write function 'varbvsplot' for the R package.
-
-* To do: Write manual page for R function 'varbvsplot'. Note that it
-  requires packages lattice and latticeExtra.
-
-* To do: Test MATLAB and R interfaces on large-scale (GWAS) data sets
-  (Crohn's, celiac). Compare posterior statistics and log-importance
-  weights computed in MATLAB and R.
+* Next to do items:
+   - Write man page for function varbvsplot. NOTE: varbvsplot requires
+     lattice and latticeExtra.
+   - Write R script demo.cytokine.R, and compare against
+     demo_cytokine.m.
 
 * To do: Test R interface on CFW mouse data.
 

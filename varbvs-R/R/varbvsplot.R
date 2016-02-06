@@ -1,7 +1,8 @@
 # Summarize the variable selection results in a single plot.
-varbvsplot <- function (fit, score = NULL, vars = NULL, groups = NULL,
-                        gap = 0, col = "midnightblue",col.vars = "magenta",
-                        xlab = "", ylab = "",...) {
+varbvsplot <- function (fit, score = NULL, groups = NULL, gap = 0, vars = NULL,
+                        var.labels = NULL,col = "midnightblue",
+                        var.col = "magenta",pch = 20,xlab = "", ylab = "",
+                        ltext.args = "col=\"black\",pos=4,cex=0.5",...) {
   
   # PROCESS OPTIONS
   # ---------------
@@ -20,31 +21,38 @@ varbvsplot <- function (fit, score = NULL, vars = NULL, groups = NULL,
     groups <- rep(1,p)
   group.labels <- unique(groups)
 
+  # Determine the selected variable labels.
+  if (is.null(var.labels))
+    var.labels <- rownames(fit$alpha)[vars]
+  
   # GENERATE GENOME-WIDE SCAN PLOT
   # ------------------------------
-  # Determine the positions of the variables along the horizontal axis.
+  # Determine the positions of the variables and group labels along
+  # the horizontal axis.
   x      <- rep(0,p)
   pos    <- 0
   xticks <- NULL
   for (i in group.labels) {
     j      <- which(groups == i)
-    m      <- length(j)
-    x[j]   <- pos + 1:m
-    xticks <- c(xticks,pos+m/2)
-    pos    <- pos + m + gap
+    n      <- length(j)
+    x[j]   <- pos + 1:n
+    xticks <- c(xticks,pos+n/2)
+    pos    <- pos + n + gap
   }
-
+  rm(i,j,n,pos)
+  
   # Plot the posterior probabilities, highlighting and labeling the
   # selected variables.
-  labels <- rownames(fit$alpha)
-  return(xyplot(y ~ x,data.frame(x = x,y = y),pch = 20,col = col,
+  return(xyplot(y ~ x,data.frame(x = x,y = y),pch = pch,col = col,
                 scales = list(x = list(at = xticks,labels = group.labels)),
                 xlab = xlab,ylab = ylab,...) +
-         as.layer(xyplot(y ~ x,data.frame(x = x,y = y)[vars,],pch = 20,
-                         col = col.vars,
-                         panel = function (x,y,...) {
-                           panel.xyplot(x,y,...);
-                           ltext(x = x,y = y,labels = labels[vars],
-                                 pos = 4,cex = 0.5)
-                         })))
+         as.layer(xyplot(y ~ x,data.frame(x = x,y = y)[vars,],pch = pch,
+           col = var.col,
+           panel = function (x,y,...) {
+             panel.xyplot(x,y,...);
+             eval(parse(text = paste("ltext(x=x,y=y,labels=var.labels,",
+                          ltext.args,")")))
+           })))
+
+  return(invisible(fit))
 }
