@@ -10,20 +10,46 @@ genome-wide association study or quantitative trait locus (QTL) mapping
 study.
 }
 \usage{
-  varbvsplot(fit, score = NULL, vars = NULL, groups = NULL,
-             gap = 0, col = "midnightblue",col.vars = "magenta",
-             xlab = "", ylab = "",...)
+varbvsplot (fit, score = NULL, groups = NULL, gap = 0,
+            col = "midnightblue", vars = NULL, var.labels = NULL,
+            var.col = "magenta", pch = 20, xlab = "", ylab = "",
+            ltext.args = "col=\"black\",pos=4,cex=0.5", ...)
 }
 \arguments{
   \item{fit}{Output of function \code{varbvs}.}
 
-  \item{cred.int}{Size of credible interval (number between 0 and 1).}
+  \item{score}{Value to plot on vertical axis. This must be NULL, or a
+  numeric vector with one entry for each variable. If score = NULL, the
+  posterior probability for each variable is plotted in the vertical
+  axis, in which this probability is averaged over hyperparameter
+  settings, treating \code{fit$logw} as (unnormalized) log-marginal
+  probabilities.}
 
-  \item{n}{Show detailed statistics for top n > 0 variables, ranked
-  according to their posterior inclusion probabilities.}
+  \item{groups}{Group the variables in the plot according to this
+  argument. This must be equal to NULL, or a vector with one entry for
+  each variable. If groups = NULL, all variables are assigned to a
+  single group.}
 
-  \item{nr}{Number of Monte Carlo samples to draw to estimate credible
-    intervals for coefficients of selected variables.}
+  \item{col}{Argument passed to \code{xyplot} specifying color of points.}
+
+  \item{vars}{Indices of variables to highlight and label.}
+
+  \item{var.labels}{Labels that accompany highlighted variables.}
+
+  \item{var.col}{Color of points for highlighted variables.}
+
+  \item{pch}{Argument passed to \code{xyplot} specifying symbol type.}
+
+  \item{xlab}{Argument passed to \code{xyplot} specifying label for
+  horizontal axis.}
+
+  \item{ylab}{Argument passed to \code{xyplot} specifying label for
+  vertical axis.}
+
+  \item{ltext.args}{Additional arguments passed to \code{ltext} to draw
+  the labels in the plot, specified as a string.}
+
+  \item{...}{Additional arguments passed to \code{xyplot}.}
 }
 \details{
   Details go here.

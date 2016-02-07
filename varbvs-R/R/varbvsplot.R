@@ -1,7 +1,7 @@
 # Summarize the variable selection results in a single plot.
-varbvsplot <- function (fit, score = NULL, groups = NULL, gap = 0, vars = NULL,
-                        var.labels = NULL,col = "midnightblue",
-                        var.col = "magenta",pch = 20,xlab = "", ylab = "",
+varbvsplot <- function (fit, score = NULL, groups = NULL, gap = 0,
+                        col = "midnightblue", vars = NULL, var.labels = NULL,
+                        var.col = "magenta", pch = 20, xlab = "", ylab = "",
                         ltext.args = "col=\"black\",pos=4,cex=0.5",...) {
   
   # PROCESS OPTIONS
@@ -21,28 +21,34 @@ varbvsplot <- function (fit, score = NULL, groups = NULL, gap = 0, vars = NULL,
     groups <- rep(1,p)
   group.labels <- unique(groups)
 
-  # Determine the selected variable labels.
+  # Determine the selected variable labels. By default, use the labels
+  # stored in the varbvs data structure ("fit").
   if (is.null(var.labels))
     var.labels <- rownames(fit$alpha)[vars]
   
   # GENERATE GENOME-WIDE SCAN PLOT
   # ------------------------------
-  # Determine the positions of the variables and group labels along
-  # the horizontal axis.
-  x      <- rep(0,p)
-  pos    <- 0
-  xticks <- NULL
-  for (i in group.labels) {
-    j      <- which(groups == i)
-    n      <- length(j)
-    x[j]   <- pos + 1:n
-    xticks <- c(xticks,pos+n/2)
-    pos    <- pos + n + gap
+  # Determine the positions of the variables and, if necessary, group
+  # labels along the horizontal axis.
+  if (length(group.labels) == 1) {
+    x            <- 1:p
+    xticks       <- NULL
+    group.labels <- NULL
+  } else {
+    x      <- rep(0,p)
+    pos    <- 0
+    xticks <- NULL
+    for (i in group.labels) {
+      j      <- which(groups == i)
+      n      <- length(j)
+      x[j]   <- pos + 1:n
+      xticks <- c(xticks,pos+n/2)
+      pos    <- pos + n + gap
+    }
   }
-  rm(i,j,n,pos)
   
-  # Plot the posterior probabilities, highlighting and labeling the
-  # selected variables.
+  # Plot the posterior probabilities, or "scores", highlighting and
+  # labeling selected variables.
   return(xyplot(y ~ x,data.frame(x = x,y = y),pch = pch,col = col,
                 scales = list(x = list(at = xticks,labels = group.labels)),
                 xlab = xlab,ylab = ylab,...) +

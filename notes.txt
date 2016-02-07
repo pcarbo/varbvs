@@ -13,11 +13,8 @@ eStrategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
-* Next to do items:
-   - Write man page for function varbvsplot. NOTE: varbvsplot requires
-     lattice and latticeExtra.
-   - Write R script demo.cytokine.R, and compare against
-     demo_cytokine.m.
+* Next to do item: Write R script demo.cytokine.R, and compare against 
+  demo_cytokine.m.
 
 * To do: Test R interface on CFW mouse data.
 
