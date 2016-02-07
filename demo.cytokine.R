@@ -23,4 +23,28 @@ load("~/data/cytokine.RData")
 # variables (genetic markers) are, *a priori*, equally likely to be included
 # in the model.
 cat("FITTING NULL MODEL TO DATA.\n")
-fit_null <- varbvs(X,NULL,y,"binomial",logodds = -4)
+fit.null <- varbvs(X,NULL,y,"binomial",logodds = -4)
+
+# Compute the variational approximation given the assumption that
+# genetic markers near cytokine signaling genes are more likely to be
+# included in the model.
+cat("FITTING PATHWAY ENRICHMENT MODEL TO DATA.\n")
+logodds          <- matrix(-4,442001,13)
+logodds[a == 1,] <- -4 + seq(0,3,0.25)
+fit.cytokine <- varbvs(X,NULL,y,"binomial",logodds = logodds,
+                       alpha = fit.null$alpha,mu = fit.null$mu,
+                       eta = fit.null$eta,optimize.eta = TRUE)
+
+stop()
+
+# Compute the Bayes factor.
+BF <- bayesfactor(fit.null$logw,fit.cytokine$logw)
+
+# SAVE RESULTS
+# ------------
+cat("SAVING RESULTS.\n")
+save(list = c("fit.null","fit.cytokine","BF","a","chr","pos"),
+     file = "/tmp/pcarbo/varbvs_demo_cytokine.mat")
+
+# Show two "genome-wide scans" from the multi-marker PIPs, with and
+# without conditioning on enrichment of cytokine signaling genes.
