@@ -57,7 +57,7 @@
 % SEE ALSO:
 %    varbvs
 %
-function BF = varbvsbayesfactor (logw0, logw1)
+function BF = bayesfactor (logw0, logw1)
 
   % Compute the marginal log-likelihood under the null hypothesis.
   c     = max(logw0(:));

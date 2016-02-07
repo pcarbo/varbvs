@@ -1,5 +1,5 @@
 # Compute numerical estimate of Bayes factor.
-varbvsbayesfactor <- function (logw0, logw1) {
+bayesfactor <- function (logw0, logw1) {
 
   # Compute the marginal log-likelihood under the null hypothesis.
   c     <- max(logw0)
