@@ -14,7 +14,6 @@ eStrategy for my new implementation of 'varbvs'
   http://www.jstatsoft.org/article/view/v033i01
 
 * Next to do items: 
-   - Verify man page for varbvsprint.
    - Write R script demo.cytokine.R, and compare against demo_cytokine.m.
 
 * To do: Test R interface on CFW mouse data.

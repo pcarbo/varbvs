@@ -15,7 +15,7 @@ rng(1);
 % -------------------------------------------------
 fprintf('LOADING DATA.\n');
 load('~/data/cytokine.mat');
-load('/tmp/pcarbo/cd.mat');
+load('~/data/cd.mat');
 labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
 
 % FIT VARIATIONAL APPROXIMATION
@@ -43,8 +43,8 @@ BF = bayesfactor(fit_null.logw,fit_cytokine.logw);
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('/tmp/pcarbo/varbvs_demo_cytokine.mat','fit_null','fit_cytokine',...
-     'BF','a','chr','pos','-v7.3');
+save('~/data/varbvs_demo_cytokine.mat','fit_null','fit_cytokine','BF',...
+     'a','chr','pos','-v7.3');
 
 % Show two "genome-wide scans" from the multi-marker PIPs, with and without
 % conditioning on enrichment of cytokine signaling genes.
