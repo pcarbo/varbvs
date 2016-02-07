@@ -30,12 +30,10 @@ fit.null <- varbvs(X,NULL,y,"binomial",logodds = -4)
 # included in the model.
 cat("FITTING PATHWAY ENRICHMENT MODEL TO DATA.\n")
 logodds          <- matrix(-4,442001,13)
-logodds[a == 1,] <- -4 + seq(0,3,0.25)
+logodds[a == 1,] <- matrix(-4 + seq(0,3,0.25),6711,13,byrow = TRUE)
 fit.cytokine <- varbvs(X,NULL,y,"binomial",logodds = logodds,
                        alpha = fit.null$alpha,mu = fit.null$mu,
                        eta = fit.null$eta,optimize.eta = TRUE)
-
-stop()
 
 # Compute the Bayes factor.
 BF <- bayesfactor(fit.null$logw,fit.cytokine$logw)
@@ -44,7 +42,8 @@ BF <- bayesfactor(fit.null$logw,fit.cytokine$logw)
 # ------------
 cat("SAVING RESULTS.\n")
 save(list = c("fit.null","fit.cytokine","BF","a","chr","pos"),
-     file = "/tmp/pcarbo/varbvs_demo_cytokine.mat")
+     file = "/tmp/pcarbo/varbvs.demo.cytokine.RData")
 
 # Show two "genome-wide scans" from the multi-marker PIPs, with and
 # without conditioning on enrichment of cytokine signaling genes.
+# TO DO.
