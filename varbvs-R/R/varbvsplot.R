@@ -59,6 +59,4 @@ varbvsplot <- function (fit, score = NULL, groups = NULL, gap = 0,
              eval(parse(text = paste("ltext(x=x,y=y,labels=var.labels,",
                           ltext.args,")")))
            })))
-
-  return(invisible(fit))
 }
