@@ -16,10 +16,7 @@ eStrategy for my new implementation of 'varbvs'
 * Next to do items:
    - Write R function 'bayesfactor'.
    - Write R script demo.cytokine.R, and compare against demo_cytokine.m.
-
-* To do: Test R interface on CFW mouse data.
-
-* To do: Add data sets, vignettes and/or demos to R package.
+   - Write and test R script demo.cfw.R.
 
 * Remove all references to 'pcarbo' directories.
 
