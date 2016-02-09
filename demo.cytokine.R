@@ -14,7 +14,7 @@ set.seed(1)
 # LOAD GENOTYPES, PHENOTYPES AND PATHWAY ANNOTATION
 # -------------------------------------------------
 cat("LOADING DATA.\n")
-load("/tmp/pcarbo/cd.RData")
+load("~/data/cd.RData")
 load("~/data/cytokine.RData")
 
 # FIT VARIATIONAL APPROXIMATION
@@ -42,8 +42,20 @@ BF <- bayesfactor(fit.null$logw,fit.cytokine$logw)
 # ------------
 cat("SAVING RESULTS.\n")
 save(list = c("fit.null","fit.cytokine","map","a","BF"),
-     file = "/tmp/pcarbo/varbvs.demo.cytokine.RData")
+     file = "varbvs.demo.cytokine.RData")
 
 # Show two "genome-wide scans" from the multi-marker PIPs, with and
 # without conditioning on enrichment of cytokine signaling genes.
-# TO DO.
+trellis.device(height = 4,width = 10)
+w <- normalizelogweights(fit.cytokine$logw)
+i <- which(fit.null$alpha < 0.5 & fit.cytokine$alpha %*% w > 0.5)
+var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
+print(varbvsplot(fit.null,groups = map$chr,vars = i,
+                 var.labels = rep("",length(i)),gap = 7500,
+                 ylab = "posterior prob."),
+      split = c(1,1,1,2),more = TRUE)
+print(varbvsplot(fit.cytokine,groups = map$chr,vars = i,
+                 var.labels = var.labels,gap = 7500,
+                 ylab = "posterior prob."),
+      split = c(1,2,1,2),more = FALSE)
+

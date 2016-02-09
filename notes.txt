@@ -13,12 +13,7 @@ eStrategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
-* Next to do items:
-   - Write R function 'bayesfactor'.
-   - Write R script demo.cytokine.R, and compare against demo_cytokine.m.
-   - Write and test R script demo.cfw.R.
-
-* Remove all references to 'pcarbo' directories.
+* To do: Write and test R script demo.cfw.R.
 
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
