@@ -7,7 +7,7 @@ This software package includes
 [R](http://www.r-project.org) implementations of the variational
 inference procedure for Bayesian variable selection, as described in
 the [Bayesian Analysis](http://ba.stat.cmu.edu/) paper
-[Scalable variational inference for Bayesian variable selection in regression, and its accuracy in genetic association studies](http://ba.stat.cmu.edu/journal/2012/vol07/issue01/carbonetto.pdf)
+[Scalable variational inference for Bayesian variable selection in regression, and its accuracy in genetic association studies](http://projecteuclid.org/euclid.ba/1339616726)
 (published in *Bayesian Analysis* 7, March 2012, pages 73-108). This
 software has been used to implement Bayesian variable selection for
 large problems with over a million variables and thousands of samples.
