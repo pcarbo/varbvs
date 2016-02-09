@@ -18,10 +18,12 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     colnames(X) <- paste0("X",1:p)
   
   # If input Z is not NULL, it must have as many rows as X.
-  if (!is.null(Z))
+  if (!is.null(Z)) {
+    Z <- as.matrix(Z)
     if (nrow(Z) != n)
       stop("Inputs X and Z do not match")
-
+  }
+  
   # Add intercept.
   if (is.null(Z))
     Z <- matrix(1,n,1)

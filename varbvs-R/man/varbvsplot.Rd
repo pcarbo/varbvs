@@ -44,6 +44,9 @@ varbvsplot (fit, score = NULL, groups = NULL, gap = 0,
 
   \item{pch}{Argument passed to \code{xyplot} specifying symbol type.}
 
+  \item{score.line}{Draw a red, dotted horizontal line at this location
+  on the vertical axis.}
+  
   \item{xlab}{Argument passed to \code{xyplot} specifying horizontal
   axis title.}
 

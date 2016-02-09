@@ -1,8 +1,9 @@
 # Summarize the variable selection results in a single plot.
 varbvsplot <- function (fit, score = NULL, groups = NULL, gap = 0,
                         col = "midnightblue", vars = NULL, var.labels = NULL,
-                        var.col = "magenta", pch = 20, xlab = "", ylab = "",
-                        ltext.args = "col=\"black\",pos=4,cex=0.5",...) {
+                        var.col = "magenta", pch = 20, score.line = NULL,
+                        ltext.args = "col=\"black\",pos=4,cex=0.5",
+                        xlab = "", ylab = "",...) {
   
   # PROCESS OPTIONS
   # ---------------
@@ -51,6 +52,12 @@ varbvsplot <- function (fit, score = NULL, groups = NULL, gap = 0,
   # labeling selected variables.
   return(xyplot(y ~ x,data.frame(x = x,y = y),pch = pch,col = col,
                 scales = list(x = list(at = xticks,labels = group.labels)),
+                panel = function (x,y,...) {
+                  panel.xyplot(x,y,...);
+                  if (!is.null(score.line))
+                    panel.abline(a = score.line,b = 0,lty = "dotted",
+                                 col = "orangered")
+                },
                 xlab = xlab,ylab = ylab,...) +
          as.layer(xyplot(y ~ x,data.frame(x = x,y = y)[vars,],pch = pch,
            col = var.col,
