@@ -41,7 +41,7 @@ BF <- bayesfactor(fit.null$logw,fit.cytokine$logw)
 # SAVE RESULTS
 # ------------
 cat("SAVING RESULTS.\n")
-save(list = c("fit.null","fit.cytokine","BF","a","chr","pos"),
+save(list = c("fit.null","fit.cytokine","map","a","BF"),
      file = "/tmp/pcarbo/varbvs.demo.cytokine.RData")
 
 # Show two "genome-wide scans" from the multi-marker PIPs, with and
