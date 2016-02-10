@@ -6,9 +6,11 @@ library(latticeExtra)
 # SCRIPT PARAMETERS
 # -----------------
 # These script parameters specify the candidate prior log-odds
-# settings and which trait to analyze.
-logodds <- seq(-5,-3,0.25)
+# settings, the prior variance of the coefficients, and which trait to
+# analyze.
 trait   <- "soleus"
+logodds <- seq(-5,-3,0.25)
+sa      <- 0.05
 
 # Initialize the random number generator. 
 set.seed(1)
@@ -19,17 +21,9 @@ cat("LOADING DATA.\n")
 load("cfw.RData")
 y <- pheno[,trait]
 if (trait == "edl" | trait == "soleus") {
-  family <- "gaussian"
-  Z      <- pheno[,c("batch16","tibia")]
-  sa     <- 0.05
+  Z <- pheno[,c("batch16","tibia")]
 } else if (trait == "testis") {
-  family <- "gaussian"
-  Z      <- pheno[,"sacwt"]
-  sa     <- 0.05
-} else if (trait == "abnormal.bmd") {
-  family <- "binomial"
-  Z      <- pheno[,"batch16"]
-  sa     <- 1
+  Z <- pheno[,"sacwt"]
 }
 Z <- as.matrix(Z)
 
@@ -44,7 +38,7 @@ rm(pheno,geno)
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 cat("FITTING MODEL TO DATA.\n")
-fit <- varbvs(X,Z,y,family,sa = sa,logodds = logodds)
+fit <- varbvs(X,Z,y,sa = sa,logodds = logodds)
 
 # Compute "single-marker" posterior inclusion probabilities.
 w   <- c(normalizelogweights(fit$logw))
