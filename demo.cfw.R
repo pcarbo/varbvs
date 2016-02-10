@@ -7,8 +7,8 @@ library(latticeExtra)
 # -----------------
 # These script parameters specify the candidate prior log-odds
 # settings and which trait to analyze.
-logodds <- seq(-5,-2.5,0.25)
-trait   <- "edl"
+logodds <- seq(-5,-3,0.25)
+trait   <- "soleus"
 
 # Initialize the random number generator. 
 set.seed(1)
@@ -21,12 +21,15 @@ y <- pheno[,trait]
 if (trait == "edl" | trait == "soleus") {
   family <- "gaussian"
   Z      <- pheno[,c("batch16","tibia")]
+  sa     <- 0.05
 } else if (trait == "testis") {
   family <- "gaussian"
   Z      <- pheno[,"sacwt"]
+  sa     <- 0.05
 } else if (trait == "abnormal.bmd") {
-  family <- "binary"
+  family <- "binomial"
   Z      <- pheno[,"batch16"]
+  sa     <- 1
 }
 Z <- as.matrix(Z)
 
@@ -41,7 +44,7 @@ rm(pheno,geno)
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 cat("FITTING MODEL TO DATA.\n")
-fit <- varbvs(X,Z,y,family,logodds = logodds)
+fit <- varbvs(X,Z,y,family,sa = sa,logodds = logodds)
 
 # Compute "single-marker" posterior inclusion probabilities.
 w   <- c(normalizelogweights(fit$logw))
@@ -60,15 +63,14 @@ trellis.device(height = 5,width = 10)
 trellis.par.set(axis.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.7))
 i <- which(fit$alpha %*% w > 0.5)
+r <- gwscan.gemma[[trait]]
+r[is.na(r)] <- 0
 print(varbvsplot(fit,groups = map$chr,vars = i,gap = 1500,cex = 0.6,
                  ylab = "posterior prob."),
       split = c(1,1,1,3),more = TRUE)
 print(varbvsplot(fit,groups = map$chr,score = log10(pip + 0.001),vars = i,
                  cex = 0.6,gap = 1500,ylab = "log10 posterior prob."),
       split = c(1,2,1,3),more = TRUE)
-r <- gwscan.gemma[[trait]]
-r[is.na(r)] <- 0
 print(varbvsplot(fit,groups = map$chr,score = r,vars = i,cex = 0.6,
                  gap = 1500,score.line = 5.71,ylab = "-log10 p-value"),
-      split = c(1,3,1,3),more = TRUE)
-
+     split = c(1,3,1,3),more = TRUE)

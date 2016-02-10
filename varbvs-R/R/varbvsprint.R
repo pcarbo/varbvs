@@ -120,12 +120,12 @@ varbvsprint <- function (fit, cred.int = 0.95, n = 5, nr = 1000) {
   # probability that they are included.
   vars <- order(PIP,decreasing = TRUE)[1:n]
   cat(sprintf("Top %d variables by inclusion probability:\n",n))
-  cat(" index variable   prob.")
+  cat(" index variable       prob.")
   if (fit$family == "gaussian")
     cat(" -PVE-")
   cat(sprintf("   coef. Pr(coef.>%0.2f)\n",cred.int))
   for (i in vars) {
-    cat(sprintf("%6d %-10s %0.3f",i,rownames(fit$alpha)[i],PIP[i]))
+    cat(sprintf("%6d %-14s %0.3f",i,rownames(fit$alpha)[i],PIP[i]))
     if (fit$family == "gaussian")
       cat(sprintf(" %04.1f%%",100*dot(w,fit$pve[i,])))
     with(varbvscoefcred(fit,i,cred.int,nr),
