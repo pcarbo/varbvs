@@ -1,4 +1,6 @@
-# TO DO: Explain here what this script does.
+# Map QTLs for phenotypes measured in CFW (Carworth Farms White)
+# outbred mice. Phenotypes include muscle weights (EDL and soleus
+# muscle) and testis weight measured at sacrifice.
 library(varbvs)
 library(lattice)
 library(latticeExtra)
