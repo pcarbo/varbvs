@@ -86,4 +86,3 @@ PIP <- c(fit$alpha %*% w)
 # --------------------------------
 cat("3. SUMMARIZING RESULTS.\n")
 print(summary(fit))
-

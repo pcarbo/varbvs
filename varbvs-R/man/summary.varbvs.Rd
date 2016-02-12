@@ -10,7 +10,7 @@
   \method{print}{summary.varbvs}(x, \ldots)
 }
 \arguments{
-  \item{fit}{Output of function \code{varbvs}.}
+  \item{fit}{Output of function \code{\link{varbvs}}.}
   \item{cred.int}{Size of credible interval (number between 0 and 1).}
   \item{nv}{Show detailed statistics for top nv variables, ranked
   according to their posterior inclusion probabilities.}
@@ -34,7 +34,7 @@
   value averaged over hyperparameter settings, treating \code{fit$logw}
   as (unnormalized) log-marginal probabilities. The next column, labeled
   "Pr>x", where \code{x = cred.int} gives the credible interval based on
-  these weights (computed using function \code{cred}).
+  these weights (computed using function \code{\link{cred}}).
 
   The third part summarizes the variable selection results. This
   includes the total number of variables included in the model at
@@ -46,7 +46,7 @@
   the PVE after removing variance in the outcome due to linear effects
   of the covariates. Finally, note that the credible intervals reported
   in the right-most column are Monte Carlo estimates, so the interval
-  will be slightly different each time \code{varbvsprint} is called; a
+  will be slightly different each time \code{summary} is called; a
   more accurate estimate can be obtained by setting input \code{nr} to a
   larger number, at the cost of increased computation time.  
 }  
@@ -58,6 +58,6 @@
 inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. \emph{Bayesian Analysis}
 \bold{7}, 73--108.}
-\author{Peter Carbonetto, \email{peter.carbonetto@gmail.com}}
+\author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \seealso{\code{varbvs}, \code{varbvscoefcred}}
 \examples{See help(varbvs) for examples.}
