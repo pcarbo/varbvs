@@ -10,7 +10,7 @@ library(latticeExtra)
 # These script parameters specify the candidate prior log-odds
 # settings, the prior variance of the coefficients, and which trait to
 # analyze.
-trait   <- "soleus"
+trait   <- "testis"
 logodds <- seq(-5,-3,0.25)
 sa      <- 0.05
 
