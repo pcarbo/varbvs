@@ -21,24 +21,25 @@ summary.varbvs <- function (fit, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   beta <- fit$mu    %*% w
 
   # Generate the summary.
-  out <- list(family       = fit$family,
-              cred.int     = cred.int,
-              n            = fit$n,
-              p            = p,
-              ns           = ns,
-              ncov         = fit$ncov,
-              prior.same   = fit$prior.same,
-              update.sigma = fit$update.sigma,
-              update.sa    = fit$update.sa,
-              optimize.eta = fit$optimize.eta,
-              model.pve    = list(x0=mean(fit$model.pve),
-                                  a=quantile(fit$model.pve,0.5 - cred.int/2),
-                                  b=quantile(fit$model.pve,0.5 + cred.int/2)),
-              sigma        = list(x = NA,x0 = NA,a = NA,b = NA),
-              sa           = list(x = NA,x0 = NA,a = NA,b = NA),
-              logodds      = list(x = NA,x0 = NA,a = NA,b = NA),
-              logw         = fit$logw,
-              w            = w)
+  out <-
+    list(family       = fit$family,
+         cred.int     = cred.int,
+         n            = fit$n,
+         p            = p,
+         ns           = ns,
+         ncov         = fit$ncov,
+         prior.same   = fit$prior.same,
+         update.sigma = fit$update.sigma,
+         update.sa    = fit$update.sa,
+         optimize.eta = fit$optimize.eta,
+         logw         = fit$logw,
+         w            = w,
+         sigma        = list(x = NA,x0 = NA,a = NA,b = NA),
+         sa           = list(x = NA,x0 = NA,a = NA,b = NA),
+         logodds      = list(x = NA,x0 = NA,a = NA,b = NA),
+         model.pve    = list(x0 = mean(fit$model.pve),
+           a = quantile(fit$model.pve,0.5 - cred.int/2,na.rm = TRUE),
+           b = quantile(fit$model.pve,0.5 + cred.int/2,na.rm = TRUE)))
 
   # Summarize the candidate hyperparameter settings, when provided.
   if (!fit$update.sigma)
@@ -84,13 +85,13 @@ summary.varbvs <- function (fit, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   }
 
   # Summarize the number of variables selected at different PIP thresholds.
-  out$n.incl <- as.table(c(sum(PIP > 0.1),sum(PIP > 0.25),sum(PIP > 0.5),
-                           sum(PIP > 0.75),sum(PIP > 0.9),sum(PIP > 0.95)))
-  names(out$n.incl) <- c(">0.10",">0.25",">0.50",">0.75",">0.90",">0.95")
+  out$num.included <- as.table(c(sum(PIP>0.1),sum(PIP>0.25),sum(PIP>0.5),
+                                 sum(PIP>0.75),sum(PIP>0.9),sum(PIP>0.95)))
+  names(out$num.included) <- c(">0.10",">0.25",">0.50",">0.75",">0.90",">0.95")
   
   # Get more detailed statistics about the top nv variables by the
   # probability that they are included.
-  vars         <- order(PIP,decreasing = TRUE)[1:nv]
+  vars <- order(PIP,decreasing = TRUE)[1:nv]
   out$top.vars <-
     data.frame(index = vars,variable = rownames(fit$alpha)[vars],
                prob = PIP[vars],PVE = NA,coef = beta[vars],cred = NA)
@@ -144,9 +145,9 @@ print.summary.varbvs <- function (x, digits = 3) {
 
       # Summarize the hyperparameter settings when there is only one
       # candidate setting.
-      cat(sprintf("sigma=%0.3g sa=%0.3g",sigma,sa))
+      cat(sprintf("sigma=%0.3g sa=%0.3g ",sigma$x0,sa$x0))
       if (prior.same)
-        cat(sprintf("logodds=%+0.2f",logodds))
+        cat(sprintf("logodds=%+0.2f",logodds$x0))
       cat("\n")
     } else {
 
@@ -173,7 +174,7 @@ print.summary.varbvs <- function (x, digits = 3) {
     # ------------------------------------
     # Summarize the number of variables selected at different PIP thresholds.
     cat("Selected variables by probability cutoff:\n")
-    print(n.incl)
+    print(num.included)
       
     # Give more detailed statistics about the top n variables by the
     # probability that they are included.

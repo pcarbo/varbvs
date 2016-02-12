@@ -340,7 +340,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
                 update.sigma = FALSE,update.sa = update.sa,
                 optimize.eta = optimize.eta,prior.same = prior.same,
                 logw = logw,sigma = NULL,sa = sa,logodds = logodds,
-                alpha = alpha,mu = mu,s = s,eta = eta,model.pve = NULL)
+                alpha = alpha,mu = mu,s = s,eta = eta,model.pve = NA)
   
   # Add column names to some of the outputs.
   rownames(fit$alpha) <- colnames(X)
