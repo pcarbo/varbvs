@@ -7,12 +7,12 @@
 }
 \usage{
   \method{summary}{varbvs}(fit, cred.int = 0.95, n = 5, nr = 1000, \ldots)
-  \method{print}{summary.varbvs}(fit, \ldots)
+  \method{print}{summary.varbvs}(x, \ldots)
 }
 \arguments{
   \item{fit}{Output of function \code{varbvs}.}
   \item{cred.int}{Size of credible interval (number between 0 and 1).}
-  \item{nv}{Show detailed statistics for top nv > 0 variables, ranked
+  \item{nv}{Show detailed statistics for top nv variables, ranked
   according to their posterior inclusion probabilities.}
   \item{nr}{Number of Monte Carlo samples to draw to estimate credible
     intervals for coefficients of selected variables.}
