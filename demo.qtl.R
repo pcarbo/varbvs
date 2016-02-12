@@ -85,4 +85,5 @@ PIP <- c(fit$alpha %*% w)
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
 cat("3. SUMMARIZING RESULTS.\n")
-varbvsprint(fit)
+print(summary(fit))
+

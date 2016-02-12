@@ -315,12 +315,13 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   }
     
   # (6) CREATE FINAL OUTPUT
-  # ----------------------
+  # -----------------------
   if (family == "gaussian") {
     fit <- list(family = family,ncov = ncol(Z) - 1,n = n,n0 = n0,sa0 = sa0,
                 update.sigma = update.sigma,update.sa = update.sa,
-                prior.same = prior.same,logw = logw,sigma = sigma,sa = sa,
-                logodds = logodds,alpha = alpha,mu = mu,s = s)
+                prior.same = prior.same,optimize.eta = FALSE,logw = logw,
+                sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
+                mu = mu,s = s,eta = NULL)
 
     # Compute the proportion of variance in Y, after removing linear
     # effects of covariates, explained by the regression model.
@@ -336,9 +337,10 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       fit$pve[,i] <- sx*(mu[,i]^2 + s[,i])/var1(y)
   } else if (family == "binomial")
     fit <- list(family = family,ncov = ncol(Z) - 1,n = n,n0 = n0,sa0 = sa0,
-                update.sa = update.sa,optimize.eta = optimize.eta,
-                prior.same = prior.same,logw = logw,sa = sa,logodds = logodds,
-                alpha = alpha,mu = mu,s = s,eta = eta)
+                update.sigma = FALSE,update.sa = update.sa,
+                optimize.eta = optimize.eta,prior.same = prior.same,
+                logw = logw,sigma = NULL,sa = sa,logodds = logodds,
+                alpha = alpha,mu = mu,s = s,eta = eta,model.pve = NULL)
   
   # Add column names to some of the outputs.
   rownames(fit$alpha) <- colnames(X)

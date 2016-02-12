@@ -1,20 +1,19 @@
-\name{varbvsprint}
-\alias{varbvsprint}
-\title{Print a fitted variable selection model.}
-\description{Print a summary of the Bayesian variable selection model
+\name{summary.varbvs,print.summary.varbvs}
+\alias{summary.varbvs}
+\alias{print.summary.varbvs}
+\title{Summarize a fitted variable selection model.}
+\description{Generate a summary of the Bayesian variable selection model
   fitted using variational approximation methods.
 }
 \usage{
-  varbvsprint(fit, cred.int = 0.95, n = 5, nr = 1000)
+  \method{summary}{varbvs}(fit, cred.int = 0.95, n = 5, nr = 1000, \ldots)
+  \method{print}{summary.varbvs}(fit, \ldots)
 }
 \arguments{
   \item{fit}{Output of function \code{varbvs}.}
-
   \item{cred.int}{Size of credible interval (number between 0 and 1).}
-
-  \item{n}{Show detailed statistics for top n > 0 variables, ranked
+  \item{nv}{Show detailed statistics for top nv > 0 variables, ranked
   according to their posterior inclusion probabilities.}
-
   \item{nr}{Number of Monte Carlo samples to draw to estimate credible
     intervals for coefficients of selected variables.}
 }
@@ -52,15 +51,13 @@
   larger number, at the cost of increased computation time.  
 }  
 \value{
-  Input \code{fit} is silently returned.
+  An object of class \code{summary.varbvs}, to be printed by
+  \code{print.summary.varbvs}.
 }
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its
-accuracy in genetic association studies. Bayesian Analysis 7(1), pages
-73-108.}
-\author{Peter Carbonetto <peter.carbonetto@gmail.com>}
-\seealso{\code{varbvs}, \code{varbvscoefcred}
-}
-\examples{
-See help(varbvs) for examples.
-}
+accuracy in genetic association studies. \emph{Bayesian Analysis}
+\bold{7}, 73--108.}
+\author{Peter Carbonetto, \email{peter.carbonetto@gmail.com}}
+\seealso{\code{varbvs}, \code{varbvscoefcred}}
+\examples{See help(varbvs) for examples.}
