@@ -1,17 +1,41 @@
 # Compute posterior statistics, ignoring correlations.
 varbvsindep <- function (fit, X, Z, y) {
 
+  # Check that the first input is an instance of class "varbvs".
+  if (!is(fit,"varbvs"))
+    stop("Input fit must be an instance of class \"varbvs\".")
+  
   # Get the number of samples (n), variables (p) and hyperparameter
   # settings (ns).
   n  <- nrow(X)
   p  <- ncol(X)
   ns <- length(fit$logw)
 
+  # Check input X.
+  if (!(is.matrix(X) & is.double(X) & is.na(X) == 0))
+    stop("Input X must be a double-precision matrix with no missing values.")
+  if (nrow(fit$alpha) != p)
+    stop("Inputs X and fit are not compatible.")
+
+  # Check input Z.
+  if (!is.null(Z)) {
+    Z <- as.matrix(Z)
+    if (!is.numeric(Z) | is.na(Z) > 0)
+      stop("Input Z must be a numeric matrix with no missing values.")
+    if (nrow(Z) != n)
+      stop("Inputs X and Z do not match.")
+    storage.mode(Z) <- "double"
+  }
+  
   # Add intercept.
   if (is.null(Z))
     Z <- matrix(1,n,1)
   else
     Z <- cbind(1,Z)
+
+  # Check input y.
+  if (!is.numeric(y) | is.na(y) > 0)
+    stop("Input y must be a numeric vector with no missing values.")
   y <- c(as.double(y))
   
   # If necessary, convert the prior log-odds to a p x ns matrix.

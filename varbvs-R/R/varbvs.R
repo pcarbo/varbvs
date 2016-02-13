@@ -17,7 +17,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   if (is.null(colnames(X)))
     colnames(X) <- paste0("X",1:p)
   
-  # If input Z is not NULL, it must have as many rows as X.
+  # Check input Z.
   if (!is.null(Z)) {
     Z <- as.matrix(Z)
     if (nrow(Z) != n)
