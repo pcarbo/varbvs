@@ -13,6 +13,8 @@ eStrategy for my new implementation of 'varbvs'
 * See here for some data sets that could be used for demos:
   http://www.jstatsoft.org/article/view/v033i01
 
+* To do: update "plot.varbvs" function.
+
 * To do: Implement "predict" method.
 
 * To do: Create R script to compare cv.glmnet and varbvs in leukemia

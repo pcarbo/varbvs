@@ -1,9 +1,9 @@
 # Summarize the variable selection results in a single plot.
-varbvsplot <- function (fit, score = NULL, groups = NULL, gap = 0,
-                        col = "midnightblue", vars = NULL, var.labels = NULL,
-                        var.col = "magenta", pch = 20, score.line = NULL,
-                        ltext.args = "col=\"black\",pos=4,cex=0.5",
-                        xlab = "", ylab = "",...) {
+plot.varbvs <- function (fit, score = NULL, groups = NULL, gap = 0,
+                         col = "midnightblue", vars = NULL, var.labels = NULL,
+                         var.col = "magenta", pch = 20, score.line = NULL,
+                         ltext.args = "col=\"black\",pos=4,cex=0.5",
+                         xlab = "", ylab = "",...) {
   
   # PROCESS OPTIONS
   # ---------------
