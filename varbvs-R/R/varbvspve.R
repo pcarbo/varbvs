@@ -9,10 +9,6 @@ varbvspve <- function (X, fit, nr = 1000) {
   p  <- ncol(X)
   ns <- length(fit$logw)
 
-  # Check input 'fit'.
-  if (!is(fit,"varbvs"))
-    stop("Input fit must be an instance of class \"varbvs\".")
-  
   # Check input X.
   if (!(is.matrix(X) & is.numeric(X) & sum(is.na(X)) == 0))
     stop("Input X must be a numeric matrix with no missing values.")
