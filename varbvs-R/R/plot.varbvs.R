@@ -4,7 +4,7 @@ plot.varbvs <-
               gap = 0,col = "midnightblue", pch = 20, xlab = "", ylab = "",
               abline.args = list(lty = "dotted",col = "orangered"),
               vars.xyplot.args = list(pch = 20,col = "magenta"),
-              vars.ltext.args = list(col = "black",pos = 4,cex = 0.5),...) {
+              vars.ltext.args = list(col = "black",pos = 4,cex = 0.5), ...) {
 
   # Plotting defaults.
   abline.defaults      <- list(lty = "dotted",col = "orangered")

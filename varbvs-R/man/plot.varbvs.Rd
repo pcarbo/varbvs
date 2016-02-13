@@ -11,53 +11,69 @@ used to summarize the results of a genome-wide association study or
 quantitative trait locus (QTL) mapping study.
 }
 \usage{
-varbvsplot (fit, score = NULL, groups = NULL, gap = 0,
-            col = "midnightblue", vars = NULL, var.labels = NULL,
-            var.col = "magenta", pch = 20, xlab = "", ylab = "",
-            ltext.args = "col=\"black\",pos=4,cex=0.5", ...)
+  \method{plot}{varbvs}(fit, score, groups, vars = NULL, var.labels,
+  draw.threshold = NA, gap = 0,col = "midnightblue", pch = 20,
+  xlab = "", ylab = "",
+  abline.args = list(lty = "dotted",col = "orangered"),
+  vars.xyplot.args = list(pch = 20,col = "magenta"),
+  vars.ltext.args = list(col = "black",pos = 4,cex = 0.5), ...)
 }
 \arguments{
+  
   \item{fit}{Output of function \code{\link{varbvs}}.}
 
-  \item{score}{Value to plot on vertical axis. This must be NULL, or a
-  numeric vector with one entry for each variable. Ths default is
-  \code{score = NULL}. In this case, he posterior inclusion probability
-  for each variable is plotted in the vertical axis, in which this
-  probability is averaged over hyperparameter settings, treating
-  \code{fit$logw} as (unnormalized) log-marginal probabilities. As
-  alternative, set \code{score} to the posterior inclusion probabilities
-  that ignore correlations, using \code{\link{varbvsindep}}.}
+  \item{score}{Value to plot on vertical axis. Must be a numeric vector
+  with one entry for each variable. If missing, the posterior inclusion
+  probability for each variable is plotted in the vertical axis, in
+  which this probability is averaged over hyperparameter settings,
+  treating \code{fit$logw} as (unnormalized) log-marginal
+  probabilities. As alternative, set \code{score} to the posterior
+  inclusion probabilities that ignore correlations, using
+  \code{\link{varbvsindep}}.}
 
   \item{groups}{Group the variables in the plot according to this
-  argument. This must be equal to NULL, or a vector with one entry for
-  each variable. If groups = NULL, all variables are assigned to a
-  single group. This is useful for grouping the genetic markers by
-  chromosome in a genome-wide association study.}
+  argument. This must be a vector with one entry for each variable. If
+  missing, all variables are treated as a single group. This is useful
+  for grouping the genetic markers by chromosome in a genome-wide
+  association study.}
+
+  \item{vars}{Indices of variables to highlight and label. By default,
+  \code{vars = NULL}, meaning no variables are highlighted.}
+
+  \item{var.labels}{Labels to accompany the highlighted variables
+  only. If missing, labels are retrieved from \code{fit}.}
+
+  \item{draw.threshold}{Plot a horizontal line at this location on the
+  vertical axis.}
+
+  \item{gap}{Amount of space to leave between each group of variables in
+  the plot.}
 
   \item{col}{Argument passed to \code{xyplot} specifying color of points.}
 
-  \item{vars}{Indices of variables to highlight and label.}
-
-  \item{var.labels}{Labels that accompany the highlighted variables only.}
-
-  \item{var.col}{Color of points for highlighted variables only.}
-
   \item{pch}{Argument passed to \code{xyplot} specifying symbol type.}
 
-  \item{score.line}{Draw a red, dotted horizontal line at this location
-  on the vertical axis.}
-  
   \item{xlab}{Argument passed to \code{xyplot} specifying horizontal
   axis title.}
 
   \item{ylab}{Argument passed to \code{xyplot} specifying 
   vertical axis title.}
 
-  \item{ltext.args}{Additional arguments passed to \code{ltext} for
-  adding the labels in the plot, specified as a string, which is then
-  parsed and evaluated using \code{eval(parse(...))}.}
+  \item{abline.args}{Additional arguments passed to \code{panel.abline}
+  specifying how to draw the horizontal line at the location specified
+  by \code{draw.threshold}.}
 
-  \item{...}{Additional arguments passed to \code{xyplot}.}
+  \item{var.col}{Color of points for highlighted variables only.}
+
+  \item{vars.xyplot.args}{Additional arguments passed to \code{xyplot}
+  for drawing the highlighted variables.}
+
+  \item{vars.ltext.args}{Additional arguments passed to \code{ltext} for
+  specifying how the labels of the highlighted variables are drawn in
+  the plot.}
+
+  \item{...}{Additional arguments passed to \code{xyplot} for drawing
+    the un-highlighted variables.}
 }
 \details{
   Note that \code{plot.varbvs} uses function \code{xyplot} from the
