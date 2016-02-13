@@ -1,11 +1,10 @@
 # Compute fully-factorized variational approximation for Bayesian
 # variable selection in linear (family = "gaussian") or logistic
 # regression (family = "binomial"). See varbvs.Rd for details.
-varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
-                    logodds = NULL, alpha = NULL, mu = NULL, eta = NULL,
-                    update.sigma = NULL, update.sa = NULL, optimize.eta = NULL,
-                    initialize.params = NULL, nr = 100, sa0 = 0, n0 = 0,
-                    tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
+varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
+                    logodds, alpha, mu, eta, update.sigma, update.sa,
+                    optimize.eta, initialize.params, nr = 100, sa0 = 0,
+                    n0 = 0, tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -44,15 +43,14 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     stop("Inputs X and y do not match")
   y <- c(as.double(y))
   
-  # Check choice of regression model.
-  if (family != "gaussian" & family != "binomial")
-    stop("family must be gaussian or binomial")
+  # Get choice of regression model.
+  family <- match.arg(family)
 
   # (2) PROCESS OPTIONS
   # -------------------
   # Get candidate settings for the variance of the residual (sigma),
   # if provided. Note that this option is not valid for a binary trait.
-  if (is.null(sigma)) {
+  if (missing(sigma)) {
     sigma <- var(y)
     update.sigma.default <- TRUE
   } else {
@@ -62,9 +60,9 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
       stop("Input sigma is not allowed for family = binomial")
   }
   
-  # Get candidate settings for the prior variance of the coefficients
-  # (sa), if provided.
-  if (is.null(sa)) {
+  # Get candidate settings for the prior variance of the coefficients,
+  # if provided.
+  if (missing(sa)) {
     sa <- 1
     update.sa.default <- TRUE
   } else {
@@ -82,11 +80,11 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
   # settings is 1, in which case we select 20 candidate settings for
   # the prior log-odds, evenly spaced between log10(1/p) and
   # log10(0.5).
-  if (is.null(logodds)) {
+  if (missing(logodds)) {
     if (length(sigma) == 1 & length(sa) == 1)
       logodds <- seq(-log10(p),-0.3,length.out = 20)
     else
-      stop("logodds can only be NULL when length(sigma) = length(sa) = 1")
+      stop("logodds can only be missing when length(sigma) = length(sa) = 1")
   }
   if (!is.matrix(logodds)) {
     prior.same <- TRUE
@@ -111,17 +109,17 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
 
   # Determine whether to update the residual variance parameter. Note
   # that this option is only relevant for a binary trait.
-  if (is.null(update.sigma))
+  if (missing(update.sigma))
     update.sigma <- update.sigma.default
 
   # Determine whether to update the prior variance of the regression
   # coefficients.
-  if (is.null(update.sa))
+  if (missing(update.sa))
     update.sa <- update.sa.default
   
   # Set initial estimates of variational parameter alpha.
   initialize.params.default <- TRUE
-  if (is.null(alpha)) {
+  if (missing(alpha)) {
     alpha <- rand(p,ns)
     alpha <- alpha / rep.row(colSums(alpha),p)
   } else
@@ -132,7 +130,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
     alpha <- rep.col(alpha,ns)
 
   # Set initial estimates of variational parameter mu.
-  if (is.null(mu))
+  if (missing(mu))
     mu <- randn(p,ns)
   else
     initialize.params.default <- FALSE    
@@ -143,12 +141,12 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
 
   # Determine whether to find a good initialization for the
   # variational parameters.
-  if (is.null(initialize.params))
+  if (missing(initialize.params))
     initialize.params <- initialize.params.default
 
   # Set initial estimates of variational parameter eta. Note this
   # input is only relevant for logistic regression.
-  if (is.null(eta)) {
+  if (missing(eta)) {
     eta                  <- matrix(1,n,ns)
     optimize.eta.default <- TRUE
   } else {
@@ -163,7 +161,7 @@ varbvs <- function (X, Z, y, family = "gaussian", sigma = NULL, sa = NULL,
 
   # Determine whether to update the variational parameter eta. Note this
   # option is only relevant for logistic regression.
-  if (is.null(optimize.eta))
+  if (missing(optimize.eta))
     optimize.eta <- optimize.eta.default
 
   # (3) PREPROCESSING STEPS
