@@ -51,7 +51,7 @@ trellis.device(height = 4,width = 10)
 w <- normalizelogweights(fit.cytokine$logw)
 i <- which(fit.null$alpha < 0.5 & fit.cytokine$alpha %*% w > 0.5)
 var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
-print(plot(fit.null,groups = map$chr,vars = i,var.labels = rep("",length(i)),
+print(plot(fit.null,groups = map$chr,vars = i,var.labels = NULL,
            gap = 7500,ylab = "posterior prob."),
       split = c(1,1,1,2),more = TRUE)
 print(plot(fit.cytokine,groups = map$chr,vars = i,var.labels = var.labels,

@@ -41,7 +41,8 @@ quantitative trait locus (QTL) mapping study.
   \code{vars = NULL}, meaning no variables are highlighted.}
 
   \item{var.labels}{Labels to accompany the highlighted variables
-  only. If missing, labels are retrieved from \code{fit}.}
+  only. If missing, labels are retrieved from \code{fit}. If
+  \code{var.labels = NULL}, no labels are plotted.}
 
   \item{draw.threshold}{Plot a horizontal line at this location on the
   vertical axis.}

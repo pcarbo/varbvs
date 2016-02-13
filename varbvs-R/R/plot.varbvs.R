@@ -38,7 +38,9 @@ plot.varbvs <-
   # stored in the varbvs data structure ("fit").
   if (missing(var.labels))
     var.labels <- rownames(fit$alpha)[vars]
-
+  if (is.null(var.labels))
+    var.labels <- rep("",length(vars))
+  
   # Get the defaults for abline.args if not provided.
   abline.args <- c(abline.args,abline.defaults)
   abline.args <- abline.args[!duplicated(names(abline.args))]
