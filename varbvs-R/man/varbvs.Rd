@@ -202,7 +202,7 @@
 }  
 \value{
 
-  An object with S3 class \code{"varbvs", "list"}.
+  An object with S3 class \code{c("varbvs","list")}.
 
   \item{family}{Either "gaussian" or "binomial".}
 
