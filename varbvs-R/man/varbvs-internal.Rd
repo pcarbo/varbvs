@@ -36,7 +36,7 @@ varbvsbinz(X,Z,y,sa,logodds,alpha,mu,eta,tol = 1e-4,maxiter = 1e4,
 \details{These functions are only intended to be used by expert
   users. Here we provide brief descriptions of some of these internal
   functions. \code{diagsq} and \code{diagsqt} compute the diagonal
-  entries of the matrix products \code{X'*A*X} and \code{X*A*X'},
+  entries of the matrix products \eqn{X'*A*X} and \eqn{X*A*X'},
   respectively, where \code{A = diag(a)}, but the computation is done
   more efficiently, and without having to store an intermediate matrix
   of the same size as the matrix.

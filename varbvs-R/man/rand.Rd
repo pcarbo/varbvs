@@ -20,9 +20,9 @@
 \value{An m x n numeric matrix.}
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its
-accuracy in genetic association studies. Bayesian Analysis 7(1), pages
-73-108.}
-\author{Peter Carbonetto <peter.carbonetto@gmail.com>}
+accuracy in genetic association studies. \emph{Bayesian Analysis} \bold{7}, 
+73--108.}
+\author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \examples{
   x <- rand(10,5)
   y <- randn(10,5)

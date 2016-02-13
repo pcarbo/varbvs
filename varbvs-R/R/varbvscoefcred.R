@@ -2,7 +2,7 @@
 # in the fitted variable selection model. This function is used by
 # varbvsprint to generate credible intervals for coefficients of
 # top-ranked variables.
-varbvscoefcred <- function (fit, vars = NULL, cred.int = 0.95, nr = 1000) {
+varbvscoefcred <- function (fit, vars, cred.int = 0.95, nr = 1000) {
 
   # Check that the first input is an instance of class "varbvs".
   if (!is(fit,"varbvs"))
@@ -12,7 +12,7 @@ varbvscoefcred <- function (fit, vars = NULL, cred.int = 0.95, nr = 1000) {
   ns <- length(fit$logw)
   
   # Take care of optional inputs.
-  if (is.null(vars)) {
+  if (missing(vars)) {
     p    <- nrow(fit$alpha)
     vars <- 1:p
   } else

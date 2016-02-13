@@ -14,18 +14,18 @@
 \details{
 
 The main functionality of this package is implemented in function
-\code{varbvs}. This function selects the most appropriate algorithm for
-the data set and selected model (linear or logistic regression). See
-\code{help(varbvs)} for details. The varbvs interface is intended to
-resemble interface for \pkg{glmnet}, the popular package for fitting
-genealized linear models.
+\code{\link{varbvs}}. This function selects the most appropriate
+algorithm for the data set and selected model (linear or logistic
+regression). See \code{help(varbvs)} for details. The varbvs interface
+is intended to resemble interface for \pkg{glmnet}, the popular package
+for fitting genealized linear models.
   
 For more details about the this package, including the license and a
 list of available functions, see \code{help(package=varbvs)}.
 
 }
-\author{Peter Carbonetto <peter.carbonetto@gmail.com>}
+\author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its
-accuracy in genetic association studies. Bayesian Analysis 7(1), pages
-73-108.}
+accuracy in genetic association studies. \emph{Bayesian Analysis} \bold{7}, 
+73--108.}

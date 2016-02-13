@@ -39,10 +39,10 @@ the same distribution as the prior, Pr(Z | H).
   P. Carbonetto and M. Stephens (2012). Scalable variational inference
   for Bayesian variable selection in regression, and its accuracy in
   genetic association studies. \emph{Bayesian Analysis} \bold{7},
-  73--108.\cr
+  73--108.
 
   R. E. Kass and A. E. Raftery (1995). Bayes Factors. \emph{Journal of the
-  American Statistical Association} \bold{90}, 773-–795.\cr
+  American Statistical Association} \bold{90}, 773-–795.
 
   R. M. Neal (2001). Annealed importance sampling. \emph{Statistics and
   Computing} \bold{11}, 125-–139.
