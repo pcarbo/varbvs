@@ -8,7 +8,17 @@ varbvspve <- function (X, fit, nr = 1000) {
   # settings (ns).
   p  <- ncol(X)
   ns <- length(fit$logw)
-    
+
+  # Check input 'fit'.
+  if (!is(fit,"varbvs"))
+    stop("Input fit must be an instance of class \"varbvs\".")
+  
+  # Check input X.
+  if (!(is.matrix(X) & is.numeric(X) & is.na(X) == 0))
+    stop("Input X must be a numeric matrix with no missing values.")
+  if (nrow(fit$alpha) != p)
+    stop("Inputs X and fit are not compatible.")
+  
   # Initialize storage for posterior estimates of the proportion of
   # variance explained.
   pve <- rep(0,nr)
