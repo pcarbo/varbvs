@@ -5,6 +5,11 @@ importFrom(stats,quantile)
 importFrom(stats,runif)
 importFrom(stats,rnorm)
 importFrom(stats,var)
+importFrom(graphics,plot)
+importFrom(lattice,xyplot)
+importFrom(lattice,panel.xyplot)
+importFrom(lattice,panel.abline)
+importFrom(latticeExtra,as.layer)
 
 export(logit,logpexp,logsigmoid,sigmoid,normalizelogweights,
        diagsq,diagsqt,cred,updatestats_varbvsbin,updatestats_varbvsbinz,
