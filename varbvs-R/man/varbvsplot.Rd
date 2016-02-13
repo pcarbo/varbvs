@@ -17,7 +17,7 @@ varbvsplot (fit, score = NULL, groups = NULL, gap = 0,
             ltext.args = "col=\"black\",pos=4,cex=0.5", ...)
 }
 \arguments{
-  \item{fit}{Output of function \code{varbvs}.}
+  \item{fit}{Output of function \code{\link{varbvs}}.}
 
   \item{score}{Value to plot on vertical axis. This must be NULL, or a
   numeric vector with one entry for each variable. Ths default is
@@ -26,7 +26,7 @@ varbvsplot (fit, score = NULL, groups = NULL, gap = 0,
   probability is averaged over hyperparameter settings, treating
   \code{fit$logw} as (unnormalized) log-marginal probabilities. As
   alternative, set \code{score} to the posterior inclusion probabilities
-  that ignore correlations, using \code{varbvsindep}.}
+  that ignore correlations, using \code{\link{varbvsindep}}.}
 
   \item{groups}{Group the variables in the plot according to this
   argument. This must be equal to NULL, or a vector with one entry for
