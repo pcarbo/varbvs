@@ -14,7 +14,7 @@ varbvspve <- function (X, fit, nr = 1000) {
     stop("Input fit must be an instance of class \"varbvs\".")
   
   # Check input X.
-  if (!(is.matrix(X) & is.numeric(X) & is.na(X) == 0))
+  if (!(is.matrix(X) & is.numeric(X) & sum(is.na(X)) == 0))
     stop("Input X must be a numeric matrix with no missing values.")
   if (nrow(fit$alpha) != p)
     stop("Inputs X and fit are not compatible.")

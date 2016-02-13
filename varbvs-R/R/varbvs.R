@@ -13,7 +13,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # (1) CHECK INPUTS
   # ----------------
   # Check input X.
-  if (!(is.matrix(X) & is.double(X) & is.na(X) == 0))
+  if (!(is.matrix(X) & is.double(X) & sum(is.na(X)) == 0))
     stop("Input X must be a double-precision matrix with no missing values.")
   
   # Add column names to X if they are not provided.
@@ -23,7 +23,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # Check input Z.
   if (!is.null(Z)) {
     Z <- as.matrix(Z)
-    if (!is.numeric(Z) | is.na(Z) > 0)
+    if (!is.numeric(Z) | sum(is.na(Z)) > 0)
       stop("Input Z must be a numeric matrix with no missing values.")
     if (nrow(Z) != n)
       stop("Inputs X and Z do not match.")
@@ -37,7 +37,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     Z <- cbind(1,Z)
 
   # Check input y.
-  if (!is.numeric(y) | is.na(y) > 0)
+  if (!is.numeric(y) | sum(is.na(y)) > 0)
     stop("Input y must be a numeric vector with no missing values.")
   if (length(y) != n)
     stop("Inputs X and y do not match")
