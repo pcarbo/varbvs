@@ -110,7 +110,6 @@
 
   \item{verbose}{If verbose = TRUE, print progress of algorithm to
     console.}
-  
 }
 \section{Regression models}{
     Two types of outcomes (y) are modeled: (1) a continuous outcome,
@@ -125,7 +124,7 @@
     description of the sigmoid function. Note that the regression always
     includes an intercept term (u0).
 }
-\section{Co-ordinate ascent optimization procedure.}{
+\section{Co-ordinate ascent optimization procedure}{
     For both regression models, the fitting procedure consists of an inner
     loop and an outer loop. The outer loop iterates over each of the
     hyperparameter settings (sa, sigma and logodds). Given a setting of
@@ -173,10 +172,12 @@
     fully-factorized variational approximation closely approximates the
     true posterior distribution, then final posterior quantities can be
     calculated by using logw as (unnormalized) log-marginal
-    probabilities. Even when conditions (1), (2) and/or (3) are not
-    satisfied, this can approach can still often yield reasonable
-    estimates of averaged posterior quantities. The examples below
-    demonstrate how final posterior quantities are reported by function
+    probabilities.
+
+    Even when conditions (1), (2) and/or (3) are not satisfied, this can
+    approach can still often yield reasonable estimates of averaged
+    posterior quantities. The examples below demonstrate how final
+    posterior quantities are reported by function
     \code{\link{summary.varbvs}} (see \code{help(summary.varbvs)} for
     more details). To account for discrepancies between the prior on
     (sigma,sa,logodds) and the sampling density used to draw candidate
@@ -185,9 +186,9 @@
     log-density of the prior distribution, and logq is the log-density
     of the sampling distribution. (This is importance sampling; see, for
     example, R. M. Neal, Annealed importance sampling, \emph{Statistics
-    and Computing}, 2001.)
+      and Computing}, 2001.)
 }
-\section{Memory requirements.}{
+\section{Memory requirements}{
     Finally, we point out that the optimization procedures were
     carefully designed so that they can be applied to very large data
     sets; to date, this code has been tested on data sets with >500,000
@@ -198,9 +199,9 @@
     mostly avoid generating intermediate products that are of the same
     size as X. Only one such intermediate product is generated when
     \code{family = "gaussian"}, and none for \code{family = "binomial"}.
-}  
+}
 \value{
-  An object with S3 class \code{c("varbvs","list")}.
+    An object with S3 class \code{c("varbvs","list")}.
 
   \item{family}{Either "gaussian" or "binomial".}
 
