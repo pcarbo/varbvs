@@ -49,7 +49,7 @@ save(list = c("fit.null","fit.cytokine","map","a","BF"),
 # without conditioning on enrichment of cytokine signaling genes.
 trellis.device(height = 4,width = 10)
 w <- normalizelogweights(fit.cytokine$logw)
-i <- which(fit.null$alpha < 0.5 & fit.cytokine$alpha %*% w > 0.5)
+i <- which(fit.null$alpha > 0.5 | fit.cytokine$alpha %*% w > 0.5)
 var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
 print(plot(fit.null,groups = map$chr,vars = i,var.labels = NULL,
            gap = 7500,ylab = "posterior prob."),
