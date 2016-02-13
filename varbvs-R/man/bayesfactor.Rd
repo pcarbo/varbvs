@@ -2,7 +2,10 @@
 \alias{bayesfactor}
 \title{Compute numerical estimate of Bayes factor.}
 \description{
-Computes numerical estimate of \eqn{BF = Pr(data | H1) / Pr(data | H0),}
+Computes numerical estimate of
+\deqn{
+  BF = Pr(data | H1) / Pr(data | H0),
+}
 the probability of the data given the alternative hypothesis (H1) over
 the probability of the data given the null hypothesis (H0). This is also
 known as a Bayes factor (see Kass & Raftery, 1995). Here we assume that
@@ -11,7 +14,9 @@ they involve intractable integrals, we can obtain reasonable estimates
 of these probabilities with a simple numerical approximation over some
 latent variable, Z, assuming the prior over Z is uniform. The inputs are
 the log-probabilities
-\eqn{Pr(data, Z | H) = Pr(data | Z, H) x Pr(Z | H),}
+\deqn{
+  Pr(data, Z | H) = Pr(data | Z, H) x Pr(Z | H),
+}
 where Pr(Z | H) is uniform over all Z, and H is H0 or H1.
 
 Alternatively, this function can be used to compute an importance
@@ -33,13 +38,14 @@ the same distribution as the prior, Pr(Z | H).
 \references{
   P. Carbonetto and M. Stephens (2012). Scalable variational inference
   for Bayesian variable selection in regression, and its accuracy in
-  genetic association studies. Bayesian Analysis 7(1), pages 73-108.\cr
+  genetic association studies. \emph{Bayesian Analysis} \bold{7},
+  73--108.\cr
 
-  R. E. Kass and A. E. Raftery (1995). Bayes Factors. Journal of the
-  American Statistical Association 90(430), pages 773–795.\cr
+  R. E. Kass and A. E. Raftery (1995). Bayes Factors. \emph{Journal of the
+  American Statistical Association} \bold{90}, 773-–795.\cr
 
-  R. M. Neal (2001). Annealed importance sampling. Statistics and
-  Computing 11(2), pages 125–139.
+  R. M. Neal (2001). Annealed importance sampling. \emph{Statistics and
+  Computing} \bold{11}, 125-–139.
 }
-\author{Peter Carbonetto <peter.carbonetto@gmail.com>}
+\author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \seealso{\code{normalizelogweights}}

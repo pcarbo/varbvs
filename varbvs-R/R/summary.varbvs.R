@@ -5,7 +5,7 @@ summary.varbvs <- function (fit, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   # Check that the first input is an instance of class "varbvs".
   if (!is(fit,"varbvs"))
     stop("Input fit must be an instance of class \"varbvs\".")
-  
+
   # Get the number of variables (p) and number of candidate
   # hyperparameter settings (ns).
   p  <- nrow(fit$alpha)

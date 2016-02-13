@@ -15,6 +15,9 @@ eStrategy for my new implementation of 'varbvs'
 
 * To do: Implement "predict" method.
 
+* To do: Create R script to compare cv.glmnet and varbvs in leukemia
+  data.
+
 * To do: Map QTLs using GEMMA using simple linear model.
 
 * To do: Add function that outputs prior variance (sa) given X, prior
@@ -22,3 +25,6 @@ eStrategy for my new implementation of 'varbvs'
 
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
+
+* To do: Point to extended examples in vignettes and/or github?
+
