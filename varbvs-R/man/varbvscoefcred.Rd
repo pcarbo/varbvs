@@ -3,16 +3,17 @@
 \title{Compute credible intervals for regression coefficients.}
 \description{Compute Monte Carlo estimates of credible intervals for
 coefficients in the fitted variable selection model. This function is
-used by varbvsprint to generate credible intervals for coefficients of
-top-ranked variables.
+used by summary.varbvs to generate credible intervals for coefficients
+of top-ranked variables.
 }
 \usage{
-  varbvscoefcred (fit, vars = NULL, cred.int = 0.95, nr = 1000)
+  varbvscoefcred (fit, vars, cred.int = 0.95, nr = 1000)
 }
 \arguments{
-  \item{fit}{Output of function \code{varbvs}.}
+  \item{fit}{Output of function \code{\link{varbvs}}.}
 
-  \item{vars}{Vector of indices or names of variables.}
+  \item{vars}{Vector of indices or names of variables. If not specified,
+    credible intervals are computed for all variables.}
 
   \item{cred.int}{Size of credible interval (number between 0 and 1).}
 
@@ -28,16 +29,12 @@ top-ranked variables.
   posterior distribution. 
 }  
 \value{
-
   \item{a}{Credible interval lower bounds.}
-
   \item{b}{Credible interval upper bounds.}
-
 }
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its
-accuracy in genetic association studies. Bayesian Analysis 7(1), pages
-73-108.}
-\author{Peter Carbonetto <peter.carbonetto@gmail.com>}
-\seealso{\code{varbvs}, \code{varbvsprint}
-}
+accuracy in genetic association studies. \emph{Bayesian Analysis} \bold{7},
+73--108.}
+\author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
+\seealso{\code{varbvs}, \code{summary.varbvs}}

@@ -54,7 +54,7 @@
 
   \item{logodds}{Hyperparameter logodds is the prior log-odds that a
     variable is included in the regression model; it is defined as
-    \deqn{logodds = log10(q/(1-q)),} where q is the prior probability
+    \eqn{logodds = log10(q/(1-q)),} where q is the prior probability
     that a variable is included in the regression model. The prior
     log-odds may also be specified separately for each variable, which
     is useful is there is prior information about which variables are
@@ -177,8 +177,8 @@
     satisfied, this can approach can still often yield reasonable
     estimates of averaged posterior quantities. The examples below
     demonstrate how final posterior quantities are reported by function
-    \code{varbvsprint} (see \code{help(varbvsprint)}for more
-    details). To account for discrepancies between the prior on
+    \code{\link{summary.varbvs}} (see \code{help(summary.varbvs)} for
+    more details). To account for discrepancies between the prior on
     (sigma,sa,logodds) and the sampling density used to draw candidate
     settings of the hyperparameters, adjust the log-probabilities by
     setting \code{fit$logw <- fit$logw + logp/logq}, where logp is the
@@ -262,10 +262,10 @@
 }
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its
-accuracy in genetic association studies. Bayesian Analysis 7(1), pages
-73-108.}
-\author{Peter Carbonetto <peter.carbonetto@gmail.com>}
-\seealso{\code{varbvsprint}, \code{varbvscoefcred}, \code{varbvspve},
+accuracy in genetic association studies. \emph{Bayesian Analysis} \bold{7},
+73--108.}
+\author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
+\seealso{\code{summary.varbvs}, \code{varbvscoefcred}, \code{varbvspve},
   \code{varbvsnorm}, \code{varbvsbin}, \code{varbvsbinz},
   \code{normalizelogweights}
 }
@@ -295,7 +295,7 @@ y <- c(-2 + Z \%*\% u + X \%*\% beta + rnorm(800))
 
 # Fit the variable selection model.
 fit <- varbvs(X,Z,y,logodds = seq(-3,-1,0.1))
-varbvsprint(fit)
+print(summary(fit))
 
 # Compute posterior inclusion probabilities (pip) and posterior mean
 # regression coefficients (beta) averaged over the hyperparameter
@@ -329,5 +329,5 @@ y <- as.double(runif(1500) < sigmoid(-1 + Z \%*\% u + X \%*\% beta))
 
 # Fit the variable selection model.
 fit <- varbvs(X,Z,y,"binomial",logodds = seq(-3,-1,0.1))
-varbvsprint(fit)
+print(summary(fit))
 }
