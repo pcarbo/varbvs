@@ -34,7 +34,7 @@ save(list = c("fit","map","pip"),file = "varbvs.demo.cd.RData")
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
 cat("SUMMARIZING RESULTS.\n")
-varbvsprint(fit,n = 9)
+print(summary(fit,n = 9))
 
 # Show two "genome-wide scans", one using the posterior inclusion
 # probabilities (PIPs) computed in the joint analysis of all

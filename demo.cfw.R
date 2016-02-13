@@ -49,7 +49,7 @@ pip <- c(varbvsindep(fit,X,Z,y)$alpha %*% w)
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
 cat("SUMMARIZING RESULTS.\n")
-varbvsprint(fit)
+print(summary(fit))
 
 # Show three genome-wide scans: (1) one using the posterior inclusion
 # probabilities (PIPs) computed in the joint analysis of all
@@ -61,12 +61,14 @@ trellis.par.set(axis.text = list(cex = 0.65),
 i <- which(fit$alpha %*% w > 0.5)
 r <- gwscan.gemma[[trait]]
 r[is.na(r)] <- 0
-print(varbvsplot(fit,groups = map$chr,vars = i,gap = 1500,cex = 0.6,
-                 ylab = "posterior prob."),
+print(plot(fit,groups = map$chr,vars = i,gap = 1500,cex = 0.6,
+           ylab = "posterior prob.",vars.xyplot.args = list(cex = 0.6)),
       split = c(1,1,1,3),more = TRUE)
-print(varbvsplot(fit,groups = map$chr,score = log10(pip + 0.001),vars = i,
-                 cex = 0.6,gap = 1500,ylab = "log10 posterior prob."),
+print(plot(fit,groups = map$chr,score = log10(pip + 0.001),vars = i,
+           cex = 0.6,gap = 1500,ylab = "log10 posterior prob.",
+           vars.xyplot.args = list(cex = 0.6)),
       split = c(1,2,1,3),more = TRUE)
-print(varbvsplot(fit,groups = map$chr,score = r,vars = i,cex = 0.6,
-                 gap = 1500,score.line = 5.71,ylab = "-log10 p-value"),
-     split = c(1,3,1,3),more = TRUE)
+print(plot(fit,groups = map$chr,score = r,vars = i,cex = 0.6,gap = 1500,
+           draw.threshold = 5.71,ylab = "-log10 p-value",
+           vars.xyplot.args = list(cex = 0.6)),
+     split = c(1,3,1,3),more = FALSE)

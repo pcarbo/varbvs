@@ -1,9 +1,16 @@
 # Summarize the variable selection results in a single plot.
-plot.varbvs <- function (fit, score, groups, vars, var.labels, gap = 0,
-                         col = "midnightblue", var.col = "magenta", pch = 20,
-                         ltext.args = "col=\"black\",pos=4,cex=0.5",
-                         score.line, xlab = "", ylab = "", ...) {
+plot.varbvs <-
+    function (fit, score, groups, vars = NULL, var.labels, draw.threshold = NA,
+              gap = 0,col = "midnightblue", pch = 20, xlab = "", ylab = "",
+              abline.args = list(lty = "dotted",col = "orangered"),
+              vars.xyplot.args = list(pch = 20,col = "magenta"),
+              vars.ltext.args = list(col = "black",pos = 4,cex = 0.5),...) {
 
+  # Plotting defaults.
+  abline.defaults      <- list(lty = "dotted",col = "orangered")
+  vars.xyplot.defaults <- list(pch = 20,col = "magenta")
+  vars.ltext.defaults  <- list(col = "black",pos = 4,cex = 0.5)
+  
   # CHECK INPUTS
   # ------------
   # Check that the first input is an instance of class "varbvs".
@@ -31,9 +38,21 @@ plot.varbvs <- function (fit, score, groups, vars, var.labels, gap = 0,
   # stored in the varbvs data structure ("fit").
   if (missing(var.labels))
     var.labels <- rownames(fit$alpha)[vars]
+
+  # Get the defaults for abline.args if not provided.
+  abline.args <- c(abline.args,abline.defaults)
+  abline.args <- abline.args[!duplicated(names(abline.args))]
+
+  # Get the defaults for vars.xyplot.args if not provided.
+  vars.xyplot.args <- c(vars.xyplot.args,vars.xyplot.defaults)
+  vars.xyplot.args <- vars.xyplot.args[!duplicated(names(vars.xyplot.args))]
+
+  # Get the defaults for vars.ltext.args if not provided.
+  vars.ltext.args <- c(vars.ltext.args,vars.ltext.defaults)
+  vars.ltext.args <- vars.ltext.args[!duplicated(names(vars.ltext.args))]
   
-  # GENERATE GENOME-WIDE SCAN PLOT
-  # ------------------------------
+  # GENERATE GENOME-WIDE SCAN
+  # -------------------------
   # Determine the positions of the variables and, if necessary, group
   # labels along the horizontal axis.
   if (length(group.labels) == 1) {
@@ -52,23 +71,29 @@ plot.varbvs <- function (fit, score, groups, vars, var.labels, gap = 0,
       pos    <- pos + n + gap
     }
   }
-  
+
+  # CREATE XYPLOT
+  # -------------
   # Plot the posterior probabilities, or "scores", highlighting and
-  # labeling selected variables.
-  return(xyplot(y ~ x,data.frame(x = x,y = y),pch = pch,col = col,
+  # labeling any selected variables.
+  out <- xyplot(y ~ x,data.frame(x=x,y=y),pch = pch,col = col,
                 scales = list(x = list(at = xticks,labels = group.labels)),
+                xlab = xlab,ylab = ylab,
                 panel = function (x,y,...) {
                   panel.xyplot(x,y,...);
-                  if (!missing(score.line))
-                    panel.abline(a = score.line,b = 0,lty = "dotted",
-                                 col = "orangered")
-                },
-                xlab = xlab,ylab = ylab,...) +
-         as.layer(xyplot(y ~ x,data.frame(x = x,y = y)[vars,],pch = pch,
-           col = var.col,
-           panel = function (x,y,...) {
-             panel.xyplot(x,y,...);
-             eval(parse(text = paste("ltext(x=x,y=y,labels=var.labels,",
-                          ltext.args,")")))
-           })))
+                  if (!is.na(draw.threshold))
+                    do.call("panel.abline",
+                            c(list(a = draw.threshold,b = 0),abline.args))
+                },,...)
+  if (!is.null(vars))
+    out <- out +
+      as.layer(do.call("xyplot",
+                       c(list(x = (y ~ x),data = data.frame(x=x,y=y)[vars,],
+                              panel = function (x,y,...) {
+                                panel.xyplot(x,y,...);
+                                do.call("ltext",
+                                        c(list(x=x,y=y,labels=var.labels),
+                                          vars.ltext.args))
+                              }),vars.xyplot.args)))
+  return(out)
 }
