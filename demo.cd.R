@@ -3,7 +3,6 @@
 # SNPs genotyped for 1,748 cases and 2,938 controls.
 library(varbvs)
 library(lattice)
-library(latticeExtra)
 
 # Initialize the random number generator. 
 set.seed(1)
@@ -34,7 +33,7 @@ save(list = c("fit","map","pip"),file = "varbvs.demo.cd.RData")
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
 cat("SUMMARIZING RESULTS.\n")
-print(summary(fit,n = 9))
+print(summary(fit,nv = 9))
 
 # Show two "genome-wide scans", one using the posterior inclusion
 # probabilities (PIPs) computed in the joint analysis of all
@@ -46,10 +45,9 @@ print(summary(fit,n = 9))
 trellis.device(height = 4,width = 10)
 i <- which(fit$alpha %*% w > 0.5)
 var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
-print(varbvsplot(fit,groups = map$chr,vars = i,var.labels = var.labels,
-                 gap = 7500,ylab = "posterior prob."),
+print(plot(fit,groups = map$chr,vars = i,var.labels = var.labels,gap = 7500,
+           ylab = "posterior prob."),
       split = c(1,1,1,2),more = TRUE)
-print(varbvsplot(fit,groups = map$chr,score = log10(pip + 0.001),
-                 vars = i,var.labels = var.labels,gap = 7500,
-                 ylab = "log10 posterior prob."),
+print(plot(fit,groups = map$chr,score = log10(pip + 0.001),vars = i,
+           var.labels = var.labels,gap = 7500,ylab = "log10 posterior prob."),
       split = c(1,2,1,2),more = FALSE)

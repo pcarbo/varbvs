@@ -7,6 +7,7 @@
 # this analysis consist of 442,001 SNPs genotyped for 1,748 cases and 2,938
 # controls.
 library(varbvs)
+library(lattice)
 
 # Initialize the random number generator. 
 set.seed(1)
@@ -50,12 +51,9 @@ trellis.device(height = 4,width = 10)
 w <- normalizelogweights(fit.cytokine$logw)
 i <- which(fit.null$alpha < 0.5 & fit.cytokine$alpha %*% w > 0.5)
 var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
-print(varbvsplot(fit.null,groups = map$chr,vars = i,
-                 var.labels = rep("",length(i)),gap = 7500,
-                 ylab = "posterior prob."),
+print(plot(fit.null,groups = map$chr,vars = i,var.labels = rep("",length(i)),
+           gap = 7500,ylab = "posterior prob."),
       split = c(1,1,1,2),more = TRUE)
-print(varbvsplot(fit.cytokine,groups = map$chr,vars = i,
-                 var.labels = var.labels,gap = 7500,
-                 ylab = "posterior prob."),
+print(plot(fit.cytokine,groups = map$chr,vars = i,var.labels = var.labels,
+           gap = 7500,ylab = "posterior prob."),
       split = c(1,2,1,2),more = FALSE)
-

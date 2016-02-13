@@ -9,11 +9,6 @@ eStrategy for my new implementation of 'varbvs'
 * For PLoS Comp. Bio. software section, see:
   doi:10.1371/journal.pcbi.1002799
   Example article: doi:10.1371/journal.pcbi.1004085
-  
-* See here for some data sets that could be used for demos:
-  http://www.jstatsoft.org/article/view/v033i01
-
-* To do: update "plot.varbvs" function, and man page.
 
 * To do: Implement "predict" method.
 
@@ -28,5 +23,5 @@ eStrategy for my new implementation of 'varbvs'
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
 
-* To do: Point to extended examples in vignettes and/or github?
+* To do: Point to extended examples in vignettes and/or github.
 

@@ -3,7 +3,6 @@
 # muscle) and testis weight measured at sacrifice.
 library(varbvs)
 library(lattice)
-library(latticeExtra)
 
 # SCRIPT PARAMETERS
 # -----------------
