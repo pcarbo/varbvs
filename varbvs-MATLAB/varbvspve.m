@@ -4,14 +4,24 @@
 % linear regression model (family = 'gaussian') with an intercept.
 function pve = varbvspve (X, fit, nr)
 
+  % Get the number of variables.
+  p = size(X,2);
+    
+  % Input X must be single precision, and cannot be sparse.
+  if issparse(X)
+    error('Input X cannot be sparse')
+  end
+  if ~isa(X,'single')
+    X = single(X);
+  end
+  if (numel(fit.labels) ~= p)
+    error('Inputs X and fit are not compatible')
+    
   % Take care of the optional inputs.
   if nargin < 3
     nr = 1000;
   end
 
-  % Get the number of variables.
-  p = size(X,2);
-    
   % Initialize storage for posterior estimates of the proportion of variance
   % explained.
   pve = zeros(nr,1);
