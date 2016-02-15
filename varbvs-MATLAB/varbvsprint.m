@@ -8,12 +8,12 @@
 %
 % USAGE:
 %    varbvsprint(fit)
-%    varbvsprint(fit, c, n, nr)
+%    varbvsprint(fit, c, nv, nr)
 %
 % INPUT ARGUMENTS:
 % fit  Output of function varbvs.
 % c    Compute c% credible intervals. By default, c = 0.95.
-% n    Show detailed statistics on n variables. By default, n = 5.
+% nv   Show detailed statistics on nv variables. By default, nv = 5.
 % nr   Draw nr samples for Monte Carlo estimates of the credible
 %      intervals for the coefficients. Default is nr = 1000.
 %
@@ -74,7 +74,7 @@
 % EXAMPLES:
 %    See demo_qtl.m and demo_cc.m for examples.
 %
-function varbvsprint (fit, c, n, nr)
+function varbvsprint (fit, c, nv, nr)
 
   % Get the number of variables (p) and number of candidate hyperparameter
   % settings (ns).
@@ -86,12 +86,12 @@ function varbvsprint (fit, c, n, nr)
     c = 0.95;
   end
 
-  % Show detailed statistics on n variables. Note that this cannot be
+  % Show detailed statistics on nv variables. Note that this cannot be
   % larger than the nubmer of variables.
   if nargin < 3
-    n = 5;
+    nv = 5;
   end
-  n = min(n,p);
+  nv = min(nv,p);
 
   % Draw this many samples to compute the Monte Carlo estimates of the
   % credible intervals for the regression coefficients.
@@ -205,12 +205,12 @@ function varbvsprint (fit, c, n, nr)
   fprintf('count %5d %5d %5d %5d %5d %5d\n',sum(PIP > 0.1),sum(PIP > 0.25),...
           sum(PIP > 0.5),sum(PIP > 0.75),sum(PIP > 0.9),sum(PIP > 0.95));
 
-  % Give more detailed statistics about the top n variables by the
+  % Give more detailed statistics about the top nv variables by the
   % probability that they are included.
   [ans vars] = sort(-PIP);
-  vars       = vars(1:n);
+  vars       = vars(1:nv);
   vars       = vars(:)';
-  fprintf('Top %d variables by inclusion probability:\n',n);
+  fprintf('Top %d variables by inclusion probability:\n',nv);
   fprintf(' index variable   prob.');
   if strcmp(fit.family,'gaussian')
     fprintf(' -PVE-');

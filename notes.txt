@@ -10,7 +10,9 @@ eStrategy for my new implementation of 'varbvs'
   doi:10.1371/journal.pcbi.1002799
   Example article: doi:10.1371/journal.pcbi.1004085
 
-* To do: Implement "predict" method.
+* To do: Implement "predict" method in both MATLAB and R.
+
+* To do: Update MATLAB interface to reflect improvements to R interface.
 
 * To do: Create R script to compare cv.glmnet and varbvs in leukemia
   data.

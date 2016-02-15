@@ -18,5 +18,6 @@ export(logit,logpexp,logsigmoid,sigmoid,normalizelogweights,
        varbvsindep,varbvspve,plot.varbvs,bayesfactor,rand,randn)
 
 S3method(summary,varbvs)
+S3method(predict,varbvs)
 S3method(print,summary.varbvs)
 S3method(plot,varbvs)

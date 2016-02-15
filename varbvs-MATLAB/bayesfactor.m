@@ -31,7 +31,7 @@
 %    distribution as the prior Pr(Z | H).
 %
 % USAGE:
-%    BF = varbvsbayesfactor(logw0, logw1)
+%    BF = bayesfactor(logw0, logw1)
 %
 % INPUT ARGUMENTS:
 % logw0  log-probabilities or log-importance weights under H0.
@@ -55,7 +55,7 @@
 %    genetic association studies. Bayesian Analysis 7: 73-108.
 %
 % SEE ALSO:
-%    varbvs
+%    varbvs, normalizelogweights
 %
 function BF = bayesfactor (logw0, logw1)
 

@@ -26,7 +26,7 @@ approximation when the settings of the latent variable Z are drawn from
 the same distribution as the prior, Pr(Z | H).
 }
 \usage{
-  varbvsbayesfactor (logw0, logw1)
+  bayesfactor (logw0, logw1)
 }
 \arguments{
   \item{logw0}{log-probabilities or log-importance weights under H0.}
@@ -48,4 +48,4 @@ the same distribution as the prior, Pr(Z | H).
   Computing} \bold{11}, 125-–139.
 }
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
-\seealso{\code{normalizelogweights}}
+\seealso{\code{varbvs}, \code{normalizelogweights}}
