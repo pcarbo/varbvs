@@ -67,8 +67,7 @@ function [alpha, mu, s] = varbvsindep (fit, X, Z, y)
   [n p] = size(X);
   ns    = numel(fit.logw);
 
-  % Input X must be single precision, and cannot be sparse. Note that
-  % here I do not check the inputs as rigorously as function varbvs.
+  % Input X must be single precision, and cannot be sparse.
   if issparse(X)
     error('Input X cannot be sparse')
   end
@@ -76,8 +75,12 @@ function [alpha, mu, s] = varbvsindep (fit, X, Z, y)
     X = single(X);
   end
 
-  % If input Z is not empty, it must be double precision.
+  % If input Z is not empty, it must be double precision, and must have
+  % as many rows as X.
   if ~isempty(Z)
+    if size(Z,1) ~= n
+      error('Inputs X and Z do not match.');
+    end
     Z = double(full(Z));
   end
 
