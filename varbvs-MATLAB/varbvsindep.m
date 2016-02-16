@@ -74,6 +74,9 @@ function [alpha, mu, s] = varbvsindep (fit, X, Z, y)
   if ~isa(X,'single')
     X = single(X);
   end
+  if (numel(fit.labels) ~= p)
+    error('Inputs X and fit are not compatible')
+  end
 
   % If input Z is not empty, it must be double precision, and must have
   % as many rows as X.

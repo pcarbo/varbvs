@@ -83,6 +83,7 @@
 % fit.alpha           variational estimates of posterior inclusion probs.
 % fit.mu              variational estimates of posterior mean coefficients.
 % fit.s               variational estimates of posterior variances.
+% fit.muz             posterior estimates of coefficients for covariates.
 % fit.eta             variational parameters for family = 'binomial' only.
 % fit.optimize_eta    whether eta was fit to data (family = 'binomial' only).
 % fit.pve             estimated PVE per variable (family = 'gaussian' only).
@@ -288,7 +289,8 @@ function fit = varbvs (X, Z, y, labels, family, options)
   end
 
   % Add intercept.
-  Z = [ones(n,1) Z];
+  Z    = [ones(n,1) Z];
+  ncov = size(Z,2) - 1;
 
   % Input y must be a double-precision column vector with n elements.
   y = double(y(:));
@@ -543,7 +545,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % McCulloch, "The Practical Implementation of Bayesian Model
   % Selection," 2001.
   if strcmp(family,'gaussian')
-    if size(Z,2) == 1
+    if ncov == 0
       X = X - repmat(mean(X),length(y),1);
       y = y - mean(y);
     else
@@ -576,7 +578,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fprintf('     convergence tolerance         %0.1e\n',tol);
     fprintf('variables:  %-6d',p); 
     fprintf('     iid variable selection prior: %s\n',tf2yn(prior_same));
-    fprintf('covariates: %-6d',max(0,size(Z,2) - 1));
+    fprintf('covariates: %-6d',ncov);
     fprintf('     fit prior var. of coefs (sa): %s\n',tf2yn(update_sa));
     fprintf('intercept:  yes        ');
     if strcmp(family,'gaussian')
@@ -588,11 +590,13 @@ function fit = varbvs (X, Z, y, labels, family, options)
   
   % (4) INITIALIZE STORAGE FOR THE OUTPUTS
   % --------------------------------------
-  % Initialize storage for the variational estimate of the marginal
-  % log-likelihood for each hyperparameter setting (logw) and the variances
-  % of the regression coefficients (s).
+  % Initialize storage for the variational estimate of the marginal log-
+  % likelihood for each hyperparameter setting (logw), the variances of the
+  % regression coefficients (s), and the posterior mean estimates of the
+  % coefficients for the covariates, including the intercept (muz).
   logw = zeros(1,ns);
-  s   = zeros(p,ns);
+  s    = zeros(p,ns);
+  muz  = zeros(ncov+1,ns);
 
   % (5) FIT BAYESIAN VARIABLE SELECTION MODEL TO DATA
   % -------------------------------------------------
@@ -605,7 +609,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
       fprintf('        variational    max.   incl variance params\n');
       fprintf(' iter   lower bound  change   vars   sigma      sa\n');
     end
-    [logw sigma sa alpha mu s eta] = ...
+    [logw sigma sa alpha mu s eta muz] = ...
         outerloop(X,Z,y,family,sigma,sa,logodds,alpha,mu,eta,tol,maxiter,...
                   verbose,[],update_sigma,update_sa,optimize_eta,n0,sa0);
     if verbose
@@ -659,13 +663,11 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fprintf('-iteration-   variational    max.   incl variance params\n');
     fprintf('outer inner   lower bound  change   vars   sigma      sa\n');
 
-    % Repeat for each setting of the hyperparameters.
+    % For each setting of the hyperparameters, find a set of parameters that
+    % locally minimize the K-L divergence between the approximating
+    % distribution and the exact posterior.
     for i = 1:ns
-
-      % Find a set of parameters that locally minimize the K-L
-      % divergence between the approximating distribution and the exact
-      % posterior.
-      [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
+      [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i) muz(:,i)]=...
           outerloop(X,Z,y,family,sigma(i),sa(i),logodds(:,i),alpha(:,i),...
                     mu(:,i),eta(:,i),tol,maxiter,verbose,i,update_sigma,...
                     update_sa,optimize_eta,n0,sa0);
@@ -678,12 +680,12 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % (6) CREATE FINAL OUTPUT
   % -----------------------
   if strcmp(family,'gaussian')
-    fit = struct('family',family,'ncov',size(Z,2) - 1,'n',n,'labels',...
-                 {labels},'n0',n0,'sa0',sa0,'update_sigma',update_sigma,...
-                 'update_sa',update_sa,'prior_same',prior_same,'logw',...
-                 {logw},'sigma',{sigma},'sa',sa,'logodds',{logodds},...
+    fit = struct('family',family,'ncov',ncov,'n',n,'labels',{labels},...
+                 'n0',n0,'sa0',sa0,'update_sigma',update_sigma,'update_sa',...
+                 update_sa,'prior_same',prior_same,'logw',{logw},...
+                 'sigma',{sigma},'sa',sa,'logodds',{logodds},...
                  'alpha',{alpha},'mu',{mu},'s',{s},'eta',[],...
-                 'optimize_eta',false);
+                 'muz',muz,'optimize_eta',false);
 
     % Compute the proportion of variance in Y, after removing linear
     % effects of covariates, explained by the regression model.
@@ -698,17 +700,16 @@ function fit = varbvs (X, Z, y, labels, family, options)
       fit.pve(:,i) = sx.*(mu(:,i).^2 + s(:,i))/var(y,1);
     end
   elseif strcmp(family,'binomial')
-    fit = struct('family',family,'ncov',size(Z,2) - 1,'n',n,'labels',...
-                 {labels},'n0',n0,'sa0',sa0,'update_sa',update_sa,...
-                 'optimize_eta',optimize_eta,'prior_same',prior_same,...
-                 'logw',{logw},'sa',sa,'logodds',{logodds},'alpha',...
-                 {alpha},'mu',{mu},'s',{s},'eta',{eta},'update_sigma',...
-                 false,'pve',[]);
+    fit = struct('family',family,'ncov',ncov,'n',n,'labels',{labels},...
+                 'n0',n0,'sa0',sa0,'update_sa',update_sa,'optimize_eta',...
+                 optimize_eta,'prior_same',prior_same,'logw',{logw},...
+                 'sa',sa,'logodds',{logodds},'alpha',{alpha},'mu',{mu},...
+                 's',{s},'eta',{eta},'muz',muz,'update_sigma',false,'pve',[]);
   end
   
 % ------------------------------------------------------------------
 % This function implements one iteration of the "outer loop".
-function [logw, sigma, sa, alpha, mu, s, eta] = ...
+function [logw, sigma, sa, alpha, mu, s, eta, muz] = ...
         outerloop (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta, ...
                    tol, maxiter, verbose, outer_iter, update_sigma, ...
                    update_sa, optimize_eta, n0, sa0)
@@ -724,12 +725,16 @@ function [logw, sigma, sa, alpha, mu, s, eta] = ...
     [logw err sigma sa alpha mu s] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
                    verbose,outer_iter,update_sigma,update_sa,n0,sa0);
+    %
+    % TO DO: FIX THIS.
+    %
+    muz = zeros(size(X,2),1);
   elseif strcmp(family,'binomial') & size(Z,2) == 1
-    [logw err sa alpha mu s eta] = ...
+    [logw err sa alpha mu s eta muz] = ...
         varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...
                   outer_iter,update_sa,optimize_eta,n0,sa0);
   elseif strcmp(family,'binomial')
-    [logw err sa alpha mu s eta] = ...
+    [logw err sa alpha mu s eta muz] = ...
         varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,...
                    verbose,outer_iter,update_sa,optimize_eta,n0,sa0);
   end

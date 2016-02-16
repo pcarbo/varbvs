@@ -84,5 +84,12 @@ PIP = fit.alpha * w(:);
 
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------
+fprintf('\n');
 fprintf('3. SUMMARIZING RESULTS.\n')
 varbvsprint(fit);
+
+% EVALUATE MODEL PREDICTIONS
+% --------------------------
+fprintf('\n');
+fprintf('4. EVALUATING FITTED MODEL:\n');
+% TO DO.

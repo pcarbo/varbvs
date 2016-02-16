@@ -1,13 +1,13 @@
-% [logw,sa,alpha,mu,s,eta] = varbvsbinz(X,Z,y,sa,logodds,...) implements the
-% fully-factorized variational approximation for Bayesian variable selection
-% in logistic regression, allowing for covariates. It is the same as
-% varbvsbin, except that it allows for an additional set of covariates that
-% are not subject to the same "spike-and-slab" priors as the other
+% [logw,sa,alpha,mu,s,eta,muz] = varbvsbinz(X,Z,y,sa,logodds,...) implements
+% the fully-factorized variational approximation for Bayesian variable
+% selection in logistic regression, allowing for covariates. It is the same
+% as varbvsbin, except that it allows for an additional set of covariates
+% that are not subject to the same "spike-and-slab" priors as the other
 % variables. The covariate data Z are specified as an n x m matrix, where n
 % is the number of samples, and m is the number of covariates. This function
 % is equivalent to varbvsbin when only one covariate is specified, the
 % intercept, and Z = ones(n,1).
-function [logw, err, sa, alpha, mu, s, eta] = ...
+function [logw, err, sa, alpha, mu, s, eta, muz] = ...
         varbvsbinz (X, Z, y, sa, logodds, alpha, mu, eta, tol, maxiter, ...
                    verbose, outer_iter, update_sa, optimize_eta, n0, sa0)
   
@@ -124,16 +124,23 @@ function [logw, err, sa, alpha, mu, s, eta] = ...
   % iterates (err).
   logw = logw(1:iter);
   err  = err(1:iter);
+
+  % Compute the posterior mean coefficients for the covariates, Z. See
+  % function update_eta below for a more detailed breakdown of this
+  % calculation.
+  d   = slope(eta);
+  S   = inv(Z'*diag(sparse(d))*Z);
+  muz = S*Z'*(y - 0.5 - d.*(X*(alpha.*mu)));
   
 % ----------------------------------------------------------------------
 % diagprod(A,B) efficiently computes diag(A*B').
 function y = diagprod (A, B)
   y = double(sum(A.*B,2));
-  
+
 % ----------------------------------------------------------------------
-% updateeta(X,Z,y,v,Xr,d) returns the M-step update for the parameters
-% specifying the variational lower bound to the logistic regression factors,
-% allowing for additional covariates.
+% Returns the M-step update for the parameters specifying the variational
+% lower bound to the logistic regression factors, allowing for additional
+% covariates.
 function eta = update_eta (X, Z, y, v, Xr, d)
 
   % Compute muz, the posterior mean of the regression coefficients

@@ -27,8 +27,8 @@
 % mean and variance of the coefficient given that it is included in the
 % model. Output eta is the vector of free parameters that specify the
 % variational approximation to the likelihood factors in the logistic
-% regression.
-function [logw, err, sa, alpha, mu, s, eta] = ...
+% regression. Finally, output mu0 is the posterior mean of the intercept.
+function [logw, err, sa, alpha, mu, s, eta, mu0] = ...
         varbvsbin (X, y, sa, logodds, alpha, mu, eta, tol, maxiter, ...
                    verbose, outer_iter, update_sa, optimize_eta, n0, sa0)
 
@@ -146,6 +146,11 @@ function [logw, err, sa, alpha, mu, s, eta] = ...
   % iterates (err).
   logw = logw(1:iter);
   err  = err(1:iter);
+
+  % Compute the posterior mean intercept. See function update_eta below
+  % for a more detailed breakdown of this calculation.
+  d   = slope(eta);
+  mu0 = sum(y - 0.5 - d.*(X*(alpha.*mu)))/sum(d);
 
 % ----------------------------------------------------------------------
 % update_eta(X,y,v,Xr,d) returns the M-step update for the parameters
