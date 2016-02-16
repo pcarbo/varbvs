@@ -134,7 +134,7 @@ print.summary.varbvs <- function (x, digits = 3) {
     if (family == "gaussian") {
       with(model.pve,{
         cat("proportion of variance explained: ")
-        cat(sprintf("%0.1f%% [%0.1f%%,%0.1f%%]\n",100*x0,100*a,100*b))
+        cat(sprintf("%0.3f [%0.3f,%0.3f]\n",x0,a,b))
       })
     }
   

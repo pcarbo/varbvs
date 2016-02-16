@@ -69,7 +69,7 @@
 %    genetic association studies. Bayesian Analysis 7: 73-108.
 %
 % SEE ALSO:
-%    varbvs.
+%    varbvs, varbvsprint
 %
 % EXAMPLES:
 %    See demo_qtl.m and demo_cc.m for examples.
@@ -86,12 +86,10 @@ function varbvsprint (fit, c, nv, nr)
     c = 0.95;
   end
 
-  % Show detailed statistics on nv variables. Note that this cannot be
-  % larger than the nubmer of variables.
+  % Show detailed statistics on nv variables.
   if nargin < 3
     nv = 5;
   end
-  nv = min(nv,p);
 
   % Draw this many samples to compute the Monte Carlo estimates of the
   % credible intervals for the regression coefficients.
@@ -130,7 +128,7 @@ function varbvsprint (fit, c, nv, nr)
     a = x(floor((0.5 - c/2)*length(x)));
     b = x(ceil((0.5 + c/2)*length(x)));
     fprintf('proportion of variance explained: ');
-    fprintf('%0.1f%% [%0.1f%%,%0.1f%%]\n',100*mean(x),100*a,100*b);
+    fprintf('%0.3f [%0.3f,%0.3f]\n',mean(x),a,b);
   end
 
   % (3) SUMMARIZE RESULTS ON HYPERPARAMETERS
@@ -213,14 +211,14 @@ function varbvsprint (fit, c, nv, nr)
   fprintf('Top %d variables by inclusion probability:\n',nv);
   fprintf(' index variable   prob.');
   if strcmp(fit.family,'gaussian')
-    fprintf(' -PVE-');
+    fprintf('   PVE');
   end
   fprintf('   coef. Pr(coef.>%0.2f)\n',c);
   for i = vars
     [a b] = varbvscoefcred(fit,i,c,nr);
     fprintf('%6d %-10s %0.3f',i,fit.labels{i},PIP(i));
     if strcmp(fit.family,'gaussian')
-      fprintf(' %04.1f%%',100*dot(w,fit.pve(i,:)));
+      fprintf(' %0.3f',dot(w,fit.pve(i,:)));
     end
     fprintf(' %+7.3f [%+0.3f,%+0.3f]\n',beta(i),a,b);
   end
