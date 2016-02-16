@@ -147,11 +147,6 @@ function [logw, err, sa, alpha, mu, s, eta, mu0] = ...
   logw = logw(1:iter);
   err  = err(1:iter);
 
-  % Compute the posterior mean intercept. See function update_eta below
-  % for a more detailed breakdown of this calculation.
-  d   = slope(eta);
-  mu0 = sum(y - 0.5 - d.*(X*(alpha.*mu)))/sum(d);
-
 % ----------------------------------------------------------------------
 % update_eta(X,y,v,Xr,d) returns the M-step update for the parameters
 % specifying the variational lower bound to the logistic regression factors.

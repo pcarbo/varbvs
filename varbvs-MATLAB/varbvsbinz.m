@@ -1,4 +1,4 @@
-% [logw,sa,alpha,mu,s,eta,muz] = varbvsbinz(X,Z,y,sa,logodds,...) implements
+% [logw,sa,alpha,mu,s,eta] = varbvsbinz(X,Z,y,sa,logodds,...) implements
 % the fully-factorized variational approximation for Bayesian variable
 % selection in logistic regression, allowing for covariates. It is the same
 % as varbvsbin, except that it allows for an additional set of covariates
@@ -7,7 +7,7 @@
 % is the number of samples, and m is the number of covariates. This function
 % is equivalent to varbvsbin when only one covariate is specified, the
 % intercept, and Z = ones(n,1).
-function [logw, err, sa, alpha, mu, s, eta, muz] = ...
+function [logw, err, sa, alpha, mu, s, eta] = ...
         varbvsbinz (X, Z, y, sa, logodds, alpha, mu, eta, tol, maxiter, ...
                    verbose, outer_iter, update_sa, optimize_eta, n0, sa0)
   
@@ -125,13 +125,6 @@ function [logw, err, sa, alpha, mu, s, eta, muz] = ...
   logw = logw(1:iter);
   err  = err(1:iter);
 
-  % Compute the posterior mean coefficients for the covariates, Z. See
-  % function update_eta below for a more detailed breakdown of this
-  % calculation.
-  d   = slope(eta);
-  S   = inv(Z'*diag(sparse(d))*Z);
-  muz = S*Z'*(y - 0.5 - d.*(X*(alpha.*mu)));
-  
 % ----------------------------------------------------------------------
 % diagprod(A,B) efficiently computes diag(A*B').
 function y = diagprod (A, B)

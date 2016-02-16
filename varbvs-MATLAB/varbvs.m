@@ -730,15 +730,33 @@ function [logw, sigma, sa, alpha, mu, s, eta, muz] = ...
     %
     muz = zeros(size(X,2),1);
   elseif strcmp(family,'binomial') & size(Z,2) == 1
-    [logw err sa alpha mu s eta muz] = ...
+    [logw err sa alpha mu s eta] = ...
         varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...
                   outer_iter,update_sa,optimize_eta,n0,sa0);
   elseif strcmp(family,'binomial')
-    [logw err sa alpha mu s eta muz] = ...
+    [logw err sa alpha mu s eta] = ...
         varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,...
                    verbose,outer_iter,update_sa,optimize_eta,n0,sa0);
   end
   logw = logw(end);
+  
+  % Compute the posterior mean of the covariate coefficients.
+  if strcmp(family,'gaussian')
+    % TO DO.
+  elseif strcmp(family,'binomial') & size(Z,2) == 1
+
+    % Compute the posterior mean intercept. See function update_eta in
+    % varbvsbin.m for a more detailed breakdown of this calculation.
+    d   = slope(eta);
+    muz = sum(y - 0.5 - d.*(X*(alpha.*mu)))/sum(d);
+  elseif strcmp(family,'binomial')
+      
+    % See function update_eta in varbvsbinz.m for a more detailed
+    % breakdown of the same calculation.
+    d   = slope(eta);
+    S   = inv(Z'*diag(sparse(d))*Z);
+    muz = S*Z'*(y - 0.5 - d.*(X*(alpha.*mu)));
+  end
 
 % ------------------------------------------------------------------
 function y = tf2yn (x)
