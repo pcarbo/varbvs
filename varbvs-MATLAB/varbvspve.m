@@ -16,7 +16,8 @@ function pve = varbvspve (X, fit, nr)
   end
   if (numel(fit.labels) ~= p)
     error('Inputs X and fit are not compatible')
-    
+  end
+  
   % Take care of the optional inputs.
   if nargin < 3
     nr = 1000;

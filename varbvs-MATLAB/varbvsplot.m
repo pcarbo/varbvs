@@ -80,8 +80,8 @@ function varbvsplot (fit, options)
     
   % PROCESS OPTIONS
   % ---------------
-  % If the 'options' input argument is not specified, all the options are set
-  % to the defaults.
+  % If the 'options' input argument is not specified, all the options are
+  % set to the defaults.
   if nargin < 2
     options = [];
   end

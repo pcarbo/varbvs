@@ -90,7 +90,7 @@
 %                     explained by variable selection model (only for
 %                     family = 'gaussian').
 %
-% DETAILS:
+% REGRESSION MODELS:
 %    Two types of outcomes Y are modeled: (1) a continuous outcome, which
 %    is also referred to as a "quantitative trait" in the genetics
 %    literature; or (2) a binary outcome with possible values 0 and 1. Y is
@@ -114,6 +114,7 @@
 %    matrix.) Note that sigma is only used for the linear regression model,
 %    and will generate an error if family = 'binomial'.
 %
+% HYPERPARAMETERS:
 %    Hyperparameter sa is the prior variance of regression coefficients for
 %    variables that are included in the model. Hyperparameter logodds is the
 %    prior log-odds that a variable is included in the regression model; it
@@ -127,6 +128,7 @@
 %    variables, and ns is the number of hyperparameter settings. In this
 %    case, fit.prior_same = false.
 % 
+% CO-ORDINATE ASCENT OPTIMIZATION PROCEDURE:
 %    Given a setting of the hyperparameters, options.sa(i), options.sigma(i)
 %    and options.logodds(:,i), the inner loop cycles through coordinate
 %    ascent updates to tighten the lower bound on the marginal likelihood,
@@ -155,6 +157,7 @@
 %    is set to the default value when options.sa and options.sigma are
 %    scalars, and otherwise an error is generated.
 %
+% VARIATIONAL APPROXIMATION:
 %    Outputs fit.alpha, fit.mu and fit.s specify the approximate posterior
 %    distribution of the regression coefficients. Each of these outputs is a
 %    p x ns matrix. For the ith hyperparameter setting, fit.alpha(:,i) is
@@ -191,6 +194,7 @@
 %    variational parameters are provided in options.alpha, options.mu and/or
 %    options.s, unless options.initialize_params = true.
 %
+% AVERAGING OVER HYPERPARAMETER SETTINGS:
 %    Output fit.logw is an array with ns elements, in which fit.logw(i) is
 %    the variational lower bound on the marginal log-likelihood for the ith
 %    setting of the hyperparameters. In many settings, it is good practice
@@ -226,6 +230,7 @@
 %    importance sampling; see, for example, R. M. Neal, "Annealed importance
 %    sampling", Statistics and Computing, 2001.)
 %
+% MEMORY REQUIREMENTS:
 %    Finally, we point out that the optimization procedures were carefully
 %    designed so that they can be applied to very large data sets; to date,
 %    this code has been tested on data sets with >500,000 variables and
@@ -677,7 +682,8 @@ function fit = varbvs (X, Z, y, labels, family, options)
                  {labels},'n0',n0,'sa0',sa0,'update_sigma',update_sigma,...
                  'update_sa',update_sa,'prior_same',prior_same,'logw',...
                  {logw},'sigma',{sigma},'sa',sa,'logodds',{logodds},...
-                 'alpha',{alpha},'mu',{mu},'s',{s});
+                 'alpha',{alpha},'mu',{mu},'s',{s},'eta',[],...
+                 'optimize_eta',false);
 
     % Compute the proportion of variance in Y, after removing linear
     % effects of covariates, explained by the regression model.
@@ -696,9 +702,10 @@ function fit = varbvs (X, Z, y, labels, family, options)
                  {labels},'n0',n0,'sa0',sa0,'update_sa',update_sa,...
                  'optimize_eta',optimize_eta,'prior_same',prior_same,...
                  'logw',{logw},'sa',sa,'logodds',{logodds},'alpha',...
-                 {alpha},'mu',{mu},'s',{s},'eta',{eta});
+                 {alpha},'mu',{mu},'s',{s},'eta',{eta},'update_sigma',...
+                 false,'pve',[]);
   end
-
+  
 % ------------------------------------------------------------------
 % This function implements one iteration of the "outer loop".
 function [logw, sigma, sa, alpha, mu, s, eta] = ...
