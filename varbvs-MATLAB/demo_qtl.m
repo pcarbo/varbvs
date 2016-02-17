@@ -92,4 +92,11 @@ varbvsprint(fit);
 % --------------------------
 fprintf('\n');
 fprintf('4. EVALUATING FITTED MODEL:\n');
-% TO DO.
+ypred = varbvspredict(fit,X,Z);
+r     = corrcoef(y,ypred);
+plot(y,ypred,'o','MarkerFaceColor',[0.10 0.10 0.44],'MarkerEdgeColor',...
+     'none','MarkerSize',6)
+xlabel('observed Y');
+ylabel('estimated Y')
+title(sprintf('corrcoef(y,ypred) = %0.3f',r(2)));
+set(gca,'FontSize',12);

@@ -86,10 +86,12 @@ function varbvsprint (fit, c, nv, nr)
     c = 0.95;
   end
 
-  % Show detailed statistics on nv variables.
+  % Show detailed statistics on nv variables. This cannot be greater than the
+  % number of variables.
   if nargin < 3
     nv = 5;
   end
+  nv = min(nv,p); 
 
   % Draw this many samples to compute the Monte Carlo estimates of the
   % credible intervals for the regression coefficients.

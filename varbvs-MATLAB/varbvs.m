@@ -545,6 +545,13 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % McCulloch, "The Practical Implementation of Bayesian Model
   % Selection," 2001.
   if strcmp(family,'gaussian')
+
+    % These quantities are used later on to efficiently compute estimates
+    % of the regression coefficients for the covariates.
+    S       = inv(Z'*Z);
+    fit_cov = struct('muz',S*Z'*y,'SZX',S*Z'*X);
+    clear S
+    
     if ncov == 0
       X = X - repmat(mean(X),length(y),1);
       y = y - mean(y);
@@ -556,6 +563,8 @@ function fit = varbvs (X, Z, y, labels, family, options)
       y = y - Z*((Z'*Z)\(Z'*y));
       X = X - Z*((Z'*Z)\(Z'*X));
     end
+  else
+    fit_cov = [];
   end
 
   % Provide a brief summary of the analysis.
@@ -611,7 +620,8 @@ function fit = varbvs (X, Z, y, labels, family, options)
     end
     [logw sigma sa alpha mu s eta muz] = ...
         outerloop(X,Z,y,family,sigma,sa,logodds,alpha,mu,eta,tol,maxiter,...
-                  verbose,[],update_sigma,update_sa,optimize_eta,n0,sa0);
+                  verbose,[],update_sigma,update_sa,optimize_eta,n0,sa0,...
+                  fit_cov);
     if verbose
       fprintf('\n');
     end
@@ -633,7 +643,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
         [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i)] = ...
             outerloop(X,Z,y,family,sigma(i),sa(i),logodds(:,i),alpha(:,i),...
                       mu(:,i),eta(:,i),tol,maxiter,verbose,i,update_sigma,...
-                      update_sa,optimize_eta,n0,sa0);
+                      update_sa,optimize_eta,n0,sa0,fit_cov);
       end
       if verbose
         fprintf('\n');
@@ -670,7 +680,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
       [logw(i) sigma(i) sa(i) alpha(:,i) mu(:,i) s(:,i) eta(:,i) muz(:,i)]=...
           outerloop(X,Z,y,family,sigma(i),sa(i),logodds(:,i),alpha(:,i),...
                     mu(:,i),eta(:,i),tol,maxiter,verbose,i,update_sigma,...
-                    update_sa,optimize_eta,n0,sa0);
+                    update_sa,optimize_eta,n0,sa0,fit_cov);
     end
     if verbose
       fprintf('\n');
@@ -712,7 +722,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
 function [logw, sigma, sa, alpha, mu, s, eta, muz] = ...
         outerloop (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta, ...
                    tol, maxiter, verbose, outer_iter, update_sigma, ...
-                   update_sa, optimize_eta, n0, sa0)
+                   update_sa, optimize_eta, n0, sa0, fit_cov)
   p = length(alpha);
   if isscalar(logodds)
     logodds = repmat(logodds,p,1);
@@ -725,10 +735,6 @@ function [logw, sigma, sa, alpha, mu, s, eta, muz] = ...
     [logw err sigma sa alpha mu s] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
                    verbose,outer_iter,update_sigma,update_sa,n0,sa0);
-    %
-    % TO DO: FIX THIS.
-    %
-    muz = zeros(size(X,2),1);
   elseif strcmp(family,'binomial') & size(Z,2) == 1
     [logw err sa alpha mu s eta] = ...
         varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,verbose,...
@@ -740,22 +746,19 @@ function [logw, sigma, sa, alpha, mu, s, eta, muz] = ...
   end
   logw = logw(end);
   
-  % Compute the posterior mean of the covariate coefficients.
+  % Compute the posterior mean estimate of the regression coefficients
+  % for the covariates.
   if strcmp(family,'gaussian')
-    % TO DO.
-  elseif strcmp(family,'binomial') & size(Z,2) == 1
+    muz = fit_cov.muz - fit_cov.SZX*(alpha.*mu);
+  elseif strcmp(family,'binomial')
 
     % Compute the posterior mean intercept. See function update_eta in
-    % varbvsbin.m for a more detailed breakdown of this calculation.
-    d   = slope(eta);
-    muz = sum(y - 0.5 - d.*(X*(alpha.*mu)))/sum(d);
-  elseif strcmp(family,'binomial')
-      
-    % See function update_eta in varbvsbinz.m for a more detailed
-    % breakdown of the same calculation.
+    % varbvsbin.m and in varbvsbinz.m for a more detailed breakdown of
+    % this calculation.
+    Xr  = X*(alpha.*mu);
     d   = slope(eta);
     S   = inv(Z'*diag(sparse(d))*Z);
-    muz = S*Z'*(y - 0.5 - d.*(X*(alpha.*mu)));
+    muz = S*Z'*(y - 0.5 - d.*Xr);
   end
 
 % ------------------------------------------------------------------

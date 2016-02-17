@@ -14,6 +14,8 @@ eStrategy for my new implementation of 'varbvs'
 
 * To do: Implement 'predict.varbvs' in R, and verify against lm().
 
+* To do: add description/man page for varbvspredict/predict.varbvs.
+
 * To do: Create R script to compare cv.glmnet and varbvs in leukemia
   data.
 

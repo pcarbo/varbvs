@@ -11,6 +11,9 @@ summary.varbvs <- function (fit, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   p  <- nrow(fit$alpha)
   ns <- length(fit$logw)
 
+  # Input nv cannot be greater than the number of variables.
+  nv <- min(nv,p) 
+  
   # Compute the normalized (approximate) probabilities.
   w <- c(normalizelogweights(fit$logw))
 
