@@ -548,8 +548,8 @@ function fit = varbvs (X, Z, y, labels, family, options)
 
     % These quantities are used later on to efficiently compute estimates
     % of the regression coefficients for the covariates.
-    S       = inv(Z'*Z);
-    fit_cov = struct('muz',S*Z'*y,'SZX',S*Z'*X);
+    S         = inv(Z'*Z);
+    cov_stats = struct('mu',S*Z'*y,'SZX',S*Z'*X);
     clear S
     
     if ncov == 0
@@ -564,7 +564,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
       X = X - Z*((Z'*Z)\(Z'*X));
     end
   else
-    fit_cov = [];
+    cov_stats = [];
   end
 
   % Provide a brief summary of the analysis.
@@ -722,7 +722,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
 function [logw, sigma, sa, alpha, mu, s, eta, muz] = ...
         outerloop (X, Z, y, family, sigma, sa, logodds, alpha, mu, eta, ...
                    tol, maxiter, verbose, outer_iter, update_sigma, ...
-                   update_sa, optimize_eta, n0, sa0, fit_cov)
+                   update_sa, optimize_eta, n0, sa0, stats_cov)
   p = length(alpha);
   if isscalar(logodds)
     logodds = repmat(logodds,p,1);
@@ -749,16 +749,16 @@ function [logw, sigma, sa, alpha, mu, s, eta, muz] = ...
   % Compute the posterior mean estimate of the regression coefficients
   % for the covariates.
   if strcmp(family,'gaussian')
-    muz = fit_cov.muz - fit_cov.SZX*(alpha.*mu);
+    mu_cov = stats_cov.mu - stats_cov.SZX*(alpha.*mu);
   elseif strcmp(family,'binomial')
 
     % Compute the posterior mean intercept. See function update_eta in
     % varbvsbin.m and in varbvsbinz.m for a more detailed breakdown of
     % this calculation.
-    Xr  = X*(alpha.*mu);
-    d   = slope(eta);
-    S   = inv(Z'*diag(sparse(d))*Z);
-    muz = S*Z'*(y - 0.5 - d.*Xr);
+    %
+    % TO DO: FIX THIS.
+    %
+    mu_cov = [];
   end
 
 % ------------------------------------------------------------------

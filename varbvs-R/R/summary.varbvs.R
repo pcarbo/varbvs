@@ -30,7 +30,7 @@ summary.varbvs <- function (fit, cred.int = 0.95, nv = 5, nr = 1000, ...) {
          n            = fit$n,
          p            = p,
          ns           = ns,
-         ncov         = fit$ncov,
+         ncov         = nrow(fit$mu.cov),
          prior.same   = fit$prior.same,
          update.sigma = fit$update.sigma,
          update.sa    = fit$update.sa,

@@ -29,6 +29,8 @@ function y = varbvspredict (fit, X, Z)
   % Add intercept.
   Z = [ones(n,1) Z];
 
+  % TO DO: Add check for number of covariates.
+
   % Compute the normalized (approximate) probabilities.
   w = normalizelogweights(fit.logw);
 
@@ -37,8 +39,7 @@ function y = varbvspredict (fit, X, Z)
   % over the hyperparameter settings.
   y = zeros(n,ns);
   for i = 1:ns
-    r      = fit.alpha(:,i) .* fit.mu(:,i);
-    y(:,i) = Z*fit.muz(:,i) + X*r;
+    y(:,i) = Z*fit.muz(:,i) + X*(fit.alpha(:,i).*fit.mu(:,i));
   end
   if strcmp(fit.family,'gaussian')
     y = y * w(:);
