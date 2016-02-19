@@ -141,6 +141,18 @@
 %    options.maxiter, or (2) the maximum difference between the estimated
 %    posterior inclusion probabilities (see below) is less than options.tol.
 %
+%    To provide a more accurate variational approximation of the posterior
+%    distribution, by default the fitting procedure has two stages. In the
+%    first stage, the entire fitting procedure is run to completion, and the
+%    variational parameters (alpha, mu, s, eta) corresponding to the maximum
+%    lower bound are then used to initialize the coordinate ascent updates
+%    in a second stage. Although this has the effect of doubling the
+%    computation time (in the worst case), the final posterior estimates
+%    tend to be more accurate with this two-stage fitting procedure. The
+%    initial stage will be automatically skipped if initial estimates of the
+%    variational parameters are provided in options.alpha, options.mu and/or
+%    options.s, unless options.initialize_params = true.
+%
 %    It is possible to optimize hyperparameter sa (and sigma for family =
 %    'gaussian') as part of the inner loop fitting procedure. Parameters sa
 %    and sigma will automatically be fitted to the data, separately for each
@@ -183,17 +195,13 @@
 %    options.optimize_eta = true, in which case options.eta is treated as an
 %    initial estimate).
 %
-%    To provide a more accurate variational approximation of the posterior
-%    distribution, by default the fitting procedure has two stages. In the
-%    first stage, the entire fitting procedure is run to completion, and the
-%    variational parameters (alpha, mu, s, eta) corresponding to the maximum
-%    lower bound are then used to initialize the coordinate ascent updates
-%    in a second stage. Although this has the effect of doubling the
-%    computation time (in the worst case), the final posterior estimates
-%    tend to be more accurate with this two-stage fitting procedure. The
-%    initial stage will be automatically skipped if initial estimates of the
-%    variational parameters are provided in options.alpha, options.mu and/or
-%    options.s, unless options.initialize_params = true.
+%    Note that special care is required for interpreting the results of
+%    the variational approximation with the logistic regression model. In
+%    particular, interpretation of the individual estimates of the
+%    regression coefficients (e.g., \code{fit$mu}) is not straightforward
+%    due to the additional approximation introduced on the individual
+%    nonlinear factors in the likelihood. As a general guideline, only
+%    the relative magnitudes of the coefficients are meaningful.
 %
 % AVERAGING OVER HYPERPARAMETER SETTINGS:
 %    Output fit.logw is an array with ns elements, in which fit.logw(i) is
@@ -245,7 +253,7 @@
 %
 % LICENSE: GPL v3
 %
-% DATE: January 10, 2016
+% DATE: February 18, 2016
 %
 % AUTHORS:
 %    Algorithm was designed by Peter Carbonetto and Matthew Stephens.

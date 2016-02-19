@@ -42,6 +42,8 @@ predict.varbvs <- function (fit, X, Z, ...) {
   if (fit$family == "gaussian")
     y <- c(y %*% w)
   else if (fit$family == "binomial")
-    y <- c(round(sigmoid(y) %*% w))
+
+    # TO DO: Fix this.
+    y <- round(sigmoid(y))
   return(y)
 }

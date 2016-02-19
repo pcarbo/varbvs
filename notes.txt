@@ -10,12 +10,16 @@ eStrategy for my new implementation of 'varbvs'
   doi:10.1371/journal.pcbi.1002799
   Example article: doi:10.1371/journal.pcbi.1004085
 
-* To do: Add note about coefficients in logistic regression not being
-  strictly interpretable.
+* To do: in summary/print function, add note about coefficients in
+  logistic regression not being strictly interpretable
+
+* To do: Update description of function 'varbvs'.
 
 * To do: Implement varbvspredict.m.
 
 * To do: Implement 'predict.varbvs' in R.
+
+* To do: Update examples in varbvs.Rd.
 
 * To do: add description/man page for varbvspredict/predict.varbvs.
 

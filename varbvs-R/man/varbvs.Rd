@@ -159,6 +159,14 @@
     fast computation with the logistic regression model \code{(family =
     "binomial")}. The fitted value of eta is returned as an n x ns
     matrix.
+
+    Note that special care is required for interpreting the results of
+    the variational approximation with the logistic regression model. In
+    particular, interpretation of the individual estimates of the
+    regression coefficients (e.g., \code{fit$mu}) is not straightforward
+    due to the additional approximation introduced on the individual
+    nonlinear factors in the likelihood. As a general guideline, only
+    the relative magnitudes of the coefficients are meaningful.
 }
 \section{Averaging over hyperparameter settings}{
     In many settings, it is good practice to account for uncertainty in
@@ -241,16 +249,20 @@
   \item{s}{Variational estimates of posterior variances for each
     hyperparameter setting.}
 
+  \item{muz}{Posterior mean regression coefficients for covariates,
+  including intercept, for each hyperparameter setting.}
+  
   \item{eta}{Additional variational parameters for \code{family =
     "binomial"} only.}
   
-  \item{eta}{If TRUE, eta was fit to data (family = 'binomial' only).}
+  \item{optimize.eta}{If TRUE, eta was fit to data (\code{family =
+  "binomial"} only).}
 
   \item{pve}{For each hyperparameter setting, and for each variable,
     mean estimate of the proportion of variance in outcome explained
     conditioned on variable being included in the model (\code{family =
     "gaussian"} only).}
-
+    
   \item{model.pve}{Samples drawn from posterior distribution giving
   estimates of proportion of variance in outcome (y) explained by fitted
   variable selection model. This is for \code{family = "gaussian"}
