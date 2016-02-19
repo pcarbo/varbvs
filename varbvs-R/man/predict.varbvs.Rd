@@ -1,14 +1,13 @@
 \name{predict.varbvs}
 \alias{predict.varbvs}
-\title{Make predictions using varbvs.}
+\title{Make predictions from a "varbvs" fitted model.}
 \description{This function predicts outcomes (Y) given a model fitted
-  using \code{\link{varbvs}}, observed variables (X), and observed
-  covariates (Z).}
+  using \code{\link{varbvs}}, and provided with the observed variables
+  (X) and observed covariates (Z).}
 \usage{
   \method{predict}{varbvs}(fit, X, Z, \ldots)
 }
 \arguments{
-
   \item{fit}{Output of function \code{\link{varbvs}}.}
 
   \item{X}{n x p matrix of samples for which predictions will be made
@@ -22,14 +21,20 @@
            automatically included in the regression model. For no
 	   covariates, set \code{Z = NULL}.}
 
-  \item{\dots}{Other arguments to generic predict function. Not used here.}
+  \item{\dots}{Other arguments to generic predict function. These
+    extra arguments are not used here.}
 }
 \details{
+  
+  For the logistic regression model, we do not provide classification
+    probabilities \eqn{Pr(Y = 1)} because these probabilities are not
+    guaranteed to be calibrated under the variational approximation.
+  
   These predictions are computed by averaging over the hyperparameter
   settings, treating \code{fit$logw} as (unnormalized) log-marginal
   probabilities. See \code{\link{varbvs}} for more details about
-  correctly using \code{fit$logw} for numerical integration, or as
-  importance weights.
+  correctly using \code{fit$logw} for numerical integration, for example
+  as importance weights.
 }  
 \value{
   A vector containing the predicted outcomes for n samples. For
