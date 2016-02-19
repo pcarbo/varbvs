@@ -1,19 +1,21 @@
 \name{predict.varbvs}
 \alias{predict.varbvs}
 \title{Make predictions from a "varbvs" fitted model.}
-\description{This function predicts outcomes (Y) given a model fitted
-  using \code{\link{varbvs}}, and provided with the observed variables
-  (X) and observed covariates (Z).}
+
+\description{This function predicts outcomes (Y) given the observed
+  variables (X) and observed covariates (Z), and a model fitted using
+  \code{\link{varbvs}}.}
+
 \usage{
   \method{predict}{varbvs}(fit, X, Z, \ldots)
 }
 \arguments{
   \item{fit}{Output of function \code{\link{varbvs}}.}
 
-  \item{X}{n x p matrix of samples for which predictions will be made
-           using fitted model; n is the number of samples, and p is the
-           number of variables. X cannot be sparse, and cannot have any
-           missing values (NA).}
+  \item{X}{n x p input matrix, in which p is the number of variables,
+           and n is the number of samples for which predictions will be
+           made using the fitted model. X cannot be sparse, and cannot
+           have any missing values (NA).}
 
   \item{Z}{n x m covariate data matrix, where m is the number of
            covariates. Do not supply an intercept as a covariate
@@ -25,19 +27,19 @@
     extra arguments are not used here.}
 }
 \details{
-  
   For the logistic regression model, we do not provide classification
-    probabilities \eqn{Pr(Y = 1)} because these probabilities are not
-    guaranteed to be calibrated under the variational approximation.
+  probabilities \eqn{Pr(Y = 1 | X, Z)} because these probabilities are not
+  necessarily calibrated under the variational approximation.
   
-  These predictions are computed by averaging over the hyperparameter
+  The predictions are computed by averaging over the hyperparameter
   settings, treating \code{fit$logw} as (unnormalized) log-marginal
   probabilities. See \code{\link{varbvs}} for more details about
-  correctly using \code{fit$logw} for numerical integration, for example
-  as importance weights.
+  correctly using \code{fit$logw} for approximate numerical integration
+  over the hyperparameters, for example by treating these as importance
+  weights.
 }  
 \value{
-  A vector containing the predicted outcomes for n samples. For
+  A vector containing the predicted outcomes for all n samples. For
   \code{family = "binomial"}, all the vector elements are 0 or 1.
 }
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational
