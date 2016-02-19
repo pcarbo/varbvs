@@ -13,7 +13,7 @@ sa <- 0.2   # Variance of log-odds ratios.
 p1 <- 0.25  # Target proportion of subjects that are cases (y = 1).
 
 # Names of covariates.
-covariates <- NULL # c("age","weight")
+covariates <- c("age","weight")
 
 # Candidate values for the prior log-odds of inclusion.
 logodds <- seq(-3,-1,0.1)
@@ -87,4 +87,4 @@ cat("\n")
 # compare against the observed values.
 y.fit <- predict(fit,X,Z)
 cat("Observed case-control status against estimated outcome:\n")
-print(table(factor(y),factor(y.fit)))
+print(table(y = factor(y),y.fit = factor(y.fit)))

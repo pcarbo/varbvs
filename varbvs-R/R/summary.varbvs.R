@@ -186,8 +186,8 @@ print.summary.varbvs <- function (x, digits = 3) {
     cat(sprintf("Top %d variables by inclusion probability:\n",nrow(top.vars)))
     print(top.vars,digits = digits)
     if (fit$family == "binomial")
-      cat("See note in help(varbvs) about interpretation of coefficients",
-          "in logistic regression.\n")
+      cat("*See help(varbvs) about interpreting coefficients in logistic",
+          "regression.\n")
   })
   
   return(invisible(fit))

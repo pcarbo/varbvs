@@ -317,6 +317,10 @@ beta <- fit$mu \%*\% c(w)
 # Compute the posterior mean estimate of hyperparameter sa.
 sa <- sum(fit$sa * w)
 
+# Compare estimated outcomes against observed outcomes.
+y.fit <- predict(fit,X,Z)
+print(cor(y,y.fit))
+
 # LOGISTIC REGRESSION EXAMPLE
 # ---------------------------
 # Data are 2,000 uncorrelated ("unlinked") single nucleotide
