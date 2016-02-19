@@ -82,7 +82,12 @@ fit <- varbvs(X,Z,y,"gaussian",logodds = logodds)
 w   <- c(normalizelogweights(fit$logw))
 PIP <- c(fit$alpha %*% w)
 
-# SUMMARIZE POSTERIOR DISTRIBUTION
-# --------------------------------
+# SUMMARIZE RESULTS
+# -----------------
 cat("3. SUMMARIZING RESULTS.\n")
 print(summary(fit))
+cat("\n")
+
+# Compute estimates of the outcome, Y, using the fitted model.
+y.fit <- predict(fit,X,Z)
+cat(sprintf("r^2 between estimated and observed Y is %0.3f.\n",cor(y,y.fit)^2))
