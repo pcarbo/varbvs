@@ -81,22 +81,24 @@ fit = varbvs(X,Z,y,labels,[],struct('logodds',logodds));
 % averaged over the hyperparameter settings.
 w   = normalizelogweights(fit.logw);
 PIP = fit.alpha * w(:);
+fprintf('\n');
 
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------
-fprintf('\n');
 fprintf('3. SUMMARIZING RESULTS.\n')
 varbvsprint(fit);
+fprintf('\n');
 
 % EVALUATE MODEL PREDICTIONS
 % --------------------------
-fprintf('\n');
-fprintf('4. EVALUATING FITTED MODEL:\n');
+fprintf('4. EVALUATING FITTED MODEL.\n');
 ypred = varbvspredict(fit,X,Z);
 r     = corrcoef(y,ypred);
+r     = r(2)^2;
+fprintf('r^2 between predicted Y and observed Y is %0.3f.\n',r);
 plot(y,ypred,'o','MarkerFaceColor',[0.10 0.10 0.44],'MarkerEdgeColor',...
      'none','MarkerSize',6)
 xlabel('observed Y');
 ylabel('estimated Y')
-title(sprintf('corrcoef(y,ypred) = %0.3f',r(2)));
+title(sprintf('corrcoef(y,ypred)^2 = %0.3f',r));
 set(gca,'FontSize',12);

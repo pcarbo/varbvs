@@ -10,12 +10,9 @@ eStrategy for my new implementation of 'varbvs'
   doi:10.1371/journal.pcbi.1002799
   Example article: doi:10.1371/journal.pcbi.1004085
 
-* To do: in varbvsprint.m, add note about coefficients in logistic
-  regression not being strictly interpretable
+* To do: Implement varbvspredict.m, and test on demo_qtl.m + demo_cc.m.
 
-* To do: Implement varbvspredict.m.
-
-* To do: add description for varbvspredict.m.
+* To do: Add description for varbvspredict.m.
 
 * To do: Create R script to compare cv.glmnet and varbvs in leukemia
   data.

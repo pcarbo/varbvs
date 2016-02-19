@@ -39,7 +39,9 @@ predict.varbvs <- function (fit, X, Z, ...) {
   # final "averaged" estimate is obtained by collecting the "votes"
   # from each hyperparameter setting, weighting the votes by the
   # marginal probabilities, and outputing the estimate that wins by
-  # majority.
+  # majority. The averaged estimate is computed this way because the
+  # estimates conditioned on each hyperparameter setting are not
+  # necessarily calibrated in the same way.
   Y <- with(fit,Z %*% mu.cov + X %*% (alpha*mu))
   if (fit$family == "gaussian")
     return(c(Y %*% w))

@@ -17,32 +17,37 @@ function y = varbvspredict (fit, X, Z)
     error('Inputs X and fit are not compatible')
   end
 
-  % If input Z is not empty, it must be double precision, and must have
-  % as many rows as X.
+  % If input Z is not empty, it must be double precision, and must have as
+  % many rows as X. Add an intercept to Z, and check the number of
+  % covariates.
   if ~isempty(Z)
     if size(Z,1) ~= n
       error('Inputs X and Z do not match.');
     end
     Z = double(full(Z));
   end
-
-  % Add intercept.
   Z = [ones(n,1) Z];
-
-  % TO DO: Add check for number of covariates.
+  if (size(Z,2) ~= size(fit.mu_cov,1))
+    error('Inputs Z and fit are not compatible')
+  end
 
   % Compute the normalized (approximate) probabilities.
   w = normalizelogweights(fit.logw);
 
   % For each hyperparameter setting, and for each sample, compute the
-  % posterior mean estimate of Y, then return the final estimate averaged
-  % over the hyperparameter settings.
-  y = zeros(n,ns);
-  for i = 1:ns
-    y(:,i) = Z*fit.muz(:,i) + X*(fit.alpha(:,i).*fit.mu(:,i));
-  end
+  % posterior mean estimate of Y, and then average these estimates
+  % over the hyperparameter settings. For the logistic regression, the
+  % final "averaged" estimate is obtained by collecting the "votes"
+  % from each hyperparameter setting, weighting the votes by the
+  % marginal probabilities, and outputing the estimate that wins by
+  % majority. The averaged estimate is computed this way because the
+  % estimates conditioned on each hyperparameter setting are not
+  % necessarily calibrated in the same way.
+  Y = Z*fit.mu_cov + X*(fit.alpha.*fit.mu);
   if strcmp(fit.family,'gaussian')
-    y = y * w(:);
+    y = Y*w(:);
   elseif strcmp(fit.family,'binomial')
-    y = round(sigmoid(y) * w(:));
+    y = round(round(sigmoid(Y))*w(:));
+  else
+    error('Invalid setting for fit.family');
   end

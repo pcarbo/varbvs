@@ -229,8 +229,8 @@ function varbvsprint (fit, c, nv, nr)
     fprintf(' %+7.3f [%+0.3f,%+0.3f]\n',beta(i),a,b);
   end
   if strcmp(fit.family,'binomial')
-    fprintf('*See help for "varbvs" about interpreting coefficients ');
-    fprintf('in logistic regression.\n');
+    fprintf('*See "help varbvs" for interpreting coefficients in ');
+    fprintf('logistic regression.\n');
   end
 
 % ------------------------------------------------------------------

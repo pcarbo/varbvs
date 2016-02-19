@@ -76,6 +76,7 @@ fit <- varbvs(X,Z,y,"binomial",logodds = logodds)
 # averaged over the hyperparameter settings.
 w   <- c(normalizelogweights(fit$logw))
 PIP <- c(fit$alpha %*% w)
+cat("\n")
 
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
