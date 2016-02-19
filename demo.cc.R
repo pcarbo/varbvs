@@ -83,8 +83,11 @@ cat("3. SUMMARIZING RESULTS.\n")
 print(summary(fit))
 cat("\n")
 
+# EVALUATE MODEL PREDICTIONS
+# --------------------------
 # Compute estimates of the binary trait using the fitted model, and
 # compare against the observed values.
+cat("4. EVALUATING FITTED MODEL.\n")
 y.fit <- predict(fit,X,Z)
-cat("Observed case-control status against estimated outcome:\n")
+cat("Comparison of observed case-control status against estimated outcome:\n")
 print(table(y = factor(y),y.fit = factor(y.fit)))

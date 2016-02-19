@@ -118,7 +118,7 @@ function varbvsprint (fit, c, nv, nr)
   fprintf('     iid variable selection prior: %s\n',tf2yn(fit.prior_same));
   fprintf('variables:  %-6d',p); 
   fprintf('     fit prior var. of coefs (sa): %s\n',tf2yn(fit.update_sa));
-  fprintf('covariates: %-6d     ',fit.ncov);
+  fprintf('covariates: %-6d     ',size(fit.mu_cov,1));
   if strcmp(fit.family,'gaussian')
     fprintf('fit residual var. (sigma):    %s\n',tf2yn(fit.update_sigma));
   elseif strcmp(fit.family,'binomial')
@@ -215,7 +215,11 @@ function varbvsprint (fit, c, nv, nr)
   if strcmp(fit.family,'gaussian')
     fprintf('   PVE');
   end
-  fprintf('   coef. Pr(coef.>%0.2f)\n',c);
+  if strcmp(fit.family,'binomial')
+    fprintf('   coef*  Pr(coef>%0.2f)\n',c);
+  else
+    fprintf('   coef   Pr(coef>%0.2f)\n',c);
+  end
   for i = vars
     [a b] = varbvscoefcred(fit,i,c,nr);
     fprintf('%6d %-10s %0.3f',i,fit.labels{i},PIP(i));
@@ -223,6 +227,10 @@ function varbvsprint (fit, c, nv, nr)
       fprintf(' %0.3f',dot(w,fit.pve(i,:)));
     end
     fprintf(' %+7.3f [%+0.3f,%+0.3f]\n',beta(i),a,b);
+  end
+  if strcmp(fit.family,'binomial')
+    fprintf('*See help for "varbvs" about interpreting coefficients ');
+    fprintf('in logistic regression.\n');
   end
 
 % ------------------------------------------------------------------

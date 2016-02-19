@@ -163,10 +163,11 @@
     Note that special care is required for interpreting the results of
     the variational approximation with the logistic regression model. In
     particular, interpretation of the individual estimates of the
-    regression coefficients (e.g., \code{fit$mu}) is not straightforward
-    due to the additional approximation introduced on the individual
-    nonlinear factors in the likelihood. As a general guideline, only
-    the relative magnitudes of the coefficients are meaningful.
+    regression coefficients (e.g., the posterior mean estimates
+    \code{fit$mu}) is not straightforward due to the additional
+    approximation introduced on the individual nonlinear factors in the
+    likelihood. As a general guideline, only the relative magnitudes of
+    the coefficients are meaningful.
 }
 \section{Averaging over hyperparameter settings}{
     In many settings, it is good practice to account for uncertainty in
@@ -249,7 +250,7 @@
   \item{s}{Variational estimates of posterior variances for each
     hyperparameter setting.}
 
-  \item{muz}{Posterior mean regression coefficients for covariates,
+  \item{mu.cov}{Posterior mean regression coefficients for covariates,
   including intercept, for each hyperparameter setting.}
   
   \item{eta}{Additional variational parameters for \code{family =
