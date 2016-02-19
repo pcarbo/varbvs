@@ -17,8 +17,6 @@ eStrategy for my new implementation of 'varbvs'
 
 * To do: Implement varbvspredict.m.
 
-* To do: Implement 'predict.varbvs' in R.
-
 * To do: Update examples in varbvs.Rd.
 
 * To do: add description/man page for varbvspredict/predict.varbvs.

@@ -88,6 +88,7 @@ cat("3. SUMMARIZING RESULTS.\n")
 print(summary(fit))
 cat("\n")
 
-# Compute estimates of the outcome, Y, using the fitted model.
+# Compute estimates of the quantitative trait using the fitted model,
+# and compare against the observed values.
 y.fit <- predict(fit,X,Z)
 cat(sprintf("r^2 between estimated and observed Y is %0.3f.\n",cor(y,y.fit)^2))
