@@ -1,0 +1,44 @@
+\name{predict.varbvs}
+\alias{predict.varbvs}
+\title{Make predictions using varbvs.}
+\description{This function predicts outcomes (Y) given a model fitted
+  using \code{\link{varbvs}}, observed variables (X), and observed
+  covariates (Z).}
+\usage{
+  \method{predict}{varbvs}(fit, X, Z, \ldots)
+}
+\arguments{
+
+  \item{fit}{Output of function \code{\link{varbvs}}.}
+
+  \item{X}{n x p matrix of samples for which predictions will be made
+           using fitted model; n is the number of samples, and p is the
+           number of variables. X cannot be sparse, and cannot have any
+           missing values (NA).}
+
+  \item{Z}{n x m covariate data matrix, where m is the number of
+           covariates. Do not supply an intercept as a covariate
+           (i.e., a column of ones), because an intercept is
+           automatically included in the regression model. For no
+	   covariates, set \code{Z = NULL}.}
+
+  \item{\dots}{Other arguments to generic predict function. Not used here.}
+}
+\details{
+  These predictions are computed by averaging over the hyperparameter
+  settings, treating \code{fit$logw} as (unnormalized) log-marginal
+  probabilities. See \code{\link{varbvs}} for more details about
+  correctly using \code{fit$logw} for numerical integration, or as
+  importance weights.
+}  
+\value{
+  A vector containing the predicted outcomes for n samples. For
+  \code{family = "binomial"}, all the vector elements are 0 or 1.
+}
+\references{P. Carbonetto and M. Stephens (2012). Scalable variational
+inference for Bayesian variable selection in regression, and its
+accuracy in genetic association studies. \emph{Bayesian Analysis}
+\bold{7}, 73--108.}
+\author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
+\seealso{\code{varbvs}, \code{summary.varbvs}}
+\examples{See help(varbvs) for examples.}

@@ -13,11 +13,7 @@ eStrategy for my new implementation of 'varbvs'
 * To do: in summary/print function, add note about coefficients in
   logistic regression not being strictly interpretable
 
-* To do: Update description of function 'varbvs'.
-
 * To do: Implement varbvspredict.m.
-
-* To do: Update examples in varbvs.Rd.
 
 * To do: add description/man page for varbvspredict/predict.varbvs.
 
