@@ -1,4 +1,4 @@
-# TO DO: Explain here what this function does.
+# Predict Y (outcome) given X (variables), Z (covariates) and fitted model.
 predict.varbvs <- function (fit, X, Z, ...) {
   
   # Check that the first input is an instance of class "varbvs".
@@ -34,16 +34,17 @@ predict.varbvs <- function (fit, X, Z, ...) {
   w <- c(normalizelogweights(fit$logw))
   
   # For each hyperparameter setting, and for each sample, compute the
-  # posterior mean estimate of Y, then return the final estimate
-  # averaged over the hyperparameter settings.
-  y <- matrix(0,n,ns)
-  for (i in 1:ns)
-    y[,i] <- with(fit,Z %*% mu.cov[,i] + X %*% (alpha[,i] * mu[,i]))
+  # posterior mean estimate of Y, and then average these estimates
+  # over the hyperparameter settings. For the logistic regression, the
+  # final "averaged" estimate is obtained by collecting the "votes"
+  # from each hyperparameter setting, weighting the votes by the
+  # marginal probabilities, and outputing the estimate that wins by
+  # majority.
+  Y <- with(fit,Z %*% mu.cov + X %*% (alpha*mu))
   if (fit$family == "gaussian")
-    y <- c(y %*% w)
+    return(c(Y %*% w))
   else if (fit$family == "binomial")
-
-    # TO DO: Fix this.
-    y <- round(sigmoid(y))
-  return(y)
+    return(round(round(sigmoid(Y)) %*% w))
+  else
+    stop("Invalid setting for fit$family")
 }
