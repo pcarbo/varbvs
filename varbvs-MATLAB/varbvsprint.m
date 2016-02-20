@@ -216,9 +216,9 @@ function varbvsprint (fit, c, nv, nr)
     fprintf('   PVE');
   end
   if strcmp(fit.family,'binomial')
-    fprintf('   coef*  Pr(coef>%0.2f)\n',c);
+    fprintf('   coef*   Pr(coef>%0.2f)\n',c);
   else
-    fprintf('   coef   Pr(coef>%0.2f)\n',c);
+    fprintf('   coef    Pr(coef>%0.2f)\n',c);
   end
   for i = vars
     [a b] = varbvscoefcred(fit,i,c,nr);

@@ -100,5 +100,4 @@ plot(y,ypred,'o','MarkerFaceColor',[0.10 0.10 0.44],'MarkerEdgeColor',...
      'none','MarkerSize',6)
 xlabel('observed Y');
 ylabel('estimated Y')
-title(sprintf('corrcoef(y,ypred)^2 = %0.3f',r));
 set(gca,'FontSize',12);

@@ -89,6 +89,6 @@ fprintf('\n');
 fprintf('4. EVALUATING FITTED MODEL.\n');
 ypred = varbvspredict(fit,X,Z);
 fprintf('     predicted\n');
-fprintf('true   0    1\n');
+fprintf('true    0    1\n');
 fprintf('  0  %4d %4d\n',sum(y == 0 & ypred == 0),sum(y == 0 & ypred == 1));
 fprintf('  1  %4d %4d\n',sum(y == 1 & ypred == 0),sum(y == 1 & ypred == 1));

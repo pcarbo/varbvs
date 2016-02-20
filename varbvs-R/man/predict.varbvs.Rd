@@ -1,6 +1,6 @@
 \name{predict.varbvs}
 \alias{predict.varbvs}
-\title{Make predictions from a "varbvs" fitted model.}
+\title{Make predictions from a model fitted by varbvs.}
 
 \description{This function predicts outcomes (Y) given the observed
   variables (X) and observed covariates (Z), and a model fitted using
@@ -39,8 +39,8 @@
   weights.
 }  
 \value{
-  A vector containing the predicted outcomes for all n samples. For
-  \code{family = "binomial"}, all the vector elements are 0 or 1.
+  Cector containing the predicted outcomes for all samples. For
+  \code{family = "binomial"}, all vector entries are 0 or 1.
 }
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its

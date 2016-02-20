@@ -1,4 +1,62 @@
-% TO DO: Add description of function here.
+%--------------------------------------------------------------------------
+% varbvspredict.m: Make predictions from a model fitted by varbvs.
+%--------------------------------------------------------------------------
+%
+% DESCRIPTION:
+%    Predict outcomes (Y) given the observed variables (X) and observed
+%    covariates (Z), and a model fitted by varbvs.
+%
+% USAGE:
+%    varbvspredict(fit, X, Z)
+%
+% INPUT ARGUMENTS:
+% fit  Output of function varbvs.
+%
+% X    n x p input matrix, in which p is the number of variables, and n
+%      is the number of samples for which predictions will be made using
+%      the fitted model. X cannot be sparse.
+%
+% Z    n x m covariate data matrix, where m is the number of covariates. Do
+%      not supply an intercept as a covariate (i.e., a column of ones),
+%      because an intercept is automatically included in the regression
+%      model. For no covariates, set Z to the empty matrix [].
+%
+% OUTPUT: Vector containing the predicted outcomes for all samples. For
+% family = 'binomial', all vector entries are 0 or 1.
+%
+% DETAILS:
+%    For the logistic regression model, we do not provide classification
+%    probabilities Pr(Y = 1 | X, Z) because these probabilities are not
+%    necessarily calibrated under the variational approximation.
+%   
+%    The predictions are computed by averaging over the hyperparameter
+%    settings, treating fit.logw as (unnormalized) log-marginal
+%    probabilities. See varbvs for more details about correctly using
+%    fit.logw for approximate numerical integration over the
+%    hyperparameters, for example by treating these as importance
+%    weights. 
+%
+% LICENSE: GPL v3
+%
+% DATE: February 19, 2016
+%
+% AUTHORS:
+%    Algorithm was designed by Peter Carbonetto and Matthew Stephens.
+%    R, MATLAB and C code was written by Peter Carbonetto.
+%    Depts. of Statistics and Human Genetics, University of Chicago,
+%    Chicago, IL, USA, and AncestryDNA, San Francisco, CA, USA
+%
+% REFERENCES:
+%    P. Carbonetto, M. Stephens (2012). Scalable variational inference
+%    for Bayesian variable selection in regression, and its accuracy in 
+%    genetic association studies. Bayesian Analysis 7: 73-108.
+%
+% SEE ALSO:
+%    varbvs
+%
+% EXAMPLES:
+%    See demo_qtl.m and demo_cc.m for examples.
+%
 function y = varbvspredict (fit, X, Z)
 
   % Get the number of samples (n), variables (p) and hyperparameter
