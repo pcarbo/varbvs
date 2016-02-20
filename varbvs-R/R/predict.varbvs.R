@@ -1,5 +1,5 @@
 # Predict Y (outcome) given X (variables), Z (covariates) and fitted model.
-predict.varbvs <- function (fit, X, Z, ...) {
+predict.varbvs <- function (fit, X, Z = NULL, ...) {
   
   # Check that the first input is an instance of class "varbvs".
   if (!is(fit,"varbvs"))

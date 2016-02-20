@@ -7,7 +7,7 @@
   \code{\link{varbvs}}.}
 
 \usage{
-  \method{predict}{varbvs}(fit, X, Z, \ldots)
+  \method{predict}{varbvs}(fit, X, Z = NULL, \ldots)
 }
 \arguments{
   \item{fit}{Output of function \code{\link{varbvs}}.}
@@ -39,7 +39,7 @@
   weights.
 }  
 \value{
-  Cector containing the predicted outcomes for all samples. For
+  Vector containing the predicted outcomes for all samples. For
   \code{family = "binomial"}, all vector entries are 0 or 1.
 }
 \references{P. Carbonetto and M. Stephens (2012). Scalable variational

@@ -10,8 +10,6 @@ eStrategy for my new implementation of 'varbvs'
   doi:10.1371/journal.pcbi.1002799
   Example article: doi:10.1371/journal.pcbi.1004085
 
-* To do: Add description for varbvspredict.m.
-
 * To do: Create R script to compare cv.glmnet and varbvs in leukemia
   data.
 
@@ -23,4 +21,5 @@ eStrategy for my new implementation of 'varbvs'
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
 
-* To do: Point to extended examples in vignettes and/or github.
+* To do: Add extended examples in vignettes, and/or point to examples
+  in github repo.

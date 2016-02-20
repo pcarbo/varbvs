@@ -181,14 +181,14 @@ print.summary.varbvs <- function (x, digits = 3) {
       
     # Give more detailed statistics about the top n variables by the
     # probability that they are included.
-    if (fit$family == "binomial")
+    if (x$family == "binomial")
       names(top.vars)[5] <- "coef*"
     cat(sprintf("Top %d variables by inclusion probability:\n",nrow(top.vars)))
     print(top.vars,digits = digits)
-    if (fit$family == "binomial")
+    if (x$family == "binomial")
       cat("*See help(varbvs) about interpreting coefficients in logistic",
           "regression.\n")
   })
   
-  return(invisible(fit))
+  return(invisible(x))
 }
