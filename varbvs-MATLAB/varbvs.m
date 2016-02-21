@@ -239,6 +239,47 @@
 %    importance sampling; see, for example, R. M. Neal, "Annealed importance
 %    sampling", Statistics and Computing, 2001.)
 %
+% PRIOR ON PROPORTION OF VARIANCE EXPLAINED:
+%    Specifying the prior variance of the regression coefficients (sa) can
+%    be difficult, which is why we have included the option of fitting this
+%    hyperparameter to the data (see input argument update_sa
+%    above). However, in many settings, especially when a small number of
+%    variables are included in the regression model, it is preferrable to
+%    average over candidate settings of sa instead of fitting sa to the
+%    data. To choose a set of candidate settings for sa, we have advocated
+%    for setting sa indirectly through a prior estimate of the proportion of
+%    variance in the outcome explained by the variables (abbreviated as
+%    PVE), since it is often more natural to specify the PVE rather than the
+%    prior variance (see references below). This is technically only
+%    suitable or the linear regression model (family = 'gaussian'), but
+%    could potentially be used for the linear regression model in an
+%    approximate way.
+%
+%    For example, one could approximate a uniform prior on the PVE by
+%    drawing the PVE uniformly between 0 and 1, additionally specifying
+%    candidate settings for the prior log-odds, then computing the prior
+%    variance (sa) as follows:
+%
+%      X  = X - repmat(mean(X),size(X,1),1);
+%      sx = sum(var1(X));
+%      sa = PVE./(1-PVE)./(sigmoid(log(10)*logodds)*sx)}
+% 
+%    Note that this calculation will yield sa = 0 when PVE = 0, and sa = Inf
+%    when PVE = 1. The first line sets the mean of each column of X to 0,
+%    which is needed to ensure that var1 correctly computes the sample
+%    variance of each variable.
+% 
+%    Also, bear in mind that if there are additional covariates (Z) included
+%    in the linear regression model that explain variance in Y, then it will
+%    usually make more sense to first remove the linear effects of these
+%    covariates before performing this calculation. The PVE would then
+%    represent the prior proportion of variance in the residuals of Y that
+%    are explained by the candidate variables. For an example of how to do
+%    this, see varbvs.m, under "preprocessing steps". Alternatively, one
+%    could include the matrix Z in the calculation above, taking care to
+%    ensure that the covariates are included in the model with
+%    probability 1.
+%
 % MEMORY REQUIREMENTS:
 %    Finally, we point out that the optimization procedures were carefully
 %    designed so that they can be applied to very large data sets; to date,
@@ -253,7 +294,7 @@
 %
 % LICENSE: GPL v3
 %
-% DATE: February 18, 2016
+% DATE: February 21, 2016
 %
 % AUTHORS:
 %    Algorithm was designed by Peter Carbonetto and Matthew Stephens.
@@ -265,6 +306,13 @@
 %    P. Carbonetto, M. Stephens (2012). Scalable variational inference
 %    for Bayesian variable selection in regression, and its accuracy in 
 %    genetic association studies. Bayesian Analysis 7: 73-108.
+%
+%    Y. Guan, M. Stephens (2011). Bayesian variable selection regression for
+%    genome-wide association studies and other large-scale problems. Annals
+%    of Applied Statistics 5, 1780–-1815.
+% 
+%    X. Zhou, P. Carbonetto, M. Stephens (2013). Polygenic modeling with
+%    Bayesian sparse linear mixed models. PLoS Genetics 9, e1003264.
 %
 % SEE ALSO:
 %    varbvsprint, varbvscoefcred

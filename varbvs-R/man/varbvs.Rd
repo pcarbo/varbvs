@@ -197,6 +197,43 @@
     example, R. M. Neal, Annealed importance sampling, \emph{Statistics
       and Computing}, 2001.)
 }
+\section{Prior on proportion of variance explained}{
+
+  Specifying the prior variance of the regression coefficients (sa) can
+  be difficult, which is why we have included the option of fitting this
+  hyperparameter to the data (see input argument \code{update.sa}
+  above). However, in many settings, especially when a small number of
+  variables are included in the regression model, it is preferrable to
+  average over candidate settings of sa instead of fitting sa to the
+  data. To choose a set of candidate settings for sa, we have advocated
+  for setting sa indirectly through a prior estimate of the proportion
+  of variance in the outcome explained by the variables (abbreviated as
+  PVE), since it is often more natural to specify the PVE rather than
+  the prior variance (see references below). This is technically only
+  suitable or the linear regression model (\code{family = "gaussian"}),
+  but could potentially be used for the linear regression model in an
+  approximate way.
+
+  For example, one could approximate a uniform prior on the PVE by
+  drawing the PVE uniformly between 0 and 1, additionally specifying
+  candidate settings for the prior log-odds, then computing the prior
+  variance (sa) as follows:\preformatted{sx <- sum(var1.cols(X))
+sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
+  
+  Note that this calculation will yield \code{sa = 0} when \code{PVE =
+  0}, and \code{sa = Inf} when \code{PVE = 1}.
+  
+  Also, bear in mind that if there are additional covariates (Z)
+  included in the linear regression model that explain variance in Y,
+  then it will usually make more sense to first remove the linear
+  effects of these covariates before performing this calculation. The
+  PVE would then represent the prior proportion of variance in the
+  residuals of Y that are explained by the candidate variables. For an
+  example of how to do this, see the code for function \code{varbvs}, in
+  file varbvs.R, under "preprocessing steps". Alternatively, one could
+  include the matrix Z in the calculation above, taking care to ensure
+  that the covariates are included in the model with probability 1.
+}
 \section{Memory requirements}{
     Finally, we point out that the optimization procedures were
     carefully designed so that they can be applied to very large data
@@ -271,14 +308,24 @@
   variance explained (PVE), for example, simply type
   \code{mean(fit$model.pve)}.}
 }
-\references{P. Carbonetto and M. Stephens (2012). Scalable variational
-inference for Bayesian variable selection in regression, and its
-accuracy in genetic association studies. \emph{Bayesian Analysis} \bold{7},
-73--108.}
+\references{
+  P. Carbonetto and M. Stephens (2012). Scalable variational inference
+  for Bayesian variable selection in regression, and its accuracy in
+  genetic association studies. \emph{Bayesian Analysis} \bold{7},
+  73--108.
+
+  Y. Guan and M. Stephens (2011). Bayesian variable selection regression
+  for genome-wide association studies and other large-scale
+  problems. \emph{Annals of Applied Statistics} \bold{5}, 1780–-1815.
+
+  X. Zhou, P. Carbonetto and M. Stephens (2013). Polygenic modeling with
+  Bayesian sparse linear mixed models. \emph{PLoS Genetics} \bold{9},
+  e1003264.
+}
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \seealso{\code{summary.varbvs}, \code{varbvscoefcred}, \code{varbvspve},
   \code{varbvsnorm}, \code{varbvsbin}, \code{varbvsbinz},
-  \code{normalizelogweights}
+  \code{normalizelogweights}, \code{varbvs-internal}
 }
 \examples{
 

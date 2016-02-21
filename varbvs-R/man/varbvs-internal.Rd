@@ -17,10 +17,12 @@
 \alias{varbvsbinupdate}
 \alias{varbvsbinzupdate}
 \alias{varbvspve}
+\alias{var1.cols}
 \description{Internal varbvs functions}
 \usage{
 diagsq(X,a = NULL)
 diagsqt(X,a = NULL)
+var1.cols(X)
 varbvspve(X,fit,nr = 1000)
 varbvsnorm(X,y,sigma,sa,logodds,alpha,mu,tol = 1e-4,maxiter = 1e4,
            verbose = TRUE,outer.iter = NULL,update.sigma = TRUE,
@@ -40,6 +42,9 @@ varbvsbinz(X,Z,y,sa,logodds,alpha,mu,eta,tol = 1e-4,maxiter = 1e4,
   respectively, where \code{A = diag(a)}, but the computation is done
   more efficiently, and without having to store an intermediate matrix
   of the same size as the matrix.
+
+  \code{var1.cols} computes the second moment of each column of X about
+  its mean.
 
   \code{varbvspve} draws posterior estimates of the proportion of
   variance in Y explained by the Bayesian variable selection model

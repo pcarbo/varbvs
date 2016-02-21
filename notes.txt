@@ -10,13 +10,12 @@ eStrategy for my new implementation of 'varbvs'
   doi:10.1371/journal.pcbi.1002799
   Example article: doi:10.1371/journal.pcbi.1004085
 
+* To do: Add instructions for how to transform PVE to sa.
+
 * To do: Create R script to compare cv.glmnet and varbvs in leukemia
   data.
 
 * To do: Map QTLs using GEMMA using simple linear model.
-
-* To do: Add function that outputs prior variance (sa) given X, prior
-  logodds and PVE (h^2).
 
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
