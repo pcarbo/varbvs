@@ -15,7 +15,7 @@ export(logit,logpexp,logsigmoid,sigmoid,normalizelogweights,
        diagsq,diagsqt,cred,updatestats_varbvsbin,updatestats_varbvsbinz,
        update_eta,update_etaz,varbvs,varbvsnorm,varbvsbin,varbvsbinz,
        varbvsnormupdate,varbvsbinupdate,varbvsbinzupdate,varbvscoefcred,
-       varbvsindep,varbvspve,plot.varbvs,bayesfactor,rand,randn)
+       varbvsindep,varbvspve,plot.varbvs,bayesfactor,rand,randn,pve2sa)
 
 S3method(summary,varbvs)
 S3method(predict,varbvs)
