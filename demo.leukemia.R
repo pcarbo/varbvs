@@ -37,6 +37,7 @@ cat("2. Running 20-fold cross-validation to select L1-penalty strength.\n")
 out.cv.glmnet <-
   cv.glmnet(X,y,family = "binomial",type.measure = "class",alpha = alpha,
             nfolds = nfolds,lambda = lambda)
+lambda <- out.cv.glmnet$lambda
 
 # Show the classification error at different settings of lambda. Then
 # choose the largest value of lambda that is within 1 standard error
@@ -99,20 +100,22 @@ b    <- as.matrix(t(coef(fit.glmnet)[vars,]))
 r    <- xyplot(y ~ x,data.frame(x = log10(lambda),y = b[,1]),type = "l",
                col = "blue",main = "C",xlab = "log10 lambda",
                ylab = "regression coefficient",
-               scales = list(x = list(limits = c(-2.1,0.3)),
+               scales = list(x = list(limits = c(-2.35,0.1)),
                              y = list(limits = c(-0.8,1.2))),
                panel = function(x, y, ...) {
                  panel.xyplot(x,y,...);
                  panel.abline(v = log10(lambda.opt),col = "orangered",
                               lwd = 1,lty = "dotted");
-                 ltext(x = 0,y = b[nrow(b),],labels = colnames(b),pos = 4,
-                       offset = 0.25,cex = 0.5)
+                 ltext(x = -2,y = b[nrow(b),],labels = colnames(b),pos = 2,
+                       offset = 0.5,cex = 0.5)
                })
 for (i in 2:n)
   r <- r + as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = b[,i]),
                            type = "l",col = "blue"))
 print(r,split = c(2,1,2,1),more = FALSE)
 rm(vars,n,b,r,i)
+
+stop()
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
