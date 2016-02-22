@@ -61,7 +61,7 @@ trellis.par.set(par.xlab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))
 print(with(out.cv.glmnet,
            xyplot(y ~ x,data.frame(x = log10(lambda),y = cvm),type = "l",
-                  col = "blue",xlab = "log10 lambda",ylab = "error",
+                  col = "blue",xlab = "log10 lambda",ylab = "error",main = "A",
                   scales = list(y = list(limits = c(-0.02,0.45))),
                   panel = function(x, y, ...) {
                     panel.xyplot(x,y,...)
@@ -80,14 +80,15 @@ print(with(out.cv.glmnet,
 # settings of lambda.
 print(with(out.cv.glmnet,
            xyplot(y ~ x,data.frame(x = log10(lambda),y = nzero),type = "l",
-             col = "blue",xlab = "log10 lambda",ylab = "num. nonzero coefs",
-             panel = function(x, y, ...) {
-               panel.xyplot(x,y,...)
-               panel.abline(v = log10(lambda.opt),col = "orangered",
-                            lwd = 1,lty = "dotted")
-             }) +
-      as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = nzero),
-                      pch = 20,cex = 0.6,col = "blue"))),
+                  col = "blue",main = "B",xlab = "log10 lambda",
+                  ylab = "num. nonzero coefs",
+                  panel = function(x, y, ...) {
+                    panel.xyplot(x,y,...)
+                    panel.abline(v = log10(lambda.opt),col = "orangered",
+                                 lwd = 1,lty = "dotted")
+                  }) +
+           as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = nzero),
+                           pch = 20,cex = 0.6,col = "blue"))),
       split = c(1,2,2,2),more = TRUE)
 
 # Plot evolution of regression coefficients at different settings of
@@ -96,9 +97,10 @@ vars <- setdiff(which(rowSums(abs(coef(fit.glmnet))) > 0),1)
 n    <- length(vars)
 b    <- as.matrix(t(coef(fit.glmnet)[vars,]))
 r    <- xyplot(y ~ x,data.frame(x = log10(lambda),y = b[,1]),type = "l",
-               col = "blue",scales = list(x = list(limits = c(-2.1,0.3)),
-                                          y = list(limits = c(-0.8,1.2))),
-               xlab = "log10 lambda",ylab = "regression coefficient",
+               col = "blue",main = "C",xlab = "log10 lambda",
+               ylab = "regression coefficient",
+               scales = list(x = list(limits = c(-2.1,0.3)),
+                             y = list(limits = c(-0.8,1.2))),
                panel = function(x, y, ...) {
                  panel.xyplot(x,y,...);
                  panel.abline(v = log10(lambda.opt),col = "orangered",
@@ -142,7 +144,8 @@ alpha <- t(fit.varbvs$alpha[vars,])
 r     <- xyplot(y ~ x,data.frame(x = logodds,y = log10(alpha[,1])),
                 scales = list(x = list(limits = c(-3.6,-1.25)),
                               y = list(limits = c(-3.5,0.25))),
-                type = "l",col = "blue",xlab = "prior log-odds",ylab = "PIP",
+                type = "l",col = "blue",xlab = "prior log-odds",
+                ylab = "PIP",main = "D",
                 panel = function(x, y, ...) {
                   panel.xyplot(x,y,...);
                   ltext(x = -1.5,y = log10(alpha[m,]),
@@ -160,7 +163,7 @@ rm(m,n,i,vars,alpha,r)
 w        <- normalizelogweights(fit.varbvs$logw)
 names(w) <- logodds
 print(xyplot(y ~ x,data.frame(x = logodds,y = w),type = "l",col = "blue",
-             xlab = "prior log-odds",ylab = "posterior prob.",
+             xlab = "prior log-odds",ylab = "posterior prob.",main = "E",
              scales = list(x = list(limits = c(-3.6,-1.25)))) +
       as.layer(xyplot(y ~ x,data.frame(x = logodds,y = w),col = "blue",
                pch = 20,cex = 0.65)),
