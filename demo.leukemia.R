@@ -105,8 +105,6 @@ for (i in 2:n)
 print(r,split = c(2,1,2,1),more = FALSE)
 rm(vars,n,b,r,i)
 
-stop()
-
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 # Fit the fully-factorized variational approximation to the posterior
@@ -114,8 +112,33 @@ stop()
 # the binary outcome (type of leukemia), with spike-and-slab priors
 # on the coefficients.
 cat("5. Fitting Bayesian variable selection model to data.\n")
-fit.varbvs <- varbvs(X,NULL,y,"binomial",logodds = seq(-4,-1,0.1),sa = 0.2)
+fit.varbvs <- varbvs(X,NULL,y,"binomial",logodds = seq(-3.5,-2,0.1))
 
-print(table(factor(y),factor(y.glmnet)))
+# Compute estimates of the disease outcome using the fitted model, and
+# compare against the observed values.
+cat("6. Summarizing results of varbvs analysis.\n")
+cat("classification results from fitted varbvs model:\n")
+y.varbvs <- predict(fit.varbvs,X)
+print(table(true = factor(y),pred = factor(y.varbvs)))
 
-y.varbvs <- predict(fit.varbvs,X,Z = NULL)
+stop()
+
+# Plot evolution of posterior inclusion probabilities (PIPs) at
+# different settings of the prior log-odds.
+trellis.device(height = 4.5,width = 4)
+vars  <- which(apply(fit.varbvs$alpha,1,max) > 0.05)
+alpha <- t(fit.varbvs$alpha[vars,])
+n     <- length(vars)
+r    <- xyplot(y ~ x,data.frame(x = fit.varbvs$logodds,y = log10(alpha[,1])),
+               scales = list(y = list(limits = c(-3,0.25))),
+               type = "l",col = "blue",xlab = "log10 lambda",
+               ylab = "regression coefficient")
+for (i in 2:n)
+  r <- r + as.layer(xyplot(y ~ x,
+                           data.frame(x = fit.varbvs$logodds,
+                                      y = log10(alpha[,i])),
+                           type = "l",col = "blue"))
+print(r,split = c(1,1,1,2),more = FALSE)
+
+
+
