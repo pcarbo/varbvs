@@ -143,9 +143,9 @@ vars  <- order(fit.varbvs$alpha[,m],decreasing = TRUE)[1:n]
 alpha <- t(fit.varbvs$alpha[vars,])
 r     <- xyplot(y ~ x,data.frame(x = logodds,y = log10(alpha[,1])),
                 scales = list(x = list(limits = c(-3.6,-1.25)),
-                              y = list(limits = c(-3.5,0.25))),
+                              y = list(limits = c(-3.5,0.4))),
                 type = "l",col = "blue",xlab = "prior log-odds",
-                ylab = "PIP",main = "D",
+                ylab = "log10 PIP",main = "D",
                 panel = function(x, y, ...) {
                   panel.xyplot(x,y,...);
                   ltext(x = -1.5,y = log10(alpha[m,]),
