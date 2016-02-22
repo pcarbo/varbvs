@@ -42,8 +42,14 @@ lambda.opt <- out.cv.glmnet$lambda.1se
 cat("3. Fitting elastic net model.\n")
 fit.glmnet <- glmnet(X,y,family = "binomial",lambda = lambda,alpha = alpha)
 
-# Plot the classification error at different settings of lambda.
+# Compute estimates of the disease outcome using the fitted model, and
+# compare against the observed values.
 cat("4. Summarizing results of glmnet analysis.\n")
+cat("classification results with lambda = ",lambda.opt,":\n",sep="")
+y.glmnet <- as.integer(c(predict(fit.glmnet,X,s = lambda.opt,type = "class")))
+print(table(true = factor(y),pred = factor(y.glmnet)))
+
+# Plot the classification error at different settings of lambda.
 trellis.device(height = 4.5,width = 7)
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
@@ -107,10 +113,9 @@ stop()
 # distribution of the coefficients for a logistic regression model of
 # the binary outcome (type of leukemia), with spike-and-slab priors
 # on the coefficients.
-cat("4. Fitting Bayesian variable selection model to data.\n")
+cat("5. Fitting Bayesian variable selection model to data.\n")
 fit.varbvs <- varbvs(X,NULL,y,"binomial",logodds = seq(-4,-1,0.1),sa = 0.2)
 
-y.glmnet <- as.integer(predict(fit.glmnet,X,type = "class",s = lambda))
 print(table(factor(y),factor(y.glmnet)))
 
 y.varbvs <- predict(fit.varbvs,X,Z = NULL)
