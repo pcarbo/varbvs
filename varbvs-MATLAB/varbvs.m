@@ -727,10 +727,12 @@ function fit = varbvs (X, Z, y, labels, family, options)
     
     % Compute a variational approximation to the posterior distribution
     % for each candidate setting of the hyperparameters.
-    fprintf('Computing marginal likelihood for %d combinations of ',ns);
-    fprintf('hyperparameters.\n');
-    fprintf('-iteration-   variational    max.   incl variance params\n');
-    fprintf('outer inner   lower bound  change   vars   sigma      sa\n');
+    if verbose
+      fprintf('Computing marginal likelihood for %d combinations of ',ns);
+      fprintf('hyperparameters.\n');
+      fprintf('-iteration-   variational    max.   incl variance params\n');
+      fprintf('outer inner   lower bound  change   vars   sigma      sa\n');
+    end
 
     % For each setting of the hyperparameters, find a set of parameters that
     % locally minimize the K-L divergence between the approximating
@@ -758,7 +760,9 @@ function fit = varbvs (X, Z, y, labels, family, options)
 
     % Compute the proportion of variance in Y, after removing linear
     % effects of covariates, explained by the regression model.
-    fprintf('Estimating proportion of variance in Y explained by model.\n');
+    if verbose
+      fprintf('Estimating proportion of variance in Y explained by model.\n');
+    end
     fit.model_pve = varbvspve(X,fit,nr);
 
     % Compute the proportion of variance in Y, after removing linear

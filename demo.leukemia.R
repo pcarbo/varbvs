@@ -8,10 +8,15 @@ library(varbvs)
 
 # SCRIPT PARAMETERS
 # -----------------
+# glmnet settings.
 nfolds <- 20                  # Number of cross-validation folds.
 alpha  <- 0.95                # Elastic net mixing parameter.
 lambda <- 10^(seq(-2,0,0.05)) # Lambda sequence.
-              
+
+# varbvs settings.
+sa      <- 1                   # Prior variance of coefficients.
+logodds <- seq(-3.5,-1.5,0.1)  # Candidate prior log-odds settings.
+
 # LOAD LEUKEMIA DATA
 # ------------------
 cat("1. Loading leukemia data.\n")
@@ -91,17 +96,19 @@ vars <- setdiff(which(rowSums(abs(coef(fit.glmnet))) > 0),1)
 n    <- length(vars)
 b    <- as.matrix(t(coef(fit.glmnet)[vars,]))
 r    <- xyplot(y ~ x,data.frame(x = log10(lambda),y = b[,1]),type = "l",
-               col = "blue",scales = list(y = list(limits = c(-0.8,1.2))),
+               col = "blue",scales = list(x = list(limits = c(-2.1,0.3)),
+                                          y = list(limits = c(-0.8,1.2))),
                xlab = "log10 lambda",ylab = "regression coefficient",
                panel = function(x, y, ...) {
-                 panel.xyplot(x,y,...)
+                 panel.xyplot(x,y,...);
                  panel.abline(v = log10(lambda.opt),col = "orangered",
-                              lwd = 1,lty = "dotted")
+                              lwd = 1,lty = "dotted");
+                 ltext(x = 0,y = b[nrow(b),],labels = colnames(b),pos = 4,
+                       offset = 0.25,cex = 0.5)
                })
 for (i in 2:n)
-  r <- r + as.layer(xyplot(y ~ x,
-                           data.frame(x = log10(lambda),y = b[,i]),type = "l",
-                           col = "blue"))
+  r <- r + as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = b[,i]),
+                           type = "l",col = "blue"))
 print(r,split = c(2,1,2,1),more = FALSE)
 rm(vars,n,b,r,i)
 
@@ -112,7 +119,8 @@ rm(vars,n,b,r,i)
 # the binary outcome (type of leukemia), with spike-and-slab priors
 # on the coefficients.
 cat("5. Fitting Bayesian variable selection model to data.\n")
-fit.varbvs <- varbvs(X,NULL,y,"binomial",logodds = seq(-3.5,-2,0.1))
+fit.varbvs <- varbvs(X,NULL,y,"binomial",logodds = logodds,sa = 1,
+                     verbose = FALSE)
 
 # Compute estimates of the disease outcome using the fitted model, and
 # compare against the observed values.
@@ -121,24 +129,40 @@ cat("classification results from fitted varbvs model:\n")
 y.varbvs <- predict(fit.varbvs,X)
 print(table(true = factor(y),pred = factor(y.varbvs)))
 
-stop()
-
 # Plot evolution of posterior inclusion probabilities (PIPs) at
 # different settings of the prior log-odds.
-trellis.device(height = 4.5,width = 4)
-vars  <- which(apply(fit.varbvs$alpha,1,max) > 0.05)
+trellis.device(height = 5,width = 4)
+trellis.par.set(par.xlab.text = list(cex = 0.65),
+                par.ylab.text = list(cex = 0.65),
+                axis.text     = list(cex = 0.65))
+m     <- length(logodds)
+n     <- 5
+vars  <- order(fit.varbvs$alpha[,m],decreasing = TRUE)[1:n]
 alpha <- t(fit.varbvs$alpha[vars,])
-n     <- length(vars)
-r    <- xyplot(y ~ x,data.frame(x = fit.varbvs$logodds,y = log10(alpha[,1])),
-               scales = list(y = list(limits = c(-3,0.25))),
-               type = "l",col = "blue",xlab = "log10 lambda",
-               ylab = "regression coefficient")
+r     <- xyplot(y ~ x,data.frame(x = logodds,y = log10(alpha[,1])),
+                scales = list(x = list(limits = c(-3.6,-1.25)),
+                              y = list(limits = c(-3.5,0.25))),
+                type = "l",col = "blue",xlab = "prior log-odds",ylab = "PIP",
+                panel = function(x, y, ...) {
+                  panel.xyplot(x,y,...);
+                  ltext(x = -1.5,y = log10(alpha[m,]),
+                        labels = colnames(alpha),pos = 4,
+                        offset = 0.25,cex = 0.5)
+                })
 for (i in 2:n)
   r <- r + as.layer(xyplot(y ~ x,
-                           data.frame(x = fit.varbvs$logodds,
-                                      y = log10(alpha[,i])),
+                           data.frame(x = logodds,y = log10(alpha[,i])),
                            type = "l",col = "blue"))
-print(r,split = c(1,1,1,2),more = FALSE)
+print(r,split = c(1,1,1,2),more = TRUE)
+rm(m,n,i,vars,alpha,r)
 
-
-
+# Show probability density of prior log-odds.
+w        <- normalizelogweights(fit.varbvs$logw)
+names(w) <- logodds
+print(xyplot(y ~ x,data.frame(x = logodds,y = w),type = "l",col = "blue",
+             xlab = "prior log-odds",ylab = "posterior prob.",
+             scales = list(x = list(limits = c(-3.6,-1.25)))) +
+      as.layer(xyplot(y ~ x,data.frame(x = logodds,y = w),col = "blue",
+               pch = 20,cex = 0.65)),
+      split = c(1,2,1,2),more = FALSE)
+rm(w)

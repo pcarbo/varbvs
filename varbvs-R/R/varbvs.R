@@ -312,11 +312,13 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
     # Compute a variational approximation to the posterior distribution
     # for each candidate setting of the hyperparameters.
-    cat("Computing marginal likelihood for",ns,"combinations of",
-        "hyperparameters.\n")
-    cat("-iteration-   variational    max.   incl variance params\n")
-    cat("outer inner   lower bound  change   vars   sigma      sa\n")
-
+    if (verbose) {
+      cat("Computing marginal likelihood for",ns,"combinations of",
+          "hyperparameters.\n")
+      cat("-iteration-   variational    max.   incl variance params\n")
+      cat("outer inner   lower bound  change   vars   sigma      sa\n")
+    }
+    
     # For each setting of the hyperparameters, find a set of
     # parameters that locally minimize the K-L divergence between the
     # approximating distribution and the exact posterior.
@@ -348,7 +350,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
     # Compute the proportion of variance in Y, after removing linear
     # effects of covariates, explained by the regression model.
-    cat("Estimating proportion of variance in Y explained by model.\n");
+    if (verbose)
+      cat("Estimating proportion of variance in Y explained by model.\n");
     fit$model.pve <- varbvspve(X,fit,nr)
 
     # Compute the proportion of variance in Y, after removing linear
