@@ -10,8 +10,6 @@ eStrategy for my new implementation of 'varbvs'
   doi:10.1371/journal.pcbi.1002799
   Example article: doi:10.1371/journal.pcbi.1004085
 
-* To do: Add instructions for how to transform PVE to sa.
-
 * To do: Create R script to compare cv.glmnet and varbvs in leukemia
   data.
 
