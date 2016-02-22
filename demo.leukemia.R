@@ -115,8 +115,6 @@ for (i in 2:n)
 print(r,split = c(2,1,2,1),more = FALSE)
 rm(vars,n,b,r,i)
 
-stop()
-
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 # Fit the fully-factorized variational approximation to the posterior
