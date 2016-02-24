@@ -19,7 +19,7 @@ logodds <- seq(-3.5,-1.5,0.1)  # Candidate prior log-odds settings.
 # LOAD LEUKEMIA DATA
 # ------------------
 cat("1. Loading leukemia data.\n")
-load("varbvs-R/data/leukemia.RData")
+data(leukemia)
 X <- Leukemia$x
 y <- Leukemia$y
 rm(Leukemia)
