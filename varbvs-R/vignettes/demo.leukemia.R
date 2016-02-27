@@ -34,10 +34,12 @@ set.seed(1)
 # lambda that is within one standard error of the minimum
 # classification error.
 cat("2. Running 20-fold cross-validation to select L1-penalty strength.\n")
-out.cv.glmnet <-
-  cv.glmnet(X,y,family = "binomial",type.measure = "class",alpha = alpha,
-            nfolds = nfolds,lambda = lambda)
+r <- system.time(out.cv.glmnet <-
+       cv.glmnet(X,y,family = "binomial",type.measure = "class",
+                 alpha = alpha,nfolds = nfolds,lambda = lambda))
 lambda <- out.cv.glmnet$lambda
+cat(sprintf("Cross-validation took %0.2f seconds.\n",r["elapsed"]))
+rm(r)
 
 # Show the classification error at different settings of lambda. Then
 # choose the largest value of lambda that is within 1 standard error
@@ -46,8 +48,11 @@ lambda.opt <- out.cv.glmnet$lambda.1se
 
 # Fit the elastic net model to the data.
 cat("3. Fitting elastic net model.\n")
-fit.glmnet <- glmnet(X,y,family = "binomial",lambda = lambda,alpha = alpha)
-
+r <- system.time(fit.glmnet <-
+       glmnet(X,y,family = "binomial",lambda = lambda,alpha = alpha))
+cat(sprintf("Model fitting took %0.2f seconds.\n",r["elapsed"]))
+rm(r)
+                 
 # Compute estimates of the disease outcome using the fitted model, and
 # compare against the observed values.
 cat("4. Summarizing results of glmnet analysis.\n")
