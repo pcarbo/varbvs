@@ -128,8 +128,10 @@ rm(vars,n,b,r,i)
 # the binary outcome (type of leukemia), with spike-and-slab priors
 # on the coefficients.
 cat("5. Fitting Bayesian variable selection model to data.\n")
-fit.varbvs <- varbvs(X,NULL,y,"binomial",logodds = logodds,sa = sa,
-                     verbose = FALSE)
+r <- system.time(fit.varbvs <-
+       varbvs(X,NULL,y,"binomial",logodds = logodds,sa = sa,verbose = FALSE))
+cat(sprintf("Model fitting took %0.2f seconds.\n",r["elapsed"]))
+rm(r)
 
 # Compute estimates of the disease outcome using the fitted model, and
 # compare against the observed values.
