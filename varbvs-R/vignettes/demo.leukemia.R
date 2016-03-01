@@ -65,6 +65,8 @@ trellis.device(height = 4.5,width = 7)
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))
+Y       <- predict(fit.glmnet,X,type = "class")
+mode(Y) <- "numeric"
 print(with(out.cv.glmnet,
            xyplot(y ~ x,data.frame(x = log10(lambda),y = cvm),type = "l",
                   col = "blue",xlab = "log10 lambda",
@@ -80,8 +82,12 @@ print(with(out.cv.glmnet,
            as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = cvup),
                            type = "l",col = "blue",lty = "dashed")) +
            as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = cvlo),
-                           type = "l",col = "blue",lty = "dashed"))),
+                           type = "l",col = "blue",lty = "dashed")) +
+           as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),
+                                            y = colMeans(abs(Y - y))),
+                           type = "l",col = "red",lwd = 2))),
            split = c(1,1,2,2),more = TRUE)
+rm(Y)
 
 # Show the number of nonzero regression coefficients at different
 # settings of lambda.
