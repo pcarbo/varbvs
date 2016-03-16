@@ -14,9 +14,9 @@
 #
 # Inputs sigma, sa and logodds are additional model parameters; sigma
 # and sa are scalars. Input sigma specifies the variance of the
-# residual, and sa specifies the prior variance of the
-# coefficients. logodds is the prior log-odds of inclusion for each
-# variable.
+# residual, and sa specifies the prior variance of the coefficients
+# (scaled by sigma). Input logodds is the prior log-odds of inclusion
+# for each variable.
 #
 # Output logw is the variational estimate of the marginal
 # log-likelihood given the hyperparameters at each iteration of the

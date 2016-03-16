@@ -45,12 +45,13 @@
 
   \item{sa}{Hyperparameter sa is the prior variance of regression
     coefficients for variables that are included in the model. This
-    input specifies the candidate settings for sa, of the same length as
-    inputs sigma and logodds (or have length equal to the number of
-    columns of logodds). If missing, prior variance is automatically
-    fitted to data by compute approximate maximum (ML) estimates, or
-    maximum a posteriori estimates when \code{n0 > 0} and \code{sa0 >
-    0}.}
+    prior variance is always scaled by sigma (for logistic regression,
+    we take sigma = 1). This input specifies the candidate settings for
+    sa, of the same length as inputs sigma and logodds (or have length
+    equal to the number of columns of logodds). If missing, prior
+    variance is automatically fitted to data by compute approximate
+    maximum (ML) estimates, or maximum a posteriori estimates when
+    \code{n0 > 0} and \code{sa0 > 0}.}
 
   \item{logodds}{Hyperparameter logodds is the prior log-odds that a
     variable is included in the regression model; it is defined as

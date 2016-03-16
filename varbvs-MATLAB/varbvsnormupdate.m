@@ -10,8 +10,9 @@
 %
 % Inputs sigma, sa and logodds specify other model parameters. sigma and sa
 % are scalars. sigma specifies the variance of the residual, and sa is the
-% prior variance of the regression coefficients. logodds is the prior
-% log-odds of inclusion for each variable. It must be a vector of length p.
+% prior variance of the regression coefficients (scaled by sigma). Input
+% logodds is the prior log-odds of inclusion for each variable. It must be a
+% vector of length p.
 %
 % Inputs alpha0, mu0 are the current parameters of the variational
 % approximation. Under the variational approximation, the ith regression
