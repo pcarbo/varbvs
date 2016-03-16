@@ -14,8 +14,13 @@
 #
 # Inputs sa and logodds are the hyperparameters. Scalar sa is the
 # prior variance of the coefficients. Input logodds is the prior
-# log-odds of inclusion for each variable. Note that the residual
-# variance parameter (sigma) is not needed to model a binary outcome.
+# log-odds of inclusion for each variable.  Note that the prior
+# log-odds here is defined with respect to the *natural* logarithm,
+# whereas in function varbvs the prior log-odds is defined with
+# respect to the base-10 logarithm, so a scaling factor of log(10) is
+# needed to convert from the latter to the former. Also, note that the
+# residual variance parameter (sigma) is not needed to model a binary
+# outcome.
 #
 # Output logw is the variational estimate of the marginal
 # log-likelihood given the hyperparameters at each iteration of the

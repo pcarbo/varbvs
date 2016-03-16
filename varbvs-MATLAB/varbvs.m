@@ -121,7 +121,9 @@
 %    Hyperparameter logodds is the prior log-odds that a variable is
 %    included in the regression model; it is defined as logodds =
 %    log10(q/(1-q)), where q is the prior probability that a variable is
-%    included in the regression model.
+%    included in the regression model. Note that we use the base-10
+%    logarithm instead of the natural logarithm because it is usually
+%    more natural to specify prior log-odds settings in this way.
 %
 %    The prior log-odds may also be specified separately for each variable,
 %    which is useful is there is prior information about which variables are
