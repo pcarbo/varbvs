@@ -48,6 +48,9 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
   # (2) PROCESS OPTIONS
   # -------------------
+  if (!is.finite(maxiter))
+    stop("Input maxiter must be a finite number")
+  
   # Get candidate settings for the variance of the residual (sigma),
   # if provided. Note that this option is not valid for a binary trait.
   if (missing(sigma)) {

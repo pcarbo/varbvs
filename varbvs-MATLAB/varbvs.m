@@ -401,6 +401,9 @@ function fit = varbvs (X, Z, y, labels, family, options)
   else
     maxiter = 1e4;
   end
+  if ~isfinite(maxiter)
+    error('options.maxiter must be a finite number');
+  end
 
   % OPTIONS.VERBOSE
   % Determine whether to output progress to the console.
