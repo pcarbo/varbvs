@@ -10,7 +10,7 @@ set.seed(1)
 # LOAD GENOTYPE AND PHENOTYPE DATA
 # --------------------------------
 cat("LOADING DATA.\n")
-load("/tmp/pcarbo/cd.RData")
+load("cd.RData")
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
@@ -29,7 +29,7 @@ pip <- c(varbvsindep(fit,X,NULL,y)$alpha %*% w)
 # SAVE RESULTS
 # ------------
 cat("SAVING RESULTS.\n")
-save(list = c("fit","map","pip","r"),file = "/tmp/pcarbo/varbvs.demo.cd.RData")
+save(list = c("fit","map","pip","r"),file = "varbvs.demo.cd.RData")
 
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
