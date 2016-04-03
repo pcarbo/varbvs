@@ -39,7 +39,8 @@ rm(pheno,geno)
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 cat("FITTING MODEL TO DATA.\n")
-fit <- varbvs(X,Z,y,sa = sa,logodds = logodds)
+runtime <- system.time(fit <- varbvs(X,Z,y,sa = sa,logodds = logodds))
+cat(sprintf("Modeling fitting took %0.2f minutes.\n",runtime["elapsed"]/60))
 
 # Compute "single-marker" posterior inclusion probabilities.
 w   <- c(normalizelogweights(fit$logw))
@@ -53,7 +54,7 @@ print(summary(fit))
 # Show three genome-wide scans: (1) one using the posterior inclusion
 # probabilities (PIPs) computed in the joint analysis of all
 # variables; (2) one using the PIPs that ignore correlations between
-# the variables.
+# the variables; and (3) and one using the p-values computed using GEMMA.
 trellis.device(height = 5,width = 10)
 trellis.par.set(axis.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.7))
