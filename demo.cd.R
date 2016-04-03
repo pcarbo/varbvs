@@ -10,7 +10,7 @@ set.seed(1)
 # LOAD GENOTYPE AND PHENOTYPE DATA
 # --------------------------------
 cat("LOADING DATA.\n")
-load("~/data/cd.RData")
+load("/tmp/pcarbo/cd.RData")
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
@@ -19,7 +19,8 @@ load("~/data/cd.RData")
 # a binary outcome (case-control status), with spike and slab priors
 # on the coefficients.
 cat("FITTING MODEL TO DATA.\n")
-fit <- varbvs(X,NULL,y,"binomial",logodds = seq(-6,-3,0.25))
+r <- system.time(fit <- varbvs(X,NULL,y,"binomial",logodds = seq(-6,-3,0.25)))
+cat(sprintf("Modeling fitting took %0.2f minutes.\n",r["elapsed"]/60))
 
 # Compute "single-marker" posterior inclusion probabilities.
 w   <- c(normalizelogweights(fit$logw))
@@ -28,7 +29,7 @@ pip <- c(varbvsindep(fit,X,NULL,y)$alpha %*% w)
 # SAVE RESULTS
 # ------------
 cat("SAVING RESULTS.\n")
-save(list = c("fit","map","pip"),file = "varbvs.demo.cd.RData")
+save(list = c("fit","map","pip","r"),file = "/tmp/pcarbo/varbvs.demo.cd.RData")
 
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
