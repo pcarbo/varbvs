@@ -14,8 +14,8 @@ rng(1);
 % LOAD GENOTYPES, PHENOTYPES AND PATHWAY ANNOTATION
 % -------------------------------------------------
 fprintf('LOADING DATA.\n');
-load('~/data/cytokine.mat');
-load('~/data/cd.mat');
+load('cytokine.mat');
+load('cd.mat');
 labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
 
 % FIT VARIATIONAL APPROXIMATION

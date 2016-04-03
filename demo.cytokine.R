@@ -15,8 +15,8 @@ set.seed(1)
 # LOAD GENOTYPES, PHENOTYPES AND PATHWAY ANNOTATION
 # -------------------------------------------------
 cat("LOADING DATA.\n")
-load("~/data/cd.RData")
-load("~/data/cytokine.RData")
+load("cd.RData")
+load("cytokine.RData")
 
 # FIT VARIATIONAL APPROXIMATION
 # -----------------------------

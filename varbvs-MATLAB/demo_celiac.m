@@ -12,8 +12,8 @@ rng(1);
 % --------------------------------
 % Also load the principal components.
 fprintf('LOADING DATA.\n');
-load('~/data/celiac_nomhc.mat');
-load('~/data/celiac_pc.mat');
+load('celiac_nomhc.mat');
+load('celiac_pc.mat');
 
 % Select all samples *not* in the Finnish cohort.
 i     = find(~strcmp(study,'Finnish'));
@@ -32,7 +32,10 @@ pc    = pc(i,:);
 % coefficients.
 fprintf('FITTING MODEL TO DATA.\n')
 Z   = pc(:,1:2);
+tic;
 fit = varbvs(X,Z,y,labels,'binomial',struct('logodds',-5.5:0.25:-3));
+r = toc;
+fprintf('Modeling fitting took %0.2f minutes.\n',r/60);
 
 % Compute "single-marker" posterior inclusion probabilities.
 w   = normalizelogweights(fit.logw);
@@ -41,7 +44,7 @@ pip = varbvsindep(fit,X,Z,y) * w(:);
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('varbvs_demo_celiac.mat','fit','w','pip','chr','pos','-v7.3');
+save('varbvs_demo_celiac.mat','fit','w','pip','chr','pos','r','-v7.3');
 
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------
