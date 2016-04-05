@@ -584,6 +584,10 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % parameters.
   if isfield(options,'initialize_params')
     initialize_params = options.initialize_params;
+    if initialize_params & ns == 1
+      error(['options.initialize_params = true is not useful for ' ...
+             '1 hyperparameter setting.']);
+    end
   end
 
   % OPTIONS.NR
