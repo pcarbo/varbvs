@@ -13,10 +13,7 @@ eStrategy for my new implementation of 'varbvs'
 * To do: Add description and usage instructions at the top of R script
   demo.leukemia.R.
 
-* To do: Map QTLs using GEMMA with simple linear model.
-
-* To do: Add extended examples in vignettes, and/or point to examples
-  in github repo.
+* To do: Add demo.cfw.R to vignettes.
 
 * To do: Allow specification of summary statistics ('Xb') from "fixed" 
   variational estimates for an external set of variables.
