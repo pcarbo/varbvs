@@ -1,11 +1,11 @@
 % This script fits two variable selection models: the first ("null") model
 % has a uniform prior for all variables (the 442,001 genetic markers), and
 % the second model has higher prior probability for genetic markers near
-% cytokine signaling genes. This analysis assess support for enrichment of
-% Crohn's disease risk factors near cytokine signaling genes; a large Bayes
-% factor means greater support for the enrichment hypothesis. The data in
-% this analysis consist of 442,001 SNPs genotyped for 1,748 cases and 2,938
-% controls.
+% cytokine signaling genes. This main aim of this analysis is to assess
+% support for enrichment of Crohn's disease risk factors near cytokine
+% signaling genes; a large Bayes factor means greater support for the
+% enrichment hypothesis. The data in this analysis consist of 442,001 SNPs
+% genotyped for 1,748 cases and 2,938 controls.
 clear
 
 % Initialize the random number generator. 
