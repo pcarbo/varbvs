@@ -1,6 +1,10 @@
 % This script fits the Bayesian variable selection model to identify genetic
 % markers associated with Crohn's disease risk. The data consist of 442,001
 % SNPs genotyped for 1,748 cases and 2,938 controls.
+%
+% Note that file cd.mat cannot be made publicly available due to data
+% sharing restrictions, so this script is for viewing only.
+%
 clear
 
 % Initialize the random number generator. 
@@ -9,7 +13,7 @@ rng(1);
 % LOAD GENOTYPE AND PHENOTYPE DATA
 % --------------------------------
 fprintf('LOADING DATA.\n');
-load('/data/internal_restricted/carbonetto_2012_wtccc/MATLAB/cd.mat');
+load('cd.mat');
 labels = strcat('rs',cellfun(@num2str,num2cell(labels),'UniformOutput',false));
 
 % FIT VARIATIONAL APPROXIMATION TO POSTERIOR

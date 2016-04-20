@@ -3,6 +3,11 @@
 % from the Finnish cohort, the data consist of 509,314 SNPs genotyped for
 % 3,149 cases and 6,325 controls, and principal components (PCs) which are
 % used as covariates in the logistic regression.
+%
+% Note that files celiac_nomhc.mat and celiac_pc.mat cannot be made publicly
+% available due to data sharing restrictions, so this script is for viewing
+% only.
+%
 clear
 
 % Initialize the random number generator. 
