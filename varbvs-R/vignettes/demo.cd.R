@@ -1,6 +1,10 @@
-# This script fits the Bayesian variable selection model to identify genetic
-# markers associated with Crohn's disease risk. The data consist of 442,001
-# SNPs genotyped for 1,748 cases and 2,938 controls.
+# This script fits the Bayesian variable selection model to identify
+# genetic markers associated with Crohn's disease risk. The data
+# consist of 442,001 SNPs genotyped for 1,748 cases and 2,938 controls.
+#
+# Note that file cd.RData cannot be made publicly available due to
+# data sharing restrictions, so this script is for viewing only.
+#
 library(varbvs)
 library(lattice)
 

@@ -6,6 +6,10 @@
 # factor means greater support for the enrichment hypothesis. The data in
 # this analysis consist of 442,001 SNPs genotyped for 1,748 cases and 2,938
 # controls.
+#
+# Note that file cd.RData cannot be made publicly available due to
+# data sharing restrictions, so this script is for viewing only.
+#
 library(varbvs)
 library(lattice)
 
