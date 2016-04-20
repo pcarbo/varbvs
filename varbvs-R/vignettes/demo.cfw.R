@@ -1,6 +1,6 @@
 # Map QTLs for phenotypes measured in CFW (Carworth Farms White)
 # outbred mice. Phenotypes include muscle weights (EDL and soleus
-# muscle) and testis weight measured at sacrifice.
+# muscle) and testis weight measured at sacrifice. 
 library(varbvs)
 library(lattice)
 
@@ -9,6 +9,8 @@ library(lattice)
 # These script parameters specify the candidate prior log-odds
 # settings, the prior variance of the coefficients, and which trait to
 # analyze.
+#
+# Set trait to "edl", "soleus" or "testis".
 trait   <- "testis"
 logodds <- seq(-5,-3,0.25)
 sa      <- 0.05

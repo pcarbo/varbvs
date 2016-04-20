@@ -20,7 +20,7 @@ set.seed(1)
 # -------------------------------------------------
 cat("LOADING DATA.\n")
 load("cd.RData")
-load("cytokine.RData")
+data(cytokine)
 
 # FIT VARIATIONAL APPROXIMATION
 # -----------------------------
