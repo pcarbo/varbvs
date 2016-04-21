@@ -1,42 +1,36 @@
-#Variational inference for Bayesian variable selection implemented in MATLAB and R
+#Large-scale Bayesian variable selection for R and MATLAB
  
 ###Introduction
 
-This software package includes
-[MATLAB](http://www.mathworks.com/products/matlab/) and
-[R](http://www.r-project.org) implementations of the variational
-inference procedure for Bayesian variable selection, as described in
-the [Bayesian Analysis](http://ba.stat.cmu.edu/) paper
-[Scalable variational inference for Bayesian variable selection in regression, and its accuracy in genetic association studies](http://projecteuclid.org/euclid.ba/1339616726)
-(published in *Bayesian Analysis* 7, March 2012, pages 73-108). This
-software has been used to implement Bayesian variable selection for
-large problems with over a million variables and thousands of samples.
+We introduce *varbvs*, a suite of functions writen in R and MATLAB for
+analysis of large-scale data sets using Bayesian variable selection
+methods. To facilitate application of Bayesian variable selection to a
+range of problems, the *varbvs* interface hides most of the
+complexities of modeling and optimization, while also providing many
+options for adaptation to range of applications. The *varbvs* software
+has been used to implement Bayesian variable selection for large
+problems with over a million variables and thousands of samples.
 
-The MATLAB implementation has been tested in version 7.10 (R2010a) of
-MATLAB for 64-bit Linux. The R implementation has been tested in
-version 2.14.2 of R for 64-bit Linux.
+The MATLAB interface has been tested in version 8.6.0 (2015b). The R
+package has been tested in version R versions 3.3.1 and 3.3.2.
+
+If this software is useful for your research, please acknowledge our
+contribution by citing the following scientific publications:
+
 
 ###License
 
-Copyright (c) 2012-2014, Peter Carbonetto.
+Copyright (c) 2012-2016, Peter Carbonetto.
 
-The varbvs source code repository by
+The *varbvs* source code repository by
 [Peter Carbonetto](http://github.com/pcarbo) is free software: you can
 redistribute it under the terms of the
 [GNU General Public License](http://www.gnu.org/licenses/gpl.html). All
-the files in this project are part of varbvs. This project is
+the files in this project are part of *varbvs*. This project is
 distributed in the hope that it will be useful, but **without any
 warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](LICENSE) for
 the full text of the license.
-
-This project includes several MATLAB functions created by James
-P. LeSage as part of the [Econometrics
-Toolbox](http://www.spatial-econometrics.com/) (March 2010 revision),
-which is also distributed under the GNU General Public License. None
-of code from this toolbox has been modified. Also included (without
-any changes) is the MATLAB function rgb.m written by [Kristján
-Jónasson](http://www.hi.is/~jonasson).
 
 ###Quick start for MATLAB
 
@@ -135,44 +129,13 @@ machine you can override the default package compilation by creating a
 text file **.R/Makevars** in your home directory that contains a
 single line: **CFLAGS=-fpic -O3**. 
 
-###Overview of R and MATLAB functions 
-
-The MATLAB subdirectory and R package contain several functions. Here
-are the most interesting ones:
-
-+ **varbvs** in MATLAB or **varbvsoptimize** in R returns
-variational estimates of the posterior statistics for the linear
-regression model with spike and slab priors, given choices for the
-hyperparameters. It computes the posterior statistics by running the
-coordinate ascent updates until they converge at a local minimum of
-the Kullback-Leibler divergence objective (which corresponds to a
-local maximum of the variational lower bound to the marginal
-log-likelihood). This function implements the "inner loop" in the
-*Bayesian Analysis* paper.
-
-+ **varbvsbin** in MATLAB or **varbvsbinoptimize** in R is analogous
-to **varbvs** or **varbvsoptimize**, except that it is meant for
-logistic regression instead of linear regression. This is useful for
-modeling a binary-valued outcome such as disease status in a
-case-control study.
-
-+ **varsimbvs** (MATLAB and R) demonstrates how to run the full
-  variational inference procedure for Bayesian variable selection in
-  linear regression, in which we fit both the regression coefficients
-  and the hyperparameters to the data. It runs both the "inner" and
-  "outer" loops of the inference algorithm, where the inner loop
-  executes the coordinate ascent updates for a given value of the
-  hyperparameters, and the outer loop runs importance sampling to
-  estimate the posterior of the hyperparameters. This is precisely the
-  variational inference procedure used in the two simulation studies
-  presented in the *Bayesian Analysis* paper. This function assumes
-  specific choices for priors on the hyperparameters, as described in
-  the paper and in the comments at the top of the file.
-
 ###Credits
 
-The varbvs software package was developed by:<br>
+The *varbvs* software package was developed by:<br>
 [Peter Carbonetto](http://www.cs.ubc.ca/spider/pcarbo)<br>
-Dept. of Human Genetics<br>
-University of Chicago<br> 
-2012-2014
+Department of Human Genetics, University of Chicago<br>
+and AncestryDNA, San Francisco, CA<br>
+2012-2016
+
+Other important contributors to this software include Xiang Zhu and
+Matthew Stephens.
