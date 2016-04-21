@@ -17,7 +17,6 @@ package has been tested in version R versions 3.3.1 and 3.3.2.
 If this software is useful for your research, please acknowledge our
 contribution by citing the following scientific publications:
 
-
 ###License
 
 Copyright (c) 2012-2016, Peter Carbonetto.
@@ -31,6 +30,50 @@ distributed in the hope that it will be useful, but **without any
 warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](LICENSE) for
 the full text of the license.
+
+###Quick start for R
+
+Start by downloading the github repository for this project. The
+simplest way to do this is to [download the repository as a ZIP
+archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
+you have extracted the files from the compressed archive, you will see
+that the main directory has two subdirectories, one containing the
+MATLAB code, and the other containing R files.
+
+The subdirectory **R/varbvs** has all the necessary files to build and
+install a package for R. To install this package, follow the [standard
+instructions](http://cran.r-project.org/doc/manuals/R-admin.html) for
+installing an R package from source. On a Unix or Unix-like platform
+(such as Mac OS X), the installation command is
+**R CMD INSTALL --clean homedir/varbvs/R/varbvs**.
+
+Once you have installed the package, you can load the functions in R
+by running **library(varbvs)**. To get an overview of the package, run
+**help(varbvs)** and **help(package="varbvs")** in R.
+
+Once you have installed and loaded the **varbvs** package, start by
+running the demonstration script with **demo(example1)**. This script
+demonstrates how the variational inference algorithm is used to
+compute posterior probabilities for a small linear regression example
+in which only a small subset of the variables (single nucleotide
+polymorphisms, or SNPs) has affects the outcome (a simulated
+quantitative trait). 
+
+**Note:** The demonstration script
+[example1.R](R/varbvs/demo/example1.R) requires packages
+[ggplot2](http://had.co.nz/ggplot2) and **grid** to show the plots
+depicting the posterior distributions of the hyperparameters computed
+using the variational inference method. The grid package is normally
+included in the base distribution of R, and ggplot2 is available on
+[CRAN](http://cran.r-project.org), and can be installed using the
+**install.packages** function (for more recent versions of R).
+
+**Another note:** By default, R compiles the C code with the debugging
+information using the **-g** flag. The computations will run much
+faster without this debugging information. For example, on a Linux
+machine you can override the default package compilation by creating a
+text file **.R/Makevars** in your home directory that contains a
+single line: **CFLAGS=-fpic -O3**. 
 
 ###Quick start for MATLAB
 
@@ -84,50 +127,6 @@ this small example, the variational estimates of the posterior
 probabilities are compared with estimates obtained by MCMC
 simulation. Notice that it takes a considerable amount of time to
 simulate the Markov chain.
-
-###Quick start for R
-
-Start by downloading the github repository for this project. The
-simplest way to do this is to [download the repository as a ZIP
-archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
-you have extracted the files from the compressed archive, you will see
-that the main directory has two subdirectories, one containing the
-MATLAB code, and the other containing R files.
-
-The subdirectory **R/varbvs** has all the necessary files to build and
-install a package for R. To install this package, follow the [standard
-instructions](http://cran.r-project.org/doc/manuals/R-admin.html) for
-installing an R package from source. On a Unix or Unix-like platform
-(such as Mac OS X), the installation command is
-**R CMD INSTALL --clean homedir/varbvs/R/varbvs**.
-
-Once you have installed the package, you can load the functions in R
-by running **library(varbvs)**. To get an overview of the package, run
-**help(varbvs)** and **help(package="varbvs")** in R.
-
-Once you have installed and loaded the **varbvs** package, start by
-running the demonstration script with **demo(example1)**. This script
-demonstrates how the variational inference algorithm is used to
-compute posterior probabilities for a small linear regression example
-in which only a small subset of the variables (single nucleotide
-polymorphisms, or SNPs) has affects the outcome (a simulated
-quantitative trait). 
-
-**Note:** The demonstration script
-[example1.R](R/varbvs/demo/example1.R) requires packages
-[ggplot2](http://had.co.nz/ggplot2) and **grid** to show the plots
-depicting the posterior distributions of the hyperparameters computed
-using the variational inference method. The grid package is normally
-included in the base distribution of R, and ggplot2 is available on
-[CRAN](http://cran.r-project.org), and can be installed using the
-**install.packages** function (for more recent versions of R).
-
-**Another note:** By default, R compiles the C code with the debugging
-information using the **-g** flag. The computations will run much
-faster without this debugging information. For example, on a Linux
-machine you can override the default package compilation by creating a
-text file **.R/Makevars** in your home directory that contains a
-single line: **CFLAGS=-fpic -O3**. 
 
 ###Credits
 
