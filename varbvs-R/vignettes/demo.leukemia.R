@@ -1,6 +1,29 @@
-# TO DO: Explain here what this script does, and how to use it. Also
-# cite Golub et al, elastic net paper, and Friedman et al (2010)
-# J. Stat. Soft. paper.
+# This script demonstrates application of *glmnet* and *varbvs* to the
+# Leukemia data set. The main aim of this script is to illustrate some
+# of the different properties of Bayesian variable selection and
+# penalized sparse regression (as implemented by varbvs and glmnet,
+# respectively). This script also reproduces the results and graphs
+# presented in the first example of Carbonetto et al (2016).
+#
+# We use the preprocessed data of Dettling (2004) retrieved from the
+# supplementary materials accompanying Friedman et al (2010). The data
+# are represented as a 72 x 3,571 matrix of gene expression values
+# (variable X), and a vector of 72 binary disease outcomes (variable
+# y).
+#
+# REFERENCES
+#
+# Carbonetto, P., Zhou, X., Trynka, G., Stephens, M. (2016) Fast
+# variable selection for genome-wide association studies and other
+# large-scale regression applications. *Forthcoming*.
+#
+# Dettling, M. (2004). BagBoosting for tumor classification with gene
+# expression data. Bioinformatics 20, 3583–3593.
+#
+# Friedman, J., Hastie, T., Tibshirani, R. Regularization paths for
+# generalized linear models via coordinate descent. Journal of
+# Statistical Software 33, 1–22.
+#
 library(lattice)
 library(latticeExtra)
 library(glmnet)
@@ -14,8 +37,8 @@ alpha  <- 0.95                # Elastic net mixing parameter.
 lambda <- 10^(seq(-2,0,0.05)) # Lambda sequence.
 
 # varbvs settings.
-logodds <- seq(-3.5,-1.5,0.1)  # Candidate prior log-odds settings.
-sa      <- 1                   # Prior variance of coefficients.
+logodds <- seq(-3.5,-1.5,0.1) # Candidate prior log-odds settings.
+sa      <- 1                  # Prior variance of coefficients.
 
 # LOAD LEUKEMIA DATA
 # ------------------
