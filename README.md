@@ -50,16 +50,50 @@ Subdirectory [varbvs-R](varbvs-R) has all the necessary files to build
 and install a package for R. To install this package, follow the
 [standard instructions](http://cran.r-project.org/doc/manuals/R-admin.html)
 for installing an R package from source. On a Unix or Unix-like
-platform such as Mac OS X, the following steps will install the R
+platform (e.g., Mac OS X), the following steps will install the R
 package:
 
     mv varbvs-R varbvs
 	R CMD build varbvs
 	R CMD INSTALL varbvs_2.0.0.tar.gz
 
-Once you have installed the package, you can load the functions in R
-by running <code>library(varbvs)</code>. To get an overview of the
-package, type <code>help(package="varbvs")</code> in R.
+Once you have installed the package, load the package in R by typing
+<code>library(varbvs)</code>. To get an overview of the package, type
+<code>help(package="varbvs")</code>. The most important function you
+will use is the varbvs function, and type <code>help(varbvs)</code> to
+get more information about this function.
+
+We have provided several R scripts in the
+[vignettes](varbvs-R/vignettes) folder that illustrate application of
+*varbvs* to small and large data sets.
+
+Script [demo.qtl.R](varbvs-R/vignettes/demo.qtl.R) demonstrates how to
+use the varbvs function for mapping a quantitative trait in a small,
+simulated data set. Script [demo.cc.R](varbvs-R/vignettes/demo.cc.R)
+demonstrates mapping of a binary trait in a simulated data set.
+
+Script [demo.leukemia.R](varbvs-R/vignettes/demo.leukemia.R)
+application of *glmnet* and *varbvs* to the Leukemia data set. The
+main aim of this script is to illustrate some of the different
+properties of varbvs (Bayesian variable selection) and glmnet
+(penalized sparse regression). This script also reproduces the results
+and graphs presented in the first example of Carbonetto et al (2016).
+
+Script [demo.cfw.R](varbvs-R/vignettes/demo.cfw.R) demonstrates varbvs
+for mapping quantitative trait loci in a large data set outbred mice.
+
+phenotypes measured in CFW (Carworth Farms White) #
+outbred mice. Phenotypes include muscle weights (EDL and soleus #
+muscle) and testis weight measured at sacrifice.
+
+Scripts [demo.cd.R](varbvs-R/vignettes/demo.cd.R) and
+[demo.cytokine.R](varbvs-R/vignettes/demo.cytokine.R) show how the
+*varbvs* package can be applied to a very large data set to map
+genetic loci contributing to human disease risk. Although these
+scripts cannot be executed because we cannot share the data, we have
+included them in the R package since it is useful to follow the steps
+presented in these scripts.  These scripts reproduce some of the
+results and figures presented in Carbonetto et al (2016).
 
 Once you have installed and loaded the **varbvs** package, start by
 running the demonstration script with **demo(example1)**. This script
@@ -68,15 +102,6 @@ compute posterior probabilities for a small linear regression example
 in which only a small subset of the variables (single nucleotide
 polymorphisms, or SNPs) has affects the outcome (a simulated
 quantitative trait). 
-
-**Note:** The demonstration script
-[example1.R](R/varbvs/demo/example1.R) requires packages
-[ggplot2](http://had.co.nz/ggplot2) and **grid** to show the plots
-depicting the posterior distributions of the hyperparameters computed
-using the variational inference method. The grid package is normally
-included in the base distribution of R, and ggplot2 is available on
-[CRAN](http://cran.r-project.org), and can be installed using the
-**install.packages** function (for more recent versions of R).
 
 ###Quick start for MATLAB
 
@@ -135,8 +160,8 @@ simulate the Markov chain.
 
 The *varbvs* software package was developed by:<br>
 [Peter Carbonetto](http://www.cs.ubc.ca/spider/pcarbo)<br>
-Department of Human Genetics, University of Chicago<br>
-and AncestryDNA, San Francisco, CA<br>
+Dept. of Human Genetics, University of Chicago<br>
+and AncestryDNA, San Francisco, California<br>
 2012-2016
 
 Other major contributors to this software include Xiang Zhu and

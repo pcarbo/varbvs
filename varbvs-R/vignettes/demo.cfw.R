@@ -1,6 +1,8 @@
 # Map QTLs for phenotypes measured in CFW (Carworth Farms White)
 # outbred mice. Phenotypes include muscle weights (EDL and soleus
-# muscle) and testis weight measured at sacrifice. 
+# muscle) and testis weight measured at sacrifice. Running this script
+# with trait = "testis" reproduces the results and figures shown in
+# the second example of Carbonetto et al (2016).
 library(varbvs)
 library(lattice)
 
