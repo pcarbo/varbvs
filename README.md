@@ -67,44 +67,36 @@ We have provided several R scripts in the
 [vignettes](varbvs-R/vignettes) folder to illustrate application of
 *varbvs* to small and large data sets.
 
-Script [demo.qtl.R](varbvs-R/vignettes/demo.qtl.R) demonstrates how to
++ Script [demo.qtl.R](varbvs-R/vignettes/demo.qtl.R) demonstrates how to
 use the varbvs function for mapping a quantitative trait (*i.e.*, a
 continuously valued outcome) in a small, simulated data set. Script
 [demo.cc.R](varbvs-R/vignettes/demo.cc.R) demonstrates mapping of a
 binary valued outcome in a simulated data set.
 
-Script [demo.leukemia.R](varbvs-R/vignettes/demo.leukemia.R)
++ Script [demo.leukemia.R](varbvs-R/vignettes/demo.leukemia.R)
 demonstrates application of both *glmnet* and *varbvs* to the Leukemia
-data set. The main aim of this script is to illustrate some of the
+data. The main aim of this script is to illustrate some of the
 different properties of *varbvs* (Bayesian variable selection) and
 *glmnet* (penalized sparse regression). This script also reproduces
 the results and graphs presented in the first example of Carbonetto *et
 al* (2016).
 
-Script [demo.cfw.R](varbvs-R/vignettes/demo.cfw.R) also demonstrates
-*varbvs* for mapping genetic factors contributing to a quantitative
-trait, but here it is applied to a actual large data set generated
-from an outbred mouse study. Running this script with <code>trait =
-"testis"</code> reproduces the results and figures given in the second
-example of Carbonetto *et al* (2016).
++ Like demo.qtl.R, script [demo.cfw.R](varbvs-R/vignettes/demo.cfw.R)
+also demonstrates *varbvs* for mapping genetic factors contributing to
+a quantitative trait, but here it is applied to an actual data set
+generated from an outbred mouse study. Running this script with
+<code>trait = "testis"</code> reproduces the results and figures given
+in the second example of Carbonetto *et al* (2016).
 
-Finally, scripts [demo.cd.R](varbvs-R/vignettes/demo.cd.R) and
++ Finally, scripts [demo.cd.R](varbvs-R/vignettes/demo.cd.R) and
 [demo.cytokine.R](varbvs-R/vignettes/demo.cytokine.R) show how the
 *varbvs* package can be applied to a very large data set to map
 genetic loci and test biological hypotheses about genetic factors
 contributing to human disease risk. Although these scripts cannot be
-executed because we cannot share the data, we have included them in
-the R package since it is useful to follow the steps presented in
-these scripts.  These scripts reproduce some of the results and
-figures presented in Carbonetto *et al* (2016).
-
-Once you have installed and loaded the **varbvs** package, start by
-running the demonstration script with **demo(example1)**. This script
-demonstrates how the variational inference algorithm is used to
-compute posterior probabilities for a small linear regression example
-in which only a small subset of the variables (single nucleotide
-polymorphisms, or SNPs) has affects the outcome (a simulated
-quantitative trait). 
+executed because we cannot share the genotype data, we have included
+these scripts anyhow since it is helpful to be able to follow the
+steps given in these R scripts. These scripts reproduce some of the
+results and figures presented in Carbonetto *et al* (2016).
 
 ###Quick start for MATLAB
 
