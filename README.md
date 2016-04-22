@@ -39,23 +39,27 @@ the full text of the license.
 
 ###Quick start for R
 
-Start by downloading the github repository for this project. The
+Begin by downloading the github repository for this project. The
 simplest way to do this is to [download the repository as a ZIP
 archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
 you have extracted the files from the compressed archive, you will see
 that the main directory has two subdirectories, one containing the
-MATLAB code, and the other containing R files.
+MATLAB code, and the other containing the files for the R package.
 
-The subdirectory **R/varbvs** has all the necessary files to build and
-install a package for R. To install this package, follow the [standard
-instructions](http://cran.r-project.org/doc/manuals/R-admin.html) for
-installing an R package from source. On a Unix or Unix-like platform
-(such as Mac OS X), the installation command is
-**R CMD INSTALL --clean homedir/varbvs/R/varbvs**.
+Subdirectory [varbvs-R](varbvs-R) has all the necessary files to build
+and install a package for R. To install this package, follow the
+[standard instructions](http://cran.r-project.org/doc/manuals/R-admin.html)
+for installing an R package from source. On a Unix or Unix-like
+platform such as Mac OS X, the following steps will install the R
+package:
+
+    mv varbvs-R varbvs
+	R CMD build varbvs
+	R CMD INSTALL varbvs_2.0.0.tar.gz
 
 Once you have installed the package, you can load the functions in R
-by running **library(varbvs)**. To get an overview of the package, run
-**help(varbvs)** and **help(package="varbvs")** in R.
+by running <code>library(varbvs)</code>. To get an overview of the
+package, type <code>help(package="varbvs")</code> in R.
 
 Once you have installed and loaded the **varbvs** package, start by
 running the demonstration script with **demo(example1)**. This script
@@ -74,16 +78,9 @@ included in the base distribution of R, and ggplot2 is available on
 [CRAN](http://cran.r-project.org), and can be installed using the
 **install.packages** function (for more recent versions of R).
 
-**Another note:** By default, R compiles the C code with the debugging
-information using the **-g** flag. The computations will run much
-faster without this debugging information. For example, on a Linux
-machine you can override the default package compilation by creating a
-text file **.R/Makevars** in your home directory that contains a
-single line: **CFLAGS=-fpic -O3**. 
-
 ###Quick start for MATLAB
 
-Start by downloading the github repository for this project. The
+Begin by downloading the github repository for this project. The
 simplest way to do this is to [download the repository as a ZIP
 archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
 you have extracted the files from the compressed archive, you will see
@@ -142,5 +139,5 @@ Department of Human Genetics, University of Chicago<br>
 and AncestryDNA, San Francisco, CA<br>
 2012-2016
 
-Other important contributors to this software include Xiang Zhu and
+Other major contributors to this software include Xiang Zhu and
 Matthew Stephens.
