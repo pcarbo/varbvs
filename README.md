@@ -9,13 +9,19 @@ range of problems, the *varbvs* interface hides most of the
 complexities of modeling and optimization, while also providing many
 options for adaptation to range of applications. The *varbvs* software
 has been used to implement Bayesian variable selection for large
-problems with over a million variables and thousands of samples.
+problems with over a million variables and thousands of samples,
+including analysis of massive genome-wide data sets.
 
 The MATLAB interface has been tested in version 8.6.0 (2015b). The R
 package has been tested in version R versions 3.3.1 and 3.3.2.
 
-If this software is useful for your research, please acknowledge our
-contribution by citing the following scientific publications:
+If you find that this software is useful for your research project,
+please cite our paper:
+
+Carbonetto, P., and Stephens, M. (2012). Scalable variational
+inference for Bayesian variable selection in regression, and its
+accuracy in genetic association studies. *Bayesian Analysis* **7**,
+73--108.
 
 ###License
 
