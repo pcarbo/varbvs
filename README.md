@@ -50,7 +50,7 @@ Subdirectory [varbvs-R](varbvs-R) has all the necessary files to build
 and install a package for R. To install this package, follow the
 [standard instructions](http://cran.r-project.org/doc/manuals/R-admin.html)
 for installing an R package from source. On a Unix or Unix-like
-platform (e.g., Mac OS X), the following steps will install the R
+platform (e.g., Mac OS X), the following steps should install the R
 package:
 
     mv varbvs-R varbvs
@@ -60,24 +60,26 @@ package:
 Once you have installed the package, load the package in R by typing
 <code>library(varbvs)</code>. To get an overview of the package, type
 <code>help(package="varbvs")</code>. The most important function you
-will use is the varbvs function, and type <code>help(varbvs)</code> to
-get more information about this function.
+will use is function "varbvs". Type <code>help(varbvs)</code> to get
+more information about this.
 
 We have provided several R scripts in the
-[vignettes](varbvs-R/vignettes) folder that illustrate application of
+[vignettes](varbvs-R/vignettes) folder to illustrate application of
 *varbvs* to small and large data sets.
 
 Script [demo.qtl.R](varbvs-R/vignettes/demo.qtl.R) demonstrates how to
-use the varbvs function for mapping a quantitative trait in a small,
-simulated data set. Script [demo.cc.R](varbvs-R/vignettes/demo.cc.R)
-demonstrates mapping of a binary trait in a simulated data set.
+use the varbvs function for mapping a quantitative trait (*i.e.*, a
+continuously valued outcome) in a small, simulated data set. Script
+[demo.cc.R](varbvs-R/vignettes/demo.cc.R) demonstrates mapping of a
+binary valued outcome in a simulated data set.
 
 Script [demo.leukemia.R](varbvs-R/vignettes/demo.leukemia.R)
-application of *glmnet* and *varbvs* to the Leukemia data set. The
-main aim of this script is to illustrate some of the different
-properties of varbvs (Bayesian variable selection) and glmnet
-(penalized sparse regression). This script also reproduces the results
-and graphs presented in the first example of Carbonetto et al (2016).
+demonstrates application of both *glmnet* and *varbvs* to the Leukemia
+data set. The main aim of this script is to illustrate some of the
+different properties of *varbvs* (Bayesian variable selection) and
+*glmnet* (penalized sparse regression). This script also reproduces
+the results and graphs presented in the first example of Carbonetto *et
+al* (2016).
 
 Script [demo.cfw.R](varbvs-R/vignettes/demo.cfw.R) demonstrates varbvs
 for mapping quantitative trait loci in a large data set outbred mice.
@@ -93,7 +95,7 @@ genetic loci contributing to human disease risk. Although these
 scripts cannot be executed because we cannot share the data, we have
 included them in the R package since it is useful to follow the steps
 presented in these scripts.  These scripts reproduce some of the
-results and figures presented in Carbonetto et al (2016).
+results and figures presented in Carbonetto *et al* (2016).
 
 Once you have installed and loaded the **varbvs** package, start by
 running the demonstration script with **demo(example1)**. This script
