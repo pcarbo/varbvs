@@ -81,21 +81,22 @@ different properties of *varbvs* (Bayesian variable selection) and
 the results and graphs presented in the first example of Carbonetto *et
 al* (2016).
 
-Script [demo.cfw.R](varbvs-R/vignettes/demo.cfw.R) demonstrates varbvs
-for mapping quantitative trait loci in a large data set outbred mice.
+Script [demo.cfw.R](varbvs-R/vignettes/demo.cfw.R) also demonstrates
+*varbvs* for mapping genetic factors contributing to a quantitative
+trait, but here it is applied to a actual large data set generated
+from an outbred mouse study. Running this script with <code>trait =
+"testis"</code> reproduces the results and figures given in the second
+example of Carbonetto *et al* (2016).
 
-phenotypes measured in CFW (Carworth Farms White) #
-outbred mice. Phenotypes include muscle weights (EDL and soleus #
-muscle) and testis weight measured at sacrifice.
-
-Scripts [demo.cd.R](varbvs-R/vignettes/demo.cd.R) and
+Finally, scripts [demo.cd.R](varbvs-R/vignettes/demo.cd.R) and
 [demo.cytokine.R](varbvs-R/vignettes/demo.cytokine.R) show how the
 *varbvs* package can be applied to a very large data set to map
-genetic loci contributing to human disease risk. Although these
-scripts cannot be executed because we cannot share the data, we have
-included them in the R package since it is useful to follow the steps
-presented in these scripts.  These scripts reproduce some of the
-results and figures presented in Carbonetto *et al* (2016).
+genetic loci and test biological hypotheses about genetic factors
+contributing to human disease risk. Although these scripts cannot be
+executed because we cannot share the data, we have included them in
+the R package since it is useful to follow the steps presented in
+these scripts.  These scripts reproduce some of the results and
+figures presented in Carbonetto *et al* (2016).
 
 Once you have installed and loaded the **varbvs** package, start by
 running the demonstration script with **demo(example1)**. This script
