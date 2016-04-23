@@ -133,40 +133,26 @@ flags may not be relevant to your setup, especially if you are not
 using [gcc](http://gcc.gnu.org). Do not remove flag -DMATLAB_MEX_FILE;
 this is important for correctly compiling the C code for MATLAB.
 
-We have provided several MATLAB scripts in the
-[varbvs-MATLAB](varbvs-MATLAB) folder to illustrate application of
+We have provided a few MATLAB scripts to illustrate application of
 *varbvs* to small and large data sets:
 
 + Script [demo_qtl.m](varbvs-MATLAB/demo_qtl.m) demonstrates how to
 use the varbvs function for mapping a quantitative trait (*i.e.*, a
-continuously valued outcome) in a small, simulated data set. Script
-[demo.cc.R](varbvs-R/vignettes/demo.cc.R) demonstrates mapping of a
-binary valued outcome in a simulated data set.
+continuously valued outcome) in a small, simulated data
+set. Additionally, script [demo_cc.m](varbvs-MATLAB/demo_cc.m)
+demonstrates mapping of a binary valued outcome in a simulated data
+set.
 
-+ Script [demo.leukemia.R](varbvs-R/vignettes/demo.leukemia.R)
-demonstrates application of both *glmnet* and *varbvs* to the Leukemia
-data. The main aim of this script is to illustrate some of the
-different properties of *varbvs* (Bayesian variable selection) and
-*glmnet* (penalized sparse regression). This script also reproduces
-the results and graphs presented in the first example of Carbonetto *et
-al* (2016).
-
-+ Like demo.qtl.R, script [demo.cfw.R](varbvs-R/vignettes/demo.cfw.R)
-also demonstrates *varbvs* for mapping genetic factors contributing to
-a quantitative trait, but here it is applied to an actual data set
-generated from an outbred mouse study. Running this script with
-<code>trait = "testis"</code> reproduces the results and figures given
-in the second example of Carbonetto *et al* (2016).
-
-+ Finally, scripts [demo.cd.R](varbvs-R/vignettes/demo.cd.R) and
-[demo.cytokine.R](varbvs-R/vignettes/demo.cytokine.R) show how the
-*varbvs* package can be applied to a very large data set to map
-genetic loci and test biological hypotheses about genetic factors
-contributing to human disease risk. Although these scripts cannot be
-executed because we cannot share the genotype data, we have included
-these scripts anyhow since it is helpful to be able to follow the
-steps given in these R scripts. These scripts reproduce some of the
-results and figures presented in Carbonetto *et al* (2016).
++ Scripts [demo_cd.m](varbvs-MATLAB/demo_cd.m),
+[demo_celiac.m](varbvs-MATLAB/demo_celiac.m) and
+[demo_cytokine.m](varbvs-MATLAB/demo_cytokine.m) show how the *varbvs*
+package can be applied to very large data sets to map genetic loci and
+test biological hypotheses about genetic factors contributing to human
+diseases. Although these scripts cannot be executed because we cannot
+share the genotype data, we have included these scripts anyhow since
+it is helpful to be able to follow the steps given in these R
+scripts. These scripts reproduce some of the results and figures
+presented in Carbonetto *et al* (2016).
 
 ###Credits
 
