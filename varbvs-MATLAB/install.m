@@ -1,8 +1,9 @@
 % This script compiles the necessary MEX files.
 
 % These are the commands to build the build the MEX shared library files.
-% The -std=gnu99 flag is needed to successfully build the MEX files in
-% MATLAB 8.1 (R2013a), but may not be needed for other MATLAB releases.
+% I've found that the -std=gnu99 flag is useful for successfully building
+% the MEX files in MATLAB 8.1 (R2013a), but may not be needed for other
+% MATLAB releases.
 opts = ['-O -largeArrayDims -DMATLAB_MEX_FILE -I../varbvs-R/src ' ...
         'COPTIMFLAGS="-std=gnu99"'];
 

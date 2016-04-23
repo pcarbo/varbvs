@@ -1,6 +1,6 @@
 #Large-scale Bayesian variable selection for R and MATLAB
  
-###Introduction
+###Overview
 
 We introduce *varbvs*, a suite of functions writen in R and MATLAB for
 analysis of large-scale data sets using Bayesian variable selection
@@ -12,8 +12,10 @@ has been used to implement Bayesian variable selection for large
 problems with over a million variables and thousands of samples,
 including analysis of massive genome-wide data sets.
 
-The MATLAB interface has been tested in version 8.6.0 (2015b). The R
-package has been tested in version R versions 3.3.1 and 3.3.2.
+The MATLAB interface has been tested in MATLAB version 8.6.0
+(2015b). The R package has been tested in R versions 3.3.1 and 3.3.2.
+
+###Citing varbvs
 
 If you find that this software is useful for your research project,
 please cite our paper:
@@ -65,7 +67,7 @@ more information about this.
 
 We have provided several R scripts in the
 [vignettes](varbvs-R/vignettes) folder to illustrate application of
-*varbvs* to small and large data sets.
+*varbvs* to small and large data sets:
 
 + Script [demo.qtl.R](varbvs-R/vignettes/demo.qtl.R) demonstrates how to
 use the varbvs function for mapping a quantitative trait (*i.e.*, a
@@ -101,55 +103,70 @@ results and figures presented in Carbonetto *et al* (2016).
 ###Quick start for MATLAB
 
 Begin by downloading the github repository for this project. The
-simplest way to do this is to [download the repository as a ZIP
-archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
+simplest way to do this is to
+[download the repository as a ZIP archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
 you have extracted the files from the compressed archive, you will see
-that the main directory contains two subdirectories, one for the
-MATLAB functions, and one for the R code.
+that the main directory contains two subdirectories, one containing
+the MATLAB code, and the other containing the files for the R package.
 
-Next you will need to compile the C code into MATLAB executable
-("MEX") files. To do this, you will need to have a [C compiler
-supported by
-MATLAB](http://www.mathworks.com/support/compilers/current_release/),
-and you will need to configure MATLAB to build MEX files. See [this
-webpage](http://www.mathworks.com/support/tech-notes/1600/1605.html)
-for details. When you follow this step, it is important that you
-configure MATLAB so that it uses the version of the C compiler that is
-compatible with your version of MATLAB. Otherwise, you will encounter
-errors when building the MEX files, or MATLAB may crash when
-attempting to run the examples. If you run into these problems, you
-may have to run the mex command with the -v flag to check what
-compiler is being used, and you may have to edit the MEX configuration
-file manually.
+Next, you will need to compile the C code into MATLAB executable
+("MEX") files. To build the necessary MEX files, run the
+[install.m](varbvs-MATLAB/install.m) script in MATLAB. For the MEX
+files to be built successfully, you will need to have a
+[C compiler supported by MATLAB](http://www.mathworks.com/support/compilers/current_release/),
+and you will need to configure MATLAB to build MEX files. See
+[this webpage](http://www.mathworks.com/support/tech-notes/1600/1605.html)
+for more details.
 
-To build the necessary MEX files, run the
-[install.m](MATLAB/install.m) script in MATLAB.
+When you take this step, it is important that you configure MATLAB so
+that it uses the version of the C compiler that is compatible with
+your version of MATLAB. Otherwise, you will encounter errors when
+building the MEX files, or MATLAB may crash when attempting to run the
+examples. If you run into these problems, you may have to run the mex
+command with the -v flag to check what compiler is being used, and you
+may have to edit the MEX configuration file manually.
 
-Note that the beginning of this script sets some compiler and linker
-flags. These flags tell the GCC compiler to use the ISO C99 standard,
-and to optimize the code as much as possible. However, these flags may
-not be relevant to your setup, especially if you are not using
-[gcc](http://gcc.gnu.org). To avoid errors during installation, if you
-are using a compiler other than GCC, it may be best to set variables
-**cflags** and **ldflags** to empty strings before running the
-[install.m](MATLAB/install.m) script.
+Also note that the beginning of this script sets some compiler and
+linker flags. These flags tell the GCC compiler to use the ISO C99
+standard, and to optimize the code as much as possible. However, these
+flags may not be relevant to your setup, especially if you are not
+using [gcc](http://gcc.gnu.org). Do not remove flag -DMATLAB_MEX_FILE;
+this is important for correctly compiling the C code for MATLAB.
 
-If you modify the installation procedure to fit your compiler setup,
-it is important that you define macro MATLAB_MEX_FILE, akin to the
-\#define MATLAB_MEX_FILE directive in C. In GCC, this is accomplished
-by including flag -DMATLAB_MEX_FILE when issuing the commands to build
-MEX files.
+We have provided several MATLAB scripts in the
+[varbvs-MATLAB](varbvs-MATLAB) folder to illustrate application of
+*varbvs* to small and large data sets:
 
-Once you have built the MEX files, start by running the script
-[example1.m](MATLAB/example1.m). This script demonstrates how the
-variational inference algorithm is used to compute posterior
-probabilities for a small linear regression example in which only a
-small subset of the variables (single nucleotide polymorphisms, or
-SNPs) has affects the outcome (a simulated quantitative trait). In
-this small example, the variational estimates of the posterior
-probabilities are compared with estimates obtained by MCMC
-simulation. Notice that it takes a considerable amount of time to
-simulate the Markov chain.
++ Script [demo_qtl.m](varbvs-MATLAB/demo_qtl.m) demonstrates how to
+use the varbvs function for mapping a quantitative trait (*i.e.*, a
+continuously valued outcome) in a small, simulated data set. Script
+[demo.cc.R](varbvs-R/vignettes/demo.cc.R) demonstrates mapping of a
+binary valued outcome in a simulated data set.
+
++ Script [demo.leukemia.R](varbvs-R/vignettes/demo.leukemia.R)
+demonstrates application of both *glmnet* and *varbvs* to the Leukemia
+data. The main aim of this script is to illustrate some of the
+different properties of *varbvs* (Bayesian variable selection) and
+*glmnet* (penalized sparse regression). This script also reproduces
+the results and graphs presented in the first example of Carbonetto *et
+al* (2016).
+
++ Like demo.qtl.R, script [demo.cfw.R](varbvs-R/vignettes/demo.cfw.R)
+also demonstrates *varbvs* for mapping genetic factors contributing to
+a quantitative trait, but here it is applied to an actual data set
+generated from an outbred mouse study. Running this script with
+<code>trait = "testis"</code> reproduces the results and figures given
+in the second example of Carbonetto *et al* (2016).
+
++ Finally, scripts [demo.cd.R](varbvs-R/vignettes/demo.cd.R) and
+[demo.cytokine.R](varbvs-R/vignettes/demo.cytokine.R) show how the
+*varbvs* package can be applied to a very large data set to map
+genetic loci and test biological hypotheses about genetic factors
+contributing to human disease risk. Although these scripts cannot be
+executed because we cannot share the genotype data, we have included
+these scripts anyhow since it is helpful to be able to follow the
+steps given in these R scripts. These scripts reproduce some of the
+results and figures presented in Carbonetto *et al* (2016).
 
 ###Credits
 
@@ -159,5 +176,5 @@ Dept. of Human Genetics, University of Chicago<br>
 and AncestryDNA, San Francisco, California<br>
 2012-2016
 
-Other major contributors to this software include Xiang Zhu and
-Matthew Stephens.
+Xiang Zhu and Matthew Stephens have also contributed to the
+development of this software.
