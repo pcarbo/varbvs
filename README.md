@@ -94,9 +94,9 @@ in the second example of Carbonetto *et al* (2016).
 [demo.cytokine.R](varbvs-R/vignettes/demo.cytokine.R) show how the
 *varbvs* package can be applied to a very large data set to map
 genetic loci and test biological hypotheses about genetic factors
-contributing to human disease risk. Although these scripts cannot be
-executed because we cannot share the genotype data, we have included
-these scripts anyhow since it is helpful to be able to follow the
+contributing to human disease risk. Although we cannot share the data
+needed to run these scripts due to data privacy restrictions, we have
+included these scripts because it is helpful to be able to follow the
 steps given in these R scripts. These scripts reproduce some of the
 results and figures presented in Carbonetto *et al* (2016).
 
@@ -148,11 +148,11 @@ set.
 [demo_cytokine.m](varbvs-MATLAB/demo_cytokine.m) show how the *varbvs*
 package can be applied to very large data sets to map genetic loci and
 test biological hypotheses about genetic factors contributing to human
-diseases. Although these scripts cannot be executed because we cannot
-share the genotype data, we have included these scripts anyhow since
-it is helpful to be able to follow the steps given in these R
-scripts. These scripts reproduce some of the results and figures
-presented in Carbonetto *et al* (2016).
+diseases. Although we cannot share the data needed to run these
+scripts due to data privacy restrictions, we have included these
+scripts anyhow since it is helpful to be able to follow the steps
+given in these MATLAB scripts. These scripts reproduce some of the
+results and figures presented in Carbonetto *et al* (2016).
 
 ###Credits
 
