@@ -23,7 +23,7 @@ please cite our paper:
 Carbonetto, P., and Stephens, M. (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. *Bayesian Analysis* **7**,
-73--108.
+73-108.
 
 ###License
 

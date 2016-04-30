@@ -169,7 +169,13 @@ updatestats_varbvsbin <- function (X, y, eta) {
 
   # Compute the diagonal entries of X'*dhat*X. For a definition of
   # dhat, see the Bayesian Analysis journal paper.
-  xdx <- diagsq(X,d) - xd^2/sum(d)
+  #
+  # This is the less numerically stable version of this update:
+  # 
+  #   xdx <- diagsq(X,d) - xd^2/sum(d)
+  # 
+  dzr <- d/sqrt(sum(d))
+  xdx <- diagsq(X,d) - c(dzr %*% X)^2
 
   # Return the result.
   return(list(d = d,yhat = yhat,xy = xy,xd = xd,xdx = xdx))
