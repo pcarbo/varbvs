@@ -9,26 +9,28 @@
 %      BF = ------------- ,
 %           Pr(data | H0)
 %
-%    the probability of the data given the alternative hypothesis (H1) over
-%    the probability of the data given the null hypothesis (H0). This is
-%    also known as a Bayes factor (see Kass & Raftery, Journal of the
+%    the probability of the data given the "alternative" hypothesis (H1)
+%    over the probability of the data given the "null" hypothesis (H0). This
+%    is also known as a Bayes factor (see Kass & Raftery, Journal of the
 %    American Statistical Association, 1995). Here we assume that although
 %    these probabilities cannot be computed analytically because they
 %    involve intractable integrals, we can obtain reasonable estimates of
 %    these probabilities with a simple numerical approximation over some
-%    latent variable, Z, assuming the prior over Z is uniform. The inputs
-%    are the log-probabilities
+%    latent variable, assuming the prior over the latent variance is
+%    uniform. The inputs are the log-probabilities
 %
-%      Pr(data, Z | H) = Pr(data | Z, H) x Pr(Z | H),
+%      Pr(data, Z0 | H0) = Pr(data | Z0, H0) x Pr(Z0 | H0),
+%      Pr(data, Z1 | H1) = Pr(data | Z1, H1) x Pr(Z1 | H1),
 %
-%    where Pr(Z | H) is uniform over all Z, and H = H0 or H1.
+%    where Pr(Z0 | H0) and Pr(Z1 | H1) are uniform over all Z0 and Z1.
 %
-%    Alternatively, this function can be used to compute an importance
+%    Alternatively, this function can be viewed as computing an importance
 %    sampling estimate of the Bayes factor; see, for example, R. M. Neal,
 %    "Annealed importance sampling", Statistics and Computing, 2001. This
-%    formulation is equivalent to a simple numerical approximation when
-%    the settings of the latent variable Z are drawn from the same
-%    distribution as the prior Pr(Z | H).
+%    formulation described above is a special case of importance sampling
+%    when the settings of the latent variable Z0 and A1 are drawn from the
+%    same (uniform) distribution as the prior, Pr(Z0 | H0) and Pr(Z1 | H1),
+%    respectively.
 %
 % USAGE:
 %    BF = bayesfactor(logw0, logw1)
