@@ -649,6 +649,8 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fprintf('*********************');
     fprintf('********************************************************\n');
     fprintf('Copyright (C) 2012-2016 Peter Carbonetto.\n')
+    fprintf('See http://www.gnu.org/licenses/gpl.html for the full ');
+    fprintf('license.\n');
     fprintf('Fitting variational approximation for Bayesian variable ');
     fprintf('selection model.\n');
     fprintf('family:     %-8s',family); 
