@@ -48,4 +48,6 @@ accuracy in genetic association studies. \emph{Bayesian Analysis}
 \bold{7}, 73--108.}
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \seealso{\code{varbvs}, \code{summary.varbvs}}
-\examples{See help(varbvs) for examples.}
+\examples{
+  # See help(varbvs) for examples.
+}

@@ -12,8 +12,9 @@ has been used to implement Bayesian variable selection for large
 problems with over a million variables and thousands of samples,
 including analysis of massive genome-wide data sets.
 
-The MATLAB interface has been tested in MATLAB version 8.6.0
-(2015b). The R package has been tested in R versions 3.3.1 and 3.3.2.
+The MATLAB interface has been tested extensively in MATLAB
+version 8.6.0 (2015b). The R package has also been tested extensively
+in R versions 3.2.1 and 3.2.2.
 
 ###Citing varbvs
 
