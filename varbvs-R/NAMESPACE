@@ -1,5 +1,6 @@
 useDynLib(varbvs)
 
+importFrom(methods,is)
 importFrom(stats,qnorm)
 importFrom(stats,quantile)
 importFrom(stats,runif)

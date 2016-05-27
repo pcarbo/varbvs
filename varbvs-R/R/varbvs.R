@@ -146,7 +146,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # variational parameters.
   if (missing(initialize.params))
     initialize.params <- initialize.params.default
-  else if (initialize_params & ns == 1)
+  else if (initialize.params & ns == 1)
     stop(paste("initialize.params = TRUE has no effect when there is",
                "only one hyperparameter setting"))
 

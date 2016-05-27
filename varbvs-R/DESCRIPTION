@@ -6,7 +6,7 @@ Author: Peter Carbonetto, Matthew Stephens
 Maintainer: Peter Carbonetto <peter.carbonetto@gmail.com>
 Description: Fast algorithms for fitting Bayesian variable selection models and computing Bayes factors, in which the outcome (or response variable) is modeled using a linear regression or a logistic regression. The algorithms are based on the variational approximations described in "Scalable variational inference for Bayesian variable selection in regression, and its accuracy in genetic association studies" (P. Carbonetto and M. Stephens, Bayesian Analysis 7, 2012, pages 73-108). This software has been applied to large data sets with over a million variables and thousands of samples.  
 Depends: R (>= 3.1.0)
-Imports: stats, graphics, lattice, latticeExtra
+Imports: methods, stats, graphics, lattice, latticeExtra
 Suggests: glmnet, qtl
 License: GPL (>= 3) 
 NeedsCompilation: yes 
