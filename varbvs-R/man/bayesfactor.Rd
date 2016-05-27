@@ -45,10 +45,10 @@ respectively.
   73--108.
 
   R. E. Kass and A. E. Raftery (1995). Bayes Factors. \emph{Journal of the
-  American Statistical Association} \bold{90}, 773-–795.
+  American Statistical Association} \bold{90}, 773--795.
 
   R. M. Neal (2001). Annealed importance sampling. \emph{Statistics and
-  Computing} \bold{11}, 125-–139.
+  Computing} \bold{11}, 125--139.
 }
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \seealso{\code{varbvs}, \code{normalizelogweights}}

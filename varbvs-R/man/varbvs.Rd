@@ -320,7 +320,7 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
 
   Y. Guan and M. Stephens (2011). Bayesian variable selection regression
   for genome-wide association studies and other large-scale
-  problems. \emph{Annals of Applied Statistics} \bold{5}, 1780–-1815.
+  problems. \emph{Annals of Applied Statistics} \bold{5}, 1780--1815.
 
   X. Zhou, P. Carbonetto and M. Stephens (2013). Polygenic modeling with
   Bayesian sparse linear mixed models. \emph{PLoS Genetics} \bold{9},
