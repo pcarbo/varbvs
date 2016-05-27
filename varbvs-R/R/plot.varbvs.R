@@ -1,6 +1,6 @@
 # Summarize the variable selection results in a single plot.
 plot.varbvs <-
-    function (fit, score, groups, vars = NULL, var.labels, draw.threshold = NA,
+    function (x, score, groups, vars = NULL, var.labels, draw.threshold = NA,
               gap = 0,col = "midnightblue", pch = 20, xlab = "", ylab = "",
               abline.args = list(lty = "dotted",col = "orangered"),
               vars.xyplot.args = list(pch = 20,col = "magenta"),
@@ -14,16 +14,16 @@ plot.varbvs <-
   # CHECK INPUTS
   # ------------
   # Check that the first input is an instance of class "varbvs".
-  if (!is(fit,"varbvs"))
-    stop("Input fit must be an instance of class \"varbvs\".")
+  if (!is(x,"varbvs"))
+    stop("Input argument x must be an instance of class \"varbvs\".")
   
   # PROCESS OPTIONS
   # ---------------
   # Calculate the posterior inclusion probabilities (PIPs) if a
   # "score" isn't provided as one of the inputs.
   if (missing(score)) {
-    w <- c(normalizelogweights(fit$logw))
-    y <- fit$alpha %*% w
+    w <- c(normalizelogweights(x$logw))
+    y <- x$alpha %*% w
   } else
     y <- score
   p <- length(y)
@@ -35,9 +35,9 @@ plot.varbvs <-
   group.labels <- unique(groups)
 
   # Determine the selected variable labels. By default, use the labels
-  # stored in the varbvs data structure ("fit").
+  # stored in the varbvs data structure.
   if (missing(var.labels))
-    var.labels <- rownames(fit$alpha)[vars]
+    var.labels <- rownames(x$alpha)[vars]
   if (is.null(var.labels))
     var.labels <- rep("",length(vars))
   

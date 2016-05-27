@@ -1,71 +1,71 @@
 # Generate a four-part summary of the fitted Bayesian variable
 # selection model.
-summary.varbvs <- function (fit, cred.int = 0.95, nv = 5, nr = 1000, ...) {
+summary.varbvs <- function (object, cred.int = 0.95, nv = 5, nr = 1000, ...) {
 
   # Check that the first input is an instance of class "varbvs".
-  if (!is(fit,"varbvs"))
-    stop("Input fit must be an instance of class \"varbvs\".")
+  if (!is(object,"varbvs"))
+    stop("Input argument object must be an instance of class \"varbvs\".")
 
   # Get the number of variables (p) and number of candidate
   # hyperparameter settings (ns).
-  p  <- nrow(fit$alpha)
-  ns <- length(fit$logw)
+  p  <- nrow(object$alpha)
+  ns <- length(object$logw)
 
   # Input nv cannot be greater than the number of variables.
   nv <- min(nv,p) 
   
   # Compute the normalized (approximate) probabilities.
-  w <- c(normalizelogweights(fit$logw))
+  w <- c(normalizelogweights(object$logw))
 
   # Compute the posterior inclusion probabilities (PIPs) and posterior
   # mean regression coefficients averaged over settings of the
   # hyperparameters.
-  PIP  <- fit$alpha %*% w
-  beta <- fit$mu    %*% w
+  PIP  <- object$alpha %*% w
+  beta <- object$mu    %*% w
 
   # Generate the summary.
   out <-
-    list(family       = fit$family,
+    list(family       = object$family,
          cred.int     = cred.int,
-         n            = fit$n,
+         n            = object$n,
          p            = p,
          ns           = ns,
-         ncov         = nrow(fit$mu.cov),
-         prior.same   = fit$prior.same,
-         update.sigma = fit$update.sigma,
-         update.sa    = fit$update.sa,
-         optimize.eta = fit$optimize.eta,
-         logw         = fit$logw,
+         ncov         = nrow(object$mu.cov),
+         prior.same   = object$prior.same,
+         update.sigma = object$update.sigma,
+         update.sa    = object$update.sa,
+         optimize.eta = object$optimize.eta,
+         logw         = object$logw,
          w            = w,
          sigma        = list(x = NA,x0 = NA,a = NA,b = NA),
          sa           = list(x = NA,x0 = NA,a = NA,b = NA),
          logodds      = list(x = NA,x0 = NA,a = NA,b = NA),
-         model.pve    = list(x0 = mean(fit$model.pve),
-           a = quantile(fit$model.pve,0.5 - cred.int/2,na.rm = TRUE),
-           b = quantile(fit$model.pve,0.5 + cred.int/2,na.rm = TRUE)))
+         model.pve    = list(x0 = mean(object$model.pve),
+           a = quantile(object$model.pve,0.5 - cred.int/2,na.rm = TRUE),
+           b = quantile(object$model.pve,0.5 + cred.int/2,na.rm = TRUE)))
 
   # Summarize the candidate hyperparameter settings, when provided.
-  if (!fit$update.sigma)
-    out$sigma$x <- fit$sigma
-  if (!fit$update.sa)
-    out$sa$x <- fit$sa
-  if (fit$prior.same)
-    out$logodds$x <- fit$logodds
+  if (!object$update.sigma)
+    out$sigma$x <- object$sigma
+  if (!object$update.sa)
+    out$sa$x <- object$sa
+  if (object$prior.same)
+    out$logodds$x <- object$logodds
   
   if (ns == 1) {
 
     # Summarize the hyperparameter settings when there is only one
     # candidate setting.
-    out$sa$x0 <- fit$sa
-    if (fit$family == "gaussian")
-      out$sigma$x0 <- fit$sigma
-    if (fit$prior.same)
-      out$logodds$x0 <- fit$logodds
+    out$sa$x0 <- object$sa
+    if (object$family == "gaussian")
+      out$sigma$x0 <- object$sigma
+    if (object$prior.same)
+      out$logodds$x0 <- object$logodds
   } else {
     
     # Summarize the residual variance parameter (sigma).
-    if (fit$family == "gaussian") {
-      x <- fit$sigma
+    if (object$family == "gaussian") {
+      x <- object$sigma
       if (length(unique(x)) > 1) {
         x0        <- dot(w,x)
         out$sigma <- c(list(x = out$sigma$x,x0 = x0),cred(x,x0,w,cred.int))
@@ -73,15 +73,15 @@ summary.varbvs <- function (fit, cred.int = 0.95, nv = 5, nr = 1000, ...) {
     }
  
     # Summarize the fitted prior variance parameter (sa).
-    x <- fit$sa
+    x <- object$sa
     if (length(unique(x)) > 1) {
       x0     <- dot(w,x)
       out$sa <- c(list(x = out$sa$x,x0 = x0),cred(x,x0,w,cred.int))
     }
 
     # Summarize the fitted prior log-odds of inclusion (logodds).
-    if (fit$prior.same) {
-      x           <- fit$logodds
+    if (object$prior.same) {
+      x           <- object$logodds
       x0          <- dot(w,x)
       out$logodds <- c(list(x = out$logodds$x,x0 = x0),cred(x,x0,w,cred.int))
     }
@@ -96,12 +96,12 @@ summary.varbvs <- function (fit, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   # probability that they are included.
   vars <- order(PIP,decreasing = TRUE)[1:nv]
   out$top.vars <-
-    data.frame(index = vars,variable = rownames(fit$alpha)[vars],
+    data.frame(index = vars,variable = rownames(object$alpha)[vars],
                prob = PIP[vars],PVE = NA,coef = beta[vars],cred = NA)
   for (i in 1:length(vars)) {
-    if (fit$family == "gaussian")
-      out$top.vars[i,"PVE"] <- dot(w,fit$pve[vars[i],])
-    out$top.vars[i,"cred"] <- with(varbvscoefcred(fit,vars[i],cred.int,nr),
+    if (object$family == "gaussian")
+      out$top.vars[i,"PVE"] <- dot(w,object$pve[vars[i],])
+    out$top.vars[i,"cred"] <- with(varbvscoefcred(object,vars[i],cred.int,nr),
                                    sprintf("[%+0.3f,%+0.3f]",a,b))
   }
   names(out$top.vars)[6] <- sprintf("Pr(coef.>%0.2f)",cred.int)
@@ -111,7 +111,7 @@ summary.varbvs <- function (fit, cred.int = 0.95, nv = 5, nr = 1000, ...) {
 }
 
 # ----------------------------------------------------------------------
-print.summary.varbvs <- function (x, digits = 3) {
+print.summary.varbvs <- function (x, digits = 3, ...) {
 
   # Check that the first input is an instance of class "summary.varbvs".
   if (!is(x,"summary.varbvs"))
