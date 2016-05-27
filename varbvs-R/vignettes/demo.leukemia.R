@@ -20,8 +20,8 @@
 # Dettling, M. (2004). BagBoosting for tumor classification with gene
 # expression data. Bioinformatics 20, 3583–3593.
 #
-# Friedman, J., Hastie, T., Tibshirani, R. Regularization paths for
-# generalized linear models via coordinate descent. Journal of
+# Friedman, J., Hastie, T., Tibshirani, R. (2010) Regularization paths
+# for generalized linear models via coordinate descent. Journal of
 # Statistical Software 33, 1–22.
 #
 library(lattice)
@@ -44,9 +44,9 @@ sa      <- 1                  # Prior variance of coefficients.
 # ------------------
 cat("1. Loading leukemia data.\n")
 data(leukemia)
-X <- Leukemia$x
-y <- Leukemia$y
-rm(Leukemia)
+X <- leukemia$x
+y <- leukemia$y
+rm(leukemia)
 
 # Set the random number generator seed.
 set.seed(1)
