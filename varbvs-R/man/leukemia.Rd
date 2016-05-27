@@ -16,15 +16,15 @@ values, and a vector \code{y} of 72 binary disease outcomes.
 from the supplementary materials accompanying Friedman et al (2010).}
 \references{
   M. Dettling (2004). BagBoosting for tumor classification with gene
-  expression data. \emph{Bioinformatics} \bold{20}, 3583-–3593.
+  expression data. \emph{Bioinformatics} \bold{20}, 3583--3593.
 
   J. Friedman, T. Hastie and R. Tibshirani (2010). Regularization paths
   for generalized linear models via coordinate descent. \emph{Journal of 
-  Statistical Software} \bold{33}, 1–-22.
+  Statistical Software} \bold{33}, 1--22.
 
   T. R. Golub, et al. (1999). Molecular classification of cancer: class
   discovery and class prediction by gene expression monitoring.
-  \emph{Science} \bold{286}, 531-–537.
+  \emph{Science} \bold{286}, 531--537.
 }
 \examples{
   # See demo.leukemia.R vignette.

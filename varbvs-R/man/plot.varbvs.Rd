@@ -64,8 +64,6 @@ quantitative trait locus (QTL) mapping study.
   specifying how to draw the horizontal line at the location specified
   by \code{draw.threshold}.}
 
-  \item{var.col}{Color of points for highlighted variables only.}
-
   \item{vars.xyplot.args}{Additional arguments passed to \code{xyplot}
   for drawing the highlighted variables.}
 

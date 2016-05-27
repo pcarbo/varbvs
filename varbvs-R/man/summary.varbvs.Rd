@@ -7,7 +7,7 @@
 }
 \usage{
   \method{summary}{varbvs}(object, cred.int = 0.95, nv = 5, nr = 1000, \ldots)
-  \method{print}{summary.varbvs}(x, \ldots)
+  \method{print}{summary.varbvs}(x, digits = 3, \ldots)
 }
 \arguments{
   \item{object}{Output of function \code{\link{varbvs}}.}
@@ -16,6 +16,10 @@
   according to their posterior inclusion probabilities.}
   \item{nr}{Number of Monte Carlo samples to draw to estimate credible
     intervals for coefficients of selected variables.}
+  \item{x}{Output of function \code{summary.varbvs}.}
+  \item{digits}{Number of digits shown when printing posterior
+    probabilities of top nv variables.}
+  \item{...}{Additional print arguments.}
 }
 \details{
   The printed summary is divided into three parts. The first part
