@@ -34,8 +34,8 @@ fit.null <- varbvs(X,NULL,y,"binomial",logodds = -4)
 # genetic markers near cytokine signaling genes are more likely to be
 # included in the model.
 cat("FITTING PATHWAY ENRICHMENT MODEL TO DATA.\n")
-logodds          <- matrix(-4,442001,13)
-logodds[a == 1,] <- matrix(-4 + seq(0,3,0.25),6711,13,byrow = TRUE)
+logodds <- matrix(-4,442001,13)
+logodds[cytokine == 1,] <- matrix(-4 + seq(0,3,0.25),6711,13,byrow = TRUE)
 fit.cytokine <- varbvs(X,NULL,y,"binomial",logodds = logodds,
                        alpha = fit.null$alpha,mu = fit.null$mu,
                        eta = fit.null$eta,optimize.eta = TRUE)
@@ -46,7 +46,7 @@ BF <- bayesfactor(fit.null$logw,fit.cytokine$logw)
 # SAVE RESULTS
 # ------------
 cat("SAVING RESULTS.\n")
-save(list = c("fit.null","fit.cytokine","map","a","BF"),
+save(list = c("fit.null","fit.cytokine","map","cytokine","BF"),
      file = "varbvs.demo.cytokine.RData")
 
 # Show two "genome-wide scans" from the multi-marker PIPs, with and

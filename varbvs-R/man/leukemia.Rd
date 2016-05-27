@@ -4,9 +4,8 @@
 \title{Expression levels recorded in leukemia patients.}
 \description{
 Expression levels recorded for 3,571 genes in 72 patients with leukemia
-(Golub et al, 1999). The 3,571 genes are the candidate variables. The
-binary outcome encodes the disease subtype: acute lymphobastic leukemia
-(ALL) or acute myeloid leukemia (AML). 
+(Golub et al, 1999). The binary outcome encodes the disease subtype:
+acute lymphobastic leukemia (ALL) or acute myeloid leukemia (AML).
 }
 \usage{data(leukemia)}
 \format{
@@ -26,5 +25,8 @@ from the supplementary materials accompanying Friedman et al (2010).}
   T. R. Golub, et al. (1999). Molecular classification of cancer: class
   discovery and class prediction by gene expression monitoring.
   \emph{Science} \bold{286}, 531-–537.
+}
+\examples{
+  # See demo.leukemia.R vignette.
 }
 \keyword{datasets}
