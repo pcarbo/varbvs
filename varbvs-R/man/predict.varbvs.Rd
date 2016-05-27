@@ -7,10 +7,10 @@
   \code{\link{varbvs}}.}
 
 \usage{
-  \method{predict}{varbvs}(fit, X, Z = NULL, \ldots)
+  \method{predict}{varbvs}(object, X, Z = NULL, \ldots)
 }
 \arguments{
-  \item{fit}{Output of function \code{\link{varbvs}}.}
+  \item{object}{Output of function \code{\link{varbvs}}.}
 
   \item{X}{n x p input matrix, in which p is the number of variables,
            and n is the number of samples for which predictions will be
@@ -32,9 +32,9 @@
   necessarily calibrated under the variational approximation.
   
   The predictions are computed by averaging over the hyperparameter
-  settings, treating \code{fit$logw} as (unnormalized) log-marginal
+  settings, treating \code{object$logw} as (unnormalized) log-marginal
   probabilities. See \code{\link{varbvs}} for more details about
-  correctly using \code{fit$logw} for approximate numerical integration
+  correctly using \code{object$logw} for approximate numerical integration
   over the hyperparameters, for example by treating these as importance
   weights.
 }  

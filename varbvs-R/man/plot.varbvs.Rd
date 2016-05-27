@@ -11,7 +11,7 @@ used to summarize the results of a genome-wide association study or
 quantitative trait locus (QTL) mapping study.
 }
 \usage{
-  \method{plot}{varbvs}(fit, score, groups, vars = NULL, var.labels,
+  \method{plot}{varbvs}(x, score, groups, vars = NULL, var.labels,
   draw.threshold = NA, gap = 0,col = "midnightblue", pch = 20,
   xlab = "", ylab = "",
   abline.args = list(lty = "dotted",col = "orangered"),
@@ -20,13 +20,13 @@ quantitative trait locus (QTL) mapping study.
 }
 \arguments{
   
-  \item{fit}{Output of function \code{\link{varbvs}}.}
+  \item{x}{Output of function \code{\link{varbvs}}.}
 
   \item{score}{Value to plot on vertical axis. Must be a numeric vector
   with one entry for each variable. If missing, the posterior inclusion
   probability for each variable is plotted in the vertical axis, in
   which this probability is averaged over hyperparameter settings,
-  treating \code{fit$logw} as (unnormalized) log-marginal
+  treating \code{x$logw} as (unnormalized) log-marginal
   probabilities. As alternative, set \code{score} to the posterior
   inclusion probabilities that ignore correlations, using
   \code{\link{varbvsindep}}.}
@@ -41,7 +41,7 @@ quantitative trait locus (QTL) mapping study.
   \code{vars = NULL}, meaning no variables are highlighted.}
 
   \item{var.labels}{Labels to accompany the highlighted variables
-  only. If missing, labels are retrieved from \code{fit}. If
+  only. If missing, labels are retrieved from \code{x}. If
   \code{var.labels = NULL}, no labels are plotted.}
 
   \item{draw.threshold}{Plot a horizontal line at this location on the

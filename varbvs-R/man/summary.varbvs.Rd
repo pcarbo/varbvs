@@ -6,11 +6,11 @@
   fitted using variational approximation methods.
 }
 \usage{
-  \method{summary}{varbvs}(fit, cred.int = 0.95, n = 5, nr = 1000, \ldots)
+  \method{summary}{varbvs}(object, cred.int = 0.95, nv = 5, nr = 1000, \ldots)
   \method{print}{summary.varbvs}(x, \ldots)
 }
 \arguments{
-  \item{fit}{Output of function \code{\link{varbvs}}.}
+  \item{object}{Output of function \code{\link{varbvs}}.}
   \item{cred.int}{Size of credible interval (number between 0 and 1).}
   \item{nv}{Show detailed statistics for top nv variables, ranked
   according to their posterior inclusion probabilities.}
@@ -31,7 +31,7 @@
 
   The second part summarizes the approximate posterior distribution of
   the hyperparameters (sigma, sa, logodds). The "estimate" column is the
-  value averaged over hyperparameter settings, treating \code{fit$logw}
+  value averaged over hyperparameter settings, treating \code{objectlogw}
   as (unnormalized) log-marginal probabilities. The next column, labeled
   "Pr>x", where \code{x = cred.int} gives the credible interval based on
   these weights (computed using function \code{\link{cred}}).
