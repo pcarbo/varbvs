@@ -168,5 +168,5 @@ Dept. of Human Genetics, University of Chicago<br>
 and AncestryDNA, San Francisco, California<br>
 2012-2016
 
-Xiang Zhu and Matthew Stephens have also contributed to the
-development of this software.
+Xiang Zhou, Xiang Zhu and Matthew Stephens have also contributed to
+the development of this software.
