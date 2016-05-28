@@ -42,9 +42,13 @@ the full text of the license.
 
 ###Quick start for R
 
-Begin by downloading the github repository for this project. The
-simplest way to do this is to [download the repository as a ZIP
-archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
+To install the official release of the *varbvs* package from CRAN,
+simply run <code>install.packages("varbvs")</code>.
+
+Alternatively, to install the most up-to-date development version,
+begin by downloading the github repository for this project. The
+simplest way to do this is to
+[download the repository as a ZIP archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
 you have extracted the files from the compressed archive, you will see
 that the main directory has two subdirectories, one containing the
 MATLAB code, and the other containing the files for the R package.
