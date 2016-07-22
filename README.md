@@ -1,3 +1,5 @@
+![Example of running varbvs map QTLs for testis weight in CFW mice][cfw.gif]
+
 #Large-scale Bayesian variable selection for R and MATLAB
  
 ###Overview
