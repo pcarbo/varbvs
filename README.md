@@ -1,6 +1,7 @@
 #Large-scale Bayesian variable selection for R and MATLAB
 
 [![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](http://cran.r-project.org/package=varbvs)
+[![Build Status](https://travis-ci.org/pcarbo/varbvs.svg?branch=master)](https://travis-ci.org/pcarbo/varbvs)
 
 ###Overview
 
