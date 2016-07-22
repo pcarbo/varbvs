@@ -46,8 +46,8 @@ the full text of the license.
 ###Quick start for R
 
 To install the official release of the *varbvs* package available from
-CRAN ([link](http://cran.r-project.org/web/packages/varbvs)), simply
-run <code>install.packages("varbvs")</code> in R.
+CRAN ([link](http://www.r-pkg.org/pkg/varbvs)), simply run
+<code>install.packages("varbvs")</code> in R.
 
 Alternatively, to install the most up-to-date development version,
 begin by downloading the github repository for this project. The
