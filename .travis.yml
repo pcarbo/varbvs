@@ -1,0 +1,5 @@
+language: r
+cache: packages
+before_install:
+  - cd varbvs-R
+  
