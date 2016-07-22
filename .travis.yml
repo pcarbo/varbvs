@@ -1,5 +1,12 @@
 language: r
+
 cache: packages
+
+r_packages:
+  - covr
+  
 before_install:
   - cd varbvs-R
-  
+
+after_success:
+  - Rscript -e 'covr::codecov()'
