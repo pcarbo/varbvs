@@ -1,19 +1,22 @@
 # This script illustrates 'varbvs' for genome-wide mapping of a binary
 # (e.g., case-control) trait in a simulated data set in which all the
 # genetic markers are uncorrelated with each other (i.e., they are
-# "unlinked").
+# "unlinked"). Note that variable "covariates" must be specified
+# before running this script.
 library(varbvs)
 
 # SCRIPT PARAMETERS
 # -----------------
-n  <- 1500  # Number of samples (subjects).
-p  <- 2000  # Number of variables (genetic markers).
-na <- 20    # Number of markers that affect the binary outcome.
+n  <- 1400  # Number of samples (subjects).
+p  <- 1000  # Number of variables (genetic markers).
+na <- 10    # Number of markers that affect the binary outcome.
 sa <- 0.2   # Variance of log-odds ratios.
-p1 <- 0.25  # Target proportion of subjects that are cases (y = 1).
+p1 <- 0.5   # Target proportion of subjects that are cases (y = 1).
 
-# Names of covariates.
-# covariates <- c("age","weight")
+# Names of covariates. Example:
+# 
+#   covariates <- c("age","weight")
+#
 
 # Candidate values for the prior log-odds of inclusion.
 logodds <- seq(-3,-1.5,0.5)
