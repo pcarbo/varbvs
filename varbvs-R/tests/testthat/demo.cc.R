@@ -13,7 +13,7 @@ sa <- 0.2   # Variance of log-odds ratios.
 p1 <- 0.25  # Target proportion of subjects that are cases (y = 1).
 
 # Names of covariates.
-covariates <- c("age","weight")
+# covariates <- c("age","weight")
 
 # Candidate values for the prior log-odds of inclusion.
 logodds <- seq(-3,-1.5,0.5)
