@@ -1,8 +1,10 @@
 # This script illustrates 'varbvs' for genome-wide mapping of a binary
 # (e.g., case-control) trait in a simulated data set in which all the
 # genetic markers are uncorrelated with each other (i.e., they are
-# "unlinked"). Note that variable "covariates" must be specified
-# before running this script.
+# "unlinked").
+#
+# Note that variable "covariates" must be specified before running
+# this script.
 library(varbvs)
 
 # SCRIPT PARAMETERS

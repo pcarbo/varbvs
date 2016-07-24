@@ -78,14 +78,15 @@ will use is function "varbvs". Type <code>help(varbvs)</code> to get
 more information about this.
 
 We have provided several R scripts in the
-[vignettes](varbvs-R/vignettes) folder to illustrate application of
-*varbvs* to small and large data sets:
+[vignettes](varbvs-R/vignettes) and [tests](varbvs-R/tests) folders to
+illustrate application of *varbvs* to small and large data sets:
 
-+ Script [demo.qtl.R](varbvs-R/vignettes/demo.qtl.R) demonstrates how to
-use the varbvs function for mapping a quantitative trait (*i.e.*, a
-continuously valued outcome) in a small, simulated data set. Script
-[demo.cc.R](varbvs-R/vignettes/demo.cc.R) demonstrates mapping of a
-binary valued outcome in a simulated data set.
++ Script [demo.qtl.R](varbvs-R/tests/testthat/demo.qtl.R) demonstrates
+how to use the varbvs function for mapping a quantitative trait
+(*i.e.*, a continuously valued outcome) in a small, simulated data
+set. Script [demo.cc.R](varbvs-R/tests/testthat/demo.cc.R)
+demonstrates mapping of a binary valued outcome in a simulated data
+set.
 
 + Script [demo.leukemia.R](varbvs-R/vignettes/demo.leukemia.R)
 demonstrates application of both *glmnet* and *varbvs* to the Leukemia
