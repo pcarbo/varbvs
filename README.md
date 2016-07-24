@@ -2,6 +2,7 @@
 
 [![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](http://cran.r-project.org/package=varbvs)
 [![Build Status](https://travis-ci.org/pcarbo/varbvs.svg?branch=master)](https://travis-ci.org/pcarbo/varbvs)
+[![codecov](https://codecov.io/gh/pcarbo/varbvs/branch/master/graph/badge.svg)](https://codecov.io/gh/pcarbo/varbvs)
 
 ###Overview
 
