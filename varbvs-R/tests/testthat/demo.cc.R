@@ -16,7 +16,7 @@ p1 <- 0.25  # Target proportion of subjects that are cases (y = 1).
 covariates <- c("age","weight")
 
 # Candidate values for the prior log-odds of inclusion.
-logodds <- seq(-3,-1,0.5)
+logodds <- seq(-3,-1.5,0.5)
 
 # Set the random number generator seed.
 set.seed(1)

@@ -19,6 +19,9 @@ test_that("model fitting works for simulated data with a continuous outcome",{
   expect_equal(summary(fit)$logodds$x0,-2.08,tolerance = 0.01)
   expect_equal(summary(fit)$sigma$x0,4.13,tolerance = 0.01)
   expect_equal(summary(fit)$sa$x0,0.158,tolerance = 0.001)
+
+  # Evaluate fitted model.
+  expect_equal(cor(y,y.fit)^2,0.650,tolerance = 0.001)
 })
 
 test_that("model fitting works for simulated data with a binary outcome",{
@@ -27,8 +30,21 @@ test_that("model fitting works for simulated data with a binary outcome",{
   # simulated data set.
   source("demo.cc.R")
 
+  # Check the number of included variables at different probability
+  # thresholds.
+  expect_equal(summary(fit)$num.included,
+               as.table(unlist(list(">0.10" = 5,">0.25" = 5,">0.50" = 5,
+                                    ">0.75" = 5,">0.90" = 5,">0.95" = 5))))
+  
   # Check the posterior mean of the hyperparameters.
   expect_equal(summary(fit)$logodds$x0,-2.54,tolerance = 0.01)
   expect_equal(summary(fit)$sa$x0,0.604,tolerance = 0.001)
   expect_true(is.na(summary(fit)$sigma$x0))
-}
+
+  # Evaluate fitted model.
+  expect_equal(table(factor(y),factor(y.fit)),
+               as.table(rbind(c(971,90),
+                              c(214,225))),
+               check.attributes = FALSE)
+})
+

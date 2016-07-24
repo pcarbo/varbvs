@@ -17,8 +17,10 @@ problems with over a million variables and thousands of samples,
 including analysis of massive genome-wide data sets.
 
 The MATLAB interface has been tested extensively in MATLAB
-version 8.6.0 (2015b), and the R package been tested by
-[Travis CI](https://travis-ci.org/pcarbo/varbvs.svg?branch=master).
+version 8.6.0 (2015b). The R package been tested by
+[Travis CI](https://travis-ci.org/pcarbo/varbvs.svg?branch=master),
+and the tests' code coverage has been assessed by
+[Codecov](https://codecov.io/gh/pcarbo/varbvs).
 
 ###Citing varbvs
 
