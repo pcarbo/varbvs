@@ -53,10 +53,17 @@ set.seed(1)
 
 # FIT ELASTIC NET MODEL TO DATA
 # -----------------------------
-# First run 20-fold cross-validation to select the largest setting of
+# Fit the elastic net model to the data.
+cat("2. Fitting elastic net model.\n")
+r <- system.time(fit.glmnet <-
+       glmnet(X,y,family = "binomial",lambda = lambda,alpha = alpha))
+cat(sprintf("Model fitting took %0.2f seconds.\n",r["elapsed"]))
+rm(r)
+                 
+# Next, run 20-fold cross-validation to select the largest setting of
 # lambda that is within one standard error of the minimum
 # classification error.
-cat("2. Running 20-fold cross-validation to select L1-penalty strength.\n")
+cat("3. Running 20-fold cross-validation to select L1-penalty strength.\n")
 r <- system.time(out.cv.glmnet <-
        cv.glmnet(X,y,family = "binomial",type.measure = "class",
                  alpha = alpha,nfolds = nfolds,lambda = lambda))
@@ -64,36 +71,61 @@ lambda <- out.cv.glmnet$lambda
 cat(sprintf("Cross-validation took %0.2f seconds.\n",r["elapsed"]))
 rm(r)
 
-# Show the classification error at different settings of lambda. Then
-# choose the largest value of lambda that is within 1 standard error
+# Choose the largest value of lambda that is within 1 standard error
 # of the smallest misclassification error.
 lambda.opt <- out.cv.glmnet$lambda.1se
 
-# Fit the elastic net model to the data.
-cat("3. Fitting elastic net model.\n")
-r <- system.time(fit.glmnet <-
-       glmnet(X,y,family = "binomial",lambda = lambda,alpha = alpha))
-cat(sprintf("Model fitting took %0.2f seconds.\n",r["elapsed"]))
-rm(r)
-                 
 # Compute estimates of the disease outcome using the fitted model, and
-# compare against the observed values.
+# compare against the observed values. 
 cat("4. Summarizing results of glmnet analysis.\n")
 cat("classification results with lambda = ",lambda.opt,":\n",sep="")
 y.glmnet <- as.integer(c(predict(fit.glmnet,X,s = lambda.opt,type = "class")))
 print(table(true = factor(y),pred = factor(y.glmnet)))
 
-# Plot the classification error at different settings of lambda.
+# Plot evolution of regression coefficients at different settings of
+# lambda. Do not show the intercept. Only label the curves for the
+# variables that are selected at the optimal setting of lambda
+# ('lambda.opt').
 trellis.device(height = 4.5,width = 7)
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))
+vars <- setdiff(which(rowSums(abs(coef(fit.glmnet))) > 0),1)
+n    <- length(vars)
+b    <- as.matrix(t(coef(fit.glmnet)[vars,]))
+i    <- coef(fit.glmnet,s = lambda.opt)
+i    <- rownames(i)[which(i != 0)]
+i    <- i[-1]
+vars.opt <- colnames(b)
+vars.opt[!is.element(vars.opt,i)] <- ""
+vars.opt <- substring(vars.opt,2)
+r    <- xyplot(y ~ x,data.frame(x = log10(lambda),y = b[,1]),type = "l",
+               col = "blue",xlab = "log10(lambda)",
+               ylab = "regression coefficient",
+               scales = list(x = list(limits = c(-2.35,0.1)),
+                             y = list(limits = c(-0.8,1.2))),
+               panel = function(x, y, ...) {
+                 panel.xyplot(x,y,...);
+                 panel.abline(v = log10(lambda.opt),col = "orangered",
+                              lwd = 1,lty = "dotted");
+                 ltext(x = -2,y = b[nrow(b),],labels = vars.opt,pos = 2,
+                       offset = 0.5,cex = 0.5)
+               })
+for (i in 2:n)
+  r <- r + as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = b[,i]),
+                           type = "l",col = "blue"))
+print(r,split = c(2,1,2,1),more = TRUE)
+rm(vars,vars.opt,n,b,r,i)
+
+# Plot the classification error at different settings of lambda. The
+# commented-out lines would show the training set classification error
+# in the plot as well.
 Y       <- predict(fit.glmnet,X,type = "class")
 mode(Y) <- "numeric"
 print(with(out.cv.glmnet,
            xyplot(y ~ x,data.frame(x = log10(lambda),y = cvm),type = "l",
-                  col = "blue",xlab = "log10 lambda",
-                  ylab = "classification error",
+                  col = "blue",xlab = "log10(lambda)",
+                  ylab = "20-fold cross-validation \n classification error",
                   scales = list(y = list(limits = c(-0.02,0.45))),
                   panel = function(x, y, ...) {
                     panel.xyplot(x,y,...)
@@ -103,12 +135,12 @@ print(with(out.cv.glmnet,
            as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = cvm),
                            pch = 20,cex = 0.6,col = "blue")) +
            as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = cvup),
-                           type = "l",col = "blue",lty = "dashed")) +
+                           type = "l",col = "blue",lty = "solid")) +
            as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = cvlo),
-                           type = "l",col = "blue",lty = "dashed")) +
-           as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),
-                                            y = colMeans(abs(Y - y))),
-                           type = "l",col = "red",lwd = 2))),
+                           type = "l",col = "blue",lty = "solid"))),
+           # as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),
+           #                                  y = colMeans(abs(Y - y))),
+           #                 type = "l",col = "red",lwd = 2))
            split = c(1,1,2,2),more = TRUE)
 rm(Y)
 
@@ -116,8 +148,8 @@ rm(Y)
 # settings of lambda.
 print(with(out.cv.glmnet,
            xyplot(y ~ x,data.frame(x = log10(lambda),y = nzero),type = "l",
-                  col = "blue",xlab = "log10 lambda",
-                  ylab = "num. nonzero coefs",
+                  col = "blue",xlab = "log10(lambda)",
+                  ylab = "number of nonzero \n coefficients",
                   panel = function(x, y, ...) {
                     panel.xyplot(x,y,...)
                     panel.abline(v = log10(lambda.opt),col = "orangered",
@@ -125,30 +157,7 @@ print(with(out.cv.glmnet,
                   }) +
            as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = nzero),
                            pch = 20,cex = 0.6,col = "blue"))),
-      split = c(1,2,2,2),more = TRUE)
-
-# Plot evolution of regression coefficients at different settings of
-# lambda. Do not show the intercept.
-vars <- setdiff(which(rowSums(abs(coef(fit.glmnet))) > 0),1)
-n    <- length(vars)
-b    <- as.matrix(t(coef(fit.glmnet)[vars,]))
-r    <- xyplot(y ~ x,data.frame(x = log10(lambda),y = b[,1]),type = "l",
-               col = "blue",xlab = "log10 lambda",
-               ylab = "regression coefficient",
-               scales = list(x = list(limits = c(-2.35,0.1)),
-                             y = list(limits = c(-0.8,1.2))),
-               panel = function(x, y, ...) {
-                 panel.xyplot(x,y,...);
-                 panel.abline(v = log10(lambda.opt),col = "orangered",
-                              lwd = 1,lty = "dotted");
-                 ltext(x = -2,y = b[nrow(b),],labels = colnames(b),pos = 2,
-                       offset = 0.5,cex = 0.5)
-               })
-for (i in 2:n)
-  r <- r + as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = b[,i]),
-                           type = "l",col = "blue"))
-print(r,split = c(2,1,2,1),more = FALSE)
-rm(vars,n,b,r,i)
+      split = c(1,2,2,2),more = FALSE)
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
