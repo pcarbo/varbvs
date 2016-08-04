@@ -52,8 +52,16 @@ To install the official release of the *varbvs* package available from
 CRAN ([link](http://www.r-pkg.org/pkg/varbvs)), simply run
 <code>install.packages("varbvs")</code> in R.
 
-Alternatively, to install the most up-to-date development version,
-begin by downloading the github repository for this project. The
+Alternatively, you can to install the most up-to-date development
+version. The easiest way to accomplish this is using the
+[dev_tools](http://www.r-pkg.org/pkg/dev_tools) package:
+
+    install.packages("devtools")
+    library(devtools)
+    install_github("pcarbo/varbvs",subdir = "varbvs-R")
+
+Without dev_tools, it is a little more complicated, but not
+hard. Begin by downloading the github repository for this project. The
 simplest way to do this is to
 [download the repository as a ZIP archive](http://github.com/pcarbo/varbvs/archive/master.zip). Once
 you have extracted the files from the compressed archive, you will see

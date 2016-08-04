@@ -183,6 +183,9 @@ trellis.device(height = 4.5,width = 7)
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))
+#
+# TO DO: Update the code for calculating the classification error.
+#
 m    <- length(logodds)
 err  <- rep(0,m)
 logw <- fit.varbvs$logw
