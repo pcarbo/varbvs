@@ -79,7 +79,7 @@ lambda.opt <- out.cv.glmnet$lambda.1se
 # compare against the observed values. 
 cat("4. Summarizing results of glmnet analysis.\n")
 cat("classification results with lambda = ",lambda.opt,":\n",sep="")
-y.glmnet <- as.integer(c(predict(fit.glmnet,X,s = lambda.opt,type = "class")))
+y.glmnet <- c(predict(fit.glmnet,X,s = lambda.opt,type = "class"))
 print(table(true = factor(y),pred = factor(y.glmnet)))
 
 # Plot evolution of regression coefficients at different settings of
