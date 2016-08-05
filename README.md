@@ -6,21 +6,24 @@
 
 ###Overview
 
-We introduce *varbvs*, a suite of functions writen in R and MATLAB for
-analysis of large-scale data sets using Bayesian variable selection
-methods. To facilitate application of Bayesian variable selection to a
-range of problems, the *varbvs* interface hides most of the
-complexities of modeling and optimization, while also providing many
-options for adaptation to range of applications. The *varbvs* software
-has been used to implement Bayesian variable selection for large
-problems with over a million variables and thousands of samples,
-including analysis of massive genome-wide data sets.
+We introduce *varbvs*, a suite of functions writen in
+[R](http://www.r-project.org) and
+[MATLAB](http://www.mathworks.com/products/matlab) for analysis of
+large-scale data sets using Bayesian variable selection methods. To
+facilitate application of Bayesian variable selection to a range of
+problems, the *varbvs* interface hides most of the complexities of
+modeling and optimization, while also providing many options for
+adaptation to range of applications. The *varbvs* software has been
+used to implement Bayesian variable selection for large problems with
+over a million variables and thousands of samples, including analysis
+of massive genome-wide data sets.
 
-The MATLAB interface has been tested extensively in MATLAB
-version 8.6.0 (2015b). The R package been tested by
-[Travis CI](https://travis-ci.org/pcarbo/varbvs.svg?branch=master),
-and the tests' code coverage has been assessed by
-[Codecov](https://codecov.io/gh/pcarbo/varbvs).
+For more details on the R package, see the
+[README](varbvs-R/README.md) in the [varbvs-R](varbvs-R) subdirectory.
+
+For more details on the MATLAB interface, see the
+[README](varbvs-MATLAB/README.md) in the
+[varbvs-MATLAB](varbvs-MATLAB) subdirectory.
 
 ###Citing varbvs
 
