@@ -2,16 +2,15 @@
 
 ###Overview
 
-We introduce *varbvs*, a suite of
-[MATLAB](http://www.mathworks.com/products/matlab) routines for
-analysis of large-scale data sets using Bayesian variable selection
-methods. To facilitate application of Bayesian variable selection to a
-range of problems, the *varbvs* interface hides most of the
-complexities of modeling and optimization, while also providing many
-options for adaptation to range of applications. The *varbvs* software
-has been used to implement Bayesian variable selection for large
-problems with over a million variables and thousands of samples,
-including analysis of massive genome-wide data sets.
+We introduce *varbvs*, a suite of MATLAB routines for analysis of
+large-scale data sets using Bayesian variable selection methods. To
+facilitate application of Bayesian variable selection to a range of
+problems, the *varbvs* interface hides most of the complexities of
+modeling and optimization, while also providing many options for
+adaptation to range of applications. The *varbvs* software has been
+used to implement Bayesian variable selection for large problems with
+over a million variables and thousands of samples, including analysis
+of massive genome-wide data sets.
 
 The MATLAB interface has been tested extensively in MATLAB
 version 8.6.0 (2015b). 
@@ -37,7 +36,7 @@ redistribute it under the terms of the
 the files in this project are part of *varbvs*. This project is
 distributed in the hope that it will be useful, but **without any
 warranty**; without even the implied warranty of **merchantability or
-fitness for a particular purpose**. See file [LICENSE](LICENSE) for
+fitness for a particular purpose**. See file [LICENSE](../LICENSE) for
 the full text of the license.
 
 ###Quick start for MATLAB

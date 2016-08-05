@@ -42,7 +42,7 @@ redistribute it under the terms of the
 the files in this project are part of *varbvs*. This project is
 distributed in the hope that it will be useful, but **without any
 warranty**; without even the implied warranty of **merchantability or
-fitness for a particular purpose**. See file [LICENSE](LICENSE) for
+fitness for a particular purpose**. See file [LICENSE](../LICENSE) for
 the full text of the license.
 
 ###Quick start for R
@@ -67,8 +67,8 @@ you have extracted the files from the compressed archive, you will see
 that the main directory has two subdirectories, one containing the
 MATLAB code, and the other containing the files for the R package.
 
-Subdirectory [varbvs-R](varbvs-R) has all the necessary files to build
-and install a package for R. To install this package, follow the
+This subdirectory has all the necessary files to build and install a
+package for R. To install this package, follow the
 [standard instructions](http://cran.r-project.org/doc/manuals/R-admin.html)
 for installing an R package from source. On a Unix or Unix-like
 platform (e.g., Mac OS X), the following steps should install the R
