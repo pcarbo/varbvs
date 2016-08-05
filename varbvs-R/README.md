@@ -1,4 +1,4 @@
-#Large-scale Bayesian variable selection for R and MATLAB
+#Large-scale Bayesian variable selection for R
 
 [![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](http://cran.r-project.org/package=varbvs)
 [![Build Status](https://travis-ci.org/pcarbo/varbvs.svg?branch=master)](https://travis-ci.org/pcarbo/varbvs)
@@ -6,17 +6,15 @@
 
 ###Overview
 
-We introduce *varbvs*, a suite of functions writen in
-[R](http://www.r-project.org) and
-[MATLAB](http://www.mathworks.com/products/matlab) for analysis of
-large-scale data sets using Bayesian variable selection methods. To
-facilitate application of Bayesian variable selection to a range of
-problems, the *varbvs* interface hides most of the complexities of
-modeling and optimization, while also providing many options for
-adaptation to range of applications. The *varbvs* software has been
-used to implement Bayesian variable selection for large problems with
-over a million variables and thousands of samples, including analysis
-of massive genome-wide data sets.
+We introduce *varbvs*, an R package for analysis of large-scale data
+sets using Bayesian variable selection methods. To facilitate
+application of Bayesian variable selection to a range of problems, the
+*varbvs* interface hides most of the complexities of modeling and
+optimization, while also providing many options for adaptation to
+range of applications. The *varbvs* software has been used to
+implement Bayesian variable selection for large problems with over a
+million variables and thousands of samples, including analysis of
+massive genome-wide data sets.
 
 The R package been tested by
 [Travis CI](https://travis-ci.org/pcarbo/varbvs.svg?branch=master),
