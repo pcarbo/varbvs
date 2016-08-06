@@ -137,10 +137,11 @@ print(with(out.cv.glmnet,
            as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = cvup),
                            type = "l",col = "blue",lty = "solid")) +
            as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),y = cvlo),
-                           type = "l",col = "blue",lty = "solid"))),
-           # as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),
-           #                                  y = colMeans(abs(Y - y))),
-           #                 type = "l",col = "red",lwd = 2))
+                           type = "l",col = "blue",lty = "solid")) +
+           as.layer(xyplot(y ~ x,data.frame(x = log10(lambda),
+                                            y = colMeans(abs(Y - y))),
+                           type = "l",col = "darkorange",lwd = 2,
+                           lty = "solid"))),
            split = c(1,1,2,2),more = TRUE)
 rm(Y)
 
@@ -246,10 +247,10 @@ for (i in 3:n) {
                            data.frame(x = logodds,y = mu[,i]),
                            type = "l",col = "blue"))
 }
-print(r,split = c(2,1,2,2),more = FALSE)
+print(r,split = c(2,1,2,2),more = TRUE)
 rm(m,n,i,vars,pip,mu,r)
 
-# Show probability density of prior log-odds.
+# Show the (approximate) probability density of the prior log-odds.
 names(w) <- logodds
 print(xyplot(y ~ x,data.frame(x = logodds,y = w),type = "l",col = "blue",
              xlab = "prior log-odds",ylab = "posterior prob.",
