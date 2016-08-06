@@ -28,6 +28,9 @@ accuracy in genetic association studies. \emph{Bayesian Analysis}
 \seealso{\code{varbvs}}
 \examples{
 
-  # First run one of the examples in help(varbvs).
-  fit.new <- subset(fit,logodds > (-4))
+  # First run one of the examples in help(varbvs), then try running 
+  # this.
+  #
+  #   fit.new <- subset(fit,logodds > (-4))
+  # 
 }
