@@ -21,5 +21,6 @@ export(logit,logpexp,logsigmoid,sigmoid,normalizelogweights,
 
 S3method(summary,varbvs)
 S3method(predict,varbvs)
+S3method(subset,varbvs)
 S3method(print,summary.varbvs)
 S3method(plot,varbvs)

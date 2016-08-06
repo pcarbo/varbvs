@@ -15,7 +15,6 @@ subset.varbvs <- function (x, subset, ...) {
   # Output the new varbvs object with these hyperparameter settings
   # only.
   out         <- x
-  out$sigma   <- out$sigma[i]
   out$sa      <- out$sa[i]
   out$logodds <- out$logodds[i]
   out$mu.cov  <- out$mu.cov[i]
@@ -23,6 +22,11 @@ subset.varbvs <- function (x, subset, ...) {
   out$alpha   <- out$alpha[,i]
   out$mu      <- out$mu[,i]
   out$s       <- out$s[,i]
-  out$pve     <- out$pve[,i]
+  if (out$family == "gaussian") {
+    out$sigma <- out$sigma[i]
+    out$pve   <- out$pve[,i]
+  } else if (out$family == "binomial") {
+    out$eta <- out$eva[,i]
+  }
   return(out)
 }
