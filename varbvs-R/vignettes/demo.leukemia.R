@@ -183,11 +183,11 @@ trellis.device(height = 4.5,width = 7)
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))
-m    <- length(logodds)
-err  <- rep(0,m)
+m   <- length(logodds)
+err <- rep(0,m)
 for (i in 1:m) {
-  d      <- logodds[i]
-  ypred  <- predict(subset(fit.varbvs,logodds == d),X)
+  r      <- logodds[i]
+  ypred  <- predict(subset(fit.varbvs,logodds == r),X)
   err[i] <- mean(y != ypred)
 }
 print(xyplot(y ~ x,data.frame(x = logodds,y = err),type = "l",
@@ -197,23 +197,13 @@ print(xyplot(y ~ x,data.frame(x = logodds,y = err),type = "l",
       as.layer(xyplot(y ~ x,data.frame(x = logodds,y = err),
                       col = "blue",pch = 20,cex = 0.65)),
       split = c(1,1,2,2),more = TRUE)
-rm(err,ypred,i,d)
-
-stop()
-
-# Show probability density of prior log-odds.
-w        <- normalizelogweights(fit.varbvs$logw)
-names(w) <- logodds
-print(xyplot(y ~ x,data.frame(x = logodds,y = w),type = "l",col = "blue",
-             xlab = "prior log-odds",ylab = "posterior prob.",
-             scales = list(x = list(limits = c(-1.4,-3.6)))) +
-      as.layer(xyplot(y ~ x,data.frame(x = logodds,y = w),
-                      col = "blue",pch = 20,cex = 0.65)),
-      split = c(1,2,2,2),more = TRUE)
-rm(w)
+rm(err,ypred,i,r)
 
 # Plot evolution of posterior inclusion probabilities (PIPs) at
 # different settings of the prior log-odds.
+#
+# TO DO: Fix this plot.
+#
 n     <- 10
 vars  <- order(fit.varbvs$alpha[,m],decreasing = TRUE)[1:n]
 alpha <- t(fit.varbvs$alpha[vars,] * fit.varbvs$mu[vars,])
@@ -233,7 +223,17 @@ for (i in 2:n)
   r <- r + as.layer(xyplot(y ~ x,
                            data.frame(x = logodds,y = (alpha[,i])),
                            type = "l",col = "blue"))
-print(r,split = c(2,1,2,1),more = FALSE)
+print(r,split = c(2,1,2,1),more = TRUE)
 rm(m,n,i,vars,alpha,r)
 
+# Show probability density of prior log-odds.
+w        <- normalizelogweights(fit.varbvs$logw)
+names(w) <- logodds
+print(xyplot(y ~ x,data.frame(x = logodds,y = w),type = "l",col = "blue",
+             xlab = "prior log-odds",ylab = "posterior prob.",
+             scales = list(x = list(limits = c(-1.4,-3.6)))) +
+      as.layer(xyplot(y ~ x,data.frame(x = logodds,y = w),
+                      col = "blue",pch = 20,cex = 0.65)),
+      split = c(1,2,2,2),more = FALSE)
+rm(w)
 
