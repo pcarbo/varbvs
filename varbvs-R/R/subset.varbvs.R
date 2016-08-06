@@ -11,22 +11,23 @@ subset.varbvs <- function (x, subset, ...) {
 
   # Get the hyperparameter settings satisfying the 'subset' condition.
   i <- which(with(x,eval(subset)))
+  if (length(i) == 0)
+    error("No hyperparameter settings are selected.")
 
   # Output the new varbvs object with these hyperparameter settings
   # only.
   out         <- x
   out$sa      <- out$sa[i]
   out$logodds <- out$logodds[i]
-  out$mu.cov  <- out$mu.cov[i]
   out$logw    <- out$logw[i]
-  out$alpha   <- out$alpha[,i]
-  out$mu      <- out$mu[,i]
-  out$s       <- out$s[,i]
+  out$mu.cov  <- as.matrix(out$mu.cov[,i])
+  out$alpha   <- as.matrix(out$alpha[,i])
+  out$mu      <- as.matrix(out$mu[,i])
+  out$s       <- as.matrix(out$s[,i])
   if (out$family == "gaussian") {
     out$sigma <- out$sigma[i]
-    out$pve   <- out$pve[,i]
-  } else if (out$family == "binomial") {
+    out$pve   <- as.matrix(out$pve[,i])
+  } else if (out$family == "binomial")
     out$eta <- out$eva[,i]
-  }
   return(out)
 }

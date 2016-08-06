@@ -183,19 +183,13 @@ trellis.device(height = 4.5,width = 7)
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))
-#
-# TO DO: Update the code for calculating the classification error.
-#
 m    <- length(logodds)
 err  <- rep(0,m)
-logw <- fit.varbvs$logw
 for (i in 1:m) {
-  fit.varbvs$logw[]  <- 0
-  fit.varbvs$logw[i] <- 100
-  ypred  <- predict(fit.varbvs,X)
+  d      <- logodds[i]
+  ypred  <- predict(subset(fit.varbvs,logodds == d),X)
   err[i] <- mean(y != ypred)
 }
-fit.varbvs$logw <- logw
 print(xyplot(y ~ x,data.frame(x = logodds,y = err),type = "l",
              col = "blue",xlab = "prior log-odds",
              ylab = "classification error",
@@ -203,7 +197,9 @@ print(xyplot(y ~ x,data.frame(x = logodds,y = err),type = "l",
       as.layer(xyplot(y ~ x,data.frame(x = logodds,y = err),
                       col = "blue",pch = 20,cex = 0.65)),
       split = c(1,1,2,2),more = TRUE)
-rm(err,logw,ypred,i)
+rm(err,ypred,i,d)
+
+stop()
 
 # Show probability density of prior log-odds.
 w        <- normalizelogweights(fit.varbvs$logw)
