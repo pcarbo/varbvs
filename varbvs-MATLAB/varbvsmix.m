@@ -1,3 +1,6 @@
+% TO DO: Implement generalization of spike-and-slab with K normal
+% components.
+
 % [logw,sigma,sa,alpha,mu,s] = varbvsnorm(X,y,sigma,sa,logodds,...)
 % implements the fully-factorized variational approximation for Bayesian
 % variable selection in linear regression. It finds the "best"
