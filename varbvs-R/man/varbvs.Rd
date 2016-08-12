@@ -136,7 +136,7 @@
     updates to tighten the lower bound on the marginal likelihood,
     \eqn{Pr(Y | X, sigma, sa, logodds)}. The inner loop coordinate
     ascent updates terminate when either (1) the maximum number of inner
-    loop iterations is reached, as specified by options.maxiter, or (2)
+    loop iterations is reached, as specified by \code{maxiter}, or (2)
     the maximum difference between the estimated posterior inclusion
     probabilities is less than \code{tol}.
 
