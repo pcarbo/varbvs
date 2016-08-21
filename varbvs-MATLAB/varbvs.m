@@ -16,7 +16,7 @@
 %    fit = varbvs(X, Z, y)
 %    fit = varbvs(X, Z, y, labels, family, options)
 %    (Use empty matrix [] to apply the default value)
-%
+%  
 % INPUT ARGUMENTS:
 % X        n x p input matrix, where n is the number of samples,
 %          and p is the number of variables. X cannot be sparse.
