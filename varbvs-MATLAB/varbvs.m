@@ -816,6 +816,10 @@ function [logw, sigma, sa, alpha, mu, s, eta, mu_cov] = ...
         varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,...
                    verbose,outer_iter,update_sigma,update_sa,n0,sa0);
 
+    % Adjust the variational lower bound to account for integral over the
+    % regression coefficients corresponding to the covariates.
+    logw = logw - logdet(Z'*Z)/2;
+    
     % Compute the posterior mean estimate of the regression
     % coefficients for the covariates under the current variational 
     % approximation.
