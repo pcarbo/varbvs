@@ -819,7 +819,7 @@ function [logw, sigma, sa, alpha, mu, s, eta, mu_cov] = ...
     % Adjust the variational lower bound to account for integral over the
     % regression coefficients corresponding to the covariates.
     logw = logw - logdet(Z'*Z)/2;
-    
+
     % Compute the posterior mean estimate of the regression
     % coefficients for the covariates under the current variational 
     % approximation.
