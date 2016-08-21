@@ -410,6 +410,10 @@ outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, logodds,
                       verbose,outer.iter,update.sigma,update.sa,n0,sa0)
     out$eta <- eta
 
+    # Adjust the variational lower bound to account for integral over
+    # the regression coefficients corresponding to the covariates.
+    logw <- logw - determinant(crossprod(Z),logarithm = TRUE)$modulus/2
+    
     # Compute the posterior mean estimate of the regression
     # coefficients for the covariates under the current variational
     # approximation.
