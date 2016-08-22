@@ -1,5 +1,7 @@
 % TO DO: Implement generalization of spike-and-slab with K normal
-% components. For now, I assume no additional covariates Z.
+% components. For now, I assume no additional covariates Z. Note
+% connection to "mvash" (special case in which we have individual-level
+% data, and linear regression model).
 
 % [logw,sigma,sa,alpha,mu,s] = varbvsnorm(X,y,sigma,sa,logodds,...)
 % implements the fully-factorized variational approximation for Bayesian
