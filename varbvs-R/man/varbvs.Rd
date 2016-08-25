@@ -96,7 +96,7 @@
     data during the inner loop coordinate ascent updates, even when good
     estimates of eta are provided as input.}
 
-  \item{initialize.params}{If TRUE, the initialization stage of the
+  \item{initialize.params}{If FALSE, the initialization stage of the
     variational inference algorithm (see below) will be skipped, which
     saves computation time for large data sets.}
 

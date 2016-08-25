@@ -174,8 +174,8 @@ rm(r)
 
 # Compute the normalized importance weights, and the posterior
 # inclusion probabilities averaged over the hyperparameter settings.
-w <- normalizelogweights(fit.varbvs$logw)
-pip   <- c(fit.varbvs$alpha %*% w)
+w   <- normalizelogweights(fit.varbvs$logw)
+pip <- c(fit.varbvs$alpha %*% w)
 
 # Compute estimates of the disease outcome using the fitted model, and
 # compare against the observed values.
