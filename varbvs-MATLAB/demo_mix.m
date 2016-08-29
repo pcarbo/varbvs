@@ -3,7 +3,8 @@ clear
 
 % SCRIPT PARAMETERS
 % -----------------
-n  = 800;   % Number of samples.
+n  = 1000;  % Number of samples.
+m  = 2;     % Number of covariates (m >= 0).
 p  = 2000;  % Number of variables (genetic markers).
 se = 4;     % Variance of residual.
 
@@ -35,3 +36,28 @@ beta = sd(k) .* randn(p,1);
 labels = num2cell(randi(max(1e6,p),p,1));
 labels = cellfun(@num2str,labels,'UniformOutput',false);
 labels = strcat('rs',labels);
+
+% Generate the intercept.
+mu = randn;
+
+% Generate the covariate data (Z), and the linear effects of the
+% covariates (u).
+if m > 0
+  Z = randn(n,m);
+  u = randn(m,1);
+else
+  Z = [];
+end
+  
+% Generate the quantitative trait measurements.
+y = mu + X*beta + sqrt(se)*randn(n,1);
+if m > 0
+  y = y + Z*u;
+end
+y = double(y);
+
+% FIT VARIATIONAL APPROXIMATION TO POSTERIOR
+% ------------------------------------------
+% TO DO: Add comments here.
+fprintf('2. FITTING MODEL TO DATA.\n')
+% TO DO.
