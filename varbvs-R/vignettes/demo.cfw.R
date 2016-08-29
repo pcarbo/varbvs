@@ -22,26 +22,25 @@ set.seed(1)
 # --------------------------------
 cat("LOADING DATA.\n")
 load("cfw.RData")
-y <- pheno[,trait]
 if (trait == "edl" | trait == "soleus") {
-  Z <- pheno[,c("batch16","tibia")]
+  covariates <- c("batch16","tibia")
 } else if (trait == "testis") {
-  Z <- pheno[,"sacwt"]
+  covariates <- "sacwt"
 }
-Z <- as.matrix(Z)
 
 # Only analyze samples for which the phenotype and all the covariates
 # are observed.
-i <- which(apply(cbind(Z,y),1,function (x) sum(is.na(x)) == 0))
-y <- y[i]
-Z <- as.matrix(Z[i,])
-X <- geno[i,]
-rm(pheno,geno)
+rows <-
+  which(apply(pheno[,c(trait,covariates)],1,function (x) sum(is.na(x)) == 0))
+pheno <- pheno[rows,]
+geno  <- geno[rows,]
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 cat("FITTING MODEL TO DATA.\n")
-runtime <- system.time(fit <- varbvs(X,Z,y,sa = sa,logodds = logodds))
+runtime <- system.time(fit <-
+  varbvs(geno,as.matrix(pheno[,covariates]),pheno[,trait],
+         sa = sa,logodds = logodds))
 cat(sprintf("Modeling fitting took %0.2f minutes.\n",runtime["elapsed"]/60))
 
 # SUMMARIZE POSTERIOR DISTRIBUTION
@@ -79,5 +78,5 @@ print(plot(fit,groups = map$chr,score = r,vars = j,cex = 0.6,gap = 1500,
 print(xyplot(p1 ~ plot.x,gwscan.bvsr,pch = 20,col = "midnightblue",
              scales = list(x = list(at = xticks,labels = chromosomes),
                            y = list(at = c(0,0.5,1))),
-             ylab = "BVSR prob."),
+             xlab = "",ylab = "BVSR prob."),
       split = c(1,3,1,3),more = FALSE)
