@@ -3,6 +3,14 @@
 % connection to "mvash" (special case in which we have individual-level
 % data, and linear regression model).
 
+% TO DO: Update these comments.
+%
+% NOTES:
+%
+%   Notes go here.
+%
+function fit = varbvsmix (X, Z, y, labels, options)
+
 % [logw,sigma,sa,alpha,mu,s] = varbvsnorm(X,y,sigma,sa,logodds,...)
 % implements the fully-factorized variational approximation for Bayesian
 % variable selection in linear regression. It finds the "best"
@@ -41,18 +49,88 @@
 % maximum a posteriori (MAP) estimate of the prior variance parameter (sa),
 % in which sa is drawn from a scaled inverse chi-square distribution with
 % scale sa0 and degrees of freedom n0.
-function [logw, err, sigma, sa, alpha, mu, s] = ...
-        varbvsnorm (X, y, sigma, sa, logodds, alpha, mu, tol, maxiter, ...
-                    verbose, outer_iter, update_sigma, update_sa, n0, sa0)
+function [logw, err, sigma, q, alpha, mu, s] = ...
+        varbvsmix (X, Z, y, sigma, sa, q, alpha, mu, tol, maxiter, ...
+                   verbose, update_sigma, update_q)
 
   % Get the number of samples (n) and variables (p).
   [n p] = size(X);
   
-  % (1) INITIAL STEPS
-  % -----------------
-  % Input X must be single precision.
+  % (1) CHECK INPUTS
+  % ----------------
+  % Input X must be single precision, and cannot be sparse.
+  if issparse(X)
+    error('Input X cannot be sparse')
+  end
   if ~isa(X,'single')
     X = single(X);
+  end
+
+  % If input Z is not empty, it must be double precision, and must have as
+  % many rows as X.
+  if ~isempty(Z)
+    if size(Z,1) ~= n
+      error('Inputs X and Z do not match.');
+    end
+    Z = double(full(Z));
+  end
+
+  % Add intercept.
+  Z    = [ones(n,1) Z];
+  ncov = size(Z,2) - 1;
+
+  % Input y must be a double-precision column vector with n elements.
+  y = double(y(:));
+  if length(y) ~= n
+    error('Inputs X and y do not match.');
+  end
+
+  % The labels must be a cell array with p elements, or an empty array.
+  if nargin < 4
+    labels = [];
+  end
+  if isempty(labels)
+    labels = cellfun(@num2str,num2cell(1:p)','UniformOutput',false);
+  else
+    labels = labels(:);
+    if (~iscell(labels) | length(labels) ~= p)
+      error('labels must be a cell array with numel(labels) = size(X,2)');
+    end
+  end
+  
+  % (2) PROCESS OPTIONS
+  % -------------------
+  % If the 'options' input argument is not specified, all the options are
+  % set to the defaults.
+  if nargin < 6
+    options = [];
+  end
+  
+  % OPTIONS.TOL
+  % Set the convergence tolerance of the co-ordinate ascent updates.
+  if isfield(options,'tol')
+    tol = options.tol;
+  else
+    tol = 1e-4;
+  end
+
+  % OPTIONS.MAXITER
+  % Set the maximum number of inner-loop iterations.
+  if isfield(options,'maxiter')
+    maxiter = options.maxiter;
+  else
+    maxiter = 1e4;
+  end
+  if ~isfinite(maxiter)
+    error('options.maxiter must be a finite number');
+  end
+
+  % OPTIONS.VERBOSE
+  % Determine whether to output progress to the console.
+  if isfield(options,'verbose')
+    verbose = options.verbose;
+  else
+    verbose = true;
   end
   
   % Compute a few useful quantities. Here I calculate X'*y as (y'*X)' to
@@ -62,8 +140,11 @@ function [logw, err, sigma, sa, alpha, mu, s] = ...
   Xr = double(X*(alpha.*mu));
   
   % Calculate the variance of the coefficients.
-  s = sa*sigma./(sa*d + 1);
-
+  s = zeros(p,K);
+  for k = 1:K
+    s(:,k) = sigma*sa(k)./(sa(k)*d + 1);
+  end
+  
   % Initialize storage for outputs logw and err.
   logw = zeros(1,maxiter);
   err  = zeros(1,maxiter);
