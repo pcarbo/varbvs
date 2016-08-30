@@ -191,6 +191,18 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   end
 
   % OPTIONS.MU
+  if isfield(options,'mu')
+    mu = double(options.mu(:));
+    initialize_params = false;  
+    if size(mu,1) ~= p
+      error('options.mu must have as many rows as X has columns')
+    end
+    if size(mu,2) == 1
+      mu = repmat(mu,1,ns);
+    end
+  else
+    mu = randn(p,ns);
+  end
 
   % (3) PREPROCESSING STEPS
   % -----------------------
