@@ -68,7 +68,7 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   % ----------------
   % Input X must be single precision, and cannot be sparse.
   if issparse(X)
-    error('Input X cannot be sparse')
+    error('Input X cannot be sparse');
   end
   if ~isa(X,'single')
     X = single(X);
@@ -191,22 +191,50 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   end
 
   % OPTIONS.MU
+  % Set initial estimates of variational parameter mu.
   if isfield(options,'mu')
-    mu = double(options.mu(:));
-    initialize_params = false;  
+    mu = double(options.mu);
     if size(mu,1) ~= p
-      error('options.mu must have as many rows as X has columns')
+      error('options.mu must have one row for each variable (column of X)');
     end
     if size(mu,2) == 1
-      mu = repmat(mu,1,ns);
+      error('options.mu must have one column for each mixture component');
     end
   else
-    mu = randn(p,ns);
+    mu = randn(p,K);
   end
 
   % (3) PREPROCESSING STEPS
   % -----------------------
-  
+  % Adjust the genotypes and phenotypes so that the linear effects of
+  % the covariates are removed. This is equivalent to integrating out
+  % the regression coefficients corresponding to the covariates with
+  % respect to an improper, uniform prior; see Chipman, George and
+  % McCulloch, "The Practical Implementation of Bayesian Model
+  % Selection," 2001.
+  %
+  % Here I compute two quantities that are used here to remove linear
+  % effects of the covariates (Z) on X and y, and later on (in function
+  % "outerloop"), to efficiently compute estimates of the regression
+  % coefficients for the covariates.
+  SZy = (Z'*Z)\(Z'*y);
+  SZX = (Z'*Z)\(Z'*X);
+  if ncov == 0
+    X = X - repmat(mean(X),length(y),1);
+    y = y - mean(y);
+  else
+
+    % This should give the same result as centering the columns of X and
+    % subtracting the mean from y when we have only one covariate, the
+    % intercept.
+    y = y - Z*SZy;
+    X = X - Z*SZX;
+  end
+
+  % Provide a brief summary of the analysis.
+  if verbose
+    % TO DO.
+  end
   
   % Compute a few useful quantities. Here I calculate X'*y as (y'*X)' to
   % avoid computing the transpose of X, since X may be large.
@@ -224,8 +252,8 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   logw = zeros(1,maxiter);
   err  = zeros(1,maxiter);
   
-  % (2) MAIN LOOP
-  % -------------
+  % (4) MODEL FITTING - MAIN LOOP
+  % -----------------------------
   % Repeat until convergence criterion is met, or until the maximum
   % number of iterations is reached.
   for iter = 1:maxiter
@@ -235,7 +263,7 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     mu0    = mu;
     s0     = s;
     sigma0 = sigma;
-    sa0    = sa;
+    q0     = q;
 
     % (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     % --------------------------------------------
