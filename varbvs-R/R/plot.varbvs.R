@@ -37,6 +37,8 @@ plot.varbvs <-
 
   # Determine the selected variable labels. By default, use the labels
   # stored in the varbvs data structure.
+  if (is.character(vars))
+    vars <- match(vars,rownames(x$alpha))
   if (missing(var.labels))
     var.labels <- rownames(x$alpha)[vars]
   if (is.null(var.labels))
