@@ -37,7 +37,8 @@ quantitative trait locus (QTL) mapping study.
   for grouping the genetic markers by chromosome in a genome-wide
   association study.}
 
-  \item{vars}{Indices of variables to highlight and label. By default,
+  \item{vars}{Indices (type \code{integer}) or names (type
+  \code{character}) of variables to highlight and label. By default,
   \code{vars = NULL}, meaning no variables are highlighted.}
 
   \item{var.labels}{Labels to accompany the highlighted variables
