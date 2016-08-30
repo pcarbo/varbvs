@@ -333,7 +333,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % ----------------
   % Input X must be single precision, and cannot be sparse.
   if issparse(X)
-    error('Input X cannot be sparse')
+    error('Input X cannot be sparse');
   end
   if ~isa(X,'single')
     X = single(X);
@@ -424,7 +424,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     sigma        = double(options.sigma(:)');
     update_sigma = false;
     if strcmp(family,'binomial')
-      error('options.sigma is not valid with family = binomial')
+      error('options.sigma is not valid with family = binomial');
     end
   else
     sigma        = var(y);
@@ -457,7 +457,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   elseif isscalar(sigma) & isscalar(sa)
     logodds = linspace(-log10(p),-0.3,20);
   else
-    error('options.logodds must be specified')
+    error('options.logodds must be specified');
   end
   if size(logodds,1) == p
     prior_same = false;
@@ -479,7 +479,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     logodds = repmat(logodds,1,ns);
   end
   if numel(sigma) ~= ns | numel(sa) ~= ns | size(logodds,2) ~= ns
-    error('options.sigma, options.sa and options.logodds are inconsistent')
+    error('options.sigma, options.sa and options.logodds are inconsistent');
   end
 
   % OPTIONS.UPDATE_SIGMA
@@ -488,7 +488,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isfield(options,'update_sigma')
     update_sigma = options.update_sigma;
     if strcmp(family,'binomial')
-      error('options.update_sigma is not valid with family = binomial')
+      error('options.update_sigma is not valid with family = binomial');
     end
   end
 
@@ -523,7 +523,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     alpha = double(options.alpha);
     initialize_params = false;  
     if size(alpha,1) ~= p
-      error('options.alpha must have as many rows as X has columns')
+      error('options.alpha must have as many rows as X has columns');
     end
     if size(alpha,2) == 1
       alpha = repmat(alpha,1,ns);
@@ -539,7 +539,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     mu = double(options.mu(:));
     initialize_params = false;  
     if size(mu,1) ~= p
-      error('options.mu must have as many rows as X has columns')
+      error('options.mu must have as many rows as X has columns');
     end
     if size(mu,2) == 1
       mu = repmat(mu,1,ns);
@@ -559,7 +559,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
       error('options.eta is only valid for family = binomial');
     end
     if size(eta,1) ~= n
-      error('options.eta must have as many rows as X')
+      error('options.eta must have as many rows as X');
     end
     if size(eta,2) == 1
       eta = repmat(eta,1,ns);
