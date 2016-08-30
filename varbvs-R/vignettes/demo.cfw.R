@@ -53,8 +53,9 @@ print(summary(fit))
 # one using the p-values computed using GEMMA; and (3) one using the
 # PIPs computed from the BVSR model in GEMMA.
 trellis.device(height = 5,width = 10)
-trellis.par.set(axis.text = list(cex = 0.65),
-                par.ylab.text = list(cex = 0.7))
+trellis.par.set(axis.text     = list(cex = 0.7),
+                par.ylab.text = list(cex = 0.7),
+                par.main.text = list(cex = 0.7,font = 1))
 w <- c(normalizelogweights(fit$logw))
 j <- which(fit$alpha %*% w > 0.5)
 r <- gwscan.gemma[[trait]]
@@ -69,7 +70,9 @@ for (i in chromosomes) {
   pos       <- pos + n + 25
 }
 print(plot(fit,groups = map$chr,vars = j,gap = 1500,cex = 0.6,
-           ylab = "varbvs prob.",vars.xyplot.args = list(cex = 0.6)),
+           ylab = "posterior prob.",main = "(a) varbvs",
+           scales = list(y = list(limits = c(-0.1,1.2),at = c(0,0.5,1))),
+           vars.xyplot.args = list(cex = 0.6)),
       split = c(1,1,1,3),more = TRUE)
 print(plot(fit,groups = map$chr,score = r,vars = j,cex = 0.6,gap = 1500,
            draw.threshold = 5.71,ylab = "-log10 p-value",
