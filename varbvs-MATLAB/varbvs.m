@@ -536,7 +536,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % OPTIONS.MU
   % Set initial estimates of variational parameter mu.
   if isfield(options,'mu')
-    mu = double(options.mu(:));
+    mu = double(options.mu);
     initialize_params = false;  
     if size(mu,1) ~= p
       error('options.mu must have as many rows as X has columns');
