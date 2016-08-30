@@ -3,13 +3,23 @@
 % connection to "mvash" (special case in which we have individual-level
 % data, and linear regression model).
 
-% TO DO: Update these comments.
-%
 % NOTES:
 %
-%   Notes go here.
+%   Options:
+%     - tol
+%     - maxiter
+%     - verbose
+%     - sigma
+%     - q
+%     - update_sigma
+%     - update_q
+%     - alpha
+%     - mu
 %
-function fit = varbvsmix (X, Z, y, labels, options)
+%   Is it important to have a penalty/regularization term for the
+%   mixture weights (q)?
+%
+function fit = varbvsmix (X, Z, y, labels, sa, options)
 
 % [logw,sigma,sa,alpha,mu,s] = varbvsnorm(X,y,sigma,sa,logodds,...)
 % implements the fully-factorized variational approximation for Bayesian
@@ -49,12 +59,10 @@ function fit = varbvsmix (X, Z, y, labels, options)
 % maximum a posteriori (MAP) estimate of the prior variance parameter (sa),
 % in which sa is drawn from a scaled inverse chi-square distribution with
 % scale sa0 and degrees of freedom n0.
-function [logw, err, sigma, q, alpha, mu, s] = ...
-        varbvsmix (X, Z, y, sigma, sa, q, alpha, mu, tol, maxiter, ...
-                   verbose, update_sigma, update_q)
 
-  % Get the number of samples (n) and variables (p).
+  % Get the number of samples (n), variables (p) and mixture components (K).
   [n p] = size(X);
+  K     = numel(sa);  
   
   % (1) CHECK INPUTS
   % ----------------
@@ -132,6 +140,61 @@ function [logw, err, sigma, q, alpha, mu, s] = ...
   else
     verbose = true;
   end
+
+  % OPTIONS.SIGMA
+  % Get the initial estimate of the residual variance, if provided. By
+  % default, the initial estimate is set to the sample variance of Y.
+  if isfield(options,'sigma')
+    sigma = double(options.sigma);
+  else
+    sigma = var(y);
+  end
+
+  % OPTIONS.Q
+  % Get the initial estimate of the mixture weights, if provided. By
+  % default, the initial estimate is set so that all the weights are equal.
+  if isfield(options,'q')
+    q = double(options.q(:));
+  else
+    q = ones(K,1)/K;
+  end
+
+  % OPTIONS.UPDATE_SIGMA
+  % Determine whether to update the residual variance parameter.
+  if isfield(options,'update_sigma')
+    update_sigma = options.update_sigma;
+  else
+    update_sigma = true;
+  end
+
+  % OPTIONS.UPDATE_Q
+  % Determine whether to update the mixture weights.
+  if isfield(options,'update_q')
+    update_q = options.update_q;
+  else
+    update_q = true;
+  end
+
+  % OPTIONS.ALPHA
+  % Set initial estimates of variational parameter alpha.
+  if isfield(options,'alpha')
+    alpha = double(options.alpha);
+    if size(alpha,1) ~= p
+      error('options.alpha must have one row for each variable (column of X)');
+    end
+    if size(alpha,2) ~= K
+      error('options.alpha must have one column for each mixture component');
+    end
+  else
+    alpha = rand(p,K);
+    alpha = alpha ./ repmat(sum(alpha),p,1);
+  end
+
+  % OPTIONS.MU
+
+  % (3) PREPROCESSING STEPS
+  % -----------------------
+  
   
   % Compute a few useful quantities. Here I calculate X'*y as (y'*X)' to
   % avoid computing the transpose of X, since X may be large.
@@ -177,7 +240,7 @@ function [logw, err, sigma, q, alpha, mu, s] = ...
     else
       i = p:-1:1;
     end
-    [alpha mu Xr] = varbvsnormupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,i);
+    % [alpha mu Xr] = varbvsnormupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,i);
 
     % (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     % --------------------------------------------
@@ -231,7 +294,7 @@ function [logw, err, sigma, q, alpha, mu, s] = ...
       err(iter)  = 0;
       sigma      = sigma0;
       sa         = sa0;
-      alpha      = alpha0;
+      % alpha      = alpha0;
       mu         = mu0;
       s          = s0;
       break
