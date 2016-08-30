@@ -69,13 +69,13 @@ function [alpha, mu, s] = varbvsindep (fit, X, Z, y)
 
   % Input X must be single precision, and cannot be sparse.
   if issparse(X)
-    error('Input X cannot be sparse')
+    error('Input X cannot be sparse');
   end
   if ~isa(X,'single')
     X = single(X);
   end
   if (numel(fit.labels) ~= p)
-    error('Inputs X and fit are not compatible')
+    error('Inputs X and fit are not compatible');
   end
 
   % If input Z is not empty, it must be double precision, and must have

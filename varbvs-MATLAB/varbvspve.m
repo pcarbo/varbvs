@@ -9,13 +9,13 @@ function pve = varbvspve (X, fit, nr)
     
   % Input X must be single precision, and cannot be sparse.
   if issparse(X)
-    error('Input X cannot be sparse')
+    error('Input X cannot be sparse');
   end
   if ~isa(X,'single')
     X = single(X);
   end
   if (numel(fit.labels) ~= p)
-    error('Inputs X and fit are not compatible')
+    error('Inputs X and fit are not compatible');
   end
   
   % Take care of the optional inputs.

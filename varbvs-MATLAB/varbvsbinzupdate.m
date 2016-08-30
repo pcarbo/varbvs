@@ -11,7 +11,7 @@ function [alpha, mu, Xr] = ...
 
   % X must be single precision.
   if ~isa(X,'single')
-    error('Input X must be SINGLE')
+    error('Input X must be SINGLE');
   end
 
   % Check input sa.
@@ -21,7 +21,7 @@ function [alpha, mu, Xr] = ...
 
   % Check input logodds, alpha0 and mu0.
   if ~(length(logodds) == p & length(alpha0) == p & length(mu0) == p)
-    error('logodds, alpha0 and mu0 must have length = size(X,2).')
+    error('logodds, alpha0 and mu0 must have length = size(X,2).');
   end
 
   % Check input Xr0.
