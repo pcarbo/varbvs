@@ -244,8 +244,8 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   
   % Calculate the variance of the coefficients.
   s = zeros(p,K);
-  for k = 1:K
-    s(:,k) = sigma*sa(k)./(sa(k)*d + 1);
+  for i = 1:K
+    s(:,i) = sigma*sa(i)./(sa(i)*d + 1);
   end
   
   % Initialize storage for outputs logw and err.
@@ -265,14 +265,23 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     sigma0 = sigma;
     q0     = q;
 
-    % (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
+    % (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute the lower bound to the marginal log-likelihood.
+    %
+    % TO DO: Update this.
+    %
+    logw0 = p/2 - n/2*log(2*pi*sigma) - norm(y - Xr)^2/(2*sigma) ...
+            - d'*betavarmix(alpha,mu,s)/(2*sigma);
+    
+    logw0 = - sum2(alpha.*log(alpha + eps))) + sum(alpha*log(q + eps)) ...
+            I = (alpha'*log(s/sa) - alpha'*(s + mu.^2)/sa)/2 ...
+
+            
     logw0 = int_linear(Xr,d,y,sigma,alpha,mu,s) ...
-            + int_gamma(logodds,alpha) ...
             + int_klbeta(alpha,mu,s,sigma*sa);
     
-    % (2b) UPDATE VARIATIONAL APPROXIMATION
+    % (4b) UPDATE VARIATIONAL APPROXIMATION
     % -------------------------------------
     % Run a forward or backward pass of the coordinate ascent updates.
     if mod(iter,2)
@@ -349,11 +358,16 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   err  = err(1:iter);
 
 % ----------------------------------------------------------------------
-% intlinear(Xr,d,y,sigma,alpha,mu,s) computes an integral that appears in
-% the variational lower bound of the marginal log-likelihood. This integral
-% is the expectation of the linear regression log-likelihood taken with
-% respect to the variational approximation.
-function I = int_linear (Xr, d, y, sigma, alpha, mu, s)
+% Compute the lower bound to the marginal log-likelihood.
+function I = compute_varlb (Xr, d, y, sigma, sa, q, alpha, mu, s)
   n = length(y);
-  I = - n/2*log(2*pi*sigma) - norm(y - Xr)^2/(2*sigma) ...
-      - d'*betavar(alpha,mu,s)/(2*sigma);
+  p = length(d);
+  K = numel(sa);
+  I = p/2 - n/2*log(2*pi*sigma) - norm(y - Xr)^2/(2*sigma) ...
+          - d'*betavarmix(alpha,mu,s)/(2*sigma);
+  for i = 1:K
+    I = I - alpha(:,i)'*log(alpha(:,i) + eps) ...
+          + sum(alpha(:,i)*log(q(i) + eps)) ...
+          + alpha(:,i)'*log(s(:,i)/(sigma*sa(i)))/2 ...
+          - alpha(:,i)'*(s(:,i) + mu(:,i).^2)/(sigma*sa(i))/2;
+  end
