@@ -4,4 +4,4 @@
 % variable i is drawn from a mixture in which the jth mixture component is
 % the univariate normal with mean mu(i,j) and variance s(i,j).
 function y = betavar (p, mu, s)
-  y = sum(alpha.*(s + mu.^2),2) - sum(alpha.*mu,2).^2;
+  y = sum(p.*(s + mu.^2),2) - sum(p.*mu,2).^2;

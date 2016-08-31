@@ -15,9 +15,10 @@
 %   Point out the connection to "mvash" (special case in which we have
 %   individual-level data, and a linear regression model).
 %
-% TO DO: Add detailed comments describing function here.
-%
-% TO DO: Set first (or zeroth) mixture component to be the "spike".
+% TO DO:
+%   * Provided detailed analysis summary with verbose = true.
+%   * Add detailed comments describing function here.
+%   * Set first (or zeroth) mixture component to be the "spike".
 %
 function fit = varbvsmix (X, Z, y, labels, sa, options)
 
@@ -202,18 +203,16 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     X = X - Z*SZX;
   end
 
-  % *** I'm up to here in testing this function using demo_mix.m ***
-  
   % Provide a brief summary of the analysis.
   if verbose
     % TO DO.
   end
   
-  % Compute a few useful quantities. Here I calculate X'*y as (y'*X)' to
+  % Compute a few useful quantities. Here, I calculate X'*y as (y'*X)' to
   % avoid computing the transpose of X, since X may be large.
   xy = double(y'*X)';
   d  = diagsq(X);
-  Xr = double(X*(alpha.*mu));
+  Xr = double(X*sum(alpha.*mu,2));
   
   % For each variable and each mixture component, calculate s(i,k), the
   % variance of the regression coefficient conditioned on being drawn
@@ -243,7 +242,7 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     % (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute the lower bound to the marginal log-likelihood.
-    logw0 = calc_varlb(Xr,d,y,sigma,sa,q,alpha,mu,s);
+    logw0 = computevarlb(Xr,d,y,sigma,sa,q,alpha,mu,s);
     
     % (4b) UPDATE VARIATIONAL APPROXIMATION
     % -------------------------------------
@@ -253,6 +252,9 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     else
       i = p:-1:1;
     end
+
+    % *** I'm up to here in testing this function using demo_mix.m ***
+  
     %
     % TO DO: Update this.
     % 
@@ -314,15 +316,15 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
 
 % ----------------------------------------------------------------------
 % Compute the lower bound to the marginal log-likelihood.
-function I = calc_varlb (Xr, d, y, sigma, sa, q, alpha, mu, s)
+function I = computevarlb (Xr, d, y, sigma, sa, q, alpha, mu, s)
   n = length(y);
   p = length(d);
   K = numel(sa);
-  I = p/2 - n/2*log(2*pi*sigma) - norm(y - Xr)^2/(2*sigma) ...
-          - d'*betavarmix(alpha,mu,s)/(2*sigma);
+  I = p/2 - n/2*log(2*pi*sigma) ...
+      - (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s))/(2*sigma);
   for i = 1:K
-    I = I - alpha(:,i)'*log(alpha(:,i) + eps) ...
-          + sum(alpha(:,i)*log(q(i) + eps)) ...
+      I = I + sum(alpha(:,i)*log(q(i) + eps)) ...
+          - alpha(:,i)'*log(alpha(:,i) + eps) ...
           + alpha(:,i)'*log(s(:,i)/(sigma*sa(i)))/2 ...
           - alpha(:,i)'*(s(:,i) + mu(:,i).^2)/(sigma*sa(i))/2;
   end
