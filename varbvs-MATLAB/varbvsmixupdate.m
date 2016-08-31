@@ -17,7 +17,7 @@ function [alpha, mu, Xr] = ...
   % TO DO: Implement more efficient C routine.
   %
   I = I(:)';
-  for i in I
+  for i = I
       
     % Compute the variance of the regression coefficient conditioned on
     % being drawn from each of the mixture componentx.
@@ -25,18 +25,18 @@ function [alpha, mu, Xr] = ...
   
     % Update the variational estimate of the posterior mean for each
     % mixture component.
-    r       = alpha(i,:) .* mu(i,:);
+    r       = dot(alpha(i,:),mu(i,:));
     mu(i,:) = s/sigma .* (xy + d(i)*r - dot(X(:,i),Xr));
     
     % Update the assignment probabilities for each of the mixture
     % components.
     SSR        = mu(i,:).^2./s;
-    w          = log(q + eps) + (log(s./(sigma*sa)) + SSR)/2);
+    w          = log(q + eps) + (log(s./(sigma*sa)) + SSR)/2;
     alpha(i,:) = normalizelogweights(w);
     
     % Update Xr = X*r.
-    rnew = alpha(i,:) .* mu(i,:);
-  add(Xr,rnew - r,x,n);
+    rnew = dot(alpha(i,:),mu(i,:));
+    Xr   = Xr + (rnew - r)*X(:,i);
     
     % Slow.
     Xr = double(X*sum(alpha.*mu,2));

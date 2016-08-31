@@ -20,7 +20,7 @@
 %   * Add detailed comments describing function here.
 %   * Set first (or zeroth) mixture component to be the "spike".
 %
-function fit = varbvsmix (X, Z, y, labels, sa, options)
+function fit = varbvsmix (X, Z, y, sa, labels, options)
 
   % Get the number of samples (n), variables (p) and mixture components (K).
   [n p] = size(X);
@@ -55,8 +55,11 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     error('Inputs X and y do not match.');
   end
 
+  % Input sa must be a double-precision row vector.
+  sa = double(sa(:))'; 
+  
   % The labels must be a cell array with p elements, or an empty array.
-  if nargin < 4
+  if nargin < 5
     labels = [];
   end
   if isempty(labels)
@@ -116,9 +119,9 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   % Get the initial estimate of the mixture weights, if provided. By
   % default, the initial estimate is set so that all the weights are equal.
   if isfield(options,'q')
-    q = double(options.q(:));
+    q = double(options.q(:))';
   else
-    q = ones(K,1)/K;
+    q = ones(1,K)/K;
   end
 
   % OPTIONS.Q_PENALTY
@@ -126,7 +129,7 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   if isfield(options,'q_penalty')
     q = double(options.q_penalty(:));
   else
-    q_penalty = repmat(2,K,1);
+    q_penalty = repmat(2,1,K);
   end
   
   % OPTIONS.UPDATE_SIGMA
@@ -242,7 +245,9 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     % (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute the lower bound to the marginal log-likelihood.
-    logw0 = computevarlb(Xr,d,y,sigma,sa,q,alpha,mu,s);
+    logw0 = computevarlb(Z,Xr,d,y,sigma,sa,q,alpha,mu,s);
+    
+    % *** I'm up to here in testing this function using demo_mix.m ***
     
     % (4b) UPDATE VARIATIONAL APPROXIMATION
     % -------------------------------------
@@ -252,13 +257,7 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     else
       i = p:-1:1;
     end
-
-    % *** I'm up to here in testing this function using demo_mix.m ***
-  
-    %
-    % TO DO: Update this.
-    % 
-    % [alpha mu Xr] = varbvsnormupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,i);
+    [alpha mu Xr] = varbvsmixupdate(X,sigma,sa,q,xy,d,alpha,mu,Xr,i);
 
     % (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     % --------------------------------------------
@@ -324,7 +323,7 @@ function I = computevarlb (Z, Xr, d, y, sigma, sa, q, alpha, mu, s)
       - (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s))/(2*sigma);
   for i = 1:K
       I = I + sum(alpha(:,i)*log(q(i) + eps)) ...
-          - alpha(:,i)'*log(alpha(:,i) + eps) ...
-          + alpha(:,i)'*log(s(:,i)/(sigma*sa(i)))/2 ...
-          - alpha(:,i)'*(s(:,i) + mu(:,i).^2)/(sigma*sa(i))/2;
+            - alpha(:,i)'*log(alpha(:,i) + eps) ...
+            + alpha(:,i)'*log(s(:,i)/(sigma*sa(i)))/2 ...
+            - alpha(:,i)'*(s(:,i) + mu(:,i).^2)/(sigma*sa(i))/2;
   end
