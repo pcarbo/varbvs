@@ -316,11 +316,11 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
 
 % ----------------------------------------------------------------------
 % Compute the lower bound to the marginal log-likelihood.
-function I = computevarlb (Xr, d, y, sigma, sa, q, alpha, mu, s)
+function I = computevarlb (Z, Xr, d, y, sigma, sa, q, alpha, mu, s)
   n = length(y);
   p = length(d);
   K = numel(sa);
-  I = p/2 - n/2*log(2*pi*sigma) ...
+  I = p/2 - n/2*log(2*pi*sigma) - logdet(Z'*Z)/2 ...
       - (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s))/(2*sigma);
   for i = 1:K
       I = I + sum(alpha(:,i)*log(q(i) + eps)) ...
