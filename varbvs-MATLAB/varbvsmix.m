@@ -1,8 +1,3 @@
-% TO DO: Implement generalization of spike-and-slab with K normal
-% components. For now, I assume no additional covariates Z. Note
-% connection to "mvash" (special case in which we have individual-level
-% data, and linear regression model).
-
 % NOTES:
 %
 %   Options:
@@ -15,50 +10,16 @@
 %     - update_q
 %     - alpha
 %     - mu
+%     - q_penalty
 %
-%   Is it important to have a penalty/regularization term for the
-%   mixture weights (q)?
+%   Point out the connection to "mvash" (special case in which we have
+%   individual-level data, and a linear regression model).
+%
+% TO DO: Add detailed comments describing function here.
+%
+% TO DO: Set first (or zeroth) mixture component to be the "spike".
 %
 function fit = varbvsmix (X, Z, y, labels, sa, options)
-
-% [logw,sigma,sa,alpha,mu,s] = varbvsnorm(X,y,sigma,sa,logodds,...)
-% implements the fully-factorized variational approximation for Bayesian
-% variable selection in linear regression. It finds the "best"
-% fully-factorized variational approximation to the posterior distribution
-% of the coefficients for a linear regression model of a continuous outcome
-% (quantitiative trait), with spike and slab priors on the coefficients. By
-% "best", we mean the approximating distribution that locally minimizes the
-% K-L divergence between the approximating distribution and the exact
-% posterior.
-%
-% Input X is an n x p matrix of variable (or feature) observations, where n
-% is the number of samples, and p is the number of variables. Input y
-% contains observations of the outcome; it is a vector of length n.
-%
-% Inputs sigma, sa and logodds are additional model parameters; sigma and sa
-% are scalars. Input sigma specifies the variance of the residual, and sa
-% specifies the prior variance of the coefficients (scaled by sigma). Input
-% logodds is the prior log-odds of inclusion for each variable. Note that
-% the prior log-odds here is defined with respect to the *natural*
-% logarithm, whereas in function varbvs the prior log-odds is defined
-% with respect to the base-10 logarithm, so a scaling factor of log(10)
-% is needed to convert from the latter to the former.
-%
-% Output logw is the variational estimate of the marginal log-likelihood
-% given the hyperparameters at each iteration of the co-ordinate ascent
-% optimization procedure. Output err is the maximum difference between the
-% approximate posterior probabilities (alpha) at successive iterations.
-% Outputs alpha, mu and s are the parameters of the variational
-% approximation and, equivalently, variational estimates of posterior
-% quantites: under the variational approximation, the ith regression
-% coefficient is normal with probability alpha(i); mu(i) and s(i) are the
-% mean and variance of the coefficient given that it is included in the
-% model.
-%
-% When update_sa = true, there is the additional option of computing the
-% maximum a posteriori (MAP) estimate of the prior variance parameter (sa),
-% in which sa is drawn from a scaled inverse chi-square distribution with
-% scale sa0 and degrees of freedom n0.
 
   % Get the number of samples (n), variables (p) and mixture components (K).
   [n p] = size(X);
@@ -159,6 +120,14 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     q = ones(K,1)/K;
   end
 
+  % OPTIONS.Q_PENALTY
+  % Specify the penalty term for estimating the mixture weights.
+  if isfield(options,'q_penalty')
+    q = double(options.q_penalty(:));
+  else
+    q_penalty = repmat(2,K,1);
+  end
+  
   % OPTIONS.UPDATE_SIGMA
   % Determine whether to update the residual variance parameter.
   if isfield(options,'update_sigma')
@@ -176,7 +145,8 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   end
 
   % OPTIONS.ALPHA
-  % Set initial estimates of variational parameter alpha.
+  % Set initial estimates of variational parameters 'alpha'. These
+  % parameters are stored as a p x K matrix.
   if isfield(options,'alpha')
     alpha = double(options.alpha);
     if size(alpha,1) ~= p
@@ -191,7 +161,8 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   end
 
   % OPTIONS.MU
-  % Set initial estimates of variational parameter mu.
+  % Set initial estimates of variational parameters 'mu'. These
+  % parameters are stored as a p x K matrix.
   if isfield(options,'mu')
     mu = double(options.mu);
     if size(mu,1) ~= p
@@ -231,6 +202,8 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     X = X - Z*SZX;
   end
 
+  % *** I'm up to here in testing this function using demo_mix.m ***
+  
   % Provide a brief summary of the analysis.
   if verbose
     % TO DO.
@@ -242,7 +215,9 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
   d  = diagsq(X);
   Xr = double(X*(alpha.*mu));
   
-  % Calculate the variance of the coefficients.
+  % For each variable and each mixture component, calculate s(i,k), the
+  % variance of the regression coefficient conditioned on being drawn
+  % from the kth mixture component.
   s = zeros(p,K);
   for i = 1:K
     s(:,i) = sigma*sa(i)./(sa(i)*d + 1);
@@ -268,18 +243,7 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     % (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute the lower bound to the marginal log-likelihood.
-    %
-    % TO DO: Update this.
-    %
-    logw0 = p/2 - n/2*log(2*pi*sigma) - norm(y - Xr)^2/(2*sigma) ...
-            - d'*betavarmix(alpha,mu,s)/(2*sigma);
-    
-    logw0 = - sum2(alpha.*log(alpha + eps))) + sum(alpha*log(q + eps)) ...
-            I = (alpha'*log(s/sa) - alpha'*(s + mu.^2)/sa)/2 ...
-
-            
-    logw0 = int_linear(Xr,d,y,sigma,alpha,mu,s) ...
-            + int_klbeta(alpha,mu,s,sigma*sa);
+    logw0 = calc_varlb(Xr,d,y,sigma,sa,q,alpha,mu,s);
     
     % (4b) UPDATE VARIATIONAL APPROXIMATION
     % -------------------------------------
@@ -289,61 +253,52 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
     else
       i = p:-1:1;
     end
+    %
+    % TO DO: Update this.
+    % 
     % [alpha mu Xr] = varbvsnormupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,i);
 
-    % (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
+    % (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute the lower bound to the marginal log-likelihood.
-    logw(iter) = int_linear(Xr,d,y,sigma,alpha,mu,s) ...
-                 + int_gamma(logodds,alpha) ...
-                 + int_klbeta(alpha,mu,s,sigma*sa);
+    log(iter) = calc_varlb(Xr,d,y,sigma,sa,q,alpha,mu,s);
     
-    % (2d) UPDATE RESIDUAL VARIANCE
+    % (4d) UPDATE RESIDUAL VARIANCE
     % -----------------------------
-    % Compute the maximum likelihood estimate of sigma, if requested.
-    % Note that we must also recalculate the variance of the regression
-    % coefficients when this parameter is updated.
+    
+    % Compute the maximum likelihood estimate of the residual variable
+    % (sigma), if requested. Note that we must also recalculate the
+    % variance of the regression coefficients when this parameter is
+    % updated. 
     if update_sigma
-      sigma = (norm(y - Xr)^2 + d'*betavar(alpha,mu,s) ...
-               + alpha'*(s + mu.^2)/sa)/(n + sum(alpha));
-      s = sa*sigma./(sa*d + 1);
+      % TO DO.
     end
     
-    % (2e) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
-    % -----------------------------------------------------
-    % Compute the maximum a posteriori estimate of sa, if requested. Note
-    % that we must also recalculate the variance of the regression
-    % coefficients when this parameter is updated. 
-    if update_sa
-      sa = (sa0*n0 + dot(alpha,s + mu.^2))/(n0 + sigma*sum(alpha));
-      s  = sa*sigma./(sa*d + 1);
+    % (4e) UPDATE MIXTURE WEIGHTS
+    % ---------------------------
+    % TO DO: Explain here what these lines of code do.
+    if update_q
+      % TO DO.
     end
 
     % (2f) CHECK CONVERGENCE
     % ----------------------
+    
     % Print the status of the algorithm and check the convergence criterion.
     % Convergence is reached when the maximum difference between the
-    % posterior probabilities at two successive iterations is less than the
-    % specified tolerance, or when the variational lower bound has
-    % decreased. 
-    err(iter) = max(abs(alpha - alpha0));
+    % posterior inclusion probabilities at two successive iterations is less
+    % than the specified tolerance, or when the variational lower bound has
+    % decreased.
+    err(iter) = max(max(abs(alpha - alpha0)));
     if verbose
-      if isempty(outer_iter)
-        status = '';
-      else
-        status = sprintf('%05d ',outer_iter);
-      end  
-      status = [status sprintf('%05d %+13.6e %0.1e %06.1f %0.1e %0.1e',...
-                               iter,logw(iter),err(iter),sum(alpha),sigma,sa)];
-      fprintf(status);
-      fprintf(repmat('\b',1,length(status)));
+      % TO DO.
     end
     if logw(iter) < logw0
       logw(iter) = logw0;
       err(iter)  = 0;
       sigma      = sigma0;
-      sa         = sa0;
-      % alpha      = alpha0;
+      q          = q0;
+      alpha      = alpha0;
       mu         = mu0;
       s          = s0;
       break
@@ -359,7 +314,7 @@ function fit = varbvsmix (X, Z, y, labels, sa, options)
 
 % ----------------------------------------------------------------------
 % Compute the lower bound to the marginal log-likelihood.
-function I = compute_varlb (Xr, d, y, sigma, sa, q, alpha, mu, s)
+function I = calc_varlb (Xr, d, y, sigma, sa, q, alpha, mu, s)
   n = length(y);
   p = length(d);
   K = numel(sa);
