@@ -161,7 +161,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     end
   else
     alpha = rand(p,K);
-    alpha = alpha ./ repmat(sum(alpha),p,1);
+    alpha = alpha ./ repmat(sum(alpha,2),1,K);
   end
 
   % OPTIONS.MU
@@ -241,13 +241,13 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     s0     = s;
     sigma0 = sigma;
     q0     = q;
+    
+    % *** I'm up to here in testing this function using demo_mix.m ***
 
     % (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute the lower bound to the marginal log-likelihood.
     logw0 = computevarlb(Z,Xr,d,y,sigma,sa,q,alpha,mu,s);
-    
-    % *** I'm up to here in testing this function using demo_mix.m ***
     
     % (4b) UPDATE VARIATIONAL APPROXIMATION
     % -------------------------------------
@@ -262,11 +262,10 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     % (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute the lower bound to the marginal log-likelihood.
-    log(iter) = calc_varlb(Xr,d,y,sigma,sa,q,alpha,mu,s);
+    logw(iter) = computevarlb(Z,Xr,d,y,sigma,sa,q,alpha,mu,s);
     
     % (4d) UPDATE RESIDUAL VARIANCE
     % -----------------------------
-    
     % Compute the maximum likelihood estimate of the residual variable
     % (sigma), if requested. Note that we must also recalculate the
     % variance of the regression coefficients when this parameter is
@@ -284,7 +283,6 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
 
     % (2f) CHECK CONVERGENCE
     % ----------------------
-    
     % Print the status of the algorithm and check the convergence criterion.
     % Convergence is reached when the maximum difference between the
     % posterior inclusion probabilities at two successive iterations is less
@@ -322,8 +320,8 @@ function I = computevarlb (Z, Xr, d, y, sigma, sa, q, alpha, mu, s)
   I = p/2 - n/2*log(2*pi*sigma) - logdet(Z'*Z)/2 ...
       - (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s))/(2*sigma);
   for i = 1:K
-      I = I + sum(alpha(:,i)*log(q(i) + eps)) ...
-            - alpha(:,i)'*log(alpha(:,i) + eps) ...
-            + alpha(:,i)'*log(s(:,i)/(sigma*sa(i)))/2 ...
-            - alpha(:,i)'*(s(:,i) + mu(:,i).^2)/(sigma*sa(i))/2;
+    I = I + sum(alpha(:,i)*log(q(i) + eps)) ...
+          - alpha(:,i)'*log(alpha(:,i) + eps) ...
+          + alpha(:,i)'*log(s(:,i)/(sigma*sa(i)))/2 ...
+          - alpha(:,i)'*(s(:,i) + mu(:,i).^2)/(sigma*sa(i))/2;
   end

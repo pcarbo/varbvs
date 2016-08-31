@@ -26,7 +26,7 @@ function [alpha, mu, Xr] = ...
     % Update the variational estimate of the posterior mean for each
     % mixture component.
     r       = dot(alpha(i,:),mu(i,:));
-    mu(i,:) = s/sigma .* (xy + d(i)*r - dot(X(:,i),Xr));
+    mu(i,:) = s/sigma * (xy(i) + d(i)*r - dot(X(:,i),Xr));
     
     % Update the assignment probabilities for each of the mixture
     % components.
@@ -37,8 +37,5 @@ function [alpha, mu, Xr] = ...
     % Update Xr = X*r.
     rnew = dot(alpha(i,:),mu(i,:));
     Xr   = Xr + (rnew - r)*X(:,i);
-    
-    % Slow.
-    Xr = double(X*sum(alpha.*mu,2));
   end
 

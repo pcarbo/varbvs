@@ -60,4 +60,4 @@ y = double(y);
 % ------------------------------------------
 % TO DO: Add comments here.
 fprintf('2. FITTING MODEL TO DATA.\n')
-fit = varbvsmix(X,Z,y,labels,sd.^2);
+fit = varbvsmix(X,Z,y,sd.^2,labels);
