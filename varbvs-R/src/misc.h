@@ -37,7 +37,7 @@ double sum (const double* x, Size n);
 // Return the largest entry in the vector.
 double max (const double* x, Size n);
 
-// Add a to all the entries in vector x, and store the result in vector y.
+// Add a*x to vector y, and store the result in y.
 void add (double* y, double a, const double* x, Size n);
 
 // Return the dot product of two vectors.

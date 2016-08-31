@@ -59,7 +59,7 @@ double max (const double* x, Size n) {
   return y;
 }
 
-// Add a to all the entries in vector x, and store the result in vector y.
+// Add a*x to vector y, and store the result in y.
 void add (double* y, double a, const double* x, Size n) {
   for (Index i = 0; i < n; i++)
     y[i] += a * x[i];
