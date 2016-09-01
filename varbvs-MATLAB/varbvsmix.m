@@ -127,7 +127,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   % OPTIONS.Q_PENALTY
   % Specify the penalty term for estimating the mixture weights.
   if isfield(options,'q_penalty')
-    q = double(options.q_penalty(:));
+    q = double(options.q_penalty(:))';
   else
     q_penalty = repmat(2,1,K);
   end
@@ -242,8 +242,6 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     sigma0 = sigma;
     q0     = q;
     
-    % *** I'm up to here in testing this function using demo_mix.m ***
-
     % (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     % --------------------------------------------
     % Compute the lower bound to the marginal log-likelihood.
@@ -266,19 +264,25 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     
     % (4d) UPDATE RESIDUAL VARIANCE
     % -----------------------------
-    % Compute the maximum likelihood estimate of the residual variable
-    % (sigma), if requested. Note that we must also recalculate the
+    % Compute the approximate maximum likelihood estimate of the residual
+    % variable (sigma), if requested. Note that we must also recalculate the
     % variance of the regression coefficients when this parameter is
-    % updated. 
+    % updated.
     if update_sigma
-      % TO DO.
+      sigma = (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s) ...
+               + sum(sum(alpha.*(s + mu.^2))./sa))/(n + p);
+      for i = 1:K
+        s(:,i) = sigma*sa(i)./(sa(i)*d + 1);
+      end
     end
     
     % (4e) UPDATE MIXTURE WEIGHTS
     % ---------------------------
-    % TO DO: Explain here what these lines of code do.
+    % Compute the approximate penalized maximum likelihood estimate of
+    % the mixture weights (q), if requested.
     if update_q
-      % TO DO.
+      q = sum(alpha) + q_penalty - 1;
+      q = q/sum(q);
     end
 
     % (2f) CHECK CONVERGENCE
@@ -290,7 +294,8 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     % decreased.
     err(iter) = max(max(abs(alpha - alpha0)));
     if verbose
-      % TO DO.
+      status = sprintf('%05d %+13.6e %0.1e\n',iter,logw(iter),err(iter));
+      fprintf(status);
     end
     if logw(iter) < logw0
       logw(iter) = logw0;
