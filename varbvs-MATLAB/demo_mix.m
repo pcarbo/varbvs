@@ -10,8 +10,8 @@ se = 4;     % Variance of residual.
 
 % The standard deviations and mixture weights used to simulate the additive
 % effects on the quantitative trait.
-sd = [     1  0.2   0.1 0.01 ]';
-q  = [ 0.005 0.01 0.025 0.96 ]';
+sd = [  0.5  0.2  0.1 0.01 ]';
+q  = [ 0.01 0.01 0.03 0.95 ]';
 
 % Set the random number generator seed.
 rng(1);
@@ -61,3 +61,15 @@ y = double(y);
 % TO DO: Add comments here.
 fprintf('2. FITTING MODEL TO DATA.\n')
 fit = varbvsmix(X,Z,y,sd.^2,labels);
+
+% Plot estimated coefficients against the ground-truth coefficients.
+figure(1)
+set(gcf,'Color','white','PaperPositionMode','auto');
+clf
+plot([-2 2],[-2 2],':','Color','magenta');
+hold on
+plot(beta,sum(fit.alpha.*fit.mu,2),'kx','MarkerSize',8);
+hold off
+set(gca,'FontSize',12,'FontName','fixed');
+xlabel('ground-truth coefficient');
+ylabel('estimated coefficient');

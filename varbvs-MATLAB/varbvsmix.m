@@ -1,4 +1,5 @@
-% NOTES:
+% NOTES
+% -----
 %
 %   Options:
 %     - tol
@@ -15,7 +16,8 @@
 %   Point out the connection to "mvash" (special case in which we have
 %   individual-level data, and a linear regression model).
 %
-% TO DO:
+% TO DO
+% -----
 % 
 %   * Provided detailed analysis summary with verbose = true.
 %
@@ -236,6 +238,10 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   % -----------------------------
   % Repeat until convergence criterion is met, or until the maximum
   % number of iterations is reached.
+  if verbose
+    fprintf('       variational    max. ---hyperparameters---\n');
+    fprintf('iter   lower bound  change   sigma  mix. weights\n');
+  end
   for iter = 1:maxiter
 
     % Save the current variational parameters and model parameters.
@@ -297,8 +303,10 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     % decreased.
     err(iter) = max(max(abs(alpha - alpha0)));
     if verbose
-      status = sprintf('%05d %+13.6e %0.1e\n',iter,logw(iter),err(iter));
+      status = sprintf('%04d %+13.6e %0.1e %0.1e [%0.3f,%0.3f]',iter,...
+                       logw(iter),err(iter),sigma,min(q),max(q));
       fprintf(status);
+      fprintf(repmat('\b',1,length(status)));
     end
     if logw(iter) < logw0
       logw(iter) = logw0;
@@ -312,6 +320,9 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     elseif err(iter) < tol
       break
     end
+  end
+  if verbose
+    fprintf('\n');
   end
 
   % (5) CREATE FINAL OUTPUT
