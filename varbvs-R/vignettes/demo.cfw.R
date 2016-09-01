@@ -70,18 +70,18 @@ for (i in chromosomes) {
   pos       <- pos + n + 25
 }
 print(plot(fit,groups = map$chr,vars = j,gap = 1500,cex = 0.6,
-           ylab = "posterior prob.",main = "(a) multi-marker (varbvs)",
+           ylab = "probability",main = "a. multi-marker (varbvs)",
            scales = list(y = list(limits = c(-0.1,1.2),at = c(0,0.5,1))),
            vars.xyplot.args = list(cex = 0.6)),
       split = c(1,1,1,3),more = TRUE)
 print(plot(fit,groups = map$chr,score = r,vars = j,cex = 0.6,gap = 1500,
            draw.threshold = 5.71,ylab = "-log10 p-value",
-           main = "(b) single-marker (GEMMA -lm 2)",
+           main = "b. single-marker (GEMMA -lm 2)",
            scales = list(y = list(limits = c(-1,20),at = seq(0,20,5))),
            vars.xyplot.args = list(cex = 0.6)),
      split = c(1,2,1,3),more = TRUE)
 print(xyplot(p1 ~ plot.x,gwscan.bvsr,pch = 20,col = "midnightblue",
              scales = list(x = list(at = xticks,labels = chromosomes),
-                           y = list(at = c(0,0.5,1))),
-             xlab = "",ylab = "BVSR prob."),
+                           y = list(limits = c(-0.1,1.2),at = c(0,0.5,1))),
+             xlab = "",ylab = "probability",main = "c. multi-marker (BVSR)"),
       split = c(1,3,1,3),more = FALSE)
