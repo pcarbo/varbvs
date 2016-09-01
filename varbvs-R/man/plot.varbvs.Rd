@@ -13,7 +13,7 @@ quantitative trait locus (QTL) mapping study.
 \usage{
   \method{plot}{varbvs}(x, score, groups, vars = NULL, var.labels,
   draw.threshold = NA, gap = 0,col = "midnightblue", pch = 20,
-  xlab = "", ylab = "",
+  scales = NULL, xlab = "", ylab = "",
   abline.args = list(lty = "dotted",col = "orangered"),
   vars.xyplot.args = list(pch = 20,col = "magenta"),
   vars.ltext.args = list(col = "black",pos = 4,cex = 0.5), ...)
@@ -37,7 +37,8 @@ quantitative trait locus (QTL) mapping study.
   for grouping the genetic markers by chromosome in a genome-wide
   association study.}
 
-  \item{vars}{Indices of variables to highlight and label. By default,
+  \item{vars}{Indices (type \code{integer}) or names (type
+  \code{character}) of variables to highlight and label. By default,
   \code{vars = NULL}, meaning no variables are highlighted.}
 
   \item{var.labels}{Labels to accompany the highlighted variables
@@ -54,6 +55,9 @@ quantitative trait locus (QTL) mapping study.
 
   \item{pch}{Argument passed to \code{xyplot} specifying symbol type.}
 
+  \item{scales}{Argument passed to \code{xyplot} specifying how x- and
+  y-axes are drawn.}
+  
   \item{xlab}{Argument passed to \code{xyplot} specifying horizontal
   axis title.}
 
@@ -88,5 +92,6 @@ inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. \emph{Bayesian Analysis}
 \bold{7}, 73--108.}
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
-\seealso{\code{varbvs}, \code{summary.varbvs}, \code{varbvsindep}
+\seealso{\code{xyplot}, \code{ltext}, \code{panel.abline},
+  \code{varbvs}, \code{summary.varbvs}, \code{varbvsindep}
 }

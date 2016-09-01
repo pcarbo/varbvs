@@ -1,7 +1,8 @@
 # Summarize the variable selection results in a single plot.
 plot.varbvs <-
     function (x, score, groups, vars = NULL, var.labels, draw.threshold = NA,
-              gap = 0,col = "midnightblue", pch = 20, xlab = "", ylab = "",
+              gap = 0,col = "midnightblue", pch = 20, scales = NULL,
+              xlab = "", ylab = "",
               abline.args = list(lty = "dotted",col = "orangered"),
               vars.xyplot.args = list(pch = 20,col = "magenta"),
               vars.ltext.args = list(col = "black",pos = 4,cex = 0.5), ...) {
@@ -36,6 +37,8 @@ plot.varbvs <-
 
   # Determine the selected variable labels. By default, use the labels
   # stored in the varbvs data structure.
+  if (is.character(vars))
+    vars <- match(vars,rownames(x$alpha))
   if (missing(var.labels))
     var.labels <- rownames(x$alpha)[vars]
   if (is.null(var.labels))
@@ -79,7 +82,8 @@ plot.varbvs <-
   # Plot the posterior probabilities, or "scores", highlighting and
   # labeling any selected variables.
   out <- xyplot(y ~ x,data.frame(x=x,y=y),pch = pch,col = col,
-                scales = list(x = list(at = xticks,labels = group.labels)),
+                scales = c(scales,
+                  list(x = list(at = xticks,labels = group.labels))),
                 xlab = xlab,ylab = ylab,
                 panel = function (x,y,...) {
                   panel.xyplot(x,y,...);

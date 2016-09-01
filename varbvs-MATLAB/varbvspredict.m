@@ -66,13 +66,13 @@ function y = varbvspredict (fit, X, Z)
     
   % Input X must be single precision, and cannot be sparse.
   if issparse(X)
-    error('Input X cannot be sparse')
+    error('Input X cannot be sparse');
   end
   if ~isa(X,'single')
     X = single(X);
   end
   if (numel(fit.labels) ~= p)
-    error('Inputs X and fit are not compatible')
+    error('Inputs X and fit are not compatible');
   end
 
   % If input Z is not empty, it must be double precision, and must have as
@@ -86,7 +86,7 @@ function y = varbvspredict (fit, X, Z)
   end
   Z = [ones(n,1) Z];
   if (size(Z,2) ~= size(fit.mu_cov,1))
-    error('Inputs Z and fit are not compatible')
+    error('Inputs Z and fit are not compatible');
   end
 
   % Compute the normalized (approximate) probabilities.
