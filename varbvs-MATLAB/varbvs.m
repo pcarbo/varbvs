@@ -618,7 +618,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     % "outerloop"), to efficiently compute estimates of the regression
     % coefficients for the covariates.
     SZy = (Z'*Z)\(Z'*y);
-    SZX = (Z'*Z)\(Z'*X);
+    SZX = double((Z'*Z)\(Z'*X));
     
     if ncov == 0
       X = X - repmat(mean(X),length(y),1);
