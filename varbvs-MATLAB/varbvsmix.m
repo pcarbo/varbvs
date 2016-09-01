@@ -16,8 +16,11 @@
 %   individual-level data, and a linear regression model).
 %
 % TO DO:
+% 
 %   * Provided detailed analysis summary with verbose = true.
+%
 %   * Add detailed comments describing function here.
+%
 %   * Set first (or zeroth) mixture component to be the "spike".
 %
 function fit = varbvsmix (X, Z, y, sa, labels, options)
@@ -193,7 +196,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   % "outerloop"), to efficiently compute estimates of the regression
   % coefficients for the covariates.
   SZy = (Z'*Z)\(Z'*y);
-  SZX = (Z'*Z)\(Z'*X);
+  SZX = double((Z'*Z)\(Z'*X));
   if ncov == 0
     X = X - repmat(mean(X),length(y),1);
     y = y - mean(y);
@@ -285,7 +288,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
       q = q/sum(q);
     end
 
-    % (2f) CHECK CONVERGENCE
+    % (4f) CHECK CONVERGENCE
     % ----------------------
     % Print the status of the algorithm and check the convergence criterion.
     % Convergence is reached when the maximum difference between the
@@ -311,10 +314,17 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     end
   end
 
-  % Return the variational lower bound (logw) and "delta" in successive
-  % iterates (err).
-  logw = logw(1:iter);
-  err  = err(1:iter);
+  % (5) CREATE FINAL OUTPUT
+  % -----------------------
+  % Compute the posterior mean estimate of the regression coefficients for the
+  % covariates under the current variational approximation.
+  r      = sum(alpha.*mu,2);
+  mu_cov = SZy - SZX*r;
+  fit = struct('family','gaussian','n',n,'labels',{labels},'mu_cov',...
+               {mu_cov},'update_sigma',update_sigma,'update_q',update_q,...
+               'q_penalty',q_penalty,'logw',{logw(1:iter)},'err',...
+               {err(1:iter)},'sigma',sigma,'sa',sa,'q',{q},'alpha',...
+               {alpha},'mu',{mu},'s',{s});
 
 % ----------------------------------------------------------------------
 % Compute the lower bound to the marginal log-likelihood.
