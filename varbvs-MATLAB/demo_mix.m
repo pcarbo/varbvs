@@ -66,10 +66,12 @@ fit = varbvsmix(X,Z,y,sd.^2,labels);
 figure(1)
 set(gcf,'Color','white','PaperPositionMode','auto');
 clf
-plot([-2 2],[-2 2],':','Color','magenta');
+x = 1.2 * max(abs(beta));
+plot([-x x],[-x x],':','Color','magenta');
 hold on
 plot(beta,sum(fit.alpha.*fit.mu,2),'kx','MarkerSize',8);
 hold off
+set(gca,'XLim',[-x x],'YLim',[-x x],'TickDir','out');
 set(gca,'FontSize',12,'FontName','fixed');
-xlabel('ground-truth coefficient');
-ylabel('estimated coefficient');
+xlabel('ground-truth regression coefficient');
+ylabel('estimated regression coefficient');
