@@ -1,0 +1,2 @@
+*.R linguist-language=R
+*.m linguist-language=MATLAB
