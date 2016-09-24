@@ -20,8 +20,8 @@ of massive genome-wide data sets.
 
 For more details on the R package, see the
 [README](varbvs-R/README.md) in the [varbvs-R](varbvs-R)
-subdirectory. For example, in only three lines of code we can fit the
-variable selection model to the Leukemia data:
+subdirectory. For example, only three lines of R code are needed to
+fit a variable selection model to the Leukemia data:
 
 ```R
 library(varbvs)
@@ -32,8 +32,8 @@ fit <- varbvs(leukemia$x,NULL,leukemia$y,family = "binomial",sa = 1)
 For more details on the MATLAB interface, see the
 [README](varbvs-MATLAB/README.md) in the
 [varbvs-MATLAB](varbvs-MATLAB) subdirectory. The MATLAB package also
-provides a simple interface for fitting variable selsection
-models. This is the call to varbvs from the
+provides a simple interface for fitting variable selection models;
+this is the call to varbvs from the
 [demo_qtl.m](varbvs-MATLAB/demo_qtl.m) example:
 
 ```MATLAB
