@@ -45,19 +45,24 @@ warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](../LICENSE) for
 the full text of the license.
 
-###Quick start for R
+###Installing the package
 
 To install the official release of the *varbvs* package available from
-CRAN ([link](http://www.r-pkg.org/pkg/varbvs)), simply run
-<code>install.packages("varbvs")</code> in R.
+CRAN ([link](http://www.r-pkg.org/pkg/varbvs)), in R simply run:
+
+```R
+install.packages("varbvs")</code> in R.
+```
 
 Alternatively, you can to install the most up-to-date development
 version. The easiest way to accomplish this is using the
 [devtools](http://www.r-pkg.org/pkg/devtools) package:
 
-    install.packages("devtools")
-    library(devtools)
-    install_github("pcarbo/varbvs",subdir = "varbvs-R")
+```R
+install.packages("devtools")
+library(devtools)
+install_github("pcarbo/varbvs",subdir = "varbvs-R")
+```
 
 Without devtools, it is a little more complicated, but not
 hard. Begin by downloading the github repository for this project. The
@@ -74,9 +79,13 @@ for installing an R package from source. On a Unix or Unix-like
 platform (e.g., Mac OS X), the following steps should install the R
 package:
 
-    mv varbvs-R varbvs
-	R CMD build varbvs
-	R CMD INSTALL varbvs_2.0.0.tar.gz
+```sh
+mv varbvs-R varbvs
+R CMD build varbvs
+R CMD INSTALL varbvs_2.0.0.tar.gz
+```
+
+###Using the package
 
 Once you have installed the package, load the package in R by typing
 <code>library(varbvs)</code>. To get an overview of the package, type
