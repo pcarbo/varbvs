@@ -79,7 +79,7 @@ for installing an R package from source. On a Unix or Unix-like
 platform (e.g., Mac OS X), the following steps should install the R
 package:
 
-```bash
+```sh
 mv varbvs-R varbvs
 R CMD build varbvs
 R CMD INSTALL varbvs_2.0.0.tar.gz
@@ -90,17 +90,26 @@ R CMD INSTALL varbvs_2.0.0.tar.gz
 Once you have installed the package, load the package in R by entering
 
 ```R
-library(varbvs)</code>
+library(varbvs)
 ```
 
 To get an overview of the package, enter
 
 ```R
-help(package="varbvs")
+help(package = "varbvs")
 ```
 
-The most important function you will use is the <code>varbvs</code>
-function. To get more information about this function, type
+The most key function in this package is function <code>varbvs</code>.
+Here is an example in which we fit the *varbvs* model to the Leukemia
+data:
+
+```R
+library(varbvs)
+data(leukemia)
+fit <- varbvs(leukemia$x,NULL,leukemia$y,family = "binomial",sa = 1)
+```
+
+To get more information about this function, type
 
 ```R
 help(varbvs)
