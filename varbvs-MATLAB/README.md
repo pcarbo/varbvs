@@ -75,15 +75,15 @@ this is important for correctly compiling the C code for MATLAB.
 ###Using the package
 
 The main function of this package is the <code>varbvs</code> function,
-which fits the variable selection model to a data set. In the
-[demo_qtl.m](demo_qtl.m) script, for example, the varbvs function
-call is simple
+which fits the variable selection model to data. In the
+[demo_qtl.m](demo_qtl.m) script, for example, the varbvs function call
+is simply
 
 ```MATLAB
 fit = varbvs(X,Z,y,labels,[],struct('logodds',logodds));
 ```
 
-Here, we use the varbvs function to mapping a quantitative trait
+In this example, we have used varbvs to map a quantitative trait
 (*i.e.*, a continuously valued outcome) in a small, simulated data
 set. Additionally, script [demo_cc.m](demo_cc.m) demonstrates mapping
 of a binary valued outcome in a simulated data set.
