@@ -81,11 +81,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # log-odds is specified separately for each variable. A default
   # setting is only available if the number of other hyperparameter
   # settings is 1, in which case we select 20 candidate settings for
-  # the prior log-odds, evenly spaced between log10(1/p) and
-  # log10(0.5).
+  # the prior log-odds, evenly spaced between log10(1/p) and -1.
   if (missing(logodds)) {
     if (length(sigma) == 1 & length(sa) == 1)
-      logodds <- seq(-log10(p),-0.3,length.out = 20)
+      logodds <- seq(-log10(p),-1,length.out = 20)
     else
       stop("logodds can only be missing when length(sigma) = length(sa) = 1")
   }
