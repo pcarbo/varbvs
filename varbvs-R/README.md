@@ -51,7 +51,7 @@ To install the official release of the *varbvs* package available from
 CRAN ([link](http://www.r-pkg.org/pkg/varbvs)), in R simply run:
 
 ```R
-install.packages("varbvs")</code> in R.
+install.packages("varbvs")
 ```
 
 Alternatively, you can to install the most up-to-date development
@@ -79,7 +79,7 @@ for installing an R package from source. On a Unix or Unix-like
 platform (e.g., Mac OS X), the following steps should install the R
 package:
 
-```sh
+```bash
 mv varbvs-R varbvs
 R CMD build varbvs
 R CMD INSTALL varbvs_2.0.0.tar.gz
@@ -87,11 +87,26 @@ R CMD INSTALL varbvs_2.0.0.tar.gz
 
 ###Using the package
 
-Once you have installed the package, load the package in R by typing
-<code>library(varbvs)</code>. To get an overview of the package, type
-<code>help(package="varbvs")</code>. The most important function you
-will use is function "varbvs". Type <code>help(varbvs)</code> to get
-more information about this.
+Once you have installed the package, load the package in R by entering
+
+```R
+library(varbvs)</code>
+```
+
+To get an overview of the package, enter
+
+```R
+help(package="varbvs")
+```
+
+The most important function you will use is the <code>varbvs</code>
+function. To get more information about this function, type
+
+```R
+help(varbvs)
+```
+
+###Working examples
 
 We have provided several R scripts in the [vignettes](vignettes) and
 [tests](tests) folders to illustrate application of *varbvs* to small
