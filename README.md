@@ -20,13 +20,15 @@ of massive genome-wide data sets.
 
 For more details on the R package, see the
 [README](varbvs-R/README.md) in the [varbvs-R](varbvs-R)
-subdirectory. For example, only three lines of R code are needed to
+subdirectory. For example, only a few lines of R code are needed to
 fit a variable selection model to the Leukemia data:
 
 ```R
 library(varbvs)
 data(leukemia)
-fit <- varbvs(leukemia$x,NULL,leukemia$y,family = "binomial",sa = 1)
+fit <- varbvs(leukemia$x,NULL,leukemia$y,family = "binomial",
+              logodds = seq(-3.5,-1,0.1),sa = 1)
+print(summary(fit))
 ```
 
 For more details on the MATLAB interface, see the
@@ -37,7 +39,7 @@ this is the call to varbvs from the
 [demo_qtl.m](varbvs-MATLAB/demo_qtl.m) example:
 
 ```MATLAB
-fit = varbvs(X,Z,y,labels,[],struct('logodds',logodds));
+fit = varbvs(X,Z,y,labels,[],struct('logodds',-3:0.1:-1));
 ```
 
 ###Citing varbvs

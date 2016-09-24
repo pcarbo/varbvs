@@ -80,7 +80,7 @@ which fits the variable selection model to data. In the
 is simply
 
 ```MATLAB
-fit = varbvs(X,Z,y,labels,[],struct('logodds',logodds));
+fit = varbvs(X,Z,y,labels,[],struct('logodds',(-3:0.1:-1)));
 ```
 
 In this example, we have used varbvs to map a quantitative trait

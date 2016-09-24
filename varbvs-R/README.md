@@ -106,7 +106,9 @@ Leukemia data:
 ```R
 library(varbvs)
 data(leukemia)
-fit <- varbvs(leukemia$x,NULL,leukemia$y,family = "binomial",sa = 1)
+fit <- varbvs(leukemia$x,NULL,leukemia$y,family = "binomial",
+              logodds = seq(-3.5,-1,0.1),sa = 1)
+print(summary(fit))
 ```
 
 To get more information about this function, type
