@@ -99,9 +99,9 @@ To get an overview of the package, enter
 help(package = "varbvs")
 ```
 
-The most key function in this package is function <code>varbvs</code>.
-Here is an example in which we fit the *varbvs* model to the Leukemia
-data:
+The key function in this package is function <code>varbvs</code>.
+Here is an example in which we fit the variable selection model to the
+Leukemia data:
 
 ```R
 library(varbvs)

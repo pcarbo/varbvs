@@ -39,7 +39,7 @@ warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](../LICENSE) for
 the full text of the license.
 
-###Quick start for MATLAB
+###Installing the package
 
 Begin by downloading the github repository for this project. The
 simplest way to do this is to
@@ -72,24 +72,30 @@ flags may not be relevant to your setup, especially if you are not
 using [gcc](http://gcc.gnu.org). Do not remove flag -DMATLAB_MEX_FILE;
 this is important for correctly compiling the C code for MATLAB.
 
-We have provided a few MATLAB scripts to illustrate application of
-*varbvs* to small and large data sets:
+###Using the package
 
-+ Script [demo_qtl.m](demo_qtl.m) demonstrates how to use the varbvs
-function for mapping a quantitative trait (*i.e.*, a continuously
-valued outcome) in a small, simulated data set. Additionally, script
-[demo_cc.m](demo_cc.m) demonstrates mapping of a binary valued outcome
-in a simulated data set.
+The main function of this package is the <code>varbvs</code> function,
+which fits the variable selection model to a data set. In the
+[demo_qtl.m](demo_qtl.m) script, for example, the varbvs function
+call is simple
 
-+ Scripts [demo_cd.m](demo_cd.m), [demo_celiac.m](demo_celiac.m) and
-[demo_cytokine.m](demo_cytokine.m) show how the *varbvs* package can
-be applied to very large data sets to map genetic loci and test
-biological hypotheses about genetic factors contributing to human
-diseases. Although we cannot share the data needed to run these
-scripts due to data privacy restrictions, we have included these
-scripts anyhow since it is helpful to be able to follow the steps
-given in these MATLAB scripts. These scripts reproduce some of the
-results and figures presented in Carbonetto *et al* (2016).
+```MATLAB
+fit = varbvs(X,Z,y,labels,[],struct('logodds',logodds));
+```
+
+Here, we use the varbvs function to mapping a quantitative trait
+(*i.e.*, a continuously valued outcome) in a small, simulated data
+set. Additionally, script [demo_cc.m](demo_cc.m) demonstrates mapping
+of a binary valued outcome in a simulated data set.
+
+We have provided a few other MATLAB scripts to demonstrate the
+application of *varbvs* to very large data sets:
+[demo_cd.m](demo_cd.m), [demo_celiac.m](demo_celiac.m) and
+[demo_cytokine.m](demo_cytokine.m). Although we cannot share the data
+needed to run these scripts due to data privacy restrictions, we have
+included these scripts anyhow since it is helpful to be able to follow
+the steps given in these MATLAB scripts. These scripts reproduce some
+of the results and figures presented in Carbonetto *et al* (2016).
 
 ###Credits
 
