@@ -40,7 +40,7 @@ Z   = pc(:,1:2);
 tic;
 fit = varbvs(X,Z,y,labels,'binomial',struct('logodds',-5.5:0.25:-3));
 r = toc;
-fprintf('Modeling fitting took %0.2f minutes.\n',r/60);
+fprintf('Model fitting took %0.2f minutes.\n',r/60);
 
 % Compute "single-marker" posterior inclusion probabilities.
 w   = normalizelogweights(fit.logw);

@@ -24,7 +24,7 @@ load("cd.RData")
 # on the coefficients.
 cat("FITTING MODEL TO DATA.\n")
 r <- system.time(fit <- varbvs(X,NULL,y,"binomial",logodds = seq(-6,-3,0.25)))
-cat(sprintf("Modeling fitting took %0.2f minutes.\n",r["elapsed"]/60))
+cat(sprintf("Model fitting took %0.2f minutes.\n",r["elapsed"]/60))
 
 # Compute "single-marker" posterior inclusion probabilities.
 w   <- c(normalizelogweights(fit$logw))
