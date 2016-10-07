@@ -41,7 +41,7 @@ cat("FITTING MODEL TO DATA.\n")
 runtime <- system.time(fit <-
   varbvs(geno,as.matrix(pheno[,covariates]),pheno[,trait],
          sa = sa,logodds = logodds))
-cat(sprintf("Modeling fitting took %0.2f minutes.\n",runtime["elapsed"]/60))
+cat(sprintf("Model fitting took %0.2f minutes.\n",runtime["elapsed"]/60))
 
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------
