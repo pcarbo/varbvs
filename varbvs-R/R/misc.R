@@ -5,7 +5,6 @@
 # overview of the functions defined in this file:
 #
 #   tf2yn(x)
-#   caterase(s)
 #   var1(x)
 #   var1.cols(X)
 #   dot(x,y)
@@ -40,13 +39,6 @@ tf2yn <- function (x) {
   else
     return("no")
 }
-
-# ----------------------------------------------------------------------
-# Output the string using 'cat', then move the cursor back to the
-# beginning of the string so that subsequent output will overwrite
-# this string.
-caterase <- function (s)
-  cat(s,rep("\b",nchar(s)),sep = "")
 
 # ----------------------------------------------------------------------
 # Return the second moment of x about its mean.

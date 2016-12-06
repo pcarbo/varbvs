@@ -100,9 +100,11 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
         status <- NULL
       else
         status <- sprintf("%05d ",outer.iter)
-      caterase(paste(status,sprintf("%05d %+13.6e %0.1e %06.1f      NA %0.1e",
-                                    iter,logw[iter],err[iter],sum(alpha),
-                                    sa),sep=""))
+      progress.str <- 
+        paste(status,sprintf("%05d %+13.6e %0.1e %06.1f      NA %0.1e",
+                             iter,logw[iter],err[iter],sum(alpha),sa),sep="")
+      cat(progress.str)
+      cat(rep("\r",nchar(progress.str)))
     }
     if (logw[iter] < logw0) {
       logw[iter]  <- logw0
