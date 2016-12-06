@@ -47,7 +47,9 @@ print(summary(fit,nv = 9))
 # genome-wide "Manhattan" plot used to summarize the results of a
 # genome-wide association study. Variables with PIP > 0.5 are
 # highlighted.
-trellis.device(height = 4,width = 10)
+#
+# dev.new(height = 4,width = 10)
+# 
 i <- which(fit$alpha %*% w > 0.5)
 var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
 print(plot(fit,groups = map$chr,vars = i,var.labels = var.labels,gap = 7500,
