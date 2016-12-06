@@ -86,7 +86,9 @@ print(table(true = factor(y),pred = factor(y.glmnet)))
 # lambda. Do not show the intercept. Only label the curves for the
 # variables that are selected at the optimal setting of lambda
 # ('lambda.opt').
-trellis.device(height = 4.5,width = 7)
+#
+# dev.new(height = 4.5,width = 7)
+# 
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))
@@ -185,7 +187,9 @@ y.varbvs <- predict(fit.varbvs,X)
 print(table(true = factor(y),pred = factor(y.varbvs)))
 
 # Show the classification error at each setting of the prior log-odds.
-trellis.device(height = 4.5,width = 7)
+#
+# dev.new(height = 4.5,width = 7)
+# 
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))

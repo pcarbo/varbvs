@@ -52,7 +52,9 @@ print(summary(fit))
 # probabilities (PIPs) computed in the BVS analysis of all SNPs; (2)
 # one using the p-values computed using GEMMA; and (3) one using the
 # PIPs computed from the BVSR model in GEMMA.
-trellis.device(height = 5,width = 8)
+#
+# dev.new(height = 5,width = 8)
+#
 trellis.par.set(axis.text     = list(cex = 0.7),
                 par.ylab.text = list(cex = 0.7),
                 par.main.text = list(cex = 0.7,font = 1))
