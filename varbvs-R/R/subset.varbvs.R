@@ -12,7 +12,7 @@ subset.varbvs <- function (x, subset, ...) {
   # Get the hyperparameter settings satisfying the 'subset' condition.
   i <- which(with(x,eval(subset)))
   if (length(i) == 0)
-    error("No hyperparameter settings are selected.")
+    stop("No hyperparameter settings are selected.")
 
   # Output the new varbvs object with these hyperparameter settings
   # only.
