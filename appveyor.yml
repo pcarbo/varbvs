@@ -14,6 +14,7 @@ install:
 
 environment:
   global:
+    USE_RTOOLS: yes
     TEST_DIR: varbvs-R
     WARNINGS_ARE_ERRORS: 1
 
