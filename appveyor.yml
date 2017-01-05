@@ -15,8 +15,11 @@ install:
 environment:
   global:
     TEST_DIR: varbvs-R
-    R_ARCH: x64
     WARNINGS_ARE_ERRORS: 1
+
+  matrix:
+    - R_VERSION: release
+      R_ARCH: x64
 
 before_build:
   - cp ../travis-tool.sh ./travis-tool.sh
