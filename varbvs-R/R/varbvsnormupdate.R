@@ -28,14 +28,14 @@
 # variational parameters, and Xr = X*(alpha*mu). The computational
 # complexity is O(n*length(i)).
 #
-# This function calls "varbvsnormupdate_Call", a function compiled
-# from C code, using the .Call interface. To load the C function into
-# R, first build the "shared object" (.so) file using the following
-# command in the "src" directory: R CMD SHLIB varbvsr.c varbvs.c
-# misc.c. Next, load the shared objects into R using the R function
-# dyn.load: dyn.load("../src/varbvsr.so").
-varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
-                              alpha0, mu0, Xr0, i) {
+# When version = ".Call", this function calls "varbvsnormupdate_Call",
+# a function compiled from C code, using the .Call interface. To load
+# the C function into R, first build the "shared object" (.so) file
+# using the following command in the "src" directory: R CMD SHLIB
+# varbvsr.c varbvs.c misc.c. Next, load the shared objects into R
+# using the R function dyn.load: dyn.load("../src/varbvsr.so").
+varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d, alpha0,
+                              mu0, Xr0, i, version = ".Call") {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -67,16 +67,41 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d,
   mu    <- c(mu0)
   Xr    <- c(Xr0)
 
-  # Execute the C routine using the .Call interface, and return the
-  # updated variational parameters statistics in a list object. The
-  # main reason for using the .Call interface is that there is less of
-  # a constraint on the size of the input matrices. The only
-  # components that change are alpha, mu and Xr. Note that I need to
-  # subtract 1 from the indices because R vectors start at 1, and C
-  # arrays start at 0.
-  out <- .Call("varbvsnormupdate_Call",X = X,sigma = as.double(sigma),
-               sa = as.double(sa),logodds = as.double(logodds),
-               xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
-               Xr = Xr,i = as.integer(i-1))
+  if (version == ".Call") {
+  
+    # Execute the C routine using the .Call interface, and return the
+    # updated variational parameters statistics in a list object. The
+    # main reason for using the .Call interface is that there is less of
+    # a constraint on the size of the input matrices. The only
+    # components that change are alpha, mu and Xr. Note that I need to
+    # subtract 1 from the indices because R vectors start at 1, and C
+    # arrays start at 0.
+    out <- .Call("varbvsnormupdate_Call",X = X,sigma = as.double(sigma),
+                 sa = as.double(sa),logodds = as.double(logodds),
+                 xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
+                 Xr = Xr,i = as.integer(i-1))
+  } else if (version == "R") {
+
+    # Repeat for each co-ordinate to update.
+    for (j in i) {
+        
+      # Compute the variational estimate of the posterior variance.
+      s <- sa*sigma/(sa*d[j] + 1)
+        
+      # Update the variational estimate of the posterior mean.
+      r     <- alpha[j] * mu[j]
+      mu[j] <- s/sigma * (xy[j] + d[j]*r - sum(X[,j]*Xr))
+
+      # Update the variational estimate of the posterior inclusion
+      # probability.
+      alpha[j] <- sigmoid(logodds[j] + (log(s/(sa*sigma)) + mu[j]^2/s)/2)
+      
+      # Update Xr = X*r.
+      Xr <- Xr + (alpha[j]*mu[j] - r) * X[,j]
+    }
+  } else if (version == "Rcpp") {
+    stop("Rcpp version of varbvsnormupdate has not yet been implemented")
+  } else
+    stop("Invalid input argument 'version' in varbvsnormupdate.")
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }
