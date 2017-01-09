@@ -35,7 +35,7 @@ double sigmoidcpp(double x) {
 // [[Rcpp::export]]
 void varbvsnormupdate_cpp(const NumericMatrix& X, double sigma, double sa, const NumericVector& logodds,
                           const NumericVector& xy, const NumericVector& d, NumericVector& alpha,
-                          NumericVector& mu, NumericVector Xr, const IntegerVector i) {
+                          NumericVector& mu, NumericVector& Xr, const IntegerVector& i) {
 
   for (int index = 0; index < i.size(); index++) {
 

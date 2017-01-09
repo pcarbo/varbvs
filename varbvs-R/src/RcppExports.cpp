@@ -17,7 +17,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // varbvsnormupdate_cpp
-void varbvsnormupdate_cpp(const NumericMatrix& X, double sigma, double sa, const NumericVector& logodds, const NumericVector& xy, const NumericVector& d, NumericVector& alpha, NumericVector& mu, NumericVector Xr, const IntegerVector i);
+void varbvsnormupdate_cpp(const NumericMatrix& X, double sigma, double sa, const NumericVector& logodds, const NumericVector& xy, const NumericVector& d, NumericVector& alpha, NumericVector& mu, NumericVector& Xr, const IntegerVector& i);
 RcppExport SEXP varbvs_varbvsnormupdate_cpp(SEXP XSEXP, SEXP sigmaSEXP, SEXP saSEXP, SEXP logoddsSEXP, SEXP xySEXP, SEXP dSEXP, SEXP alphaSEXP, SEXP muSEXP, SEXP XrSEXP, SEXP iSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -29,8 +29,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericVector& >::type d(dSEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Xr(XrSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector >::type i(iSEXP);
+    Rcpp::traits::input_parameter< NumericVector& >::type Xr(XrSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type i(iSEXP);
     varbvsnormupdate_cpp(X, sigma, sa, logodds, xy, d, alpha, mu, Xr, i);
     return R_NilValue;
 END_RCPP
