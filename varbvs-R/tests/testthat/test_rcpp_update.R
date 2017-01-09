@@ -69,7 +69,7 @@ test_that("Rcpp Update Works", {
 }
 )
 
-test_that("interface with varbvsnormupdate is ok" {
+test_that("interface with varbvsnormupdate is ok", {
   ## generate test data ------------------------------------------------------
   gen_dat <- function(seed) {
     set.seed(seed)
