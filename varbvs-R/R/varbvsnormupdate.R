@@ -35,22 +35,24 @@
 # varbvsr.c varbvs.c misc.c. Next, load the shared objects into R
 # using the R function dyn.load: dyn.load("../src/varbvsr.so").
 varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d, alpha0,
-                              mu0, Xr0, i, version = ".Call") {
+                              mu0, Xr0, i, version = c(".Call", "Rcpp", "R")) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
   p <- ncol(X)
 
+  version <- match.arg(version)
+
   # Check input X.
   if (!is.double(X) || !is.matrix(X))
     stop("Input X must be a double-precision matrix")
-  
+
   # Check inputs sigma and sa.
   if (length(sigma) != 1 | length(sa) != 1)
     stop("Inputs sigma and sa must be scalars")
-  
+
   # Check input logodds, xy, d, alpha0 and mu0.
-  if (!(length(logodds) == p & length(xy) == p & length(d) == p & 
+  if (!(length(logodds) == p & length(xy) == p & length(d) == p &
        length(alpha0) == p & length(mu0) == p))
     stop("logodds, xy, d, alpha0 and mu0 must have length = ncol(X)")
 
@@ -68,7 +70,7 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d, alpha0,
   Xr    <- c(Xr0)
 
   if (version == ".Call") {
-  
+
     # Execute the C routine using the .Call interface, and return the
     # updated variational parameters statistics in a list object. The
     # main reason for using the .Call interface is that there is less of
@@ -80,14 +82,18 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d, alpha0,
                  sa = as.double(sa),logodds = as.double(logodds),
                  xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
                  Xr = Xr,i = as.integer(i-1))
+  } else if (version == "Rcpp") {
+    varbvsnormupdate_cpp(X = X, sigma = sigma, sa = sa, logodds = logodds,
+                         xy = xy, d = d, alpha = alpha, mu = mu, Xr = Xr,
+                         i = i - 1)
   } else if (version == "R") {
 
     # Repeat for each co-ordinate to update.
     for (j in i) {
-        
+
       # Compute the variational estimate of the posterior variance.
       s <- sa*sigma/(sa*d[j] + 1)
-        
+
       # Update the variational estimate of the posterior mean.
       r     <- alpha[j] * mu[j]
       mu[j] <- s/sigma * (xy[j] + d[j]*r - sum(X[,j]*Xr))
@@ -95,12 +101,10 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d, alpha0,
       # Update the variational estimate of the posterior inclusion
       # probability.
       alpha[j] <- sigmoid(logodds[j] + (log(s/(sa*sigma)) + mu[j]^2/s)/2)
-      
+
       # Update Xr = X*r.
       Xr <- Xr + (alpha[j]*mu[j] - r) * X[,j]
     }
-  } else if (version == "Rcpp") {
-    stop("Rcpp version of varbvsnormupdate has not yet been implemented")
   } else
     stop("Invalid input argument 'version' in varbvsnormupdate.")
   return(list(alpha = alpha,mu = mu,Xr = Xr))
