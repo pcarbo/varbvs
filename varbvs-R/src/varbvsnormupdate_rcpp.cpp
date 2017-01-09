@@ -56,6 +56,3 @@ void varbvsnormupdate_cpp(const NumericMatrix& X, double sigma, double sa, const
     Xr = Xr + (alpha[j] * mu[j] - r) * X.column(j);
   }
 }
-
-
-
