@@ -68,3 +68,45 @@ test_that("Rcpp Update Works", {
 
 }
 )
+
+test_that("interface with varbvsnormupdate is ok" {
+  ## generate test data ------------------------------------------------------
+  gen_dat <- function(seed) {
+    set.seed(seed)
+    n <- 11
+    p <- 21
+    X <- matrix(stats::rnorm(n * p), nrow = n)
+    beta <- stats::rnorm(p)
+    sigma <- 1
+    sa <- 1.1
+    logodds <- rep(1, p)
+    y <- X %*% beta + stats::rnorm(n = n, sd = sqrt(sigma))
+    xy <- crossprod(X, y)
+    d <- colSums(X ^ 2)
+    alpha <- stats::runif(n = p)
+    mu <- rep(0, p)
+    Xr <- X %*% (mu * alpha)
+    i <- sample(1:p)
+    return(list(X = X, sigma = sigma, sa = sa, logodds = logodds, xy = xy,
+                d = d, alpha = alpha, mu = mu, Xr = Xr, i = i))
+  }
+
+  dat <- gen_dat(2345234)
+  out1 <- varbvsnormupdate(X = dat$X, sigma = dat$sigma, sa = dat$sa,
+                           logodds = dat$logodds, xy = dat$xy, d = dat$d,
+                           alpha0 = dat$alpha, mu0 = dat$mu,
+                           Xr0 = dat$Xr, i = dat$i, version = c("Rcpp"))
+  out2 <- varbvsnormupdate(X = dat$X, sigma = dat$sigma, sa = dat$sa,
+                           logodds = dat$logodds, xy = dat$xy, d = dat$d,
+                           alpha0 = dat$alpha, mu0 = dat$mu,
+                           Xr0 = dat$Xr, i = dat$i, version = c(".Call"))
+  out3 <- varbvsnormupdate(X = dat$X, sigma = dat$sigma, sa = dat$sa,
+                           logodds = dat$logodds, xy = dat$xy, d = dat$d,
+                           alpha0 = dat$alpha, mu0 = dat$mu,
+                           Xr0 = dat$Xr, i = dat$i, version = c("R"))
+
+  expect_equal(out1$alpha, out2$alpha, out3$alpha)
+  expect_equal(out1$mu, out2$mu, out3$mu)
+  expect_equal(out1$Xr, out2$Xr, out3$Xr)
+}
+)
