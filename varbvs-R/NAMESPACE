@@ -11,6 +11,7 @@ importFrom(lattice,xyplot)
 importFrom(lattice,panel.xyplot)
 importFrom(lattice,panel.abline)
 importFrom(latticeExtra,as.layer)
+importFrom(Rcpp, sourceCpp)
 
 export(logit,logpexp,logsigmoid,sigmoid,normalizelogweights,
        diagsq,diagsqt,cred,updatestats_varbvsbin,updatestats_varbvsbinz,

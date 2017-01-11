@@ -5,3 +5,8 @@ varbvs_demo_celiac.mat
 varbvs_demo_cytokine.mat
 varbvs.demo.cd.RData
 varbvs.demo.cytokine.RData
+*.Rhistory
+*~
+*.Rcheck/
+*.tar.gz
+benchmarks/
