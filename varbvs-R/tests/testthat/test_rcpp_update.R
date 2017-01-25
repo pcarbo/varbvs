@@ -95,15 +95,17 @@ test_that("interface with varbvsnormupdate is ok", {
   out1 <- varbvsnormupdate(X = dat$X, sigma = dat$sigma, sa = dat$sa,
                            logodds = dat$logodds, xy = dat$xy, d = dat$d,
                            alpha0 = dat$alpha, mu0 = dat$mu,
-                           Xr0 = dat$Xr, i = dat$i, version = c("Rcpp"))
+                           Xr0 = dat$Xr, i = dat$i,algorithm.version = "Rcpp")
   out2 <- varbvsnormupdate(X = dat$X, sigma = dat$sigma, sa = dat$sa,
                            logodds = dat$logodds, xy = dat$xy, d = dat$d,
                            alpha0 = dat$alpha, mu0 = dat$mu,
-                           Xr0 = dat$Xr, i = dat$i, version = c(".Call"))
+                           Xr0 = dat$Xr, i = dat$i,
+                           algorithm.version = ".Call")
   out3 <- varbvsnormupdate(X = dat$X, sigma = dat$sigma, sa = dat$sa,
                            logodds = dat$logodds, xy = dat$xy, d = dat$d,
                            alpha0 = dat$alpha, mu0 = dat$mu,
-                           Xr0 = dat$Xr, i = dat$i, version = c("R"))
+                           Xr0 = dat$Xr, i = dat$i,
+                           algorithm.version = "R")
 
   expect_equal(out1$alpha, out2$alpha, out3$alpha)
   expect_equal(out1$mu, out2$mu, out3$mu)
