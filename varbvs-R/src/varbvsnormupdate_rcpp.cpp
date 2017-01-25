@@ -3,7 +3,7 @@ using namespace Rcpp;
 
 // Return the sigmoid function at x.
 // [[Rcpp::export]]
-double sigmoidcpp (double x) {
+double sigmoid_rcpp (double x) {
   return(1/(1 + exp(-x)));
 }
 
@@ -45,7 +45,8 @@ void varbvsnormupdate_rcpp (const NumericMatrix& X, double sigma, double sa,
     mu[j] = s/sigma*(xy[j] + d[j]*r - sum(X.column(j) * Xr));
 
     // Update the variational estimate of the posterior inclusion probability.
-    alpha[j] = sigmoidcpp(logodds[j] + (log(s/(sa*sigma)) + pow(mu[j],2)/s)/2);
+    alpha[j] = sigmoid_rcpp(logodds[j] + (log(s/(sa*sigma)) +
+					  mu[j]*mu[j]/s)/2);
 
     // Update Xr = X*r.
     Xr = Xr + (alpha[j] * mu[j] - r) * X.column(j);
