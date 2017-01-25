@@ -36,8 +36,10 @@
 # shared objects into R using the R function dyn.load:
 # dyn.load("../src/varbvsr.so").
 #
-# TO DO: Add instructions for updating the Rcpp code.
-#
+# When algorithm.version = "Rcpp", this function uses the code from
+# varbvsnormupdate_rcpp.cpp. If any changes are made to this code,
+# make sure to run Rcpp::compileAttributes(), which updates
+# RcppExports.R.
 varbvsnormupdate <-
     function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, i,
               algorithm.version = c(".Call","Rcpp","R")) {
