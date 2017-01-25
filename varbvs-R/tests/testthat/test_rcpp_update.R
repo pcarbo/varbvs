@@ -24,10 +24,10 @@ test_that("Rcpp Update Works", {
 
   ## cpp version -------------------------------------------------------------
   dat1 <- gen_dat(101)
-  varbvsnormupdate_cpp(X = dat1$X, sigma = dat1$sigma, sa = dat1$sa,
-                       logodds = dat1$logodds, xy = dat1$xy,
-                       d = dat1$d, alpha = dat1$alpha, mu = dat1$mu,
-                       Xr = dat1$Xr, i = dat1$i - 1)
+  varbvsnormupdate_rcpp(X = dat1$X, sigma = dat1$sigma, sa = dat1$sa,
+                        logodds = dat1$logodds, xy = dat1$xy,
+                        d = dat1$d, alpha = dat1$alpha, mu = dat1$mu,
+                        Xr = dat1$Xr, i = dat1$i - 1)
 
   ## .Call version -----------------------------------------------------------
   dat2 <- gen_dat(101)

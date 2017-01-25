@@ -28,21 +28,30 @@
 # variational parameters, and Xr = X*(alpha*mu). The computational
 # complexity is O(n*length(i)).
 #
-# When version = ".Call", this function calls "varbvsnormupdate_Call",
+
+# When algorithm.version = ".Call", this function calls "varbvsnormupdate_Call",
 # a function compiled from C code, using the .Call interface. To load
 # the C function into R, first build the "shared object" (.so) file
 # using the following command in the "src" directory: R CMD SHLIB
 # varbvsr.c varbvs.c misc.c. Next, load the shared objects into R
 # using the R function dyn.load: dyn.load("../src/varbvsr.so").
+
+#
+# Add instructions for updating the 
+    #
+    # TO DO: Add instructions for updating the Rcpp code.
+    #
+
 varbvsnormupdate <-
     function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, i,
-              algorithm.version = c(".Call", "Rcpp", "R")) {
+              algorithm.version = c(".Call","Rcpp","R")) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
   p <- ncol(X)
 
-  version <- match.arg(version)
+  # Specify the algorithm implementation.
+  algorithm.version <- match.arg(algorithm.version)
 
   # Check input X.
   if (!is.double(X) || !is.matrix(X))
@@ -70,7 +79,7 @@ varbvsnormupdate <-
   mu    <- c(mu0)
   Xr    <- c(Xr0)
 
-  if (version == ".Call") {
+  if (algorithm.version == ".Call") {
 
     # Execute the C routine using the .Call interface, and return the
     # updated variational parameters statistics in a list object. The
@@ -83,13 +92,13 @@ varbvsnormupdate <-
                  sa = as.double(sa),logodds = as.double(logodds),
                  xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
                  Xr = Xr,i = as.integer(i-1))
-  } else if (version == "Rcpp") {
+  } else if (algorithm.version == "Rcpp") {
 
-    # TO DO: Add comments here.
-    varbvsnormupdate_Rcpp(X = X, sigma = sigma, sa = sa, logodds = logodds,
-                          xy = xy, d = d, alpha = alpha, mu = mu, Xr = Xr,
-                          i = i - 1)
-  } else if (version == "R") {
+    # Execute the C routine using the Rcpp interface.
+    varbvsnormupdate_Rcpp(X = X,sigma = sigma,sa = sa,logodds = logodds,
+                          xy = xy,d = d,alpha = alpha,mu = mu,Xr = Xr,
+                          i = i-1)
+  } else if (algorithm.version == "R") {
 
     # Repeat for each co-ordinate to update.
     for (j in i) {
@@ -109,6 +118,6 @@ varbvsnormupdate <-
       Xr <- Xr + (alpha[j]*mu[j] - r) * X[,j]
     }
   } else
-    stop("Invalid input argument 'version' in varbvsnormupdate.")
+    stop("Invalid input argument 'algorithm.version' in varbvsnormupdate.")
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }
