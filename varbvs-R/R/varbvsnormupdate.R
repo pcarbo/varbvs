@@ -28,20 +28,16 @@
 # variational parameters, and Xr = X*(alpha*mu). The computational
 # complexity is O(n*length(i)).
 #
-
-# When algorithm.version = ".Call", this function calls "varbvsnormupdate_Call",
-# a function compiled from C code, using the .Call interface. To load
-# the C function into R, first build the "shared object" (.so) file
-# using the following command in the "src" directory: R CMD SHLIB
-# varbvsr.c varbvs.c misc.c. Next, load the shared objects into R
-# using the R function dyn.load: dyn.load("../src/varbvsr.so").
-
+# When algorithm.version = ".Call", this function calls
+# "varbvsnormupdate_Call", a function compiled from C code, using the
+# .Call interface. To load the C function into R, first build the
+# "shared object" (.so) file using the following command in the "src"
+# directory: R CMD SHLIB varbvsr.c varbvs.c misc.c. Next, load the
+# shared objects into R using the R function dyn.load:
+# dyn.load("../src/varbvsr.so").
 #
-# Add instructions for updating the 
-    #
-    # TO DO: Add instructions for updating the Rcpp code.
-    #
-
+# TO DO: Add instructions for updating the Rcpp code.
+#
 varbvsnormupdate <-
     function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, i,
               algorithm.version = c(".Call","Rcpp","R")) {
