@@ -2,6 +2,7 @@
 using namespace Rcpp;
 
 // Return the sigmoid function at x.
+//
 // [[Rcpp::export]]
 double sigmoid_rcpp (double x) {
   return(1/(1 + exp(-x)));
@@ -9,6 +10,7 @@ double sigmoid_rcpp (double x) {
 
 // Execute a single coordinate ascent update to maximize the variational 
 // lower bound for Bayesian variable selection in linear regression.
+//
 // [[Rcpp::export]]
 void varbvsnormupdate_rcpp (const NumericMatrix& X, double sigma, double sa,
 			    const NumericVector& logodds,
