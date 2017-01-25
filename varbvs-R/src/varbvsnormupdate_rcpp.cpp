@@ -1,12 +1,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' Sigmoid function written with sugar.
-//'
-//' @param x A double.
-//'
-//' @author David Gerard
-//'
+// Return the sigmoid function at x.
 // [[Rcpp::export]]
 double sigmoidcpp (double x) {
   return(1/(1 + exp(-x)));
