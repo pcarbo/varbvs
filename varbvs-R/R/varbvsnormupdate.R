@@ -34,8 +34,9 @@
 # using the following command in the "src" directory: R CMD SHLIB
 # varbvsr.c varbvs.c misc.c. Next, load the shared objects into R
 # using the R function dyn.load: dyn.load("../src/varbvsr.so").
-varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d, alpha0,
-                              mu0, Xr0, i, version = c(".Call", "Rcpp", "R")) {
+varbvsnormupdate <-
+    function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, i,
+              algorithm.version = c(".Call", "Rcpp", "R")) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -83,9 +84,11 @@ varbvsnormupdate <- function (X, sigma, sa, logodds, xy, d, alpha0,
                  xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
                  Xr = Xr,i = as.integer(i-1))
   } else if (version == "Rcpp") {
-    varbvsnormupdate_cpp(X = X, sigma = sigma, sa = sa, logodds = logodds,
-                         xy = xy, d = d, alpha = alpha, mu = mu, Xr = Xr,
-                         i = i - 1)
+
+    # TO DO: Add comments here.
+    varbvsnormupdate_Rcpp(X = X, sigma = sigma, sa = sa, logodds = logodds,
+                          xy = xy, d = d, alpha = alpha, mu = mu, Xr = Xr,
+                          i = i - 1)
   } else if (version == "R") {
 
     # Repeat for each co-ordinate to update.
