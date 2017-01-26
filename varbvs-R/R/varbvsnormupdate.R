@@ -93,7 +93,7 @@ varbvsnormupdate <-
   } else if (algorithm.version == "Rcpp") {
 
     # Execute the C routine using the Rcpp interface.
-    varbvsnormupdate_Rcpp(X = X,sigma = sigma,sa = sa,logodds = logodds,
+    varbvsnormupdate_rcpp(X = X,sigma = sigma,sa = sa,logodds = logodds,
                           xy = xy,d = d,alpha = alpha,mu = mu,Xr = Xr,
                           i = i-1)
   } else if (algorithm.version == "R") {
