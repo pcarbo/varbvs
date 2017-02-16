@@ -27,6 +27,7 @@ Suggests:
     testthat
 License: GPL (>= 3)
 NeedsCompilation: yes
+LazyData: true
 URL: http://github.com/pcarbo/varbvs
 LinkingTo: Rcpp
 
