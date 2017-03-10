@@ -36,8 +36,8 @@ for generalized linear models via coordinate descent. *Journal of
 Statistical Software* **33**, 1–22.
 
 ```{r, echo = FALSE, message = FALSE}
-knitr::opts_chunk$set(collapse = TRUE,comment = "#",fig.width = 6.75,
-                      fig.height = 5.25,fig.align = "center",
+knitr::opts_chunk$set(collapse = TRUE,comment = "#",fig.width = 6.9,
+                      fig.height = 5.5,fig.align = "center",
                       fig.cap = "&nbsp;")
 ```
 
