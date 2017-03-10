@@ -1,6 +1,8 @@
 Package: varbvs
-Version: 2.0.5
-Date: 2017-01-11
+Encoding: UTF-8
+Type: Package
+Version: 2.0-6
+Date: 2017-03-09
 Title: Large-Scale Bayesian Variable Selection Using Variational Methods
 Author: Peter Carbonetto, Matthew Stephens, David Gerard
 Maintainer: Peter Carbonetto <peter.carbonetto@gmail.com>
@@ -24,10 +26,11 @@ Imports:
 Suggests:
     glmnet,
     qtl,
+    knitr,
     testthat
 License: GPL (>= 3)
 NeedsCompilation: yes
 LazyData: true
 URL: http://github.com/pcarbo/varbvs
 LinkingTo: Rcpp
-
+VignetteBuilder: knitr

@@ -10,3 +10,4 @@ varbvs.demo.cytokine.RData
 *.Rcheck/
 *.tar.gz
 benchmarks/
+varbvs-R/vignettes/*.html
