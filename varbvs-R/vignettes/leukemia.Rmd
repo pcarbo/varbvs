@@ -13,8 +13,8 @@ the Leukemia data set. The main aim of this script is to illustrate
 some of the different properties of Bayesian variable selection and
 penalized sparse regression (as implemented by **varbvs** and **glmnet**,
 respectively). This script also reproduces the results and graphs
-presented in the first example of Carbonetto *et al* (2016).
-
+presented in the first example of a forthcoming paper (Carbonetto 
+*et al*, 2016).
 
 We use the preprocessed data of Dettling (2004) retrieved from the
 supplementary materials accompanying Friedman *et al* (2010). The data
@@ -52,7 +52,7 @@ library(glmnet)
 library(varbvs)
 ```
 
-Next, specify settings that control the data analysis.
+Next, specify settings that control the data analyses.
 
 ```{r}
 # glmnet settings.
@@ -67,28 +67,29 @@ sa      <- 1                   # Prior variance of coefficients.
 
 ## Load the Leukemia data
 
+Also set the random number generator seed.
+
 ```{r}
 data(leukemia)
 X <- leukemia$x
 y <- leukemia$y
-
-# Set the random number generator seed.
 set.seed(1)
 ```
 
 ## Fit elastic net model to data
 
-```{r}
-r <- system.time(fit.glmnet <-
-       glmnet(X,y,family = "binomial",lambda = lambda,alpha = alpha))
-cat(sprintf("Model fitting took %0.2f seconds.\n",r["elapsed"]))
-```
-
-Next, run 20-fold cross-validation to select the largest setting of the 
-L1-penalty strength (*lambda*) that is within 1 standard error of the 
+Here, we also run 20-fold cross-validation to select the largest setting 
+of the L1-penalty strength (*lambda*) that is within 1 standard error of the 
 minimum classification error.
 
 ```{r}
+
+# This is the model fitting step.
+r <- system.time(fit.glmnet <-
+       glmnet(X,y,family = "binomial",lambda = lambda,alpha = alpha))
+cat(sprintf("Model fitting took %0.2f seconds.\n",r["elapsed"]))
+
+# This is the cross-validation step.
 r <- system.time(out.cv.glmnet <-
        cv.glmnet(X,y,family = "binomial",type.measure = "class",
                  alpha = alpha,nfolds = nfolds,lambda = lambda))
@@ -114,9 +115,9 @@ print(table(true = factor(y),pred = factor(y.glmnet)))
 ## Visualize results of glmnet analysis
 
 The first plot shows the evolution of regression coefficients at different 
-settings of *lambda*. (Do not show the intercept.) Only label the curves for 
-the variables that are selected at the optimal settingof *lambda* 
-("lambda.opt"").
+settings of *lambda*. (Note that the intercept is not shown.) Only the 
+curves for the variables that are selected at the optimal setting 
+of *lambda* ("lambda.opt"") are labeled.
 
 The second plot shows the classification error at different settings of 
 *lambda*. 
@@ -125,10 +126,11 @@ The third plot shows the number of nonzero regression coefficients at
 different settings of *lambda*.
 
 ```{r}
-# Plot regression coefficients.
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))
+
+# Plot regression coefficients.
 vars <- setdiff(which(rowSums(abs(coef(fit.glmnet))) > 0),1)
 n    <- length(vars)
 b    <- as.matrix(t(coef(fit.glmnet)[vars,]))
@@ -212,8 +214,8 @@ Compute the normalized importance weights and the posterior
 inclusion probabilities averaged over the hyperparameter settings.
 
 ```{r}
-w <- normalizelogweights(fit.varbvs$logw)
-pip   <- c(fit.varbvs$alpha %*% w)
+w   <- normalizelogweights(fit.varbvs$logw)
+pip <- c(fit.varbvs$alpha %*% w)
 ```
 
 ## Evaluate the varbvs predictions
@@ -226,14 +228,29 @@ y.varbvs <- predict(fit.varbvs,X)
 print(table(true = factor(y),pred = factor(y.varbvs)))
 ```
 
-```{r, eval=FALSE}
-# Show the classification error at each setting of the prior log-odds.
-#
-# dev.new(height = 4.5,width = 7)
-# 
+## Visualize results of varbvs analysis
+
+The first plot shows the classification error at each setting of 
+the prior log-odds. 
+
+The second plot shows the evolution of the posterior mean regression 
+coefficients (the beta's) at different settings of the prior log-odds, 
+for the top 6 variables ranked by posterior inclusion probability 
+(averaged over settings of the hyperparameters).
+
+The top-ranked variable (by posterior inclusion probability) has a
+much larger coefficient than all the others, so it is shown in a
+separate plot.
+
+The third plot shows the (approximate) probability density of the 
+prior log-odds parameter.
+
+```{r}
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))
+
+# Plot classification error.
 m   <- length(logodds)
 err <- rep(0,m)
 for (i in 1:m) {
@@ -249,14 +266,7 @@ print(xyplot(y ~ x,data.frame(x = logodds,y = err),type = "l",
                       col = "blue",pch = 20,cex = 0.65)),
       split = c(1,1,2,2),more = TRUE)
 
-# Plot the evolution of the posterior mean regression coefficients
-# (the beta's) at different settings of the prior log-odds, for the
-# top 6 variables ranked by posterior inclusion probability (averaged
-# over settings of the hyperparameters).
-#
-# The top-ranked variable (by posterior inclusion probability) has a
-# much larger coefficient than all the others, so it is shown in a
-# separate plot.
+# Plot regression coefficients.
 n     <- 4
 m     <- length(logodds)
 vars  <- order(pip,decreasing = TRUE)[1:n]
@@ -293,7 +303,7 @@ for (i in 3:n) {
 }
 print(r,split = c(2,1,2,2),more = TRUE)
 
-# Show the (approximate) probability density of the prior log-odds.
+# Plot density of "prior log-odds"" hyperparameter.
 names(w) <- logodds
 print(xyplot(y ~ x,data.frame(x = logodds,y = w),type = "l",col = "blue",
              xlab = "prior log-odds",ylab = "posterior prob.",
@@ -302,4 +312,3 @@ print(xyplot(y ~ x,data.frame(x = logodds,y = w),type = "l",col = "blue",
                       col = "blue",pch = 20,cex = 0.65)),
       split = c(1,2,2,2),more = FALSE)
 ```
-
