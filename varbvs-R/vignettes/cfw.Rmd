@@ -8,17 +8,13 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-Map QTLs for phenotypes measured in CFW (Carworth Farms White)
-outbred mice. Phenotypes include muscle weights---EDL and soleus
-muscle---and testis weight measured at sacrifice. Running this
-script with `trait = "testis"` reproduces the results and figures
+In this vignette, we use **varbvs** to map QTLs for phenotypes measured 
+in CFW (Carworth Farms White) outbred mice. Phenotypes include muscle weights---EDL and soleus muscle---and testis weight measured at sacrifice. Running this script with `trait = "testis"` reproduces the results and figures
 shown in the second example of a forthcoming paper (Carbonetto 
 *et al*, 2016).
 
 ```{r, echo = FALSE, message = FALSE}
-knitr::opts_chunk$set(eval = TRUE,collapse = TRUE,comment = "#",
-                      fig.width = 6.9,fig.height = 5.5,
-                      fig.align = "center")
+knitr::opts_chunk$set(eval = TRUE,collapse = TRUE,comment = "#")
 ```
 
 ## Vignette parameters
@@ -49,7 +45,6 @@ set.seed(1)
 ## Load the genotype and phenotype data
 
 ```{r}
-cat("LOADING DATA.\n")
 load("cfw.RData")
 if (trait == "edl" | trait == "soleus") {
   covariates <- c("batch16","tibia")
@@ -71,17 +66,15 @@ geno  <- geno[rows,]
 ## Fit variational approximation to posterior
 
 ```{r}
-cat("FITTING MODEL TO DATA.\n")
 runtime <- system.time(fit <-
   varbvs(geno,as.matrix(pheno[,covariates]),pheno[,trait],
-         sa = sa,logodds = logodds))
+         sa = sa,logodds = logodds,verbose = FALSE))
 cat(sprintf("Model fitting took %0.2f minutes.\n",runtime["elapsed"]/60))
 ```
 
 ## Summarize the results of model fitting
 
 ```{r}
-cat("SUMMARIZING RESULTS.\n")
 print(summary(fit))
 ```
 
@@ -90,7 +83,7 @@ probabilities (PIPs) computed in the BVS analysis of all SNPs; (2)
 one using the p-values computed using GEMMA; and (3) one using the
 PIPs computed from the BVSR model in GEMMA.
 
-```{r}
+```{r, fig.width = 7,fig.height = 5.5, fig.align = "center"}
 trellis.par.set(axis.text     = list(cex = 0.7),
                 par.ylab.text = list(cex = 0.7),
                 par.main.text = list(cex = 0.7,font = 1))

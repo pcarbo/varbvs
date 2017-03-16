@@ -35,7 +35,6 @@ set.seed(1)
 ## Load the genotype and phenotype data
 
 ```{r}
-cat("LOADING DATA.\n")
 load("cd.RData")
 ```
 
@@ -46,7 +45,6 @@ distribution of the coefficients for a logistic regression model of a binary
 outcome (case-control status), with spike and slab priors on the coefficients.
 
 ```{r}
-cat("FITTING MODEL TO DATA.\n")
 r <- system.time(fit <- varbvs(X,NULL,y,"binomial",logodds = seq(-6,-3,0.25)))
 cat(sprintf("Model fitting took %0.2f minutes.\n",r["elapsed"]/60))
 ```
@@ -61,7 +59,6 @@ pip <- c(varbvsindep(fit,X,NULL,y)$alpha %*% w)
 ## Save the results to a file
 
 ```{r}
-cat("SAVING RESULTS.\n")
 save(list = c("fit","map","pip","r"),
      file = "varbvs.demo.cd.RData")
 ```
@@ -69,7 +66,6 @@ save(list = c("fit","map","pip","r"),
 ## Summarize the model fitting
 
 ```{r}
-cat("SUMMARIZING RESULTS.\n")
 print(summary(fit,nv = 9))
 ```
 

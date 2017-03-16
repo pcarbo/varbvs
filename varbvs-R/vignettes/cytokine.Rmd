@@ -39,7 +39,6 @@ set.seed(1)
 ## Load the genotypes, phenotypes and pathway annotation
 
 ```{r}
-cat("LOADING DATA.\n")
 load("cd.RData")
 data(cytokine)
 ```
@@ -51,7 +50,6 @@ variables (genetic markers) are, *a priori*, equally likely to be included
 in the model.
 
 ```{r}
-cat("FITTING NULL MODEL TO DATA.\n")
 fit.null <- varbvs(X,NULL,y,"binomial",logodds = -4)
 ```
 
@@ -60,7 +58,6 @@ genetic markers near cytokine signaling genes are more likely to be
 included in the model.
 
 ```{r}
-cat("FITTING PATHWAY ENRICHMENT MODEL TO DATA.\n")
 logodds <- matrix(-4,442001,13)
 logodds[cytokine == 1,] <- matrix(-4 + seq(0,3,0.25),6711,13,byrow = TRUE)
 fit.cytokine <- varbvs(X,NULL,y,"binomial",logodds = logodds,
@@ -77,7 +74,6 @@ BF <- bayesfactor(fit.null$logw,fit.cytokine$logw)
 ## Save the results to a file
 
 ```{r}
-cat("SAVING RESULTS.\n")
 save(list = c("fit.null","fit.cytokine","map","cytokine","BF"),
      file = "varbvs.demo.cytokine.RData")
 ```
