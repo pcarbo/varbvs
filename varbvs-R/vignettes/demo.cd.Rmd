@@ -1,0 +1,94 @@
+---
+title: "Using varbvs to map genetic loci associated with Crohn's disease"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Crohn's disease demo}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+This vignettes demonstrates how to fit a Bayesian variable selection model 
+using **varbvs** to identify genetic markers associated with Crohn's 
+disease risk. The data consist of 442,001 SNPs genotyped for 1,748 cases 
+and 2,938 controls.
+
+Note that file `cd.RData` cannot be made publicly available due to
+data sharing restrictions, so this vignette is for viewing only.
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+Begin by loading a couple packages into the R environment.
+
+```{r}
+library(lattice)
+library(varbvs)
+```
+
+Set the random number generator seed.
+
+```{r}
+set.seed(1)
+```
+
+## Load the genotype and Crohn's disease data
+
+```{r}
+cat("LOADING DATA.\n")
+load("cd.RData")
+```
+
+## Fit variational approximation to posterior
+
+Here we fit the fully-factorized variational approximation to the posterior
+distribution of the coefficients for a logistic regression model of a binary
+outcome (case-control status), with spike and slab priors on the coefficients.
+
+```{r}
+cat("FITTING MODEL TO DATA.\n")
+r <- system.time(fit <- varbvs(X,NULL,y,"binomial",logodds = seq(-6,-3,0.25)))
+cat(sprintf("Model fitting took %0.2f minutes.\n",r["elapsed"]/60))
+```
+
+Compute "single-marker" posterior inclusion probabilities.
+
+```{r}
+w   <- c(normalizelogweights(fit$logw))
+pip <- c(varbvsindep(fit,X,NULL,y)$alpha %*% w)
+```
+
+## Save the results to a file
+
+```{r}
+cat("SAVING RESULTS.\n")
+save(list = c("fit","map","pip","r"),
+     file = "varbvs.demo.cd.RData")
+```
+
+## Summarize the results of fitting the model to the data
+
+```{r}
+cat("SUMMARIZING RESULTS.\n")
+print(summary(fit,nv = 9))
+```
+
+Show two "genome-wide scans", one using the posterior inclusion
+probabilities (PIPs) computed in the joint analysis of all
+variables, and one using the PIPs that ignore correlations between
+the variables. The latter is meant to look like a typical
+genome-wide "Manhattan" plot used to summarize the results of a
+genome-wide association study. Variables with PIP > 0.5 are
+highlighted.
+
+```{r}
+i <- which(fit$alpha %*% w > 0.5)
+var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
+print(plot(fit,groups = map$chr,vars = i,var.labels = var.labels,gap = 7500,
+           ylab = "posterior prob."),
+      split = c(1,1,1,2),more = TRUE)
+print(plot(fit,groups = map$chr,score = log10(pip + 0.001),vars = i,
+           var.labels = var.labels,gap = 7500,ylab = "log10 posterior prob."),
+      split = c(1,2,1,2),more = FALSE)
+```
