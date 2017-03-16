@@ -1,5 +1,5 @@
 ---
-title: "Using varbvs to map genetic loci associated with Crohn's disease"
+title: "Using varbvs to assess support for enrichment of Crohn's disease risk factors near cytokine signaling genes"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -85,9 +85,7 @@ save(list = c("fit.null","fit.cytokine","map","cytokine","BF"),
 Show two "genome-wide scans" from the multi-marker PIPs, with and
 without conditioning on enrichment of cytokine signaling genes.
 
-```{r, eval=TRUE, fig.width = 9,fig.height = 4,fig.align = "center"}
-load("../../varbvs.demo.cytokine.RData")
-
+```{r, fig.width = 9,fig.height = 4,fig.align = "center"}
 w <- normalizelogweights(fit.cytokine$logw)
 i <- which(fit.null$alpha > 0.5 | fit.cytokine$alpha %*% w > 0.5)
 var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
