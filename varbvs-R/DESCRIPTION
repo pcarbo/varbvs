@@ -1,7 +1,7 @@
 Package: varbvs
 Encoding: UTF-8
 Type: Package
-Version: 2.0-7
+Version: 2.0-8
 Date: 2017-03-09
 Title: Large-Scale Bayesian Variable Selection Using Variational Methods
 Author: Peter Carbonetto, Matthew Stephens, David Gerard

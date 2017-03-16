@@ -14,14 +14,14 @@ shown in the second example of a forthcoming paper (Carbonetto
 *et al*, 2016).
 
 ```{r, echo = FALSE, message = FALSE}
-knitr::opts_chunk$set(eval = TRUE,collapse = TRUE,comment = "#")
+knitr::opts_chunk$set(eval = FALSE,collapse = TRUE,comment = "#")
 ```
 
 ## Vignette parameters
 
 Begin by loading packages into the R environment.
 
-```{r, message = FALSE}
+```{r, eval = TRUE, message = FALSE}
 library(lattice)
 library(varbvs)
 ```
@@ -30,7 +30,7 @@ These script parameters specify the candidate prior log-odds
 settings, the prior variance of the coefficients, and which trait to
 analyze. Set trait to "edl", "soleus" or "testis".
 
-```{r}
+```{r, eval = TRUE}
 trait   <- "testis"
 logodds <- seq(-5,-3,0.25)
 sa      <- 0.05
@@ -38,7 +38,7 @@ sa      <- 0.05
 
 Set the random number generator seed.
 
-```{r}
+```{r, eval = TRUE}
 set.seed(1)
 ```
 
@@ -57,8 +57,8 @@ Only analyze samples for which the phenotype and all the covariates
 are observed.
 
 ```{r}
-rows <-
-  which(apply(pheno[,c(trait,covariates)],1,function (x) sum(is.na(x)) == 0))
+rows <- which(apply(pheno[,c(trait,covariates)],1,
+                    function (x) sum(is.na(x)) == 0))
 pheno <- pheno[rows,]
 geno  <- geno[rows,]
 ```

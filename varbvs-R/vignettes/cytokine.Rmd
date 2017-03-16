@@ -25,7 +25,7 @@ knitr::opts_chunk$set(eval = FALSE,collapse = TRUE,comment = "#")
 
 Begin by loading a couple packages into the R environment.
 
-```{r, eval = TRUE}
+```{r, eval = TRUE, message = FALSE}
 library(lattice)
 library(varbvs)
 ```
