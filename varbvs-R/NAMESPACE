@@ -1,4 +1,4 @@
-useDynLib(varbvs)
+useDynLib(varbvs,.registration = TRUE,.fixes = "C_")
 
 importFrom(methods,is)
 importFrom(stats,qnorm)

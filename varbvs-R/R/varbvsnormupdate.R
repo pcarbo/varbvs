@@ -86,7 +86,7 @@ varbvsnormupdate <-
     # components that change are alpha, mu and Xr. Note that I need to
     # subtract 1 from the indices because R vectors start at 1, and C
     # arrays start at 0.
-    out <- .Call("varbvsnormupdate_Call",X = X,sigma = as.double(sigma),
+    out <- .Call(C_varbvsnormupdate_Call,X = X,sigma = as.double(sigma),
                  sa = as.double(sa),logodds = as.double(logodds),
                  xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
                  Xr = Xr,i = as.integer(i-1))

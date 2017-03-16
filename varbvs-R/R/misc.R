@@ -124,7 +124,7 @@ diagsq <- function (X, a = NULL) {
   # Execute the C routine using the .Call interface. The main reason
   # for using .Call interface is that there is less of a constraint on
   # the size of the input matrices.
-  out <- .Call("diagsq_Call",X = X,a = a,y = y)
+  out <- .Call(C_diagsq_Call,X = X,a = a,y = y)
   return(y)
 }
 
@@ -151,7 +151,7 @@ diagsqt <- function (X, a = NULL) {
   # Execute the C routine using the .Call interface. The main reason
   # for using .Call interface is that there is less of a constraint on
   # the size of the input matrices.
-  out <- .Call("diagsqt_Call",X = X,a = a,y = y)
+  out <- .Call(C_diagsqt_Call,X = X,a = a,y = y)
   return(y)
 }
 
