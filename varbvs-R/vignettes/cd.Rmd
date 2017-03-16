@@ -11,29 +11,28 @@ vignette: >
 This vignettes demonstrates how to fit a Bayesian variable selection model 
 using **varbvs** to identify genetic markers associated with Crohn's 
 disease risk. The data consist of 442,001 SNPs genotyped for 1,748 cases 
-and 2,938 controls.
-
-Note that file `cd.RData` cannot be made publicly available due to
-data sharing restrictions, so this vignette is for viewing only.
+and 2,938 controls. Note that file `cd.RData` cannot be made publicly 
+available due to data sharing restrictions, so this vignette is for 
+viewing only.
 
 ```{r, echo = FALSE, message = FALSE}
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(eval = FALSE,collapse = TRUE,comment = "#")
 ```
 
 Begin by loading a couple packages into the R environment.
 
-```{r}
+```{r, eval = TRUE}
 library(lattice)
 library(varbvs)
 ```
 
 Set the random number generator seed.
 
-```{r}
+```{r, eval = TRUE}
 set.seed(1)
 ```
 
-## Load the genotype and Crohn's disease data
+## Load the genotype and phenotype data
 
 ```{r}
 cat("LOADING DATA.\n")
@@ -54,9 +53,13 @@ cat(sprintf("Model fitting took %0.2f minutes.\n",r["elapsed"]/60))
 
 Compute "single-marker" posterior inclusion probabilities.
 
-```{r}
+```{r, eval=TRUE}
+load("../../varbvs.demo.cd.RData")
+fit$update.sigma <- FALSE
+fit$model.pve <- NA
+
 w   <- c(normalizelogweights(fit$logw))
-pip <- c(varbvsindep(fit,X,NULL,y)$alpha %*% w)
+# pip <- c(varbvsindep(fit,X,NULL,y)$alpha %*% w)
 ```
 
 ## Save the results to a file
@@ -69,7 +72,7 @@ save(list = c("fit","map","pip","r"),
 
 ## Summarize the results of fitting the model to the data
 
-```{r}
+```{r, eval=TRUE}
 cat("SUMMARIZING RESULTS.\n")
 print(summary(fit,nv = 9))
 ```
@@ -79,10 +82,10 @@ probabilities (PIPs) computed in the joint analysis of all
 variables, and one using the PIPs that ignore correlations between
 the variables. The latter is meant to look like a typical
 genome-wide "Manhattan" plot used to summarize the results of a
-genome-wide association study. Variables with PIP > 0.5 are
+genome-wide association study. Variables with `PIP > 0.5` are
 highlighted.
 
-```{r}
+```{r, eval=TRUE, fig.width = 9,fig.height = 4,fig.align = "center"}
 i <- which(fit$alpha %*% w > 0.5)
 var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
 print(plot(fit,groups = map$chr,vars = i,var.labels = var.labels,gap = 7500,
