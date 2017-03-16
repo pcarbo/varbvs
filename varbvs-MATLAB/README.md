@@ -100,7 +100,7 @@ of the results and figures presented in Carbonetto *et al* (2016).
 ###Credits
 
 The *varbvs* software package was developed by:<br>
-[Peter Carbonetto](http://www.cs.ubc.ca/spider/pcarbo)<br>
+[Peter Carbonetto](http://pcarbo.github.io)<br>
 Dept. of Human Genetics, University of Chicago<br>
 and AncestryDNA, San Francisco, California<br>
 2012-2016
