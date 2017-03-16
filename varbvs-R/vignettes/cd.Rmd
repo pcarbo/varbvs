@@ -53,13 +53,9 @@ cat(sprintf("Model fitting took %0.2f minutes.\n",r["elapsed"]/60))
 
 Compute "single-marker" posterior inclusion probabilities.
 
-```{r, eval=TRUE}
-load("../../varbvs.demo.cd.RData")
-fit$update.sigma <- FALSE
-fit$model.pve <- NA
-
+```{r}
 w   <- c(normalizelogweights(fit$logw))
-# pip <- c(varbvsindep(fit,X,NULL,y)$alpha %*% w)
+pip <- c(varbvsindep(fit,X,NULL,y)$alpha %*% w)
 ```
 
 ## Save the results to a file
@@ -72,7 +68,7 @@ save(list = c("fit","map","pip","r"),
 
 ## Summarize the results of fitting the model to the data
 
-```{r, eval=TRUE}
+```{r}
 cat("SUMMARIZING RESULTS.\n")
 print(summary(fit,nv = 9))
 ```
@@ -85,7 +81,7 @@ genome-wide "Manhattan" plot used to summarize the results of a
 genome-wide association study. Variables with `PIP > 0.5` are
 highlighted.
 
-```{r, eval=TRUE, fig.width = 9,fig.height = 4,fig.align = "center"}
+```{r, fig.width = 9,fig.height = 4,fig.align = "center"}
 i <- which(fit$alpha %*% w > 0.5)
 var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
 print(plot(fit,groups = map$chr,vars = i,var.labels = var.labels,gap = 7500,
