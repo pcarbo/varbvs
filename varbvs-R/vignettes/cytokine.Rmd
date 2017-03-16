@@ -3,7 +3,7 @@ title: "Using varbvs to assess support for enrichment of Crohn's disease risk fa
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Crohn's disease demo}
+  %\VignetteIndexEntry{Cytokine signaling genes demo}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -81,6 +81,8 @@ cat("SAVING RESULTS.\n")
 save(list = c("fit.null","fit.cytokine","map","cytokine","BF"),
      file = "varbvs.demo.cytokine.RData")
 ```
+
+## Summarize the results of model fitting
 
 Show two "genome-wide scans" from the multi-marker PIPs, with and
 without conditioning on enrichment of cytokine signaling genes.

@@ -1,25 +1,54 @@
-# Map QTLs for phenotypes measured in CFW (Carworth Farms White)
-# outbred mice. Phenotypes include muscle weights---EDL and soleus
-# muscle---and testis weight measured at sacrifice. Running this
-# script with trait = "testis" reproduces the results and figures
-# shown in the second example of Carbonetto et al (2016).
-library(varbvs)
-library(lattice)
+---
+title: "Using varbvs to map QTLs in outbred mice"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{QTL mapping in mice demo}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
 
-# SCRIPT PARAMETERS
-# -----------------
-# These script parameters specify the candidate prior log-odds
-# settings, the prior variance of the coefficients, and which trait to
-# analyze. Set trait to "edl", "soleus" or "testis".
+Map QTLs for phenotypes measured in CFW (Carworth Farms White)
+outbred mice. Phenotypes include muscle weights---EDL and soleus
+muscle---and testis weight measured at sacrifice. Running this
+script with `trait = "testis"` reproduces the results and figures
+shown in the second example of a forthcoming paper (Carbonetto 
+*et al*, 2016).
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(eval = TRUE,collapse = TRUE,comment = "#",
+                      fig.width = 6.9,fig.height = 5.5,
+                      fig.align = "center")
+```
+
+## Vignette parameters
+
+Begin by loading packages into the R environment.
+
+```{r, message = FALSE}
+library(lattice)
+library(varbvs)
+```
+
+These script parameters specify the candidate prior log-odds
+settings, the prior variance of the coefficients, and which trait to
+analyze. Set trait to "edl", "soleus" or "testis".
+
+```{r}
 trait   <- "testis"
 logodds <- seq(-5,-3,0.25)
 sa      <- 0.05
+```
 
-# Initialize the random number generator. 
+Set the random number generator seed.
+
+```{r}
 set.seed(1)
+```
 
-# LOAD GENOTYPE AND PHENOTYPE DATA
-# --------------------------------
+## Load the genotype and phenotype data
+
+```{r}
 cat("LOADING DATA.\n")
 load("cfw.RData")
 if (trait == "edl" | trait == "soleus") {
@@ -27,34 +56,41 @@ if (trait == "edl" | trait == "soleus") {
 } else if (trait == "testis") {
   covariates <- "sacwt"
 }
+```
 
-# Only analyze samples for which the phenotype and all the covariates
-# are observed.
+Only analyze samples for which the phenotype and all the covariates
+are observed.
+
+```{r}
 rows <-
   which(apply(pheno[,c(trait,covariates)],1,function (x) sum(is.na(x)) == 0))
 pheno <- pheno[rows,]
 geno  <- geno[rows,]
+```
 
-# FIT VARIATIONAL APPROXIMATION TO POSTERIOR
-# ------------------------------------------
+## Fit variational approximation to posterior
+
+```{r}
 cat("FITTING MODEL TO DATA.\n")
 runtime <- system.time(fit <-
   varbvs(geno,as.matrix(pheno[,covariates]),pheno[,trait],
          sa = sa,logodds = logodds))
 cat(sprintf("Model fitting took %0.2f minutes.\n",runtime["elapsed"]/60))
+```
 
-# SUMMARIZE POSTERIOR DISTRIBUTION
-# --------------------------------
+## Summarize the results of model fitting
+
+```{r}
 cat("SUMMARIZING RESULTS.\n")
 print(summary(fit))
+```
 
-# Show three genome-wide scans: (1) one using the posterior inclusion
-# probabilities (PIPs) computed in the BVS analysis of all SNPs; (2)
-# one using the p-values computed using GEMMA; and (3) one using the
-# PIPs computed from the BVSR model in GEMMA.
-#
-# dev.new(height = 5,width = 8)
-#
+Show three genome-wide scans: (1) one using the posterior inclusion
+probabilities (PIPs) computed in the BVS analysis of all SNPs; (2)
+one using the p-values computed using GEMMA; and (3) one using the
+PIPs computed from the BVSR model in GEMMA.
+
+```{r}
 trellis.par.set(axis.text     = list(cex = 0.7),
                 par.ylab.text = list(cex = 0.7),
                 par.main.text = list(cex = 0.7,font = 1))
@@ -87,3 +123,4 @@ print(xyplot(p1 ~ plot.x,gwscan.bvsr,pch = 20,col = "midnightblue",
                            y = list(limits = c(-0.1,1.2),at = c(0,0.5,1))),
              xlab = "",ylab = "probability",main = "c. multi-marker (BVSR)"),
       split = c(1,3,1,3),more = FALSE)
+```

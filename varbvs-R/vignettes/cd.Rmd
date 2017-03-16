@@ -66,7 +66,7 @@ save(list = c("fit","map","pip","r"),
      file = "varbvs.demo.cd.RData")
 ```
 
-## Summarize the results of fitting the model to the data
+## Summarize the model fitting
 
 ```{r}
 cat("SUMMARIZING RESULTS.\n")
