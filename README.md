@@ -1,11 +1,11 @@
-#Large-scale Bayesian variable selection for R and MATLAB
+# Large-scale Bayesian variable selection for R and MATLAB
 
 [![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](http://cran.r-project.org/package=varbvs)
 [![Travis Build Status](https://travis-ci.org/pcarbo/varbvs.svg?branch=master)](https://travis-ci.org/pcarbo/varbvs)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/xqnqhsk5na3855nq?svg=true)](https://ci.appveyor.com/project/pcarbo/varbvs)
 [![codecov](https://codecov.io/gh/pcarbo/varbvs/branch/master/graph/badge.svg)](https://codecov.io/gh/pcarbo/varbvs)
 
-###Overview
+### Overview
 
 We introduce *varbvs*, a suite of functions writen in
 [R](http://www.r-project.org) and
@@ -43,7 +43,7 @@ this is the call to varbvs from the
 fit = varbvs(X,Z,y,labels,[],struct('logodds',-3:0.1:-1));
 ```
 
-###Citing varbvs
+### Citing varbvs
 
 If you find that this software is useful for your research project,
 please cite our paper:
