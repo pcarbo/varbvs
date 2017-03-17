@@ -1,12 +1,14 @@
 ---
-title: "Using varbvs to map genetic loci associated with Crohn's disease"
+title: "Mapping disease risk loci using varbvs"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Crohn's disease demo}
   %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
+
+# Mapping disease risk loci using varbvs
 
 This vignettes demonstrates how to fit a Bayesian variable selection model 
 using **varbvs** to identify genetic markers associated with Crohn's 

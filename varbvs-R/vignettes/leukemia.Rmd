@@ -5,8 +5,10 @@ output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Leukemia demo}
   %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
+
+# Comparison of glmnet and varbvs in Leukemia data set
 
 This vignette demonstrates application of **glmnet** and **varbvs** to
 the Leukemia data set. The main aim of this script is to illustrate
@@ -38,7 +40,7 @@ Statistical Software* **33**, 1–22.
 ```{r, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(collapse = TRUE,comment = "#",fig.width = 6.9,
                       fig.height = 5.5,fig.align = "center",
-                      fig.cap = "&nbsp;")
+                      fig.cap = "&nbsp;",dpi = 100)
 ```
 
 ## Vignette parameters

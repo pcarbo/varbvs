@@ -1,17 +1,21 @@
 ---
-title: "Using varbvs to map QTLs in outbred mice"
+title: "Mapping QTLs in outbred mice using varbvs"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{QTL mapping in mice demo}
+  %\VignetteIndexEntry{QTL mapping demo}
   %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
-In this vignette, we use **varbvs** to map QTLs for phenotypes measured 
-in CFW (Carworth Farms White) outbred mice. Phenotypes include muscle weights---EDL and soleus muscle---and testis weight measured at sacrifice. Running this script with `trait = "testis"` reproduces the results and figures
-shown in the second example of a forthcoming paper (Carbonetto 
-*et al*, 2016).
+# Mapping QTLs in outbred mice using varbvs
+
+In this vignette, we use **varbvs** to map QTLs for phenotypes
+measured in CFW (Carworth Farms White) outbred mice. Phenotypes
+include muscle weights---EDL and soleus muscle---and testis weight
+measured at sacrifice. Running this script with `trait = "testis"`
+reproduces the results and figures shown in the second example of a
+forthcoming paper (Carbonetto *et al*, 2016).
 
 ```{r, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(eval = FALSE,collapse = TRUE,comment = "#")

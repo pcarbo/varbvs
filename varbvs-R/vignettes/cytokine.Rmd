@@ -1,12 +1,14 @@
 ---
-title: "Using varbvs to assess support for enrichment of Crohn's disease risk factors near cytokine signaling genes"
+title: "Assessing support for gene sets in disease using varbvs"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Cytokine signaling genes demo}
   %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
+
+# Assessing support for gene sets in disease using varbvs
 
 In this vignette, we fit two variable selection models: the first ("null") 
 model has a uniform prior for all variables (the 442,001 genetic markers);
