@@ -40,7 +40,7 @@ Statistical Software* **33**, 1–22.
 ```{r, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(collapse = TRUE,comment = "#",fig.width = 6.9,
                       fig.height = 5.5,fig.align = "center",
-                      fig.cap = "&nbsp;",dpi = 100)
+                      fig.cap = "&nbsp;",dpi = 120)
 ```
 
 ## Vignette parameters
