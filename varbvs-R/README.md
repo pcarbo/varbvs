@@ -1,10 +1,10 @@
-#Large-scale Bayesian variable selection for R
+# Large-scale Bayesian variable selection for R
 
 [![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](http://cran.r-project.org/package=varbvs)
 [![Build Status](https://travis-ci.org/pcarbo/varbvs.svg?branch=master)](https://travis-ci.org/pcarbo/varbvs)
 [![codecov](https://codecov.io/gh/pcarbo/varbvs/branch/master/graph/badge.svg)](https://codecov.io/gh/pcarbo/varbvs)
 
-###Overview
+### Overview
 
 We introduce *varbvs*, an R package for analysis of large-scale data
 sets using Bayesian variable selection methods. To facilitate
@@ -21,7 +21,7 @@ The R package been tested by
 and the tests' code coverage has been assessed by
 [Codecov](https://codecov.io/gh/pcarbo/varbvs).
 
-###Citing varbvs
+### Citing varbvs
 
 If you find that this software is useful for your research project,
 please cite our paper:
@@ -31,7 +31,7 @@ inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. *Bayesian Analysis* **7**,
 73-108.
 
-###License
+### License
 
 Copyright (c) 2012-2016, Peter Carbonetto.
 
@@ -45,7 +45,7 @@ warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](../LICENSE) for
 the full text of the license.
 
-###Installing the package
+### Installing the package
 
 To install the official release of the *varbvs* package available from
 CRAN ([link](http://www.r-pkg.org/pkg/varbvs)), in R simply run:
@@ -85,7 +85,7 @@ R CMD build varbvs
 R CMD INSTALL varbvs_2.0.0.tar.gz
 ```
 
-###Using the package
+### Using the package
 
 Once you have installed the package, load the package in R by entering
 
@@ -117,7 +117,7 @@ To get more information about this function, type
 help(varbvs)
 ```
 
-###Working examples
+### Working examples
 
 We have provided several R scripts in the [vignettes](vignettes) and
 [tests](tests) folders to illustrate application of *varbvs* to small
@@ -154,7 +154,7 @@ scripts because it is helpful to be able to follow the steps given in
 these R scripts. These scripts reproduce some of the results and
 figures presented in Carbonetto *et al* (2016).
 
-###Credits
+### Credits
 
 The *varbvs* software package was developed by:<br>
 [Peter Carbonetto](http://pcarbo.github.io)<br>

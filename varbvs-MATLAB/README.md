@@ -1,6 +1,6 @@
-#Large-scale Bayesian variable selection for MATLAB
+# Large-scale Bayesian variable selection for MATLAB
 
-###Overview
+### Overview
 
 We introduce *varbvs*, a suite of MATLAB routines for analysis of
 large-scale data sets using Bayesian variable selection methods. To
@@ -15,7 +15,7 @@ of massive genome-wide data sets.
 The MATLAB interface has been tested extensively in MATLAB
 version 8.6.0 (2015b). 
 
-###Citing varbvs
+### Citing varbvs
 
 If you find that this software is useful for your research project,
 please cite our paper:
@@ -25,7 +25,7 @@ inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. *Bayesian Analysis* **7**,
 73-108.
 
-###License
+### License
 
 Copyright (c) 2012-2016, Peter Carbonetto.
 
@@ -39,7 +39,7 @@ warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](../LICENSE) for
 the full text of the license.
 
-###Installing the package
+### Installing the package
 
 Begin by downloading the github repository for this project. The
 simplest way to do this is to
@@ -72,7 +72,7 @@ flags may not be relevant to your setup, especially if you are not
 using [gcc](http://gcc.gnu.org). Do not remove flag -DMATLAB_MEX_FILE;
 this is important for correctly compiling the C code for MATLAB.
 
-###Using the package
+### Using the package
 
 The main function of this package is the <code>varbvs</code> function,
 which fits the variable selection model to data. In the
@@ -97,7 +97,7 @@ included these scripts anyhow since it is helpful to be able to follow
 the steps given in these MATLAB scripts. These scripts reproduce some
 of the results and figures presented in Carbonetto *et al* (2016).
 
-###Credits
+### Credits
 
 The *varbvs* software package was developed by:<br>
 [Peter Carbonetto](http://pcarbo.github.io)<br>

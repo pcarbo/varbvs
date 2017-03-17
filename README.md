@@ -53,7 +53,7 @@ inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. *Bayesian Analysis* **7**,
 73-108.
 
-###License
+### License
 
 Copyright (c) 2012-2017, Peter Carbonetto.
 
@@ -67,7 +67,7 @@ warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](LICENSE) for
 the full text of the license.
 
-###Credits
+### Credits
 
 The *varbvs* software package was developed by:<br>
 [Peter Carbonetto](http://pcarbo.github.io)<br>
