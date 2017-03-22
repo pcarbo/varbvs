@@ -8,8 +8,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Mapping QTLs in outbred mice using varbvs
-
 In this vignette, we use **varbvs** to map QTLs for phenotypes
 measured in CFW (Carworth Farms White) outbred mice. Phenotypes
 include muscle weights---EDL and soleus muscle---and testis weight

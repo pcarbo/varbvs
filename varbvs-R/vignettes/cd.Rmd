@@ -8,8 +8,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Mapping disease risk loci using varbvs
-
 This vignettes demonstrates how to fit a Bayesian variable selection model 
 using **varbvs** to identify genetic markers associated with Crohn's 
 disease risk. The data consist of 442,001 SNPs genotyped for 1,748 cases 

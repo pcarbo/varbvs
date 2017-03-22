@@ -8,8 +8,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Comparison of glmnet and varbvs in Leukemia data set
-
 This vignette demonstrates application of **glmnet** and **varbvs** to
 the Leukemia data set. The main aim of this script is to illustrate
 some of the different properties of Bayesian variable selection and
