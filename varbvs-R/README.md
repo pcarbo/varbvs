@@ -1,6 +1,6 @@
 # Large-scale Bayesian variable selection for R
 
-[![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](http://cran.r-project.org/package=varbvs)
+[![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](https://cran.r-project.org/package=varbvs)
 [![Build Status](https://travis-ci.org/pcarbo/varbvs.svg?branch=master)](https://travis-ci.org/pcarbo/varbvs)
 [![codecov](https://codecov.io/gh/pcarbo/varbvs/branch/master/graph/badge.svg)](https://codecov.io/gh/pcarbo/varbvs)
 
@@ -74,7 +74,7 @@ MATLAB code, and the other containing the files for the R package.
 
 This subdirectory has all the necessary files to build and install a
 package for R. To install this package, follow the
-[standard instructions](http://cran.r-project.org/doc/manuals/R-admin.html)
+[standard instructions](https://cran.r-project.org/doc/manuals/R-admin.html)
 for installing an R package from source. On a Unix or Unix-like
 platform (e.g., Mac OS X), the following steps should install the R
 package:
