@@ -7,10 +7,10 @@ subset.varbvs <- function (x, subset, ...) {
     stop("Input argument object must be an instance of class \"varbvs\".")
 
   # Get the unevaluated subset expression.
-  subset <- substitute(subset)
+  e <- substitute(subset)
 
   # Get the hyperparameter settings satisfying the 'subset' condition.
-  i <- which(with(x,eval(subset)))
+  i <- which(eval(e,x,parent.frame()))
   if (length(i) == 0)
     stop("No hyperparameter settings are selected.")
 

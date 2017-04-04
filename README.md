@@ -72,7 +72,7 @@ the full text of the license.
 The *varbvs* software package was developed by:<br>
 [Peter Carbonetto](http://pcarbo.github.io)<br>
 Dept. of Human Genetics, University of Chicago<br>
-2012-2016
+2012-2017
 
 Xiang Zhou, Xiang Zhu, David Gerard and Matthew Stephens have also
 contributed to the development of this software.

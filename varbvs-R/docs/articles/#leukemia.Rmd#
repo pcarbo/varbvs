@@ -249,13 +249,14 @@ prior log-odds parameter.
 trellis.par.set(par.xlab.text = list(cex = 0.65),
                 par.ylab.text = list(cex = 0.65),
                 axis.text     = list(cex = 0.65))
+```
 
+```{r}
 # Plot classification error.
 m   <- length(logodds)
 err <- rep(0,m)
 for (i in 1:m) {
-  r      <- subset(fit.varbvs,logodds == logodds[i])
-  ypred  <- predict(r,X)
+  ypred  <- predict(subset(fit.varbvs,logodds == logodds[i]),X)
   err[i] <- mean(y != ypred)
 }
 print(xyplot(y ~ x,data.frame(x = logodds,y = err),type = "l",

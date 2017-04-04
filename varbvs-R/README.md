@@ -154,6 +154,23 @@ scripts because it is helpful to be able to follow the steps given in
 these R scripts. These scripts reproduce some of the results and
 figures presented in Carbonetto *et al* (2016).
 
+## How to build static HTML documentation
+
+These are the R commands to build the website (make sure you are
+connected to Internet while running these commands, and the working
+directory is set to `varbvs-R`):
+
+```R
+library(pkgdown)
+build_site(mathjax = FALSE)
+```
+
+Before building the website, move the `RcppExports.R` file temporarily
+outside the `R` directory, otherwise `build_site` will report an
+error. Once the pkgdown site is successfully built, move the
+`RcppExports.R` file back to its original location, overwriting the
+newly generated file.
+
 ### Credits
 
 The *varbvs* software package was developed by:<br>
