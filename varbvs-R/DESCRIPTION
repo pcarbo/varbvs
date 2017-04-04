@@ -1,11 +1,13 @@
 Package: varbvs
 Encoding: UTF-8
 Type: Package
-Version: 2.0-8
-Date: 2017-03-09
+Version: 2.0-9
+Date: 2017-04-03
 Title: Large-Scale Bayesian Variable Selection Using Variational Methods
-Author: Peter Carbonetto, Matthew Stephens, David Gerard
-Maintainer: Peter Carbonetto <peter.carbonetto@gmail.com>
+Authors@R: c(person("Peter","Carbonetto",role=c("aut","cre"),
+                    email="peter.carbonetto@gmail.com"),
+             person("Matthew","Stephens",role="aut"),
+             person("David","Gerard",role="aut"))
 Description: Fast algorithms for fitting Bayesian variable selection
     models and computing Bayes factors, in which the outcome (or
     response variable) is modeled using a linear regression or a
@@ -32,5 +34,6 @@ License: GPL (>= 3)
 NeedsCompilation: yes
 LazyData: true
 URL: http://github.com/pcarbo/varbvs
+BugReports: http://github.com/pcarbo/varbvs/issues
 LinkingTo: Rcpp
 VignetteBuilder: knitr
