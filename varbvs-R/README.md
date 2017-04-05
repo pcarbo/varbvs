@@ -82,7 +82,7 @@ package:
 ```sh
 mv varbvs-R varbvs
 R CMD build varbvs
-R CMD INSTALL varbvs_2.0.0.tar.gz
+R CMD INSTALL varbvs_2.0.9.tar.gz
 ```
 
 ### Using the package
@@ -129,30 +129,24 @@ continuously valued outcome) in a small, simulated data set. Script
 [demo.cc.R](tests/testthat/demo.cc.R) demonstrates mapping of a binary
 valued outcome in a simulated data set.
 
-+ Script [demo.leukemia.R](vignettes/demo.leukemia.R) demonstrates
++ The [leukemia.R](vignettes/leukemia.R) vignette demonstrates
 application of both *glmnet* and *varbvs* to the Leukemia data. The
 main aim of this script is to illustrate some of the different
 properties of *varbvs* (Bayesian variable selection) and *glmnet*
-(penalized sparse regression). This script also reproduces the results
-and graphs presented in the first example of Carbonetto *et al*
-(2016).
+(penalized sparse regression).
 
-+ Like demo.qtl.R, script [demo.cfw.R](vignettes/demo.cfw.R) also
++ Like `demo.qtl.R`, the [cfw.R](vignettes/cfw.R) vignette
 demonstrates *varbvs* for mapping genetic factors contributing to a
 quantitative trait, but here it is applied to an actual data set
-generated from an outbred mouse study. Running this script with
-<code>trait = "testis"</code> reproduces the results and figures given
-in the second example of Carbonetto *et al* (2016).
+generated from an outbred mouse study.
 
-+ Finally, scripts [demo.cd.R](vignettes/demo.cd.R) and
-[demo.cytokine.R](vignettes/demo.cytokine.R) show how the *varbvs*
-package can be applied to a very large data set to map genetic loci
-and test biological hypotheses about genetic factors contributing to
-human disease risk. Although we cannot share the data needed to run
-these scripts due to data privacy restrictions, we have included these
-scripts because it is helpful to be able to follow the steps given in
-these R scripts. These scripts reproduce some of the results and
-figures presented in Carbonetto *et al* (2016).
++ Finally, the [cd.R](vignettes/cd.R) and [cytokine.R](cytokine.R)
+illustrate how the *varbvs* package can be applied to a very large
+data set to map genetic loci and test biological hypotheses about
+genetic factors contributing to human disease risk. Although we cannot
+share the data needed to run these scripts due to data privacy
+restrictions, we have included these scripts because it is helpful to
+be able to follow the steps given in these R scripts.
 
 ## How to build static HTML documentation
 
@@ -176,8 +170,7 @@ newly generated file.
 The *varbvs* software package was developed by:<br>
 [Peter Carbonetto](http://pcarbo.github.io)<br>
 Dept. of Human Genetics, University of Chicago<br>
-and AncestryDNA, San Francisco, California<br>
-2012-2016
+2012-2017
 
 Xiang Zhou, Xiang Zhu and Matthew Stephens have also contributed to
 the development of this software.

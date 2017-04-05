@@ -27,7 +27,7 @@ accuracy in genetic association studies. *Bayesian Analysis* **7**,
 
 ### License
 
-Copyright (c) 2012-2016, Peter Carbonetto.
+Copyright (c) 2012-2017, Peter Carbonetto.
 
 The *varbvs* source code repository by
 [Peter Carbonetto](http://github.com/pcarbo) is free software: you can
@@ -102,8 +102,7 @@ of the results and figures presented in Carbonetto *et al* (2016).
 The *varbvs* software package was developed by:<br>
 [Peter Carbonetto](http://pcarbo.github.io)<br>
 Dept. of Human Genetics, University of Chicago<br>
-and AncestryDNA, San Francisco, California<br>
-2012-2016
+2012-2017
 
 Xiang Zhou, Xiang Zhu and Matthew Stephens have also contributed to
 the development of this software.
