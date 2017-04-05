@@ -21,7 +21,7 @@ of massive genome-wide data sets.
 
 For more details on the R package, see here the
 [README](varbvs-R/docs/README.md) and the
-[online documentation](http://pcarbo.github.io/varbvs/docs/index.html).
+[online documentation](http://pcarbo.github.io/varbvs/varbvs-R/docs).
 For example, only a few lines of R code are needed to
 fit a variable selection model to the Leukemia data:
 
