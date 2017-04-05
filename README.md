@@ -19,10 +19,11 @@ used to implement Bayesian variable selection for large problems with
 over a million variables and thousands of samples, including analysis
 of massive genome-wide data sets.
 
-For more details on the R package, see
-[here](varbvs-R/docs/index.html). For example, only a few lines of R
-code are needed to fit a variable selection model to the Leukemia
-data:
+For more details on the R package, see here the
+[README](varbvs-R/docs/README.md) and the
+[online documentation](http://pcarbo.github.io/varbvs/docs/index.html).
+For example, only a few lines of R code are needed to
+fit a variable selection model to the Leukemia data:
 
 ```R
 library(varbvs)
