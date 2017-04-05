@@ -129,22 +129,22 @@ continuously valued outcome) in a small, simulated data set. Script
 [demo.cc.R](tests/testthat/demo.cc.R) demonstrates mapping of a binary
 valued outcome in a simulated data set.
 
-+ The [leukemia.R](vignettes/leukemia.R) vignette demonstrates
++ The [leukemia.Rmd](vignettes/leukemia.Rmd) vignette demonstrates
 application of both *glmnet* and *varbvs* to the Leukemia data. The
 main aim of this script is to illustrate some of the different
 properties of *varbvs* (Bayesian variable selection) and *glmnet*
 (penalized sparse regression).
 
-+ Like `demo.qtl.R`, the [cfw.R](vignettes/cfw.R) vignette
++ Like `demo.qtl.R`, the [cfw.Rmd](vignettes/cfw.Rmd) vignette
 demonstrates *varbvs* for mapping genetic factors contributing to a
 quantitative trait, but here it is applied to an actual data set
 generated from an outbred mouse study.
 
-+ Finally, the [cd.R](vignettes/cd.R) and [cytokine.R](cytokine.R)
-illustrate how the *varbvs* package can be applied to a very large
-data set to map genetic loci and test biological hypotheses about
-genetic factors contributing to human disease risk. Although we cannot
-share the data needed to run these scripts due to data privacy
++ Finally, the [cd.Rmd](vignettes/cd.Rmd) and [cytokine.Rmd](cytokine.Rmd)
+vignettesq illustrate how the *varbvs* package can be applied to a
+very large data set to map genetic loci and test biological hypotheses
+about genetic factors contributing to human disease risk. Although we
+cannot share the data needed to run these scripts due to data privacy
 restrictions, we have included these scripts because it is helpful to
 be able to follow the steps given in these R scripts.
 
