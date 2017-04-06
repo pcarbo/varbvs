@@ -3,7 +3,7 @@ title: "Comparison of glmnet and varbvs in Leukemia data set"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Leukemia demo}
+  %\VignetteIndexEntry{varbvs leukemia demo}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -12,28 +12,13 @@ This vignette demonstrates application of **glmnet** and **varbvs** to
 the Leukemia data set. The main aim of this script is to illustrate
 some of the different properties of Bayesian variable selection and
 penalized sparse regression (as implemented by **varbvs** and **glmnet**,
-respectively). This script also reproduces the results and graphs
-presented in the first example of a forthcoming paper (Carbonetto 
-*et al*, 2016).
+respectively).
 
 We use the preprocessed data of Dettling (2004) retrieved from the
 supplementary materials accompanying Friedman *et al* (2010). The data
 are represented as a 72 x 3,571 matrix of gene expression values
 (variable `X`), and a vector of 72 binary disease outcomes (variable
 `y`).
-
-### References
-
-Carbonetto, P., *et al* (2016) Fast variable selection for genome-wide
-association studies and other large-scale regression applications.
-*Forthcoming*.
-
-Dettling, M. (2004). BagBoosting for tumor classification with gene
-expression data. *Bioinformatics* **20**, 3583–3593.
-
-Friedman, J., Hastie, T., Tibshirani, R. (2010) Regularization paths
-for generalized linear models via coordinate descent. *Journal of
-Statistical Software* **33**, 1–22.
 
 ```{r, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(collapse = TRUE,comment = "#",fig.width = 6.9,
@@ -43,7 +28,7 @@ knitr::opts_chunk$set(collapse = TRUE,comment = "#",fig.width = 6.9,
 
 ## Vignette parameters
 
-Begin by loading a few packages into the R environment.
+Begin by loadingthese packages into your R environment.
 
 ```{r, message = FALSE}
 library(lattice)
@@ -56,9 +41,9 @@ Next, specify settings that control the data analyses.
 
 ```{r}
 # glmnet settings.
-nfolds <- 20                   # Number of cross-validation folds.
-alpha  <- 0.95                 # Elastic net mixing parameter.
-lambda <- 10^(seq(-2,0,0.05))  # Lambda sequence.
+nfolds <- 20                    # Number of cross-validation folds.
+alpha  <- 0.95                  # Elastic net mixing parameter.
+lambda <- 10^(seq(0,-2,-0.05))  # Lambda sequence.
 
 # varbvs settings.
 logodds <- seq(-3.5,-1.5,0.1)  # Candidate prior log-odds settings.
@@ -314,3 +299,12 @@ print(xyplot(y ~ x,data.frame(x = logodds,y = w),type = "l",col = "blue",
                       col = "blue",pch = 20,cex = 0.65)),
       split = c(1,2,2,2),more = FALSE)
 ```
+
+### References
+
+Dettling, M. (2004). BagBoosting for tumor classification with gene
+expression data. *Bioinformatics* **20**, 3583–3593.
+
+Friedman, J., Hastie, T., Tibshirani, R. (2010) Regularization paths
+for generalized linear models via coordinate descent. *Journal of
+Statistical Software* **33**, 1–22.
