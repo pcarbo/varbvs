@@ -1,0 +1,3 @@
+*.R linguist-language=R
+*.m linguist-language=MATLAB
+varbvs-MATLAB/* linguist-vendored

@@ -1,14 +1,39 @@
 Package: varbvs
-Version: 2.0.1
-Date: 2016-08-04
+Encoding: UTF-8
+Type: Package
+Version: 2.0-9
+Date: 2017-04-03
 Title: Large-Scale Bayesian Variable Selection Using Variational Methods
-Author: Peter Carbonetto, Matthew Stephens
-Maintainer: Peter Carbonetto <peter.carbonetto@gmail.com>
-Description: Fast algorithms for fitting Bayesian variable selection models and computing Bayes factors, in which the outcome (or response variable) is modeled using a linear regression or a logistic regression. The algorithms are based on the variational approximations described in "Scalable variational inference for Bayesian variable selection in regression, and its accuracy in genetic association studies" (P. Carbonetto & M. Stephens, 2012, <DOI:10.1214/12-BA703>). This software has been applied to large data sets with over a million variables and thousands of samples.  
+Authors@R: c(person("Peter","Carbonetto",role=c("aut","cre"),
+                    email="peter.carbonetto@gmail.com"),
+             person("Matthew","Stephens",role="aut"),
+             person("David","Gerard",role="aut"))
+Description: Fast algorithms for fitting Bayesian variable selection
+    models and computing Bayes factors, in which the outcome (or
+    response variable) is modeled using a linear regression or a
+    logistic regression. The algorithms are based on the variational
+    approximations described in "Scalable variational inference for
+    Bayesian variable selection in regression, and its accuracy in
+    genetic association studies" (P. Carbonetto & M. Stephens, 2012,
+    <DOI:10.1214/12-BA703>). This software has been applied to large
+    data sets with over a million variables and thousands of samples.
 Depends: R (>= 3.1.0)
-Imports: methods, stats, graphics, lattice, latticeExtra
-Suggests: glmnet, qtl,
+Imports:
+    methods,
+    stats,
+    graphics,
+    lattice,
+    latticeExtra,
+    Rcpp
+Suggests:
+    glmnet,
+    qtl,
+    knitr,
     testthat
-License: GPL (>= 3) 
-NeedsCompilation: yes 
+License: GPL (>= 3)
+NeedsCompilation: yes
+LazyData: true
 URL: http://github.com/pcarbo/varbvs
+BugReports: http://github.com/pcarbo/varbvs/issues
+LinkingTo: Rcpp
+VignetteBuilder: knitr

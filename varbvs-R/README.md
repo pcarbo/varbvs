@@ -1,10 +1,10 @@
-#Large-scale Bayesian variable selection for R
+# Large-scale Bayesian variable selection for R
 
-[![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](http://cran.r-project.org/package=varbvs)
+[![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](https://cran.r-project.org/package=varbvs)
 [![Build Status](https://travis-ci.org/pcarbo/varbvs.svg?branch=master)](https://travis-ci.org/pcarbo/varbvs)
 [![codecov](https://codecov.io/gh/pcarbo/varbvs/branch/master/graph/badge.svg)](https://codecov.io/gh/pcarbo/varbvs)
 
-###Overview
+### Overview
 
 We introduce *varbvs*, an R package for analysis of large-scale data
 sets using Bayesian variable selection methods. To facilitate
@@ -21,7 +21,7 @@ The R package been tested by
 and the tests' code coverage has been assessed by
 [Codecov](https://codecov.io/gh/pcarbo/varbvs).
 
-###Citing varbvs
+### Citing varbvs
 
 If you find that this software is useful for your research project,
 please cite our paper:
@@ -31,7 +31,7 @@ inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. *Bayesian Analysis* **7**,
 73-108.
 
-###License
+### License
 
 Copyright (c) 2012-2016, Peter Carbonetto.
 
@@ -45,19 +45,24 @@ warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](../LICENSE) for
 the full text of the license.
 
-###Quick start for R
+### Installing the package
 
 To install the official release of the *varbvs* package available from
-CRAN ([link](http://www.r-pkg.org/pkg/varbvs)), simply run
-<code>install.packages("varbvs")</code> in R.
+CRAN ([link](http://www.r-pkg.org/pkg/varbvs)), in R simply run:
+
+```R
+install.packages("varbvs")
+```
 
 Alternatively, you can to install the most up-to-date development
 version. The easiest way to accomplish this is using the
 [devtools](http://www.r-pkg.org/pkg/devtools) package:
 
-    install.packages("devtools")
-    library(devtools)
-    install_github("pcarbo/varbvs",subdir = "varbvs-R")
+```R
+install.packages("devtools")
+library(devtools)
+install_github("pcarbo/varbvs",subdir = "varbvs-R")
+```
 
 Without devtools, it is a little more complicated, but not
 hard. Begin by downloading the github repository for this project. The
@@ -69,20 +74,50 @@ MATLAB code, and the other containing the files for the R package.
 
 This subdirectory has all the necessary files to build and install a
 package for R. To install this package, follow the
-[standard instructions](http://cran.r-project.org/doc/manuals/R-admin.html)
+[standard instructions](https://cran.r-project.org/doc/manuals/R-admin.html)
 for installing an R package from source. On a Unix or Unix-like
 platform (e.g., Mac OS X), the following steps should install the R
 package:
 
-    mv varbvs-R varbvs
-	R CMD build varbvs
-	R CMD INSTALL varbvs_2.0.0.tar.gz
+```sh
+mv varbvs-R varbvs
+R CMD build varbvs
+R CMD INSTALL varbvs_2.0.9.tar.gz
+```
 
-Once you have installed the package, load the package in R by typing
-<code>library(varbvs)</code>. To get an overview of the package, type
-<code>help(package="varbvs")</code>. The most important function you
-will use is function "varbvs". Type <code>help(varbvs)</code> to get
-more information about this.
+### Using the package
+
+Once you have installed the package, load the package in R by entering
+
+```R
+library(varbvs)
+```
+
+To get an overview of the package, enter
+
+```R
+help(package = "varbvs")
+```
+
+The key function in this package is function <code>varbvs</code>.
+Here is an example in which we fit the variable selection model to the
+Leukemia data:
+
+```R
+library(varbvs)
+data(leukemia)
+fit <- varbvs(leukemia$x,NULL,leukemia$y,family = "binomial",
+              logodds = seq(-3.5,-1,0.1),sa = 1)
+print(summary(fit))
+```
+
+To get more information about this function, type
+
+```R
+help(varbvs)
+```
+
+### Working examples
 
 We have provided several R scripts in the [vignettes](vignettes) and
 [tests](tests) folders to illustrate application of *varbvs* to small
@@ -94,38 +129,48 @@ continuously valued outcome) in a small, simulated data set. Script
 [demo.cc.R](tests/testthat/demo.cc.R) demonstrates mapping of a binary
 valued outcome in a simulated data set.
 
-+ Script [demo.leukemia.R](vignettes/demo.leukemia.R) demonstrates
++ The [leukemia.Rmd](vignettes/leukemia.Rmd) vignette demonstrates
 application of both *glmnet* and *varbvs* to the Leukemia data. The
 main aim of this script is to illustrate some of the different
 properties of *varbvs* (Bayesian variable selection) and *glmnet*
-(penalized sparse regression). This script also reproduces the results
-and graphs presented in the first example of Carbonetto *et al*
-(2016).
+(penalized sparse regression).
 
-+ Like demo.qtl.R, script [demo.cfw.R](vignettes/demo.cfw.R) also
++ Like `demo.qtl.R`, the [cfw.Rmd](vignettes/cfw.Rmd) vignette
 demonstrates *varbvs* for mapping genetic factors contributing to a
 quantitative trait, but here it is applied to an actual data set
-generated from an outbred mouse study. Running this script with
-<code>trait = "testis"</code> reproduces the results and figures given
-in the second example of Carbonetto *et al* (2016).
+generated from an outbred mouse study.
 
-+ Finally, scripts [demo.cd.R](vignettes/demo.cd.R) and
-[demo.cytokine.R](vignettes/demo.cytokine.R) show how the *varbvs*
-package can be applied to a very large data set to map genetic loci
-and test biological hypotheses about genetic factors contributing to
-human disease risk. Although we cannot share the data needed to run
-these scripts due to data privacy restrictions, we have included these
-scripts because it is helpful to be able to follow the steps given in
-these R scripts. These scripts reproduce some of the results and
-figures presented in Carbonetto *et al* (2016).
++ Finally, the [cd.Rmd](vignettes/cd.Rmd) and [cytokine.Rmd](cytokine.Rmd)
+vignettesq illustrate how the *varbvs* package can be applied to a
+very large data set to map genetic loci and test biological hypotheses
+about genetic factors contributing to human disease risk. Although we
+cannot share the data needed to run these scripts due to data privacy
+restrictions, we have included these scripts because it is helpful to
+be able to follow the steps given in these R scripts.
 
-###Credits
+## How to build static HTML documentation
+
+These are the R commands to build the website (make sure you are
+connected to Internet while running these commands, and the working
+directory is set to `varbvs-R`):
+
+```R
+library(pkgdown)
+build_site(mathjax = FALSE)
+```
+
+Before building the website, move the `RcppExports.R` file temporarily
+outside the `R` directory, otherwise `build_site` will report an
+error. Once the pkgdown site is successfully built, move the
+`RcppExports.R` file back to its original location, overwriting the
+newly generated file.
+
+### Credits
 
 The *varbvs* software package was developed by:<br>
-[Peter Carbonetto](http://www.cs.ubc.ca/spider/pcarbo)<br>
+[Peter Carbonetto](http://pcarbo.github.io)<br>
 Dept. of Human Genetics, University of Chicago<br>
-and AncestryDNA, San Francisco, California<br>
-2012-2016
+2012-2017
 
 Xiang Zhou, Xiang Zhu and Matthew Stephens have also contributed to
 the development of this software.

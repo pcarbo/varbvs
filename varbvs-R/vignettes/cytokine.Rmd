@@ -1,0 +1,96 @@
+---
+title: "Assessing support for gene sets in disease using varbvs"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Cytokine signaling genes demo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+In this vignette, we fit two variable selection models: the first ("null") 
+model has a uniform prior for all variables (the 442,001 genetic markers);
+the second model has higher prior probability for genetic markers near
+cytokine signaling genes. This analysis is intended to assess support for
+enrichment of Crohn's disease risk factors near cytokine signaling genes; 
+a large Bayes factor means greater support for this enrichment hypothesis. 
+The data in this analysis consist of 442,001 SNPs genotyped for 1,748 cases
+and 2,938 controls. Note that file `cd.RData` cannot be made publicly 
+available due to data sharing restrictions, so this script is for viewing 
+only.
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(eval = FALSE,collapse = TRUE,comment = "#")
+```
+
+Begin by loading a couple packages into the R environment.
+
+```{r, eval = TRUE, message = FALSE}
+library(lattice)
+library(varbvs)
+```
+
+Set the random number generator seed.
+
+```{r, eval = TRUE}
+set.seed(1)
+```
+
+## Load the genotypes, phenotypes and pathway annotation
+
+```{r}
+load("cd.RData")
+data(cytokine)
+```
+
+## Fit variational approximation to posterior
+
+Here we compute the variational approximation given the assumption that all
+variables (genetic markers) are, *a priori*, equally likely to be included
+in the model.
+
+```{r}
+fit.null <- varbvs(X,NULL,y,"binomial",logodds = -4)
+```
+
+Next, compute the variational approximation given the assumption that
+genetic markers near cytokine signaling genes are more likely to be
+included in the model.
+
+```{r}
+logodds <- matrix(-4,442001,13)
+logodds[cytokine == 1,] <- matrix(-4 + seq(0,3,0.25),6711,13,byrow = TRUE)
+fit.cytokine <- varbvs(X,NULL,y,"binomial",logodds = logodds,
+                       alpha = fit.null$alpha,mu = fit.null$mu,
+                       eta = fit.null$eta,optimize.eta = TRUE)
+```
+
+Compute the Bayes factor.
+
+```{r}
+BF <- bayesfactor(fit.null$logw,fit.cytokine$logw)
+```
+
+## Save the results to a file
+
+```{r}
+save(list = c("fit.null","fit.cytokine","map","cytokine","BF"),
+     file = "varbvs.demo.cytokine.RData")
+```
+
+## Summarize the results of model fitting
+
+Show two "genome-wide scans" from the multi-marker PIPs, with and
+without conditioning on enrichment of cytokine signaling genes.
+
+```{r, fig.width = 9,fig.height = 4,fig.align = "center"}
+w <- normalizelogweights(fit.cytokine$logw)
+i <- which(fit.null$alpha > 0.5 | fit.cytokine$alpha %*% w > 0.5)
+var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
+print(plot(fit.null,groups = map$chr,vars = i,var.labels = NULL,
+           gap = 7500,ylab = "posterior prob."),
+      split = c(1,1,1,2),more = TRUE)
+print(plot(fit.cytokine,groups = map$chr,vars = i,var.labels = var.labels,
+           gap = 7500,ylab = "posterior prob."),
+      split = c(1,2,1,2),more = FALSE)
+```

@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------
 // This function is used to implement the R function varbvsnormupdate.
 // It is called in R using the .Call interface.
-SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp, 
-			    SEXP xyp, SEXP dp, SEXP alphap, SEXP mup, 
+SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp,
+			    SEXP xyp, SEXP dp, SEXP alphap, SEXP mup,
 			    SEXP Xrp, SEXP ip) {
 
   // (1) GET INPUTS AND OUTPUTS
@@ -47,8 +47,8 @@ SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp,
 // ---------------------------------------------------------------------
 // This function is used to implement the R function varbvsbinupdate.
 // It is called in R using the .Call interface.
-SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp, 
-			   SEXP xdxp, SEXP xyp, SEXP xdp, SEXP alphap, 
+SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
+			   SEXP xdxp, SEXP xyp, SEXP xdp, SEXP alphap,
 			   SEXP mup, SEXP Xrp, SEXP ip) {
 
   // (1) GET INPUTS AND OUTPUTS
@@ -88,8 +88,8 @@ SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
 // ---------------------------------------------------------------------
 // This function is used to implement the R function varbvsbinzupdate.
 // It is called in R using the .Call interface.
-SEXP varbvsbinzupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp, 
-			    SEXP xdxp, SEXP xyp, SEXP dzrp, SEXP alphap, 
+SEXP varbvsbinzupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
+			    SEXP xdxp, SEXP xyp, SEXP dzrp, SEXP alphap,
 			    SEXP mup, SEXP Xrp, SEXP ip) {
 
   // (1) GET INPUTS AND OUTPUTS

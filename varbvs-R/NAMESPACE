@@ -1,4 +1,4 @@
-useDynLib(varbvs)
+useDynLib(varbvs,.registration = TRUE,.fixes = "C_")
 
 importFrom(methods,is)
 importFrom(stats,qnorm)
@@ -11,13 +11,13 @@ importFrom(lattice,xyplot)
 importFrom(lattice,panel.xyplot)
 importFrom(lattice,panel.abline)
 importFrom(latticeExtra,as.layer)
+importFrom(Rcpp,sourceCpp)
 
 export(logit,logpexp,logsigmoid,sigmoid,normalizelogweights,
        diagsq,diagsqt,cred,updatestats_varbvsbin,updatestats_varbvsbinz,
        update_eta,update_etaz,varbvs,varbvsnorm,varbvsbin,varbvsbinz,
        varbvsnormupdate,varbvsbinupdate,varbvsbinzupdate,varbvscoefcred,
-       varbvsindep,varbvspve,plot.varbvs,bayesfactor,rand,randn,var1,
-       var1.cols)
+       varbvsindep,varbvspve,varbvs,bayesfactor,rand,randn,var1,var1.cols)
 
 S3method(summary,varbvs)
 S3method(predict,varbvs)

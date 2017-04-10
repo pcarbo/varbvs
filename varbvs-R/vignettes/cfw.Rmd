@@ -1,0 +1,121 @@
+---
+title: "Mapping QTLs in outbred mice using varbvs"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{QTL mapping demo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+In this vignette, we use **varbvs** to map QTLs for phenotypes
+measured in CFW (Carworth Farms White) outbred mice. Phenotypes
+include muscle weights---EDL and soleus muscle---and testis weight
+measured at sacrifice. Running this script with `trait = "testis"`
+reproduces the results and figures shown in the second example of a
+forthcoming paper (Carbonetto *et al*, 2016).
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(eval = FALSE,collapse = TRUE,comment = "#")
+```
+
+## Vignette parameters
+
+Begin by loading packages into the R environment.
+
+```{r, eval = TRUE, message = FALSE}
+library(lattice)
+library(varbvs)
+```
+
+These script parameters specify the candidate prior log-odds
+settings, the prior variance of the coefficients, and which trait to
+analyze. Set trait to "edl", "soleus" or "testis".
+
+```{r, eval = TRUE}
+trait   <- "testis"
+logodds <- seq(-5,-3,0.25)
+sa      <- 0.05
+```
+
+Set the random number generator seed.
+
+```{r, eval = TRUE}
+set.seed(1)
+```
+
+## Load the genotype and phenotype data
+
+```{r}
+load("cfw.RData")
+if (trait == "edl" | trait == "soleus") {
+  covariates <- c("batch16","tibia")
+} else if (trait == "testis") {
+  covariates <- "sacwt"
+}
+```
+
+Only analyze samples for which the phenotype and all the covariates
+are observed.
+
+```{r}
+rows <- which(apply(pheno[,c(trait,covariates)],1,
+                    function (x) sum(is.na(x)) == 0))
+pheno <- pheno[rows,]
+geno  <- geno[rows,]
+```
+
+## Fit variational approximation to posterior
+
+```{r}
+runtime <- system.time(fit <-
+  varbvs(geno,as.matrix(pheno[,covariates]),pheno[,trait],
+         sa = sa,logodds = logodds,verbose = FALSE))
+cat(sprintf("Model fitting took %0.2f minutes.\n",runtime["elapsed"]/60))
+```
+
+## Summarize the results of model fitting
+
+```{r}
+print(summary(fit))
+```
+
+Show three genome-wide scans: (1) one using the posterior inclusion
+probabilities (PIPs) computed in the BVS analysis of all SNPs; (2)
+one using the p-values computed using GEMMA; and (3) one using the
+PIPs computed from the BVSR model in GEMMA.
+
+```{r, fig.width = 7,fig.height = 5.5, fig.align = "center"}
+trellis.par.set(axis.text     = list(cex = 0.7),
+                par.ylab.text = list(cex = 0.7),
+                par.main.text = list(cex = 0.7,font = 1))
+w <- c(normalizelogweights(fit$logw))
+j <- which(fit$alpha %*% w > 0.5)
+r <- gwscan.gemma[[trait]]
+r[is.na(r)] <- 0
+chromosomes   <- levels(gwscan.bvsr$chr)
+xticks        <- rep(0,length(chromosomes))
+names(xticks) <- chromosomes
+pos           <- 0
+for (i in chromosomes) {
+  n         <- sum(gwscan.bvsr$chr == i)
+  xticks[i] <- pos + n/2
+  pos       <- pos + n + 25
+}
+print(plot(fit,groups = map$chr,vars = j,gap = 1500,cex = 0.6,
+           ylab = "probability",main = "a. multi-marker (varbvs)",
+           scales = list(y = list(limits = c(-0.1,1.2),at = c(0,0.5,1))),
+           vars.xyplot.args = list(cex = 0.6)),
+      split = c(1,1,1,3),more = TRUE)
+print(plot(fit,groups = map$chr,score = r,vars = j,cex = 0.6,gap = 1500,
+           draw.threshold = 5.71,ylab = "-log10 p-value",
+           main = "b. single-marker (GEMMA -lm 2)",
+           scales = list(y = list(limits = c(-1,20),at = seq(0,20,5))),
+           vars.xyplot.args = list(cex = 0.6)),
+     split = c(1,2,1,3),more = TRUE)
+print(xyplot(p1 ~ plot.x,gwscan.bvsr,pch = 20,col = "midnightblue",
+             scales = list(x = list(at = xticks,labels = chromosomes),
+                           y = list(limits = c(-0.1,1.2),at = c(0,0.5,1))),
+             xlab = "",ylab = "probability",main = "c. multi-marker (BVSR)"),
+      split = c(1,3,1,3),more = FALSE)
+```

@@ -47,7 +47,7 @@
 %          options.maxiter = 1e4 (maximum number of inner loop iterations)
 %          options.verbose = true (print progress of algorithm to console)
 %          options.sa = 1 (prior variance parameter settings)
-%          options.logodds = linspace(-log10(p),-0.3,20) (log-odds settings)
+%          options.logodds = linspace(-log10(p),-1,20) (log-odds settings)
 %          options.update_sa (fit model parameter sa to data)
 %          options.sa0 = 0 (scale parameter for prior on sa)
 %          options.n0 = 0 (degrees of freedom for prior on sa)
@@ -451,11 +451,11 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % each variable. A default setting is only available if the number of
   % other hyperparameter settings is 1, in which case we select 20 candidate
   % settings for the prior log-odds, evenly spaced between log10(1/p) and
-  % log10(0.5).
+  % -1.
   if isfield(options,'logodds')
     logodds = double(options.logodds);
   elseif isscalar(sigma) & isscalar(sa)
-    logodds = linspace(-log10(p),-0.3,20);
+    logodds = linspace(-log10(p),-1,20);
   else
     error('options.logodds must be specified');
   end
@@ -640,7 +640,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if verbose
     fprintf('Welcome to           ');
     fprintf('--       *                              *               \n');
-    fprintf('VARBVS version 2.0.0 ');
+    fprintf('VARBVS version 2.0.3 ');
     fprintf('--       |              |               |               \n');
     fprintf('large-scale Bayesian ');
     fprintf('--       ||           | |    |          || |     |   |  \n');

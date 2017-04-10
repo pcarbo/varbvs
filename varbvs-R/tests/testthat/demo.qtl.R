@@ -9,7 +9,7 @@ library(varbvs)
 n  <- 800   # Number of samples.
 p  <- 2000  # Number of variables (genetic markers).
 na <- 20    # Number of quantitative trait loci (QTLs).
-se <- 4     # Variance of residual
+se <- 4     # Variance of residual.
 r  <- 0.5   # Proportion of variance in trait explained by QTLs.
 
 # Names of covariates.
