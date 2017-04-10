@@ -290,7 +290,7 @@ for (i in 3:n) {
 }
 print(r,split = c(2,1,2,2),more = TRUE)
 
-# Plot density of "prior log-odds"" hyperparameter.
+# Plot density of "prior log-odds" hyperparameter.
 names(w) <- logodds
 print(xyplot(y ~ x,data.frame(x = logodds,y = w),type = "l",col = "blue",
              xlab = "prior log-odds",ylab = "posterior prob.",
