@@ -164,10 +164,35 @@
     "binomial")}. The fitted value of eta is returned as an n x ns
     matrix.
 
-    Note that special care is required for interpreting the results of
-    the variational approximation with the logistic regression model. In
-    particular, interpretation of the individual estimates of the
-    regression coefficients (e.g., the posterior mean estimates
+    The variational estimates should be interpreted carefully,
+    especially when variables are strongly correlated. For example,
+    consider the simple scenario in which 2 candidate variables are
+    closely correlated, and at least one of them explains the outcome
+    with probability close to 1. Under the correct posterior
+    distribution, we would expect that each variable is included with
+    probability ~0.5. However, the variational approximation, due to the
+    conditional independence assumption, will typically get this wrong,
+    and concentrate most of the posterior weight on one variable (the
+    actual variable that is chosen will depend on the starting
+    conditions of the optimization). Although the individual PIPs are
+    incorrect, a statistic summarizing the variable selection for both
+    correlated variables (e.g., the total number of variables included
+    in the model) should be reasonably accurate.
+
+    More generally, if variables can be reasonably grouped together
+    based on their correlations, we recommend interpreting the variable
+    selection results at a group level. For example, in genome-wide
+    association studies (see the vignettes) ,a SNP with a high PIP
+    indicates that this SNP is probably associated with the trait, and
+    one or more nearby SNPs within a chromosomal region, or ``locus,''
+    may be associated as well. Therefore, we interpreted the GWAS
+    variable selection results at the level of loci, rather than at the
+    level of individual SNPs. 
+    
+    Also note that special care is required for interpreting the results
+    of the variational approximation with the logistic regression
+    model. In particular, interpretation of the individual estimates of
+    the regression coefficients (e.g., the posterior mean estimates
     \code{fit$mu}) is not straightforward due to the additional
     approximation introduced on the individual nonlinear factors in the
     likelihood. As a general guideline, only the relative magnitudes of
