@@ -22,10 +22,14 @@
            and cannot have any missing values (NA).}
 
   \item{Z}{n x m covariate data matrix, where m is the number of
-           covariates. Do not supply an intercept as a covariate
-           (i.e., a column of ones), because an intercept is
-           automatically included in the regression model. For no
-	   covariates, set \code{Z = NULL}.}
+           covariates. Do not supply an intercept as a covariate (i.e.,
+           a column of ones), because an intercept is automatically
+           included in the regression model. For no covariates, set
+           \code{Z = NULL}. The covariates are assigned an improper,
+           uniform prior. Although improper priors are generally not
+           advisable because they can result in improper posteriors and
+           Bayes factors, this choice allows us to easily integrate out
+           these covariates.}
 
   \item{y}{Vector of length n containing observations of binary
           (\code{family = "binomial"}) or continuous (\code{family =
@@ -130,7 +134,7 @@
     \eqn{sigmoid(u0 + Z*u + X*b).} See \code{help(sigmoid)} for a
     description of the sigmoid function. Note that the regression always
     includes an intercept term (u0).
-}
+  }
 \section{Co-ordinate ascent optimization procedure}{
     For both regression models, the fitting procedure consists of an inner
     loop and an outer loop. The outer loop iterates over each of the

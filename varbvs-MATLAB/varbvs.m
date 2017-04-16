@@ -22,10 +22,13 @@
 %          and p is the number of variables. X cannot be sparse.
 %
 % Z        n x m covariate data matrix, where m is the number of
-%          covariates. Do not supply an intercept as a covariate
-%          (i.e., a column of ones), because an intercept is
-%          automatically included in the regression model. For no
-%          covariates, set Z to the empty matrix [].
+%          covariates. Do not supply an intercept as a covariate (i.e., a
+%          column of ones), because an intercept is automatically included
+%          in the regression model. For no covariates, set Z to the empty
+%          matrix []. The covariates are assigned an improper, uniform
+%          prior. Although improper priors are generally not advisable
+%          because they can result in improper posteriors and Bayes factors,
+%          this choice allows us to easily integrate out these covariates.
 %
 % y        Vector of length n containing observations of binary
 %          (family = 'binomial') or continuous (family = 'gaussian')
