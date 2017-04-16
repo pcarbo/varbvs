@@ -46,12 +46,15 @@
   \item{sa}{Hyperparameter sa is the prior variance of regression
     coefficients for variables that are included in the model. This
     prior variance is always scaled by sigma (for logistic regression,
-    we take sigma = 1). This input specifies the candidate settings for
-    sa, of the same length as inputs sigma and logodds (or have length
-    equal to the number of columns of logodds). If missing, prior
-    variance is automatically fitted to data by compute approximate
-    maximum (ML) estimates, or maximum a posteriori estimates when
-    \code{n0 > 0} and \code{sa0 > 0}.}
+    we take sigma = 1). Scaling the variance of the coefficients in this
+    way is necessary to ensure that this prior is invariant to
+    measurement scale (e.g., switching from grams to kilograms). This
+    input specifies the candidate settings for sa, of the same length as
+    inputs sigma and logodds (or have length equal to the number of
+    columns of logodds). If missing, prior variance is automatically
+    fitted to data by compute approximate maximum (ML) estimates, or
+    maximum a posteriori estimates when \code{n0 > 0} and \code{sa0 >
+    0}.}
 
   \item{logodds}{Hyperparameter logodds is the prior log-odds that a
     variable is included in the regression model; it is defined as
@@ -227,7 +230,6 @@
       and Computing}, 2001.)
 }
 \section{Prior on proportion of variance explained}{
-
   Specifying the prior variance of the regression coefficients (sa) can
   be difficult, which is why we have included the option of fitting this
   hyperparameter to the data (see input argument \code{update.sa}

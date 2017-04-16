@@ -117,13 +117,15 @@
 % HYPERPARAMETERS:
 %    Hyperparameter sa is the prior variance of regression coefficients for
 %    variables that are included in the model. This prior variance is always
-%    scaled by sigma (for logistic regression, we take sigma = 1).
-%    Hyperparameter logodds is the prior log-odds that a variable is
-%    included in the regression model; it is defined as logodds =
-%    log10(q/(1-q)), where q is the prior probability that a variable is
-%    included in the regression model. Note that we use the base-10
-%    logarithm instead of the natural logarithm because it is usually
-%    more natural to specify prior log-odds settings in this way.
+%    scaled by sigma (for logistic regression, we take sigma = 1).  Scaling
+%    the variance of the coefficients in this way is necessary to ensure
+%    that this prior is invariant to measurement scale (e.g., switching from
+%    grams to kilograms). Hyperparameter logodds is the prior log-odds that
+%    a variable is included in the regression model; it is defined as
+%    logodds = log10(q/(1-q)), where q is the prior probability that a
+%    variable is included in the regression model. Note that we use the
+%    base-10 logarithm instead of the natural logarithm because it is
+%    usually more natural to specify prior log-odds settings in this way.
 %
 %    The prior log-odds may also be specified separately for each variable,
 %    which is useful is there is prior information about which variables are
