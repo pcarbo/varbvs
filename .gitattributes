@@ -1,5 +1,4 @@
 *.R linguist-language=R
 *.m linguist-language=MATLAB
-data linguist-vendored=false
-varbvs-R/docs/* linguist-vendored=false
-unused-files linguist-vendored=false
+data/* linguist-documentation
+varbvs-R/docs/* linguist-documentation
