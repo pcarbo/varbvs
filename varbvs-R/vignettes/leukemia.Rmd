@@ -250,50 +250,34 @@ print(xyplot(y ~ x,data.frame(x = logodds,y = err),type = "l",
       as.layer(xyplot(y ~ x,data.frame(x = logodds,y = err),
                       col = "blue",pch = 20,cex = 0.65)),
       split = c(1,1,2,2),more = TRUE)
-```
 
-```{r}
 # Plot regression coefficients.
 n     <- 4
 m     <- length(logodds)
 vars  <- order(pip,decreasing = TRUE)[1:n]
 mu    <- t(fit.varbvs$alpha[vars,] * fit.varbvs$mu[vars,])
-print(xyplot(y ~ x,data.frame(x = logodds,y = (mu[,1])),
+ly    <- mu[m,]
+ly[2] <- 0.075
+r <- xyplot(y ~ x,data.frame(x = logodds,y = (mu[,1])),
              type = "l",col = "blue",xlab = "prior log-odds",
              ylab = "regression coefficient",
              scales = list(x = list(limits = c(-1.15,-3.6)),
-                           y = list(limits=c(-3,-2.5),at=seq(-3,-2.5,0.25))),
+                            y = list(limits=c(-3,0.2),at=seq(-3,0.2,0.5))),
              panel = function(x, y, ...) {
                panel.xyplot(x,y,...);
-               ltext(x = -1.5,y = mu[m,1],
-                     labels = vars[1],pos = 2,
-                     offset = 0.5,cex = 0.5)
-               }),
-      split = c(2,2,2,2),more = TRUE)
-
-r    <- xyplot(y ~ x,data.frame(x = logodds,y = (mu[,2])),
-               type = "l",col = "blue",xlab = "prior log-odds",
-               ylab = "regression coefficient",
-               scales = list(x = list(limits = c(-1.15,-3.6)),
-                             y = list(limits = c(-0.06,0.06),
-                                      at = c(-0.06,0,0.06))),
-               panel = function(x, y, ...) {
-                 panel.xyplot(x,y,...);
-                 ltext(x = -1.5,y = mu[m,],
-                       labels = vars,pos = 2,
-                       offset = 0.5,cex = 0.5)
-               })
-for (i in 3:n) {
+               ltext(x = -1.5,y = ly,labels = vars,pos = 2,offset = 0.5,
+                     cex = 0.5)
+             })
+for (i in 2:n)
   r <- r + as.layer(xyplot(y ~ x,
                            data.frame(x = logodds,y = mu[,i]),
                            type = "l",col = "blue"))
-}
-print(r,split = c(2,1,2,2),more = TRUE)
+print(r,split = c(2,1,2,1),more = TRUE)
 
 # Plot density of "prior log-odds" hyperparameter.
 names(w) <- logodds
 print(xyplot(y ~ x,data.frame(x = logodds,y = w),type = "l",col = "blue",
-             xlab = "prior log-odds",ylab = "posterior prob.",
+             xlab = "prior log-odds",ylab = "postemrior prob.",
              scales = list(x = list(limits = c(-1.4,-3.6)))) +
       as.layer(xyplot(y ~ x,data.frame(x = logodds,y = w),
                       col = "blue",pch = 20,cex = 0.65)),
