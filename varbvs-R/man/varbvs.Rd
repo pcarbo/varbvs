@@ -22,10 +22,14 @@
            and cannot have any missing values (NA).}
 
   \item{Z}{n x m covariate data matrix, where m is the number of
-           covariates. Do not supply an intercept as a covariate
-           (i.e., a column of ones), because an intercept is
-           automatically included in the regression model. For no
-	   covariates, set \code{Z = NULL}.}
+           covariates. Do not supply an intercept as a covariate (i.e.,
+           a column of ones), because an intercept is automatically
+           included in the regression model. For no covariates, set
+           \code{Z = NULL}. The covariates are assigned an improper,
+           uniform prior. Although improper priors are generally not
+           advisable because they can result in improper posteriors and
+           Bayes factors, this choice allows us to easily integrate out
+           these covariates.}
 
   \item{y}{Vector of length n containing observations of binary
           (\code{family = "binomial"}) or continuous (\code{family =
@@ -46,12 +50,15 @@
   \item{sa}{Hyperparameter sa is the prior variance of regression
     coefficients for variables that are included in the model. This
     prior variance is always scaled by sigma (for logistic regression,
-    we take sigma = 1). This input specifies the candidate settings for
-    sa, of the same length as inputs sigma and logodds (or have length
-    equal to the number of columns of logodds). If missing, prior
-    variance is automatically fitted to data by compute approximate
-    maximum (ML) estimates, or maximum a posteriori estimates when
-    \code{n0 > 0} and \code{sa0 > 0}.}
+    we take sigma = 1). Scaling the variance of the coefficients in this
+    way is necessary to ensure that this prior is invariant to
+    measurement scale (e.g., switching from grams to kilograms). This
+    input specifies the candidate settings for sa, of the same length as
+    inputs sigma and logodds (or have length equal to the number of
+    columns of logodds). If missing, prior variance is automatically
+    fitted to data by compute approximate maximum (ML) estimates, or
+    maximum a posteriori estimates when \code{n0 > 0} and \code{sa0 >
+    0}.}
 
   \item{logodds}{Hyperparameter logodds is the prior log-odds that a
     variable is included in the regression model; it is defined as
@@ -127,7 +134,7 @@
     \eqn{sigmoid(u0 + Z*u + X*b).} See \code{help(sigmoid)} for a
     description of the sigmoid function. Note that the regression always
     includes an intercept term (u0).
-}
+  }
 \section{Co-ordinate ascent optimization procedure}{
     For both regression models, the fitting procedure consists of an inner
     loop and an outer loop. The outer loop iterates over each of the
@@ -227,7 +234,6 @@
       and Computing}, 2001.)
 }
 \section{Prior on proportion of variance explained}{
-
   Specifying the prior variance of the regression coefficients (sa) can
   be difficult, which is why we have included the option of fitting this
   hyperparameter to the data (see input argument \code{update.sa}

@@ -1,3 +1,5 @@
 *.R linguist-language=R
 *.m linguist-language=MATLAB
-varbvs-MATLAB/* linguist-vendored
+data/* linguist-documentation
+varbvs-MATLAB/* linguist-documentation
+varbvs-R/docs/* linguist-documentation

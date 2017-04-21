@@ -22,10 +22,13 @@
 %          and p is the number of variables. X cannot be sparse.
 %
 % Z        n x m covariate data matrix, where m is the number of
-%          covariates. Do not supply an intercept as a covariate
-%          (i.e., a column of ones), because an intercept is
-%          automatically included in the regression model. For no
-%          covariates, set Z to the empty matrix [].
+%          covariates. Do not supply an intercept as a covariate (i.e., a
+%          column of ones), because an intercept is automatically included
+%          in the regression model. For no covariates, set Z to the empty
+%          matrix []. The covariates are assigned an improper, uniform
+%          prior. Although improper priors are generally not advisable
+%          because they can result in improper posteriors and Bayes factors,
+%          this choice allows us to easily integrate out these covariates.
 %
 % y        Vector of length n containing observations of binary
 %          (family = 'binomial') or continuous (family = 'gaussian')
@@ -117,13 +120,15 @@
 % HYPERPARAMETERS:
 %    Hyperparameter sa is the prior variance of regression coefficients for
 %    variables that are included in the model. This prior variance is always
-%    scaled by sigma (for logistic regression, we take sigma = 1).
-%    Hyperparameter logodds is the prior log-odds that a variable is
-%    included in the regression model; it is defined as logodds =
-%    log10(q/(1-q)), where q is the prior probability that a variable is
-%    included in the regression model. Note that we use the base-10
-%    logarithm instead of the natural logarithm because it is usually
-%    more natural to specify prior log-odds settings in this way.
+%    scaled by sigma (for logistic regression, we take sigma = 1).  Scaling
+%    the variance of the coefficients in this way is necessary to ensure
+%    that this prior is invariant to measurement scale (e.g., switching from
+%    grams to kilograms). Hyperparameter logodds is the prior log-odds that
+%    a variable is included in the regression model; it is defined as
+%    logodds = log10(q/(1-q)), where q is the prior probability that a
+%    variable is included in the regression model. Note that we use the
+%    base-10 logarithm instead of the natural logarithm because it is
+%    usually more natural to specify prior log-odds settings in this way.
 %
 %    The prior log-odds may also be specified separately for each variable,
 %    which is useful is there is prior information about which variables are
