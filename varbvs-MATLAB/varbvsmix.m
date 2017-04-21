@@ -16,6 +16,8 @@
 %   Point out the connection to "mvash" (special case in which we have
 %   individual-level data, and a linear regression model).
 %
+%   First mixture component is always the "spike".
+%
 % TO DO
 % -----
 % 
@@ -50,7 +52,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     Z = double(full(Z));
   end
 
-  % Add intercept.
+  % Add the intercept.
   Z    = [ones(n,1) Z];
   ncov = size(Z,2) - 1;
 
@@ -60,8 +62,10 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     error('Inputs X and y do not match.');
   end
 
-  % Input sa must be a double-precision row vector.
-  sa = double(sa(:))'; 
+  % Input sa must be a double-precision row vector. The variance of the first
+  % mixture component must be exactly zero, corresponding to the "spike".
+  sa    = double(sa(:))';
+  sa(1) = 0;
   
   % The labels must be a cell array with p elements, or an empty array.
   if nargin < 5
@@ -276,11 +280,11 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     % Compute the approximate maximum likelihood estimate of the residual
     % variable (sigma), if requested. Note that we must also recalculate the
     % variance of the regression coefficients when this parameter is
-    % updated.
+    % updated. 
     if update_sigma
       sigma = (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s) ...
                + sum(sum(alpha.*(s + mu.^2))./sa))/(n + p);
-      for i = 1:K
+      for i = 2:K
         s(:,i) = sigma*sa(i)./(sa(i)*d + 1);
       end
     end
