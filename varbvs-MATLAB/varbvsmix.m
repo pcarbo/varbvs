@@ -1,3 +1,34 @@
+%--------------------------------------------------------------------------
+% varbvsmix.m: Fit linear regression model with mixture-of-normals prior
+% using variational approximation.
+%--------------------------------------------------------------------------
+%
+% DESCRIPTION:
+%   Compute fully-factorized variational approximation for linear regression
+%   model with a mixture-of-normals prior on the regression coefficients.
+%   The first mixture component is the "spike"; that is, a normal density
+%   with zero mean and variance approaching zero (otherwise known as the
+%   delta-Dirac density). A co-ordinate ascent algorithm is used to find a
+%   fully-factorized approximating distribution that locally minimizes the
+%   Kullback-Leibler divergence between the approximating distribution and
+%   the exact posterior.
+%
+% USAGE:
+%    fit = varbvsmix(X, Z, y)
+%    fit = varbvsmix(X, Z, y, labels, family, options)
+%    (Use empty matrix [] to apply the default value)
+%  
+% INPUT ARGUMENTS:
+% X        n x p input matrix, where n is the number of samples,
+%          and p is the number of variables. X cannot be sparse.
+%
+% Z        n x m covariate data matrix, where m is the number of
+%          covariates. Do not supply an intercept as a covariate (i.e., a
+%          column of ones), because an intercept is automatically included
+%          in the regression model. For no covariates, set Z to the empty
+%          matrix []. The covariates are assigned an improper, uniform
+%          prior.
+%
 % NOTES
 % -----
 %
@@ -27,7 +58,7 @@
 %
 %   * Set first (or zeroth) mixture component to be the "spike".
 %
-function fit = varbvsmix (X, Z, y, sa, labels, options)
+function fit = varbvsmix (X, Z, y, labels, options)
 
   % Get the number of samples (n), variables (p) and mixture components (K).
   [n p] = size(X);
