@@ -51,7 +51,9 @@
 %          options.sigma = var(y) (initial estimate of residual variance)
 %          options.q = ones(1,K)/K (initial estimate of mixture weights)
 %          options.update_sigma (fit model parameter sigma to data)
-%          options.update_q (fit mixture weights to data)
+%          options.update_q = true (fit mixture weights to data)
+%          options.alpha (initial estimate of variational parameter alpha)
+%          options.mu (initial estimate of variational parameter mu)
 %
 % OUTPUT ARGUMENTS:
 % fit      A structure (type 'help struct').
@@ -201,7 +203,9 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   end
   
   % OPTIONS.UPDATE_SIGMA
-  % Determine whether to update the residual variance parameter.
+  % Determine whether to update the residual variance parameter. Note
+  % that the default seting is determined by whether options.sigma is
+  % provided.
   if isfield(options,'update_sigma')
     update_sigma = options.update_sigma;
   end
@@ -236,10 +240,10 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   if isfield(options,'mu')
     mu = double(options.mu);
     if size(mu,1) ~= p
-      error('options.mu must have one row for each variable (column of X)');
+      error('options.mu should have 1 row for each variable (column of X)');
     end
     if size(mu,2) == 1
-      error('options.mu must have one column for each mixture component');
+      error('options.mu should have have 1 column for each mixture component');
     end
   else
     mu = randn(p,K);
