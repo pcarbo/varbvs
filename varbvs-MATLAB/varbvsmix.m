@@ -278,7 +278,20 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
 
   % Provide a brief summary of the analysis.
   if verbose
-    % TO DO.
+    fprintf('Fitting variational approximation for linear regression model ');
+    fprintf('with\n');
+    fprintf('mixture-of-normals priors.\n');
+    fprintf('samples:      %-6d ',n);
+    fprintf('mixture component sd''s:    %0.2g..%0.2g\n',...
+            min(sqrt(sa(2:K))),max(sqrt(sa(2:K))));
+    fprintf('variables:    %-6d ',p); 
+    fprintf('fit mixture weights:       %s\n',tf2yn(update_q));
+    fprintf('covariates:   %-6d ',ncov);
+    fprintf('fit residual var. (sigma): %s\n',tf2yn(update_sigma));
+    fprintf('mixture size: %-6d ',K);
+    fprintf('convergence tolerance      %0.1e\n',tol);
+    fprintf('intercept:    yes    ');
+    fprintf('spike (delta-Dirac at 0):  yes\n');
   end
   
   % Compute a few useful quantities. Here, I calculate X'*y as (y'*X)' to
@@ -416,3 +429,12 @@ function I = computevarlb (Z, Xr, d, y, sigma, sa, q, alpha, mu, s)
           + alpha(:,i)'*log(s(:,i)/(sigma*sa(i)))/2 ...
           - alpha(:,i)'*(s(:,i) + mu(:,i).^2)/(sigma*sa(i))/2;
   end
+
+% ------------------------------------------------------------------
+function y = tf2yn (x)
+  if x
+    y = 'yes';
+  else
+    y = 'no';
+  end
+  
