@@ -29,6 +29,28 @@
 %          matrix []. The covariates are assigned an improper, uniform
 %          prior.
 %
+% y        Vector of length n containing observations of quantitative
+%          trait (i.e., a continuously-valued outcome).
+%
+% sa       Vector of length K specifying the variance of each mixture
+%          component, where K is the number of mixture components. The
+%          first component must be exactly zero. Note that all prior
+%          variances are scaled by the residual variance (sigma). 
+%
+% labels   Cell array with p entries containing variable labels. It is
+%          set to the empty matrix [] by default.
+%
+% OUTPUT ARGUMENTS:
+% fit      A structure (type 'help struct').
+%
+% LICENSE: GPL v3
+%
+% DATE: April 24, 2017
+%
+% EXAMPLES:
+%    See demo_mix.m.
+%
+
 % NOTES
 % -----
 %
@@ -44,21 +66,14 @@
 %     - mu
 %     - q_penalty
 %
-%   Point out the connection to "mvash" (special case in which we have
-%   individual-level data, and a linear regression model).
-%
-%   First mixture component is always the "spike".
-%
 % TO DO
 % -----
 % 
 %   * Provided detailed analysis summary with verbose = true.
 %
-%   * Add detailed comments describing function here.
-%
 %   * Set first (or zeroth) mixture component to be the "spike".
 %
-function fit = varbvsmix (X, Z, y, labels, options)
+function fit = varbvsmix (X, Z, y, sa, labels, options)
 
   % Get the number of samples (n), variables (p) and mixture components (K).
   [n p] = size(X);
@@ -93,10 +108,13 @@ function fit = varbvsmix (X, Z, y, labels, options)
     error('Inputs X and y do not match.');
   end
 
-  % Input sa must be a double-precision row vector. The variance of the first
-  % mixture component must be exactly zero, corresponding to the "spike".
-  sa    = double(sa(:))';
-  sa(1) = 0;
+  % Input sa must be a double-precision row vector. The variance of the
+  % first mixture component must be exactly zero, corresponding to the
+  % "spike". 
+  sa = double(sa(:))';
+  if (sa(1) ~= 0)
+    error('Variance of first mixture component must be 0.')
+  end
   
   % The labels must be a cell array with p elements, or an empty array.
   if nargin < 5
