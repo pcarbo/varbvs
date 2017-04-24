@@ -40,6 +40,19 @@
 % labels   Cell array with p entries containing variable labels. It is
 %          set to the empty matrix [] by default.
 %
+% options  A structure (type 'help struct') containing additional
+%          model parameters and optimization settings. More details about
+%          these options are given below. Fields, with their default
+%          settings given, include:
+%            
+%          options.tol = 1e-4 (convergence tolerance for inner loop)
+%          options.maxiter = 1e4 (maximum number of inner loop iterations)
+%          options.verbose = true (print progress of algorithm to console)
+%          options.sigma = var(y) (initial estimate of residual variance)
+%          options.q = ones(1,K)/K (initial estimate of mixture weights)
+%          options.update_sigma (fit model parameter sigma to data)
+%          options.update_q (fit mixture weights to data)
+%
 % OUTPUT ARGUMENTS:
 % fit      A structure (type 'help struct').
 %
@@ -55,16 +68,8 @@
 % -----
 %
 %   Options:
-%     - tol
-%     - maxiter
-%     - verbose
-%     - sigma
-%     - q
-%     - update_sigma
-%     - update_q
 %     - alpha
 %     - mu
-%     - q_penalty
 %
 % TO DO
 % -----
@@ -113,7 +118,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   % "spike". 
   sa = double(sa(:))';
   if (sa(1) ~= 0)
-    error('Variance of first mixture component must be 0.')
+    error('Variance of first mixture component should be 0.')
   end
   
   % The labels must be a cell array with p elements, or an empty array.
@@ -125,7 +130,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   else
     labels = labels(:);
     if (~iscell(labels) | length(labels) ~= p)
-      error('labels must be a cell array with numel(labels) = size(X,2)');
+      error('labels should be a cell array with numel(labels) = size(X,2)');
     end
   end
   
@@ -152,9 +157,6 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   else
     maxiter = 1e4;
   end
-  if ~isfinite(maxiter)
-    error('options.maxiter must be a finite number');
-  end
 
   % OPTIONS.VERBOSE
   % Determine whether to output progress to the console.
@@ -168,9 +170,14 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   % Get the initial estimate of the residual variance, if provided. By
   % default, the initial estimate is set to the sample variance of Y.
   if isfield(options,'sigma')
-    sigma = double(options.sigma);
+    sigma        = double(options.sigma);
+    update_sigma = false;
   else
-    sigma = var(y);
+    sigma        = var(y);
+    update_sigma = true;
+  end
+  if ~isscalar(sigma)
+    error('options.sigma should be a scalar.')
   end
 
   % OPTIONS.Q
@@ -181,21 +188,22 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   else
     q = ones(1,K)/K;
   end
-
-  % OPTIONS.Q_PENALTY
-  % Specify the penalty term for estimating the mixture weights.
-  if isfield(options,'q_penalty')
-    q = double(options.q_penalty(:))';
+  if length(q) ~= K
+    error('numel(options.q) should be the same as numel(sa).');
+  end
+  
+  % OPTIONS.PENALTY_Q
+  % Specify the penalty term for the mixture weights.
+  if isfield(options,'penalty_q')
+    penalty_q = double(options.penalty_q(:))';
   else
-    q_penalty = repmat(2,1,K);
+    penalty_q = ones(1,K);
   end
   
   % OPTIONS.UPDATE_SIGMA
   % Determine whether to update the residual variance parameter.
   if isfield(options,'update_sigma')
     update_sigma = options.update_sigma;
-  else
-    update_sigma = true;
   end
 
   % OPTIONS.UPDATE_Q
@@ -212,10 +220,10 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   if isfield(options,'alpha')
     alpha = double(options.alpha);
     if size(alpha,1) ~= p
-      error('options.alpha must have one row for each variable (column of X)');
+      error('options.alpha should have 1 row for each variable (column of X)');
     end
     if size(alpha,2) ~= K
-      error('options.alpha must have one column for each mixture component');
+      error('options.alpha should have 1 column for each mixture component');
     end
   else
     alpha = rand(p,K);
