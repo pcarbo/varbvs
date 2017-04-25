@@ -301,10 +301,11 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   Xr = double(X*sum(alpha.*mu,2));
   
   % For each variable and each mixture component, calculate s(i,k), the
-  % variance of the regression coefficient conditioned on being drawn
-  % from the kth mixture component.
+  % variance of the regression coefficient conditioned on being drawn from
+  % the kth mixture component. Note that first column of "s" is always zero
+  % since this corresponds to the "spike" mixture component.
   s = zeros(p,K);
-  for i = 1:K
+  for i = 2:K
     s(:,i) = sigma*sa(i)./(sa(i)*d + 1);
   end
   
@@ -312,8 +313,8 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   logw = zeros(1,maxiter);
   err  = zeros(1,maxiter);
   
-  % (4) MODEL FITTING - MAIN LOOP
-  % -----------------------------
+  % (4) FIT MODEL TO DATA
+  % ---------------------
   % Repeat until convergence criterion is met, or until the maximum
   % number of iterations is reached.
   if verbose
@@ -423,7 +424,8 @@ function I = computevarlb (Z, Xr, d, y, sigma, sa, q, alpha, mu, s)
   K = numel(sa);
   I = p/2 - n/2*log(2*pi*sigma) - logdet(Z'*Z)/2 ...
       - (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s))/(2*sigma);
-  for i = 1:K
+
+  for i = 2:K
     I = I + sum(alpha(:,i)*log(q(i) + eps)) ...
           - alpha(:,i)'*log(alpha(:,i) + eps) ...
           + alpha(:,i)'*log(s(:,i)/(sigma*sa(i)))/2 ...
