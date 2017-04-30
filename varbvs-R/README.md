@@ -1,18 +1,9 @@
-# Large-scale Bayesian variable selection for R
+# varbvs: large-scale Bayesian variable selection in R
 
 [![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](https://cran.r-project.org/package=varbvs)
 [![Travis CI Build Status](https://travis-ci.org/pcarbo/varbvs.svg?branch=master)](https://travis-ci.org/pcarbo/varbvs)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/xqnqhsk5na3855nq?svg=true)](https://ci.appveyor.com/project/pcarbo/varbvs)
 [![codecov](https://codecov.io/gh/pcarbo/varbvs/branch/master/graph/badge.svg)](https://codecov.io/gh/pcarbo/varbvs)
-
-R package for analysis of large-scale data sets using Bayesian
-variable selection methods.
-
-The R package been tested by
-[Travis CI](https://travis-ci.org/pcarbo/varbvs.svg?branch=master) and
-[Appveyor](https://ci.appveyor.com/project/pcarbo/varbvs), and the
-tests' code coverage has been assessed by
-[Codecov](https://codecov.io/gh/pcarbo/varbvs).
 
 ### Citing varbvs
 
@@ -165,5 +156,5 @@ The *varbvs* software package was developed by:<br>
 Dept. of Human Genetics, University of Chicago<br>
 2012-2017
 
-Xiang Zhou, Xiang Zhu, Matthew Stephens and several others have also
+Xiang Zhou, Xiang Zhu, Matthew Stephens and others have also
 contributed to the development of this software.
