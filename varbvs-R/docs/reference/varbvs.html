@@ -107,10 +107,14 @@
     <tr>
       <th>Z</th>
       <td><p>n x m covariate data matrix, where m is the number of
-           covariates. Do not supply an intercept as a covariate
-           (i.e., a column of ones), because an intercept is
-           automatically included in the regression model. For no
-	   covariates, set <code>Z = NULL</code>.</p></td>
+           covariates. Do not supply an intercept as a covariate (i.e.,
+           a column of ones), because an intercept is automatically
+           included in the regression model. For no covariates, set
+           <code>Z = NULL</code>. The covariates are assigned an improper,
+           uniform prior. Although improper priors are generally not
+           advisable because they can result in improper posteriors and
+           Bayes factors, this choice allows us to easily integrate out
+           these covariates.</p></td>
     </tr>
     <tr>
       <th>y</th>
@@ -139,12 +143,15 @@
       <td><p>Hyperparameter sa is the prior variance of regression
     coefficients for variables that are included in the model. This
     prior variance is always scaled by sigma (for logistic regression,
-    we take sigma = 1). This input specifies the candidate settings for
-    sa, of the same length as inputs sigma and logodds (or have length
-    equal to the number of columns of logodds). If missing, prior
-    variance is automatically fitted to data by compute approximate
-    maximum (ML) estimates, or maximum a posteriori estimates when
-    <code>n0 &gt; 0</code> and <code>sa0 &gt; 0</code>.</p></td>
+    we take sigma = 1). Scaling the variance of the coefficients in this
+    way is necessary to ensure that this prior is invariant to
+    measurement scale (e.g., switching from grams to kilograms). This
+    input specifies the candidate settings for sa, of the same length as
+    inputs sigma and logodds (or have length equal to the number of
+    columns of logodds). If missing, prior variance is automatically
+    fitted to data by compute approximate maximum (ML) estimates, or
+    maximum a posteriori estimates when <code>n0 &gt; 0</code> and <code>sa0 &gt;
+    0</code>.</p></td>
     </tr>
     <tr>
       <th>logodds</th>
@@ -288,10 +295,33 @@
     fast computation with the logistic regression model <code>(family =
     "binomial")</code>. The fitted value of eta is returned as an n x ns
     matrix.</p>
-<p>Note that special care is required for interpreting the results of
-    the variational approximation with the logistic regression model. In
-    particular, interpretation of the individual estimates of the
-    regression coefficients (e.g., the posterior mean estimates
+<p>The variational estimates should be interpreted carefully,
+    especially when variables are strongly correlated. For example,
+    consider the simple scenario in which 2 candidate variables are
+    closely correlated, and at least one of them explains the outcome
+    with probability close to 1. Under the correct posterior
+    distribution, we would expect that each variable is included with
+    probability ~0.5. However, the variational approximation, due to the
+    conditional independence assumption, will typically get this wrong,
+    and concentrate most of the posterior weight on one variable (the
+    actual variable that is chosen will depend on the starting
+    conditions of the optimization). Although the individual PIPs are
+    incorrect, a statistic summarizing the variable selection for both
+    correlated variables (e.g., the total number of variables included
+    in the model) should be reasonably accurate.</p>
+<p>More generally, if variables can be reasonably grouped together
+    based on their correlations, we recommend interpreting the variable
+    selection results at a group level. For example, in genome-wide
+    association studies (see the vignettes) ,a SNP with a high PIP
+    indicates that this SNP is probably associated with the trait, and
+    one or more nearby SNPs within a chromosomal region, or ``locus,''
+    may be associated as well. Therefore, we interpreted the GWAS
+    variable selection results at the level of loci, rather than at the
+    level of individual SNPs.
+    Also note that special care is required for interpreting the results
+    of the variational approximation with the logistic regression
+    model. In particular, interpretation of the individual estimates of
+    the regression coefficients (e.g., the posterior mean estimates
     <code>fit$mu</code>) is not straightforward due to the additional
     approximation introduced on the individual nonlinear factors in the
     likelihood. As a general guideline, only the relative magnitudes of
@@ -327,7 +357,6 @@
     
     <h2 class="hasAnchor" id="prior-on-proportion-of-variance-explained"><a class="anchor" href="#prior-on-proportion-of-variance-explained"></a>Prior on proportion of variance explained</h2>
 
-    
     <p>Specifying the prior variance of the regression coefficients (sa) can
   be difficult, which is why we have included the option of fitting this
   hyperparameter to the data (see input argument <code>update.sa</code>

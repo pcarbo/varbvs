@@ -5,6 +5,10 @@
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/xqnqhsk5na3855nq?svg=true)](https://ci.appveyor.com/project/pcarbo/varbvs)
 [![codecov](https://codecov.io/gh/pcarbo/varbvs/branch/master/graph/badge.svg)](https://codecov.io/gh/pcarbo/varbvs)
 
+See also the
+[varbvs R package website](https://pcarbo.github.io/varbvs/varbvs-R/docs)
+generated using [pkgdown](http://hadley.github.io/pkgdown).
+
 ### Citing varbvs
 
 If you find that this software is useful for your research project,
@@ -124,13 +128,14 @@ demonstrates *varbvs* for mapping genetic factors contributing to a
 quantitative trait, but here it is applied to an actual data set
 generated from an outbred mouse study.
 
-+ Finally, the [cd.Rmd](vignettes/cd.Rmd) and [cytokine.Rmd](cytokine.Rmd)
-vignettes illustrate how the *varbvs* package can be applied to a
-very large data set to map genetic loci and test biological hypotheses
-about genetic factors contributing to human disease risk. Although we
-cannot share the data needed to run these scripts due to data privacy
-restrictions, we have included these scripts because it is helpful to
-be able to follow the steps given in these R scripts.
++ Finally, the [cd.Rmd](vignettes/cd.Rmd) and
+[cytokine.Rmd](vignettes/cytokine.Rmd) vignettes illustrate how the
+*varbvs* package can be applied to a very large data set to map
+genetic loci and test biological hypotheses about genetic factors
+contributing to human disease risk. Although we cannot share the data
+needed to run these scripts due to data privacy restrictions, we have
+included these scripts because it is helpful to be able to follow the
+steps given in these R scripts.
 
 ## How to build static HTML documentation
 

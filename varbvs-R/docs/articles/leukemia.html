@@ -56,34 +56,27 @@
     <div class="page-header toc-ignore">
       <h1>Comparison of glmnet and varbvs in Leukemia data set</h1>
             
-            <h4 class="date">2017-04-04</h4>
+            <h4 class="date">2017-04-30</h4>
           </div>
 
     
     
 <div class="contents">
-<p>This vignette demonstrates application of <strong>glmnet</strong> and <strong>varbvs</strong> to the Leukemia data set. The main aim of this script is to illustrate some of the different properties of Bayesian variable selection and penalized sparse regression (as implemented by <strong>varbvs</strong> and <strong>glmnet</strong>, respectively). This script also reproduces the results and graphs presented in the first example of a forthcoming paper (Carbonetto <em>et al</em>, 2016).</p>
+<p>This vignette demonstrates application of <strong>glmnet</strong> and <strong>varbvs</strong> to the Leukemia data set. The main aim of this script is to illustrate some of the different properties of Bayesian variable selection and penalized sparse regression (as implemented by <strong>varbvs</strong> and <strong>glmnet</strong>, respectively).</p>
 <p>We use the preprocessed data of Dettling (2004) retrieved from the supplementary materials accompanying Friedman <em>et al</em> (2010). The data are represented as a 72 x 3,571 matrix of gene expression values (variable <code>X</code>), and a vector of 72 binary disease outcomes (variable <code>y</code>).</p>
-<div id="references" class="section level3">
-<h3 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h3>
-<p>Carbonetto, P., <em>et al</em> (2016) Fast variable selection for genome-wide association studies and other large-scale regression applications. <em>Forthcoming</em>.</p>
-<p>Dettling, M. (2004). BagBoosting for tumor classification with gene expression data. <em>Bioinformatics</em> <strong>20</strong>, 3583–3593.</p>
-<p>Friedman, J., Hastie, T., Tibshirani, R. (2010) Regularization paths for generalized linear models via coordinate descent. <em>Journal of Statistical Software</em> <strong>33</strong>, 1–22.</p>
-</div>
 <div id="vignette-parameters" class="section level2">
 <h2 class="hasAnchor">
 <a href="#vignette-parameters" class="anchor"></a>Vignette parameters</h2>
-<p>Begin by loading a few packages into the R environment.</p>
+<p>Begin by loadingthese packages into your R environment.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lattice)
 <span class="kw">library</span>(latticeExtra)
 <span class="kw">library</span>(glmnet)
 <span class="kw">library</span>(varbvs)</code></pre></div>
 <p>Next, specify settings that control the data analyses.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># glmnet settings.</span>
-nfolds &lt;-<span class="st"> </span><span class="dv">20</span>                   <span class="co"># Number of cross-validation folds.</span>
-alpha  &lt;-<span class="st"> </span><span class="fl">0.95</span>                 <span class="co"># Elastic net mixing parameter.</span>
-lambda &lt;-<span class="st"> </span><span class="dv">10</span>^(<span class="kw">seq</span>(-<span class="dv">2</span>,<span class="dv">0</span>,<span class="fl">0.05</span>))  <span class="co"># Lambda sequence.</span>
+nfolds &lt;-<span class="st"> </span><span class="dv">20</span>                    <span class="co"># Number of cross-validation folds.</span>
+alpha  &lt;-<span class="st"> </span><span class="fl">0.95</span>                  <span class="co"># Elastic net mixing parameter.</span>
+lambda &lt;-<span class="st"> </span><span class="dv">10</span>^(<span class="kw">seq</span>(<span class="dv">0</span>,-<span class="dv">2</span>,-<span class="fl">0.05</span>))  <span class="co"># Lambda sequence.</span>
 
 <span class="co"># varbvs settings.</span>
 logodds &lt;-<span class="st"> </span><span class="kw">seq</span>(-<span class="fl">3.5</span>,-<span class="fl">1.5</span>,<span class="fl">0.1</span>)  <span class="co"># Candidate prior log-odds settings.</span>
@@ -107,7 +100,7 @@ y &lt;-<span class="st"> </span>leukemia$y
 r &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.glmnet &lt;-
 <span class="st">       </span><span class="kw">glmnet</span>(X,y,<span class="dt">family =</span> <span class="st">"binomial"</span>,<span class="dt">lambda =</span> lambda,<span class="dt">alpha =</span> alpha))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Model fitting took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,r[<span class="st">"elapsed"</span>]))
-<span class="co"># Model fitting took 0.08 seconds.</span>
+<span class="co"># Model fitting took 0.09 seconds.</span>
 
 <span class="co"># This is the cross-validation step.</span>
 r &lt;-<span class="st"> </span><span class="kw">system.time</span>(out.cv.glmnet &lt;-
@@ -115,7 +108,7 @@ r &lt;-<span class="st"> </span><span class="kw">system.time</span>(out.cv.glmne
                  <span class="dt">alpha =</span> alpha,<span class="dt">nfolds =</span> nfolds,<span class="dt">lambda =</span> lambda))
 lambda &lt;-<span class="st"> </span>out.cv.glmnet$lambda
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Cross-validation took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,r[<span class="st">"elapsed"</span>]))
-<span class="co"># Cross-validation took 2.37 seconds.</span>
+<span class="co"># Cross-validation took 3.85 seconds.</span>
 
 <span class="co"># Choose the largest value of lambda that is within 1 standard error</span>
 <span class="co"># of the smallest misclassification error.</span>
@@ -222,7 +215,7 @@ Y       &lt;-<span class="st"> </span><span class="kw">predict</span>(fit.glmnet
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.varbvs &lt;-
 <span class="st">       </span><span class="kw"><a href="../reference/varbvs.html">varbvs</a></span>(X,<span class="ot">NULL</span>,y,<span class="st">"binomial"</span>,<span class="dt">logodds =</span> logodds,<span class="dt">sa =</span> sa,<span class="dt">verbose =</span> <span class="ot">FALSE</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Model fitting took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,r[<span class="st">"elapsed"</span>]))
-<span class="co"># Model fitting took 27.78 seconds.</span></code></pre></div>
+<span class="co"># Model fitting took 40.95 seconds.</span></code></pre></div>
 <p>Compute the normalized importance weights and the posterior inclusion probabilities averaged over the hyperparameter settings.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">w   &lt;-<span class="st"> </span><span class="kw"><a href="../reference/normalizelogweights.html">normalizelogweights</a></span>(fit.varbvs$logw)
 pip &lt;-<span class="st"> </span><span class="kw">c</span>(fit.varbvs$alpha %*%<span class="st"> </span>w)</code></pre></div>
@@ -263,61 +256,49 @@ for (i in <span class="dv">1</span>:m) {
              <span class="dt">scales =</span> <span class="kw">list</span>(<span class="dt">x =</span> <span class="kw">list</span>(<span class="dt">limits =</span> <span class="kw">c</span>(-<span class="fl">1.4</span>,-<span class="fl">3.6</span>)))) +
 <span class="st">      </span><span class="kw">as.layer</span>(<span class="kw">xyplot</span>(y ~<span class="st"> </span>x,<span class="kw">data.frame</span>(<span class="dt">x =</span> logodds,<span class="dt">y =</span> err),
                       <span class="dt">col =</span> <span class="st">"blue"</span>,<span class="dt">pch =</span> <span class="dv">20</span>,<span class="dt">cex =</span> <span class="fl">0.65</span>)),
-      <span class="dt">split =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>),<span class="dt">more =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<div class="figure" style="text-align: center">
-<img src="leukemia_files/figure-html/unnamed-chunk-11-1.png" alt="&amp;nbsp;" width="828"><p class="caption">
- 
-</p>
-</div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Plot regression coefficients.</span>
+      <span class="dt">split =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>),<span class="dt">more =</span> <span class="ot">TRUE</span>)
+
+<span class="co"># Plot regression coefficients.</span>
 n     &lt;-<span class="st"> </span><span class="dv">4</span>
 m     &lt;-<span class="st"> </span><span class="kw">length</span>(logodds)
 vars  &lt;-<span class="st"> </span><span class="kw">order</span>(pip,<span class="dt">decreasing =</span> <span class="ot">TRUE</span>)[<span class="dv">1</span>:n]
 mu    &lt;-<span class="st"> </span><span class="kw">t</span>(fit.varbvs$alpha[vars,] *<span class="st"> </span>fit.varbvs$mu[vars,])
-<span class="kw">print</span>(<span class="kw">xyplot</span>(y ~<span class="st"> </span>x,<span class="kw">data.frame</span>(<span class="dt">x =</span> logodds,<span class="dt">y =</span> (mu[,<span class="dv">1</span>])),
+ly    &lt;-<span class="st"> </span>mu[m,]
+ly[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="fl">0.075</span>
+r &lt;-<span class="st"> </span><span class="kw">xyplot</span>(y ~<span class="st"> </span>x,<span class="kw">data.frame</span>(<span class="dt">x =</span> logodds,<span class="dt">y =</span> (mu[,<span class="dv">1</span>])),
              <span class="dt">type =</span> <span class="st">"l"</span>,<span class="dt">col =</span> <span class="st">"blue"</span>,<span class="dt">xlab =</span> <span class="st">"prior log-odds"</span>,
              <span class="dt">ylab =</span> <span class="st">"regression coefficient"</span>,
              <span class="dt">scales =</span> <span class="kw">list</span>(<span class="dt">x =</span> <span class="kw">list</span>(<span class="dt">limits =</span> <span class="kw">c</span>(-<span class="fl">1.15</span>,-<span class="fl">3.6</span>)),
-                           <span class="dt">y =</span> <span class="kw">list</span>(<span class="dt">limits=</span><span class="kw">c</span>(-<span class="dv">3</span>,-<span class="fl">2.5</span>),<span class="dt">at=</span><span class="kw">seq</span>(-<span class="dv">3</span>,-<span class="fl">2.5</span>,<span class="fl">0.25</span>))),
+                            <span class="dt">y =</span> <span class="kw">list</span>(<span class="dt">limits=</span><span class="kw">c</span>(-<span class="dv">3</span>,<span class="fl">0.2</span>),<span class="dt">at=</span><span class="kw">seq</span>(-<span class="dv">3</span>,<span class="fl">0.2</span>,<span class="fl">0.5</span>))),
              <span class="dt">panel =</span> function(x, y, ...) {
                <span class="kw">panel.xyplot</span>(x,y,...);
-               <span class="kw">ltext</span>(<span class="dt">x =</span> -<span class="fl">1.5</span>,<span class="dt">y =</span> mu[m,<span class="dv">1</span>],
-                     <span class="dt">labels =</span> vars[<span class="dv">1</span>],<span class="dt">pos =</span> <span class="dv">2</span>,
-                     <span class="dt">offset =</span> <span class="fl">0.5</span>,<span class="dt">cex =</span> <span class="fl">0.5</span>)
-               }),
-      <span class="dt">split =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">2</span>),<span class="dt">more =</span> <span class="ot">TRUE</span>)
-
-r    &lt;-<span class="st"> </span><span class="kw">xyplot</span>(y ~<span class="st"> </span>x,<span class="kw">data.frame</span>(<span class="dt">x =</span> logodds,<span class="dt">y =</span> (mu[,<span class="dv">2</span>])),
-               <span class="dt">type =</span> <span class="st">"l"</span>,<span class="dt">col =</span> <span class="st">"blue"</span>,<span class="dt">xlab =</span> <span class="st">"prior log-odds"</span>,
-               <span class="dt">ylab =</span> <span class="st">"regression coefficient"</span>,
-               <span class="dt">scales =</span> <span class="kw">list</span>(<span class="dt">x =</span> <span class="kw">list</span>(<span class="dt">limits =</span> <span class="kw">c</span>(-<span class="fl">1.15</span>,-<span class="fl">3.6</span>)),
-                             <span class="dt">y =</span> <span class="kw">list</span>(<span class="dt">limits =</span> <span class="kw">c</span>(-<span class="fl">0.06</span>,<span class="fl">0.06</span>),
-                                      <span class="dt">at =</span> <span class="kw">c</span>(-<span class="fl">0.06</span>,<span class="dv">0</span>,<span class="fl">0.06</span>))),
-               <span class="dt">panel =</span> function(x, y, ...) {
-                 <span class="kw">panel.xyplot</span>(x,y,...);
-                 <span class="kw">ltext</span>(<span class="dt">x =</span> -<span class="fl">1.5</span>,<span class="dt">y =</span> mu[m,],
-                       <span class="dt">labels =</span> vars,<span class="dt">pos =</span> <span class="dv">2</span>,
-                       <span class="dt">offset =</span> <span class="fl">0.5</span>,<span class="dt">cex =</span> <span class="fl">0.5</span>)
-               })
-for (i in <span class="dv">3</span>:n) {
+               <span class="kw">ltext</span>(<span class="dt">x =</span> -<span class="fl">1.5</span>,<span class="dt">y =</span> ly,<span class="dt">labels =</span> vars,<span class="dt">pos =</span> <span class="dv">2</span>,<span class="dt">offset =</span> <span class="fl">0.5</span>,
+                     <span class="dt">cex =</span> <span class="fl">0.5</span>)
+             })
+for (i in <span class="dv">2</span>:n)
   r &lt;-<span class="st"> </span>r +<span class="st"> </span><span class="kw">as.layer</span>(<span class="kw">xyplot</span>(y ~<span class="st"> </span>x,
                            <span class="kw">data.frame</span>(<span class="dt">x =</span> logodds,<span class="dt">y =</span> mu[,i]),
                            <span class="dt">type =</span> <span class="st">"l"</span>,<span class="dt">col =</span> <span class="st">"blue"</span>))
-}
-<span class="kw">print</span>(r,<span class="dt">split =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>),<span class="dt">more =</span> <span class="ot">TRUE</span>)
+<span class="kw">print</span>(r,<span class="dt">split =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>),<span class="dt">more =</span> <span class="ot">TRUE</span>)
 
-<span class="co"># Plot density of "prior log-odds"" hyperparameter.</span>
+<span class="co"># Plot density of "prior log-odds" hyperparameter.</span>
 <span class="kw">names</span>(w) &lt;-<span class="st"> </span>logodds
 <span class="kw">print</span>(<span class="kw">xyplot</span>(y ~<span class="st"> </span>x,<span class="kw">data.frame</span>(<span class="dt">x =</span> logodds,<span class="dt">y =</span> w),<span class="dt">type =</span> <span class="st">"l"</span>,<span class="dt">col =</span> <span class="st">"blue"</span>,
-             <span class="dt">xlab =</span> <span class="st">"prior log-odds"</span>,<span class="dt">ylab =</span> <span class="st">"posterior prob."</span>,
+             <span class="dt">xlab =</span> <span class="st">"prior log-odds"</span>,<span class="dt">ylab =</span> <span class="st">"postemrior prob."</span>,
              <span class="dt">scales =</span> <span class="kw">list</span>(<span class="dt">x =</span> <span class="kw">list</span>(<span class="dt">limits =</span> <span class="kw">c</span>(-<span class="fl">1.4</span>,-<span class="fl">3.6</span>)))) +
 <span class="st">      </span><span class="kw">as.layer</span>(<span class="kw">xyplot</span>(y ~<span class="st"> </span>x,<span class="kw">data.frame</span>(<span class="dt">x =</span> logodds,<span class="dt">y =</span> w),
                       <span class="dt">col =</span> <span class="st">"blue"</span>,<span class="dt">pch =</span> <span class="dv">20</span>,<span class="dt">cex =</span> <span class="fl">0.65</span>)),
       <span class="dt">split =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">2</span>),<span class="dt">more =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="leukemia_files/figure-html/unnamed-chunk-12-1.png" alt="&amp;nbsp;" width="828"><p class="caption">
+<img src="leukemia_files/figure-html/unnamed-chunk-11-1.png" alt="&amp;nbsp;" width="828"><p class="caption">
  
 </p>
+</div>
+<div id="references" class="section level3">
+<h3 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h3>
+<p>Dettling, M. (2004). BagBoosting for tumor classification with gene expression data. <em>Bioinformatics</em> <strong>20</strong>, 3583–3593.</p>
+<p>Friedman, J., Hastie, T., Tibshirani, R. (2010) Regularization paths for generalized linear models via coordinate descent. <em>Journal of Statistical Software</em> <strong>33</strong>, 1–22.</p>
 </div>
 </div>
 </div>
