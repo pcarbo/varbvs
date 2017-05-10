@@ -1,10 +1,13 @@
-% [alpha,mu,Xr] = varbvsmixupdate(X,sigma,sa,q,xy,d,alpha0,mu0,Xr0,I)
+% [alpha,mu,Xr] = varbvsmixupdate(X,sigma,sa,q,xy,d,alpha0,mu0,Xr0,i)
 % runs a single iteration of the coordinate ascent updates maximizing the
 % variational lower bound for the linear regression model with a
 % mixture-of-normals prior.
 function [alpha, mu, Xr] = varbvsmixupdate (X, sigma, sa, q, xy, d, ...
-                                            alpha0, mu0, Xr0, I)
+                                            alpha0, mu0, Xr0, i)
 
+  % I am adding this temporarily for testing.
+  fast_version = false;
+    
   % Get the number of samples, (n) the number of variables (p), and the
   % number of mixture components including the "spike" (K)..
   [n p] = size(X);
@@ -37,46 +40,51 @@ function [alpha, mu, Xr] = varbvsmixupdate (X, sigma, sa, q, xy, d, ...
   end
    
   % Check input I.
-  if sum(I < 1 | I > p)
-    error('Input I contains invalid variable indices');
+  if sum(i < 1 | i > p)
+    error('Input i contains invalid variable indices');
   end
 
   % Initialize the outputs.
   alpha = alpha0;
   mu    = mu0;
   Xr    = Xr0;
-  
-  % Run the co-ordinate ascent updates.
-  %
-  % TO DO: Implement more efficient C routine.
-  %
-  I = I(:)';
-  for i = I
-      
-    % Compute the variance of the regression coefficient conditioned on
-    % being drawn from each of the mixture componentx. Note that the
-    % variance corresponding to the first mixture component, the "spike",
-    % should always be zero.
-    s    = sigma*sa./(sa*d(i) + 1);
-    s(1) = 0;
-    
-    % Update the variational estimate of the posterior mean for each
-    % mixture component. Note that posterior mean corresponding to the
-    % first component, the "spike", should always be zero.
-    x       = double(X(:,i));
-    r       = dot(alpha(i,:),mu(i,:));
-    mu(i,:) = s/sigma * (xy(i) + d(i)*r - dot(x,Xr));
-    mu(i,1) = 0;
-    
-    % Update the assignment probabilities for each of the mixture
-    % components.
-    SSR        = mu(i,:).^2./s;
-    w          = log(q + eps) + (log(s./(sigma*sa)) + SSR)/2;
-    w(1)       = log(q(1) + eps);
-    alpha(i,:) = normalizelogweights(w);
-    
-    % Update Xr = X*r.
-    rnew = dot(alpha(i,:),mu(i,:));
-    Xr   = Xr + (rnew - r)*x;
-  end
 
+  % Execute the C routine. I subtract 1 from the indices because MATLAB
+  % arrays start at 1, but C arrays start at 0.
+  if (fast_version)
+      
+    % Run the co-ordinate ascent updates.
+    %
+    % TO DO: Implement more efficient C routine.
+    %
+  else
+    i = i(:)';
+    for j = i
+      
+      % Compute the variance of the regression coefficient conditioned on
+      % being drawn from each of the mixture components. Note that the
+      % variance corresponding to the first mixture component, the "spike",
+      % should always be zero.
+      s    = sigma*sa./(sa*d(j) + 1);
+      s(1) = 0;
+    
+      % Update the variational estimate of the posterior mean for each
+      % mixture component. Note that posterior mean corresponding to the
+      % first component, the "spike", should always be zero.
+      x       = double(X(:,j));
+      r       = dot(alpha(j,:),mu(j,:));
+      mu(j,:) = s/sigma * (xy(j) + d(j)*r - dot(x,Xr));
+      mu(j,1) = 0;
+    
+      % Update the assignment probabilities for each of the mixture
+      % components.
+      SSR        = mu(j,:).^2./s;
+      w          = log(q + eps) + (log(s./(sigma*sa)) + SSR)/2;
+      w(1)       = log(q(1) + eps);
+      alpha(j,:) = normalizelogweights(w);
+    
+      % Update Xr = X*r.
+      rnew = dot(alpha(j,:),mu(j,:));
+      Xr   = Xr + (rnew - r)*x;
+    end
+  end
