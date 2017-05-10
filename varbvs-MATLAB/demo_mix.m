@@ -1,4 +1,5 @@
-% TO DO: Explain here what this script does.
+% This script illustrates the "varbvsmix" function on a simulated data
+% set, in which all candidate variables (predictors) are uncorrelated.
 clear
 
 % SCRIPT PARAMETERS
