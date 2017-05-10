@@ -50,7 +50,9 @@
 %          options.verbose = true (print progress of algorithm to console)
 %          options.sigma = var(y) (initial estimate of residual variance)
 %          options.q = ones(1,K)/K (initial estimate of mixture weights)
+%          options.q_penalty = ones(1,K) (penalty for mixture weights)
 %          options.update_sigma (fit model parameter sigma to data)
+%          options.update_sa (fit mixture variances to data)
 %          options.update_q = true (fit mixture weights to data)
 %          options.alpha (initial estimate of variational parameter alpha)
 %          options.mu (initial estimate of variational parameter mu)
@@ -194,12 +196,12 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     error('numel(options.q) should be the same as numel(sa).');
   end
   
-  % OPTIONS.PENALTY_Q
+  % OPTIONS.Q_PENALTY
   % Specify the penalty term for the mixture weights.
-  if isfield(options,'penalty_q')
-    penalty_q = double(options.penalty_q(:))';
+  if isfield(options,'q_penalty')
+    q_penalty = double(options.q_penalty(:))';
   else
-    penalty_q = ones(1,K);
+    q_penalty = ones(1,K);
   end
   
   % OPTIONS.UPDATE_SIGMA
@@ -210,6 +212,18 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     update_sigma = options.update_sigma;
   end
 
+  % OPTIONS.UPDATE_SA
+  % Determine whether to update the mixture variance parameters. By default,
+  % these parameters are not updated.
+  if isfield(options,'update_sa')
+    update_sa = options.update_sa;
+  else
+    update_sa = false;
+  end
+  if update_sa
+    error('Estimation of mixture variances not implemented.')
+  end
+  
   % OPTIONS.UPDATE_Q
   % Determine whether to update the mixture weights.
   if isfield(options,'update_q')
@@ -236,7 +250,9 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
 
   % OPTIONS.MU
   % Set initial estimates of variational parameters 'mu'. These
-  % parameters are stored as a p x K matrix.
+  % parameters are stored as a p x K matrix. Note that the first column
+  % of this matrix is always zero because it corresponds to the "spike"
+  % component. 
   if isfield(options,'mu')
     mu = double(options.mu);
     if size(mu,1) ~= p
@@ -248,6 +264,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   else
     mu = randn(p,K);
   end
+  mu(:,1) = 0;
 
   % (3) PREPROCESSING STEPS
   % -----------------------
@@ -285,15 +302,15 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     fprintf('mixture component sd''s:    %0.2g..%0.2g\n',...
             min(sqrt(sa(2:K))),max(sqrt(sa(2:K))));
     fprintf('variables:    %-6d ',p); 
-    fprintf('fit mixture weights:       %s\n',tf2yn(update_q));
+    fprintf('fit mixture variances:     %s\n',tf2yn(update_sa));
     fprintf('covariates:   %-6d ',ncov);
-    fprintf('fit residual var. (sigma): %s\n',tf2yn(update_sigma));
+    fprintf('fit mixture weights:       %s\n',tf2yn(update_q));
     fprintf('mixture size: %-6d ',K);
-    fprintf('convergence tolerance      %0.1e\n',tol);
+    fprintf('fit residual var. (sigma): %s\n',tf2yn(update_sigma));
     fprintf('intercept:    yes    ');
-    fprintf('spike (delta-Dirac at 0):  yes\n');
+    fprintf('convergence tolerance      %0.1e\n',tol);
   end
-  
+
   % Compute a few useful quantities. Here, I calculate X'*y as (y'*X)' to
   % avoid computing the transpose of X, since X may be large.
   xy = double(y'*X)';
@@ -318,8 +335,10 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   % Repeat until convergence criterion is met, or until the maximum
   % number of iterations is reached.
   if verbose
-    fprintf('       variational    max. ---hyperparameters---\n');
-    fprintf('iter   lower bound  change   sigma  mix. weights\n');
+    fprintf('       variational    max. ');
+    fprintf('--------- hyperparameters ---------\n');
+    fprintf('iter   lower bound  change   sigma  mixture sd''s ');
+    fprintf(' mix. weights\n');
   end
   for iter = 1:maxiter
 
@@ -328,6 +347,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     mu0    = mu;
     s0     = s;
     sigma0 = sigma;
+    sa0    = sa;
     q0     = q;
     
     % (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
@@ -357,13 +377,14 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     % variance of the regression coefficients when this parameter is
     % updated. 
     if update_sigma
+      % TO DO: Revise this.
       sigma = (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s) ...
                + sum(sum(alpha.*(s + mu.^2))./sa))/(n + p);
       for i = 2:K
         s(:,i) = sigma*sa(i)./(sa(i)*d + 1);
       end
     end
-    
+
     % (4e) UPDATE MIXTURE WEIGHTS
     % ---------------------------
     % Compute the approximate penalized maximum likelihood estimate of
@@ -382,8 +403,9 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     % decreased.
     err(iter) = max(max(abs(alpha - alpha0)));
     if verbose
-      status = sprintf('%04d %+13.6e %0.1e %0.1e [%0.3f,%0.3f]',iter,...
-                       logw(iter),err(iter),sigma,min(q),max(q));
+      str    = sprintf('[%0.1g,%0.1g]',sqrt(min(sa(2:K))),sqrt(max(sa)));
+      status = sprintf('%04d %+13.6e %0.1e %0.1e %13s [%0.3f,%0.3f]',...
+                       iter,logw(iter),err(iter),sigma,str,min(q),max(q));
       fprintf(status);
       fprintf(repmat('\b',1,length(status)));
     end
@@ -411,10 +433,10 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   r      = sum(alpha.*mu,2);
   mu_cov = SZy - SZX*r;
   fit = struct('family','gaussian','n',n,'labels',{labels},'mu_cov',...
-               {mu_cov},'update_sigma',update_sigma,'update_q',update_q,...
-               'q_penalty',q_penalty,'logw',{logw(1:iter)},'err',...
-               {err(1:iter)},'sigma',sigma,'sa',sa,'q',{q},'alpha',...
-               {alpha},'mu',{mu},'s',{s});
+               {mu_cov},'update_sigma',update_sigma,'update_sa',update_sa,...
+               'update_q',update_q,'q_penalty',q_penalty,'logw',...
+               {logw(1:iter)},'err',{err(1:iter)},'sigma',sigma,'sa',sa,...
+               'q',{q},'alpha',{alpha},'mu',{mu},'s',{s});
 
 % ----------------------------------------------------------------------
 % Compute the lower bound to the marginal log-likelihood.
@@ -422,16 +444,17 @@ function I = computevarlb (Z, Xr, d, y, sigma, sa, q, alpha, mu, s)
   n = length(y);
   p = length(d);
   K = numel(sa);
-  I = p/2 - n/2*log(2*pi*sigma) - logdet(Z'*Z)/2 ...
+  I = - n/2*log(2*pi*sigma) - logdet(Z'*Z)/2 ...
       - (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s))/(2*sigma);
-
+  for i = 1:K
+    I = I + sum(alpha(:,i)*log(q(i) + eps)) + ...
+          - alpha(:,i)'*log(alpha(:,i) + eps);
+  end
   for i = 2:K
-    I = I + sum(alpha(:,i)*log(q(i) + eps)) ...
-          - alpha(:,i)'*log(alpha(:,i) + eps) ...
-          + alpha(:,i)'*log(s(:,i)/(sigma*sa(i)))/2 ...
+    I = I + (sum(alpha(:,i)) + alpha(:,i)'*log(s(:,i)/(sigma*sa(i))))/2 ...
           - alpha(:,i)'*(s(:,i) + mu(:,i).^2)/(sigma*sa(i))/2;
   end
-
+  
 % ------------------------------------------------------------------
 function y = tf2yn (x)
   if x

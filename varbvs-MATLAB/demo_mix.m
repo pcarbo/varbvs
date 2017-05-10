@@ -66,7 +66,13 @@ y = double(y);
 % ------------------------------------------
 % TO DO: Add comments here.
 fprintf('2. FITTING MODEL TO DATA.\n');
-fit = varbvsmix(X,Z,y,sd.^2,labels);
+options.update_sigma = false;
+fit = varbvsmix(X,Z,y,sd.^2,labels,options);
+
+% TO DO: Create plot showing convergence to solution.
+%
+% plot(1:74,log10(max(fit.logw) - fit.logw))
+%
 
 % Plot estimated coefficients against the ground-truth coefficients.
 figure(1)
