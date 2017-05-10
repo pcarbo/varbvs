@@ -66,8 +66,7 @@ y = double(y);
 % ------------------------------------------
 % TO DO: Add comments here.
 fprintf('2. FITTING MODEL TO DATA.\n');
-options.update_sigma = false;
-fit = varbvsmix(X,Z,y,sd.^2,labels,options);
+fit = varbvsmix(X,Z,y,sd.^2,labels);
 
 % TO DO: Create plot showing convergence to solution.
 %

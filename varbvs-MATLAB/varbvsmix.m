@@ -377,10 +377,11 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     % variance of the regression coefficients when this parameter is
     % updated. 
     if update_sigma
-      % TO DO: Revise this.
+      k = 2:K;
       sigma = (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s) ...
-               + sum(sum(alpha.*(s + mu.^2))./sa))/(n + p);
-      for i = 2:K
+               + sum(sum(alpha(:,k).*(s(:,k) + mu(:,k).^2))./sa(k)))...
+               /(n + sum(sum(alpha(:,k))));
+      for i = k
         s(:,i) = sigma*sa(i)./(sa(i)*d + 1);
       end
     end
