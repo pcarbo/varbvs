@@ -64,20 +64,19 @@ y = double(y);
 
 % FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 % ------------------------------------------
-% TO DO: Add comments here.
+% Fit the fully-factorized variational approximation to the posterior
+% distribution of the coefficients for a linear regression model of the
+% quantitative trait (Y), with the mixture-of-normals prior on the
+% coefficients.
 fprintf('2. FITTING MODEL TO DATA.\n');
 fit = varbvsmix(X,Z,y,sd.^2,labels);
 
-% TO DO: Create plot showing convergence to solution.
-%
-% plot(1:74,log10(max(fit.logw) - fit.logw))
-%
-
-% Plot estimated coefficients against the ground-truth coefficients.
+% Plot the estimated coefficients against the ground-truth coefficients.
 figure(1)
 set(gcf,'Color','white','PaperPositionMode','auto');
 clf
 x = 1.2 * max(abs(beta));
+subplot(1,2,1);
 plot([-x x],[-x x],':','Color','magenta');
 hold on
 plot(beta,sum(fit.alpha.*fit.mu,2),'kx','MarkerSize',8);
@@ -86,3 +85,14 @@ set(gca,'XLim',[-x x],'YLim',[-x x],'TickDir','out');
 set(gca,'FontSize',12,'FontName','fixed');
 xlabel('ground-truth regression coefficient');
 ylabel('estimated regression coefficient');
+
+% Show the change in the variational lower bound at each iteration of the
+% co-ordinate ascent algorithm.
+niter = length(fit.logw);
+subplot(1,2,2);
+plot(1:niter,max(fit.logw) - fit.logw,'-','Color',rgb('darkorange'),...
+     'LineWidth',2);
+set(gca,'FontSize',12,'FontName','fixed');
+set(gca,'XLim',[0 niter+1],'TickDir','out','YScale','log');
+xlabel('iteration');
+ylabel('log10-distance from final lower bound');

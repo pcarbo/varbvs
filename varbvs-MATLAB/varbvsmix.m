@@ -62,25 +62,10 @@
 %
 % LICENSE: GPL v3
 %
-% DATE: April 24, 2017
+% DATE: May 10, 2017
 %
 % EXAMPLES:
-%    See demo_mix.m.
-%
-
-% NOTES
-% -----
-%
-%   Options:
-%     - alpha
-%     - mu
-%
-% TO DO
-% -----
-% 
-%   * Provided detailed analysis summary with verbose = true.
-%
-%   * Set first (or zeroth) mixture component to be the "spike".
+%    See demo_mix.m and demo_mix2.m.
 %
 function fit = varbvsmix (X, Z, y, sa, labels, options)
 
