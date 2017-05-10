@@ -49,14 +49,14 @@ function [alpha, mu, Xr] = varbvsmixupdate (X, sigma, sa, q, xy, d, ...
   mu    = mu0;
   Xr    = Xr0;
 
-  % Execute the C routine. I subtract 1 from the indices because MATLAB
-  % arrays start at 1, but C arrays start at 0.
   if (fast_version)
       
-    % Run the co-ordinate ascent updates.
-    %
-    % TO DO: Implement more efficient C routine.
-    %
+    % Execute the C routine. I subtract 1 from the indices because MATLAB 
+    % arrays start at 1, but C arrays start at 0.
+    [alpha mu Xr] = ...
+      varbvsmixupdatemex(X,double(sigma),double(sa),double(q),double(xy),..
+                         double(d),double(alpha0),double(mu0),double(Xr0),...
+                         double(i-1));
   else
     i = i(:)';
     for j = i
