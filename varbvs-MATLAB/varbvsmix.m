@@ -75,7 +75,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   
   % (1) CHECK INPUTS
   % ----------------
-  % Input X must be single precision, and cannot be sparse.
+  % Input X should be single precision, and cannot be sparse.
   if issparse(X)
     error('Input X cannot be sparse');
   end
@@ -83,8 +83,8 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     X = single(X);
   end
 
-  % If input Z is not empty, it must be double precision, and must have as
-  % many rows as X.
+  % If input Z is not empty, it should be double precision, and should
+  % have as many rows as X.
   if ~isempty(Z)
     if size(Z,1) ~= n
       error('Inputs X and Z do not match.');
@@ -96,21 +96,21 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   Z    = [ones(n,1) Z];
   ncov = size(Z,2) - 1;
 
-  % Input y must be a double-precision column vector with n elements.
+  % Input y should be a double-precision column vector with n elements.
   y = double(y(:));
   if length(y) ~= n
     error('Inputs X and y do not match.');
   end
 
-  % Input sa must be a double-precision row vector. The variance of the
-  % first mixture component must be exactly zero, corresponding to the
+  % Input sa should be a double-precision row vector. The variance of the
+  % first mixture component should be exactly zero, corresponding to the
   % "spike". 
   sa = double(sa(:))';
   if (sa(1) ~= 0)
     error('Variance of first mixture component should be 0.')
   end
   
-  % The labels must be a cell array with p elements, or an empty array.
+  % The labels should be a cell array with p elements, or an empty array.
   if nargin < 5
     labels = [];
   end
@@ -358,9 +358,9 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     % (4d) UPDATE RESIDUAL VARIANCE
     % -----------------------------
     % Compute the approximate maximum likelihood estimate of the residual
-    % variable (sigma), if requested. Note that we must also recalculate the
-    % variance of the regression coefficients when this parameter is
-    % updated. 
+    % variable (sigma), if requested. Note that we should also
+    % recalculate the variance of the regression coefficients when this
+    % parameter is updated. 
     if update_sigma
       k = 2:K;
       sigma = (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s) ...
