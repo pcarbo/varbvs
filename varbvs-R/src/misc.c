@@ -26,16 +26,16 @@ void normalizelogweights (const double* logw, double* w, Size n) {
 
   // Guard against underflow or overflow by adjusting the
   // log-probabilities so that the largest probability is 1.
-  double c = max(logw,n);
+  // double c = max(logw,n);
   for (Index i = 0; i < n; i++)
-    w[i] = exp(logw[i] - c);
+    w[i] = exp(logw[i]); // exp(logw[i] - c);
 
   // Normalize the probabilities.
   double r = sum(w,n);
   for (Index i = 0; i < n; i++)
     w[i] /= r;
 }
-
+  
 // Copy entries of one vector to another vector.
 void copy (const double* source, double* dest, Size n) {
   memcpy(dest,source,sizeof(double)*n);
