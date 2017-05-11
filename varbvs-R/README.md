@@ -1,39 +1,27 @@
-# Large-scale Bayesian variable selection for R
+# varbvs: large-scale Bayesian variable selection in R
 
 [![CRAN status badge](http://www.r-pkg.org/badges/version/varbvs)](https://cran.r-project.org/package=varbvs)
-[![Build Status](https://travis-ci.org/pcarbo/varbvs.svg?branch=master)](https://travis-ci.org/pcarbo/varbvs)
+[![Travis CI Build Status](https://travis-ci.org/pcarbo/varbvs.svg?branch=master)](https://travis-ci.org/pcarbo/varbvs)
+[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/xqnqhsk5na3855nq?svg=true)](https://ci.appveyor.com/project/pcarbo/varbvs)
 [![codecov](https://codecov.io/gh/pcarbo/varbvs/branch/master/graph/badge.svg)](https://codecov.io/gh/pcarbo/varbvs)
 
-### Overview
-
-We introduce *varbvs*, an R package for analysis of large-scale data
-sets using Bayesian variable selection methods. To facilitate
-application of Bayesian variable selection to a range of problems, the
-*varbvs* interface hides most of the complexities of modeling and
-optimization, while also providing many options for adaptation to
-range of applications. The *varbvs* software has been used to
-implement Bayesian variable selection for large problems with over a
-million variables and thousands of samples, including analysis of
-massive genome-wide data sets.
-
-The R package been tested by
-[Travis CI](https://travis-ci.org/pcarbo/varbvs.svg?branch=master),
-and the tests' code coverage has been assessed by
-[Codecov](https://codecov.io/gh/pcarbo/varbvs).
+See also the
+[varbvs R package website](https://pcarbo.github.io/varbvs/varbvs-R/docs)
+generated using [pkgdown](http://hadley.github.io/pkgdown).
 
 ### Citing varbvs
 
 If you find that this software is useful for your research project,
 please cite our paper:
 
-Carbonetto, P., and Stephens, M. (2012). Scalable variational
+Carbonetto, P. and Stephens, M. (2012). Scalable variational
 inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. *Bayesian Analysis* **7**,
 73-108.
 
 ### License
 
-Copyright (c) 2012-2016, Peter Carbonetto.
+Copyright (c) 2012-2017, Peter Carbonetto.
 
 The *varbvs* source code repository by
 [Peter Carbonetto](http://github.com/pcarbo) is free software: you can
@@ -45,10 +33,10 @@ warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](../LICENSE) for
 the full text of the license.
 
-### Installing the package
+### Setup
 
-To install the official release of the *varbvs* package available from
-CRAN ([link](http://www.r-pkg.org/pkg/varbvs)), in R simply run:
+To install the *varbvs* CRAN release
+([link](http://www.r-pkg.org/pkg/varbvs)), in R run:
 
 ```R
 install.packages("varbvs")
@@ -120,8 +108,8 @@ help(varbvs)
 ### Working examples
 
 We have provided several R scripts in the [vignettes](vignettes) and
-[tests](tests) folders to illustrate application of *varbvs* to small
-and large data sets:
+[testthat](tests/testthat) folders to illustrate application of
+*varbvs* to small and large data sets:
 
 + Script [demo.qtl.R](tests/testthat/demo.qtl.R) demonstrates how to
 use the varbvs function for mapping a quantitative trait (*i.e.*, a
@@ -140,13 +128,14 @@ demonstrates *varbvs* for mapping genetic factors contributing to a
 quantitative trait, but here it is applied to an actual data set
 generated from an outbred mouse study.
 
-+ Finally, the [cd.Rmd](vignettes/cd.Rmd) and [cytokine.Rmd](cytokine.Rmd)
-vignettesq illustrate how the *varbvs* package can be applied to a
-very large data set to map genetic loci and test biological hypotheses
-about genetic factors contributing to human disease risk. Although we
-cannot share the data needed to run these scripts due to data privacy
-restrictions, we have included these scripts because it is helpful to
-be able to follow the steps given in these R scripts.
++ Finally, the [cd.Rmd](vignettes/cd.Rmd) and
+[cytokine.Rmd](vignettes/cytokine.Rmd) vignettes illustrate how the
+*varbvs* package can be applied to a very large data set to map
+genetic loci and test biological hypotheses about genetic factors
+contributing to human disease risk. Although we cannot share the data
+needed to run these scripts due to data privacy restrictions, we have
+included these scripts because it is helpful to be able to follow the
+steps given in these R scripts.
 
 ## How to build static HTML documentation
 
@@ -172,5 +161,5 @@ The *varbvs* software package was developed by:<br>
 Dept. of Human Genetics, University of Chicago<br>
 2012-2017
 
-Xiang Zhou, Xiang Zhu and Matthew Stephens have also contributed to
-the development of this software.
+Xiang Zhou, Xiang Zhu, Matthew Stephens and others have also
+contributed to the development of this software.

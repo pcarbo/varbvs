@@ -1,29 +1,16 @@
-# Large-scale Bayesian variable selection for MATLAB
-
-### Overview
-
-We introduce *varbvs*, a suite of MATLAB routines for analysis of
-large-scale data sets using Bayesian variable selection methods. To
-facilitate application of Bayesian variable selection to a range of
-problems, the *varbvs* interface hides most of the complexities of
-modeling and optimization, while also providing many options for
-adaptation to range of applications. The *varbvs* software has been
-used to implement Bayesian variable selection for large problems with
-over a million variables and thousands of samples, including analysis
-of massive genome-wide data sets.
+# varbvs: large-scale Bayesian variable selection in MATLAB
 
 The MATLAB interface has been tested extensively in MATLAB
-version 8.6.0 (2015b). 
+version 8.6.0 (2015b).
 
 ### Citing varbvs
 
 If you find that this software is useful for your research project,
 please cite our paper:
 
-Carbonetto, P., and Stephens, M. (2012). Scalable variational
-inference for Bayesian variable selection in regression, and its
-accuracy in genetic association studies. *Bayesian Analysis* **7**,
-73-108.
+Carbonetto, P. and Stephens, M. (2012). Scalable variational inference
+for Bayesian variable selection in regression, and its accuracy in
+genetic association studies. *Bayesian Analysis* **7**, 73-108.
 
 ### License
 
@@ -39,7 +26,7 @@ warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](../LICENSE) for
 the full text of the license.
 
-### Installing the package
+### Setup
 
 Begin by downloading the github repository for this project. The
 simplest way to do this is to
@@ -104,5 +91,6 @@ The *varbvs* software package was developed by:<br>
 Dept. of Human Genetics, University of Chicago<br>
 2012-2017
 
-Xiang Zhou, Xiang Zhu and Matthew Stephens have also contributed to
-the development of this software.
+Xiang Zhou, Xiang Zhu, Matthew Stephens and others have also
+contributed to the development of this software.
+
