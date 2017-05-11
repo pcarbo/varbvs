@@ -28,7 +28,12 @@ void copyDoubleMatrix (const DoubleMatrix source, DoubleMatrix dest);
 // Get a pointer to column j of matrix X. The entries in a single
 // column of the matrix are assumed to be stored consecutively in
 // memory. Input n is the number of rows in the matrix.
-const double* getDoubleColumn (const double* X, Index j, Size n);
+const double* getConstDoubleColumn (const double* X, Index j, Size n);
+  
+// Get a pointer to column j of matrix X. The entries in a single
+// column of the matrix are assumed to be stored consecutively in
+// memory. Input n is the number of rows in the matrix.
+double* getDoubleColumn (double* X, Index j, Size n);
 
 // Copy column j of matrix X. The entries in a single column of the
 // matrix are assumed to be stored consecutively in memory. Input n

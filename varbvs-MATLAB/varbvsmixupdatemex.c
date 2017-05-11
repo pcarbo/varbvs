@@ -15,7 +15,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
   // --------------
   const SingleMatrix X      = getSingleMatrix(prhs[0]);
   const double       sigma  = *mxGetPr(prhs[1]);
-  const double       sa     = getDoubleVector(prhs[2]);
+  const DoubleVector sa     = getDoubleVector(prhs[2]);
   const DoubleVector q      = getDoubleVector(prhs[3]);
   const DoubleVector xy     = getDoubleVector(prhs[4]);
   const DoubleVector d      = getDoubleVector(prhs[5]);
@@ -35,8 +35,8 @@ void mexFunction (int nlhs, mxArray* plhs[],
 
   // (2) INITIALIZE OUTPUTS
   // ----------------------
-  DoubleMatrix alpha = createMatlabDoubleMatrix(k,p,&prhs[0]);
-  DoubleVector mu    = createMatlabDoubleMatrix(k,p,&prhs[1]);
+  DoubleMatrix alpha = createMatlabDoubleMatrix(k,p,&plhs[0]);
+  DoubleMatrix mu    = createMatlabDoubleMatrix(k,p,&plhs[1]);
   DoubleVector Xr    = createMatlabVector(n,&plhs[2]);
 
   copyDoubleMatrix(alpha0,alpha);
@@ -60,8 +60,9 @@ void mexFunction (int nlhs, mxArray* plhs[],
     copyColumn(X.elems,x,i,n);
 
     // Perform the update.
-    varbvsmixupdate(x,xy.elems[i],d.elems[i],sigma,sa,q,
-		    getDoubleColumn(alpha,i,k),getDoubleColumn(mu,i,k)
+    varbvsmixupdate(x,xy.elems[i],d.elems[i],sigma,sa.elems,q.elems,
+		    getDoubleColumn(alpha.elems,i,k),
+		    getDoubleColumn(mu.elems,i,k),
 		    Xr.elems,s,logw,n,k,eps);
   }
 
