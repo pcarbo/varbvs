@@ -55,4 +55,16 @@ void varbvsbinzupdate (const double* x, double xy, double xdx,
 		       double logodds, double* alpha, double* mu, 
 		       double* Xr, double* a, double* b, Size n, Size m);
 
+// -----------------------------------------------------------------
+// Execute a single coordinate ascent update to maximize the variational 
+// lower bound for the linear regression model with mixture-of-normal
+// priors. The inputs are as follows:
+//
+// TO DO: Describe inputs here.
+//
+void varbvsmixupdate (const double* x, double xy, double d, double sigma, 
+		      double sa, double* q, double* alpha, double* mu, 
+		      double* Xr, double* s, double* r, double* logw,
+		      Size n, Size k, double eps);
+
 #endif

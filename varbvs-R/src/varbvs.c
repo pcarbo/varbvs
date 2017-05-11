@@ -85,15 +85,15 @@ void varbvsbinzupdate (const double* x, double xy, double xdx,
 // priors.
 void varbvsmixupdate (const double* x, double xy, double d, double sigma, 
 		      double sa, double* q, double* alpha, double* mu, 
-		      double* Xr, double* s, double* r, double* w,
+		      double* Xr, double* s, double* r, double* logw,
 		      Size n, Size k, double eps) {
 
   // The mean and variance corresponding to the first mixture
   // component, the "spike", should always be zero.
-  mu[0] = 0;
-  s[0]  = 0;
-  r[0]  = 0;
-  w[0]  = log(q[0] + eps);
+  mu[0]   = 0;
+  s[0]    = 0;
+  r[0]    = 0;
+  logw[0] = log(q[0] + eps);
   
   // Compute the variance of the regression coefficient conditioned on
   // being drawn from each of the mixture components.
@@ -112,11 +112,10 @@ void varbvsmixupdate (const double* x, double xy, double d, double sigma,
   // components.
   double SSR;
   for (Index i = 1; i < k; i++) {
-    SSR  = mu[i]*mu[i]/s[i];
-    w[i] = log(q[i] + eps) + (log(s[i]/(sigma*sa[i])) + SSR)/2;
+    SSR     = mu[i]*mu[i]/s[i];
+    logw[i] = log(q[i] + eps) + (log(s[i]/(sigma*sa[i])) + SSR)/2;
   }
-  // TO DO: Fix this.
-  // alpha(j,:) = normalizelogweights(w);
+  normalizelogweights(logw,alpha,k);
   
   // Update Xr = X*r.
   double rnew = dot(alpha,mu,k);

@@ -19,6 +19,23 @@ double logsigmoid (double x) {
   return -logpexp(-x);
 }
 
+// This function takes as input an array of unnormalized
+// log-probabilities "logw" and returns normalized probabilities "w"
+// such that the sum is equal to 1.
+void normalizelogweights (const double* logw, double* w, Size n) {
+
+  // Guard against underflow or overflow by adjusting the
+  // log-probabilities so that the largest probability is 1.
+  c = max(logw,n);
+  for (Index i = 0; i < n; i++)
+    w[i] = exp(logw[i] - c);
+
+  // Normalize the probabilities.
+  double r = sum(w,n);
+  for (Index i = 0; i < n; i++)
+    w[i] /= r;
+}
+
 // Copy entries of one vector to another vector.
 void copy (const double* source, double* dest, Size n) {
   memcpy(dest,source,sizeof(double)*n);

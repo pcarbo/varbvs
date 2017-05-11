@@ -15,6 +15,11 @@ double sigmoid (double x);
 // performed in a numerically stable manner.
 double logsigmoid (double x);
 
+// This function takes as input an array of unnormalized
+// log-probabilities "logw" and returns normalized probabilities "w"
+// such that the sum is equal to 1.
+void normalizelogweights (const double* logw, double* w, Size n);
+
 // Copy entries of one vector to another vector.
 void copy (const double* source, double* dest, Size n);
 
