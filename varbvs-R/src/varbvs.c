@@ -11,7 +11,7 @@ void varbvsnormupdate (const double* x, double xy, double d, double sigma,
 		       double* Xr, Size n) {
 
   // Compute the variational estimate of the posterior variance.
-  double s = sa*sigma/(sa*d + 1);
+  double s = sigma*sa/(sa*d + 1);
   
   // Update the variational estimate of the posterior mean.
   double r = (*alpha) * (*mu);
@@ -20,7 +20,7 @@ void varbvsnormupdate (const double* x, double xy, double d, double sigma,
   // Update the variational estimate of the posterior inclusion
   // probability.
   double SSR = (*mu) * (*mu) / s;
-  *alpha = sigmoid(logodds + (log(s/(sa*sigma)) + SSR)/2);
+  *alpha = sigmoid(logodds + (log(s/(sigma*sa)) + SSR)/2);
   
   // Update Xr = X*r.
   double rnew = (*alpha) * (*mu);
@@ -76,5 +76,49 @@ void varbvsbinzupdate (const double* x, double xy, double xdx,
 
   // Update Xr = X*r.
   double rnew = (*alpha) * (*mu);
+  add(Xr,rnew - r,x,n);
+}
+
+// ---------------------------------------------------------------------
+// Execute a single coordinate ascent update to maximize the variational 
+// lower bound for the linear regression model with mixture-of-normal
+// priors.
+void varbvsmixupdate (const double* x, double xy, double d, double sigma, 
+		      double sa, double* q, double* alpha, double* mu, 
+		      double* Xr, double* s, double* r, double* w,
+		      Size n, Size k, double eps) {
+
+  // The mean and variance corresponding to the first mixture
+  // component, the "spike", should always be zero.
+  mu[0] = 0;
+  s[0]  = 0;
+  r[0]  = 0;
+  w[0]  = log(q[0] + eps);
+  
+  // Compute the variance of the regression coefficient conditioned on
+  // being drawn from each of the mixture components.
+  for (Index i = 1; i < k; i++)
+    s[i] = sigma*sa[i]/(sa[i]*d + 1);
+  
+  // Update the variational estimate of the posterior mean for each
+  // mixture component.
+  double xxr = dot(x,Xr,n)
+  for (Index i = 1; i < k; i++) {
+    r[i]  = alpha[i] * mu[i];
+    mu[i] = s[i]/sigma * (xy + d*r[i] - xxr);
+  }
+
+  // Update the assignment probabilities for all of the mixture
+  // components.
+  double SSR;
+  for (Index i = 1; i < k; i++) {
+    SSR  = mu[i]*mu[i]/s[i];
+    w[i] = log(q[i] + eps) + (log(s[i]/(sigma*sa[i])) + SSR)/2;
+  }
+  // TO DO: Fix this.
+  // alpha(j,:) = normalizelogweights(w);
+  
+  // Update Xr = X*r.
+  double rnew = dot(alpha,mu,k);
   add(Xr,rnew - r,x,n);
 }

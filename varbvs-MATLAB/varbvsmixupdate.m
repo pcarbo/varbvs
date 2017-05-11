@@ -49,7 +49,7 @@ function [alpha, mu, Xr] = varbvsmixupdate (X, sigma, sa, q, xy, d, ...
   mu    = mu0;
   Xr    = Xr0;
 
-  if (fast_version)
+  if fast_version
       
     % Execute the C routine. I subtract 1 from the indices because MATLAB 
     % arrays start at 1, but C arrays start at 0.
@@ -76,7 +76,7 @@ function [alpha, mu, Xr] = varbvsmixupdate (X, sigma, sa, q, xy, d, ...
       mu(j,:) = s/sigma * (xy(j) + d(j)*r - dot(x,Xr));
       mu(j,1) = 0;
     
-      % Update the assignment probabilities for each of the mixture
+      % Update the assignment probabilities for all of the mixture
       % components.
       SSR        = mu(j,:).^2./s;
       w          = log(q + eps) + (log(s./(sigma*sa)) + SSR)/2;

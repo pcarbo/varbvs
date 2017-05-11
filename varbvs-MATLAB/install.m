@@ -40,6 +40,8 @@ eval(['mex ',opts,' varbvsbinzupdatemex.c doublevectormex.c ',...
 
 % Build varbvsmixupdatemex MEX file.
 fprintf('Building varbvsmixupdatemex MEX file.\n');
-% TO DO.
+eval(['mex ',opts,' varbvsmixupdatemex.c doublevectormex.c ',...
+      'singlematrixmex.c doublematrixmex.c ../varbvs-R/src/misc.c ',...
+      '/varbvs-R/src/varbvs.c']);
 
 fprintf('Compilation of MEX files is complete.\n');
