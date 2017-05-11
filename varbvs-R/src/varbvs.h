@@ -39,7 +39,7 @@ void varbvsbinupdate (const double* x, double xy, double xd, double xdx,
 // Execute a single coordinate ascent update to maximize the
 // variational lower bound for Bayesian variable selection in logistic
 // regression, allowing for covariates. The inputs are as follows: x
-// is a single column of the data matrix D; d is a vector defined in
+// is a single column of the data matrix X; d is a vector defined in
 // the Bayesian Analysis paper that is used to specify the variational
 // approximation to the logistic regression factors; xy is the
 // corresponding entry of the matrix-vector product X'*yhat; xdx is
@@ -56,12 +56,21 @@ void varbvsbinzupdate (const double* x, double xy, double xdx,
 		       double* Xr, double* a, double* b, Size n, Size m);
 
 // -----------------------------------------------------------------
-// Execute a single coordinate ascent update to maximize the variational 
-// lower bound for the linear regression model with mixture-of-normal
-// priors. The inputs are as follows:
-//
-// TO DO: Describe inputs here.
-//
+// Execute a single coordinate ascent update to maximize the
+// variational lower bound for the linear regression model with
+// mixture-of-normal priors. The inputs are as follows: x is a single
+// column of the data matrix X; xy is the corresponding entry of
+// matrix-vector product X'*y; d is the corresponding entry on the
+// diagonal of X'*X; sigma, sa and q specify the hyperparameters (the
+// residual variance, mixture variances and mixture weights,
+// respectively); n is the number of samples; k is the number of
+// mixture components (including the "spike"); alpha and mu are the
+// variational parameters that will be updated; Xr is the
+// matrix-vector product X'*r which will be updated to reflect the
+// change to alpha and mu; inputs s, r and logw are all vectors of
+// length k that will be used to store intermediate calculations; and
+// eps is the floating-point precision value (e.g., type "help eps" in
+// MATLAB).
 void varbvsmixupdate (const double* x, double xy, double d, double sigma, 
 		      double sa, double* q, double* alpha, double* mu, 
 		      double* Xr, double* s, double* r, double* logw,
