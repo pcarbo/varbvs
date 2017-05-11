@@ -26,9 +26,9 @@ void normalizelogweights (const double* logw, double* w, Size n) {
 
   // Guard against underflow or overflow by adjusting the
   // log-probabilities so that the largest probability is 1.
-  // double c = max(logw,n);
+  double c = max(logw,n);
   for (Index i = 0; i < n; i++)
-    w[i] = exp(logw[i]); // exp(logw[i] - c);
+    w[i] = exp(logw[i] - c);
 
   // Normalize the probabilities.
   double r = sum(w,n);
@@ -70,9 +70,8 @@ double sum (const double* x, Size n) {
 // Return the largest entry in the vector.
 double max (const double* x, Size n) {
   double y = x[0];
-  for (Index i = 1; i < n; i++, x++) {
-    y  = (x[i] > y) * x[i] + (x[i] <= y) * y;
-  }
+  for (Index i = 1; i < n; i++)
+    y = (x[i] > y) * x[i] + (x[i] <= y) * y;
   return y;
 }
 
