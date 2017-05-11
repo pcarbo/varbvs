@@ -26,7 +26,7 @@ void normalizelogweights (const double* logw, double* w, Size n) {
 
   // Guard against underflow or overflow by adjusting the
   // log-probabilities so that the largest probability is 1.
-  c = max(logw,n);
+  double c = max(logw,n);
   for (Index i = 0; i < n; i++)
     w[i] = exp(logw[i] - c);
 

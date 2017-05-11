@@ -84,15 +84,14 @@ void varbvsbinzupdate (const double* x, double xy, double xdx,
 // lower bound for the linear regression model with mixture-of-normal
 // priors.
 void varbvsmixupdate (const double* x, double xy, double d, double sigma, 
-		      double sa, double* q, double* alpha, double* mu, 
-		      double* Xr, double* s, double* r, double* logw,
+		      const double* sa, const double* q, double* alpha,
+		      double* mu, double* Xr, double* s, double* logw,
 		      Size n, Size k, double eps) {
 
   // The mean and variance corresponding to the first mixture
   // component, the "spike", should always be zero.
   mu[0]   = 0;
   s[0]    = 0;
-  r[0]    = 0;
   logw[0] = log(q[0] + eps);
   
   // Compute the variance of the regression coefficient conditioned on
@@ -102,10 +101,11 @@ void varbvsmixupdate (const double* x, double xy, double d, double sigma,
   
   // Update the variational estimate of the posterior mean for each
   // mixture component.
-  double xxr = dot(x,Xr,n)
+  double r = 0;
+  double t = xy + d*r - dot(x,Xr,n);
   for (Index i = 1; i < k; i++) {
-    r[i]  = alpha[i] * mu[i];
-    mu[i] = s[i]/sigma * (xy + d*r[i] - xxr);
+    r    += alpha[i] * mu[i];
+    mu[i] = s[i]/sigma*t; 
   }
 
   // Update the assignment probabilities for all of the mixture

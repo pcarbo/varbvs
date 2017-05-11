@@ -1,4 +1,5 @@
 #include "doublematrixmex.h"
+#include "misc.h"
 
 // FUNCTION DEFINITIONS
 // -----------------------------------------------------------------
@@ -9,6 +10,17 @@ DoubleMatrix getDoubleMatrix (const mxArray* ptr) {
   result.nc    = mxGetN(ptr);
   result.elems = (double*) mxGetPr(ptr);
   return result;
+}
+
+// Create an m x n matrix in a MATLAB array.
+DoubleMatrix createMatlabDoubleMatrix (Size m, Size n, mxArray** ptr) {
+  *ptr = mxCreateDoubleMatrix(m,n,mxREAL);
+  return getDoubleMatrix(*ptr);
+}
+
+// Copy all the entries of one matrix to another matrix.
+void copyDoubleMatrix (const DoubleMatrix source, DoubleMatrix dest) {
+  copy(source.elems,dest.elems,dest.nr*dest.nc);
 }
 
 // Get a pointer to column j of matrix X.

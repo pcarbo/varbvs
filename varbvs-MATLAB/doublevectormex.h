@@ -21,7 +21,7 @@ typedef struct {
 // Get a double precision vector from a MATLAB array.
 DoubleVector getDoubleVector (const mxArray* ptr);
 
-// Create a column vector in MATLAB array.
+// Create a column vector in a MATLAB array.
 DoubleVector createMatlabVector (Size n, mxArray** ptr);
 
 // Copy entries of one vector to another vector.

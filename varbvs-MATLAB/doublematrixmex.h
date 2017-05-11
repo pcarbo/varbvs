@@ -19,6 +19,12 @@ typedef struct {
 // Get a double precision floating point matrix from a MATLAB array. 
 DoubleMatrix getDoubleMatrix (const mxArray* ptr);
 
+// Create an m x n matrix in a MATLAB array.
+DoubleMatrix createMatlabDoubleMatrix (Size m, Size n, mxArray** ptr);
+
+// Copy all the entries of one matrix to another matrix.
+void copyDoubleMatrix (const DoubleMatrix source, DoubleMatrix dest);
+
 // Get a pointer to column j of matrix X. The entries in a single
 // column of the matrix are assumed to be stored consecutively in
 // memory. Input n is the number of rows in the matrix.
