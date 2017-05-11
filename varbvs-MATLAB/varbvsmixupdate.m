@@ -52,11 +52,16 @@ function [alpha, mu, Xr] = varbvsmixupdate (X, sigma, sa, q, xy, d, ...
   if fast_version
       
     % Execute the C routine. I subtract 1 from the indices because MATLAB 
-    % arrays start at 1, but C arrays start at 0.
-    [alpha mu Xr] = ...
-      varbvsmixupdatemex(X,double(sigma),double(sa),double(q),double(xy),..
-                         double(d),double(alpha0),double(mu0),double(Xr0),...
-                         double(i-1),eps);
+    % arrays start at 1, but C arrays start at 0. Also, note that the
+    % alpha and mu matrices are stored differently in the C
+    % implementation---variables correspond to columns---so we need to
+    % first transpose these matrices.
+    [alpha_fast mu_fast Xr_fast] = ...
+      varbvsmixupdatemex(X,double(sigma),double(sa),double(q),double(xy),...
+                         double(d),double(alpha0)',double(mu0)',...
+                         double(Xr0),double(i-1),eps);
+    alpha_fast = alpha_fast';
+    mu_fast    = mu_fast';
   else
     i = i(:)';
     for j = i

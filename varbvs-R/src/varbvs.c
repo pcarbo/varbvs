@@ -101,12 +101,10 @@ void varbvsmixupdate (const double* x, double xy, double d, double sigma,
   
   // Update the variational estimate of the posterior mean for each
   // mixture component.
-  double r = 0;
+  double r = dot(alpha,mu,k);
   double t = xy + d*r - dot(x,Xr,n);
-  for (Index i = 1; i < k; i++) {
-    r    += alpha[i] * mu[i];
+  for (Index i = 1; i < k; i++)
     mu[i] = s[i]/sigma*t; 
-  }
 
   // Update the assignment probabilities for all of the mixture
   // components.

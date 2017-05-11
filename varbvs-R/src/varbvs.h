@@ -71,6 +71,11 @@ void varbvsbinzupdate (const double* x, double xy, double xdx,
 // length k that will be used to store intermediate calculations; and
 // eps is the floating-point precision value (e.g., type "help eps" in
 // MATLAB).
+//
+// Note that the variational parameters alpha and mu are stored as k x
+// p matrices, where p is the number of variables. The variational
+// parameters are stored in this way so that that the co-ordinate
+// ascent updates are easier to implement.
 void varbvsmixupdate (const double* x, double xy, double d, double sigma, 
 		      const double* sa, const double* q, double* alpha,
 		      double* mu, double* Xr, double* s, double* logw,
