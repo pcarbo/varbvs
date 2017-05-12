@@ -668,7 +668,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if verbose
     fprintf('Welcome to           ');
     fprintf('--       *                              *               \n');
-    fprintf('VARBVS version 2.0.3 ');
+    fprintf('VARBVS version 2.1-0 ');
     fprintf('--       |              |               |               \n');
     fprintf('large-scale Bayesian ');
     fprintf('--       ||           | |    |          || |     |   |  \n');
@@ -676,7 +676,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fprintf('-- |     || | |    |  | ||  ||        |||| ||    |   || \n');
     fprintf('*********************');
     fprintf('********************************************************\n');
-    fprintf('Copyright (C) 2012-2016 Peter Carbonetto.\n')
+    fprintf('Copyright (C) 2012-2017 Peter Carbonetto.\n')
     fprintf('See http://www.gnu.org/licenses/gpl.html for the full ');
     fprintf('license.\n');
     fprintf('Fitting variational approximation for Bayesian variable ');

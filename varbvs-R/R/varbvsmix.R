@@ -1,7 +1,7 @@
 # varbvsmix.m: Fit linear regression model with mixture-of-normals
 # prior using variational approximation. See varbvsmix.Rd for details.
-varbvsmix <- function (eX, Z, y, sa, sigma, q, alpha, mu, update.sigma,
-                       update.sa, update.q, q.penalty, tol = 1e-4,
+varbvsmix <- function (eX, Z, y, sa, sigma, w, alpha, mu, update.sigma,
+                       update.sa, update.w, w.penalty, tol = 1e-4,
                        maxiter = 1e4, verbose = TRUE) {
     
   # Get the number of samples (n), variables (p) and mixture
@@ -48,4 +48,76 @@ varbvsmix <- function (eX, Z, y, sa, sigma, q, alpha, mu, update.sigma,
   sa <- c(as.double(sa))
   if (sa[1] != 0)
     stop("Variance of first mixture component should be 0")
+
+  # (2) PROCESS OPTIONS
+  # -------------------
+  if (!is.finite(maxiter))
+    stop("Input maxiter must be a finite number")
+  
+  # Get initial estimate for the variance of the residual, if
+  # provided.
+  if (missing(sigma)) {
+    sigma <- var(y)
+    update.sigma.default <- TRUE
+  } else {
+    sigma <- c(sigma)
+    update.sigma.default <- FALSE
+  }
+
+  # Get initial estimate for the mixture weights, if provided.
+  if (missing(w))
+    w <- rep(1/K,K)
+  else
+    w <- c(w)
+  if (length(w) != K)
+    stop("Length of input w should be the same as length of sa")
+  
+  # Specify the penalty term for the mixture weights.
+  if (missing(w.penalty))
+    w.penalty <- rep(1/K,K)
+  else
+    w.penalty <- c(w.penalty)
+  
+  # Determine whether to update the residual variance parameter. Note
+  # that the default seting is determined by whether sigma is
+  # provided.
+  if (missing(update.sigma))
+    update.sigma <- update.sigma.default
+
+  # Determine whether to update the mixture variance parameters. By default,
+  # these parameters are not updated.
+  if (missing(update.sa))
+    update.sa <- FALSE
+  if (update.sa)
+    stop("Estimation of mixture variances not implemented")
+  
+  # Determine whether to update the mixture weights.
+  if (missing(update.w))
+    update.w <- TRUE
+
+  # Set initial estimates of variational parameters alpha. These
+  # parameters are stored as a p x K matrix.
+  if (missing(alpha)) {
+    alpha <- rand(p,K)
+    alpha <- alpha / rep.row(colSums(alpha),p)
+  }
+  if (nrow(alpha) != p)
+    stop("Input alpha should have as many rows as X has columns")
+  if (ncol(alpha) != K)
+    stop("Input alpha should have one column for each mixture component")
+
+  # Set initial estimates of variational parameters 'mu'. These
+  # parameters are stored as a p x K matrix. Note that the first
+  # column of this matrix is always zero because it corresponds to the
+  # "spike" component.
+  if (missing(mu))
+    mu <- randn(p,K)
+  if (nrow(mu) != p)
+    stop("Input mu must have as many rows as X has columns")
+  if (ncol(mu) != K)
+  mu[,1] <- 0
+
+  # (3) PREPROCESSING STEPS
+  # -----------------------
+  # TO DO.
 }
