@@ -1,5 +1,5 @@
-# varbvsmix.m: Fit linear regression model with mixture-of-normals
-# prior using variational approximation. See varbvsmix.Rd for details.
+# Fit linear regression model with mixture-of-normals prior using
+# variational approximation. See varbvsmix.Rd for details.
 varbvsmix <- function (eX, Z, y, sa, sigma, w, alpha, mu, update.sigma,
                        update.sa, update.w, w.penalty, tol = 1e-4,
                        maxiter = 1e4, verbose = TRUE) {
@@ -119,5 +119,51 @@ varbvsmix <- function (eX, Z, y, sa, sigma, w, alpha, mu, update.sigma,
 
   # (3) PREPROCESSING STEPS
   # -----------------------
-  # TO DO.
+  # Adjust the genotypes and phenotypes so that the linear effects of
+  # the covariates are removed. This is equivalent to integrating out
+  # the regression coefficients corresponding to the covariates with
+  # respect to an improper, uniform prior; see Chipman, George and
+  # McCulloch, "The Practical Implementation of Bayesian Model
+  # Selection," 2001.
+  #
+  # Here I compute two quantities that are used here to remove linear
+  # effects of the covariates (Z) on X and y, and later on (in
+  # function "outerloop"), to efficiently compute estimates of the
+  # regression coefficients for the covariates.
+  SZy <- solve(crossprod(Z),c(y %*% Z))
+  SZX <- solve(crossprod(Z),t(Z) %*% X)
+  if (ncol(Z) == 1) {
+    X <- X - rep.row(colMeans(X),n)
+    y <- y - mean(y)
+  } else {
+
+    # The equivalent expressions in MATLAB are  
+    #
+    #   y = y - Z*((Z'*Z)\(Z'*y))
+    #   X = X - Z*((Z'*Z)\(Z'*X))  
+    #
+    # This should give the same result as centering the columns of X
+    # and subtracting the mean from y when we have only one
+    # covariate, the intercept.
+    y <- y - c(Z %*% SZy)
+    X <- X - Z %*% SZX
+  }
+
+  # Provide a brief summary of the analysis.
+  if (verbose) {
+    cat("Fitting variational approximation for linear regression model",
+        "with\n")
+    cat("mixture-of-normals priors.\n")
+    cat(sprintf("samples:      %-6d ",n))
+    cat('mixture component sd''s:    %0.2g..%0.2g\n',...
+            min(sqrt(sa(2:K))),max(sqrt(sa(2:K))))
+    cat('variables:    %-6d ',p);
+    cat('fit mixture variances:     %s\n',tf2yn(update_sa))
+    cat('covariates:   %-6d ',ncov);
+    cat('fit mixture weights:       %s\n',tf2yn(update_q))
+    cat('mixture size: %-6d ',K);
+    cat('fit residual var. (sigma): %s\n',tf2yn(update_sigma))
+    cat('intercept:    yes    ');
+    cat('convergence tolerance      %0.1e\n',tol)
+  }
 }
