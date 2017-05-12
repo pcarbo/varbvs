@@ -12,8 +12,8 @@ se <- 4     # Variance of residual.
 # The standard deviations and mixture weights used to simulate the
 # additive effects on the quantitative trait. Note that the first
 # mixture component must have a standard deviation of exactly zero.
-sd = [    0  0.1  0.2  0.5 ]';
-q  = [ 0.95 0.03 0.01 0.01 ]';
+sd <- [    0  0.1  0.2  0.5 ]
+q  <- [ 0.95 0.03 0.01 0.01 ]
 
 # Set the random number generator seed.
 set.seed(1)
