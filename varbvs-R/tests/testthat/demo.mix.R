@@ -66,3 +66,12 @@ y <- mu + X %*% beta + sqrt(se)*rnorm(n)
 if (m > 0)
   y <- y + Z %*% u
 y <- c(y)
+
+# FIT VARIATIONAL APPROXIMATION TO POSTERIOR
+# ------------------------------------------
+# Fit the fully-factorized variational approximation to the posterior
+# distribution of the coefficients for a linear regression model of
+# the quantitative trait (Y), with the mixture-of-normals prior on the
+# coefficients.
+cat("2. FITTING MODEL TO DATA.\n")
+fit <- varbvsmix(X,Z,y,sd^2)

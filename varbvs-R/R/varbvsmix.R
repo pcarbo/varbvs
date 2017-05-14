@@ -1,6 +1,6 @@
 # Fit linear regression model with mixture-of-normals prior using
 # variational approximation. See varbvsmix.Rd for details.
-varbvsmix <- function (eX, Z, y, sa, sigma, w, alpha, mu, update.sigma,
+varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
                        update.sa, update.w, w.penalty, tol = 1e-4,
                        maxiter = 1e4, verbose = TRUE) {
     
@@ -151,19 +151,19 @@ varbvsmix <- function (eX, Z, y, sa, sigma, w, alpha, mu, update.sigma,
 
   # Provide a brief summary of the analysis.
   if (verbose) {
-    cat("Fitting variational approximation for linear regression model",
-        "with\n")
+    cat("Fitting variational approximation for linear regression",
+        "model with\n")
     cat("mixture-of-normals priors.\n")
     cat(sprintf("samples:      %-6d ",n))
-    cat('mixture component sd''s:    %0.2g..%0.2g\n',...
-            min(sqrt(sa(2:K))),max(sqrt(sa(2:K))))
-    cat('variables:    %-6d ',p);
-    cat('fit mixture variances:     %s\n',tf2yn(update_sa))
-    cat('covariates:   %-6d ',ncov);
-    cat('fit mixture weights:       %s\n',tf2yn(update_q))
-    cat('mixture size: %-6d ',K);
-    cat('fit residual var. (sigma): %s\n',tf2yn(update_sigma))
-    cat('intercept:    yes    ');
-    cat('convergence tolerance      %0.1e\n',tol)
+    cat(sprintf("mixture component sd's:    %0.2g..%0.2g\n",
+                min(sqrt(sa[2:K])),max(sqrt(sa[2:K]))))
+    cat(sprintf("variables:    %-6d ",p))
+    cat(sprintf("fit mixture variances:     %s\n",tf2yn(update.sa)))
+    cat(sprintf("covariates:   %-6d ",max(0,ncol(Z) - 1)))
+    cat(sprintf("fit mixture weights:       %s\n",tf2yn(update.w)))
+    cat(sprintf("mixture size: %-6d ",K))
+    cat(sprintf("fit residual var. (sigma): %s\n",tf2yn(update.sigma)))
+    cat("intercept:    yes    ")
+    cat(sprintf("convergence tolerance      %0.1e\n",tol))
   }
 }
