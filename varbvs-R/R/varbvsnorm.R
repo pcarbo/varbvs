@@ -164,6 +164,6 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4,
 # variational approximation.
 int.linear <- function (Xr, d, y, sigma, alpha, mu, s) {
   n <- length(y)
-  return(-length(y)/2*log(2*pi*sigma) - norm2(y - Xr)^2/(2*sigma) 
+  return(-n/2*log(2*pi*sigma) - norm2(y - Xr)^2/(2*sigma) 
          - dot(d,betavar(alpha,mu,s))/(2*sigma))
 }

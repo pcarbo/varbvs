@@ -166,4 +166,110 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     cat("intercept:    yes    ")
     cat(sprintf("convergence tolerance      %0.1e\n",tol))
   }
+
+  # (4) FIT MODEL TO DATA
+  # ---------------------
+  # Repeat until convergence criterion is met, or until the maximum
+  # number of iterations is reached.
+  if (verbose) {
+    cat("       variational    max. --------- hyperparameters ---------\n")
+    cat("iter   lower bound  change   sigma  mixture sd's  mix. weights\n")
+  }
+  for (iter in 1:maxiter) {
+
+    # Save the current variational parameters and model parameters.
+    alpha0 <- alpha
+    mu0    <- mu
+    s0     <- s
+    sigma0 <- sigma
+    sa0    <- sa
+    w0     <- w
+    
+    # (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
+    # --------------------------------------------
+    # Compute the lower bound to the marginal log-likelihood.
+    logw0 <- computevarlbmix(Z,Xr,d,y,sigma,sa,q,alpha,mu,s)
+    
+    # (4b) UPDATE VARIATIONAL APPROXIMATION
+    # -------------------------------------
+    # Run a forward or backward pass of the coordinate ascent updates.
+    if (iter %% 2)
+      i <- 1:p
+    else
+      i <- p:1
+    # TO DO.
+
+    # (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
+    # --------------------------------------------
+    # Compute the lower bound to the marginal log-likelihood.
+    # TO DO.
+    
+    # (4d) UPDATE RESIDUAL VARIANCE
+    # -----------------------------
+    # Compute the approximate maximum likelihood estimate of the residual
+    # variable (sigma), if requested. Note that we should also
+    # recalculate the variance of the regression coefficients when this
+    # parameter is updated. 
+    if (update_sigma) {
+      # TO DO.
+    }
+
+    # (4e) UPDATE MIXTURE WEIGHTS
+    # ---------------------------
+    # Compute the approximate penalized maximum likelihood estimate of
+    # the mixture weights (w), if requested.
+    if (update.w) {
+      # TO DO.
+    }
+
+    # (4f) CHECK CONVERGENCE
+    # ----------------------
+    # Print the status of the algorithm and check the convergence
+    # criterion. Convergence is reached when the maximum difference
+    # between the posterior inclusion probabilities at two successive
+    # iterations is less than the specified tolerance, or when the
+    # variational lower bound has decreased.
+    # TO DO.
+  }
+  if (verbose)
+    cat("\n")
+}
+
+# ----------------------------------------------------------------------
+# betavarmix(p,mu,s) returns variances of variables drawn from mixtures of
+# normals. Each of the inputs is a n x k matrix, where n is the number of
+# variables and k is the number of mixture components. Specifically,
+# variable i is drawn from a mixture in which the jth mixture component is
+# the univariate normal with mean mu[i,j] and variance s[i,j].
+#
+# Note that the following two lines should return the same result when k=2
+# and the first component is the "spike" density with zero mean and
+# variance.
+#
+#   y1 <- betavar(p,mu,s)
+#   y2 <- betavarmix(c(1-p,p),cbind(0,mu),cbind(0,s))
+#
+betavarmix <- function (p, mu, s)
+  rowSums(p*(s + mu^2)) - rowSums(p*mu)^2
+
+# ----------------------------------------------------------------------
+# Compute the lower bound to the marginal log-likelihood.
+computevarlb <- function (Z, Xr, d, y, sigma, sa, q, alpha, mu, s) {
+
+  # Get the number of samples (n), variables (p) and mixture
+  # components (K).
+  n <- length(y)
+  p <- length(d)
+  K <- length(sa)
+
+  # Compute the variational lower bound.
+  out <- (-n/2*log(2*pi*sigma) - logdet(Z'*Z)/2 
+      - (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s))/(2*sigma);
+  for i = 1:K
+    out <- out + sum(alpha(:,i)*log(q(i) + eps)) + ...
+          - alpha(:,i)'*log(alpha(:,i) + eps);
+  for (i in 2:K)
+    out = out + (sum(alpha(:,i)) + alpha(:,i)'*log(s(:,i)/(sigma*sa(i))))/2 ...
+          - alpha(:,i)'*(s(:,i) + mu(:,i).^2)/(sigma*sa(i))/2;
+  end
 }
