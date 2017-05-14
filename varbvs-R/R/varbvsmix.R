@@ -254,22 +254,23 @@ betavarmix <- function (p, mu, s)
 
 # ----------------------------------------------------------------------
 # Compute the lower bound to the marginal log-likelihood.
-computevarlb <- function (Z, Xr, d, y, sigma, sa, q, alpha, mu, s) {
+computevarlbmix <- function (Z, Xr, d, y, sigma, sa, w, alpha, mu, s) {
 
   # Get the number of samples (n), variables (p) and mixture
   # components (K).
   n <- length(y)
   p <- length(d)
-  K <- length(sa)
+  K <- length(w)
 
   # Compute the variational lower bound.
-  out <- (-n/2*log(2*pi*sigma) - logdet(Z'*Z)/2 
-      - (norm(y - Xr)^2 + d'*betavarmix(alpha,mu,s))/(2*sigma);
-  for i = 1:K
-    out <- out + sum(alpha(:,i)*log(q(i) + eps)) + ...
-          - alpha(:,i)'*log(alpha(:,i) + eps);
+  out <- (-n/2*log(2*pi*sigma)
+          - determinant(crossprod(Z),logarithm = TRUE)$modulus/2
+          - (norm2(y - Xr)^2 + dot(d,betavarmix(alpha,mu,s)))/(2*sigma))
+  for (i in 1:K)
+    out <- (out + sum(alpha[,i]*log(w[i] + eps)) 
+                - sum(alpha[,i]*log(alpha[,i] + eps)))
   for (i in 2:K)
-    out = out + (sum(alpha(:,i)) + alpha(:,i)'*log(s(:,i)/(sigma*sa(i))))/2 ...
-          - alpha(:,i)'*(s(:,i) + mu(:,i).^2)/(sigma*sa(i))/2;
-  end
+    out <- (out + (sum(alpha[,i]) + sum(alpha[,i]*log(s[,i]/(sigma*sa[i]))))/2
+                - sum(alpha[,i]*(s[,i] + mu[,i]^2))/(sigma*sa[i])/2)
+  return(out)
 }
