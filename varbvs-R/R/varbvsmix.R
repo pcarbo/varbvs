@@ -167,6 +167,24 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     cat(sprintf("convergence tolerance      %0.1e\n",tol))
   }
 
+  # Compute a few useful quantities.
+  xy <- c(y %*% X)
+  d  <- diagsq(X)
+  Xr <- c(X %*% rowSums(alpha*mu))
+  
+  # For each variable and each mixture component, calculate s[i,k],
+  # the variance of the regression coefficient conditioned on being
+  # drawn from the kth mixture component. Note that first column of
+  # "s" is always zero since this corresponds to the "spike" mixture
+  # component.
+  s <- matrix(0,p,K)
+  for (i in 2:K)
+    s[,i] <- sigma*sa[i]/(sa[i]*d + 1)
+
+  # Initialize storage for outputs logw and err.
+  logw <- rep(0,maxiter)
+  err  <- rep(0,maxiter)
+  
   # (4) FIT MODEL TO DATA
   # ---------------------
   # Repeat until convergence criterion is met, or until the maximum
@@ -188,7 +206,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
-    logw0 <- computevarlbmix(Z,Xr,d,y,sigma,sa,q,alpha,mu,s)
+    logw0 <- computevarlbmix(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
     
     # (4b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
@@ -202,7 +220,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
-    # TO DO.
+    logw[iter] <- computevarlb(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
     
     # (4d) UPDATE RESIDUAL VARIANCE
     # -----------------------------
