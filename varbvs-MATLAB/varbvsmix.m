@@ -243,8 +243,8 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     if size(mu,1) ~= p
       error('options.mu should have 1 row for each variable (column of X)');
     end
-    if size(mu,2) == 1
-      error('options.mu should have have 1 column for each mixture component');
+    if size(mu,2) ~= K
+      error('options.mu should have one column for each mixture component');
     end
   else
     mu = randn(p,K);

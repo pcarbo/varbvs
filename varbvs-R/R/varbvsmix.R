@@ -113,8 +113,9 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   if (missing(mu))
     mu <- randn(p,K)
   if (nrow(mu) != p)
-    stop("Input mu must have as many rows as X has columns")
+    stop("Input mu should have as many rows as X has columns")
   if (ncol(mu) != K)
+    stop("Input mu should have one column for each mixture component")
   mu[,1] <- 0
 
   # (3) PREPROCESSING STEPS
@@ -202,7 +203,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     sigma0 <- sigma
     sa0    <- sa
     w0     <- w
-    
+
     # (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.

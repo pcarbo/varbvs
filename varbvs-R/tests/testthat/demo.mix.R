@@ -74,4 +74,14 @@ y <- c(y)
 # the quantitative trait (Y), with the mixture-of-normals prior on the
 # coefficients.
 cat("2. FITTING MODEL TO DATA.\n")
-fit <- varbvsmix(X,Z,y,sd^2)
+# *** DEBUGGING *** 
+library(R.matlab)
+out    <- readMat("../../varbvs-MATLAB/temp.mat")
+X      <- out$X
+Z      <- out$Z
+y      <- c(out$y)
+alpha0 <- out$alpha
+mu0    <- out$mu
+rm(out)
+# *** end debugging *** 
+fit <- varbvsmix(X,Z,y,sd^2,alpha = alpha0,mu = mu0)
