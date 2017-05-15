@@ -221,7 +221,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
-    logw[iter] <- computevarlb(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
+    logw[iter] <- computevarlbmix(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
     
     # (4d) UPDATE RESIDUAL VARIANCE
     # -----------------------------
@@ -230,7 +230,11 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # recalculate the variance of the regression coefficients when this
     # parameter is updated. 
     if (update_sigma) {
-      # TO DO.
+      sigma <- (norm2(y - Xr)^2 + dot(d,betavarmix(alpha,mu,s))
+                 + sum(colSums(alpha[,-1]*(s[,-1] + mu[,-1]^2))/sa[-1]))/
+               (n + sum(alpha[,-1]))
+      for (i in 2:K)
+        s[,i] <- sigma*sa[i]/(sa[i]*d + 1)
     }
 
     # (4e) UPDATE MIXTURE WEIGHTS
@@ -238,7 +242,8 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # Compute the approximate penalized maximum likelihood estimate of
     # the mixture weights (w), if requested.
     if (update.w) {
-      # TO DO.
+      w <- colSums(alpha) + w.penalty - 1
+      w <- w/sum(w)
     }
 
     # (4f) CHECK CONVERGENCE
