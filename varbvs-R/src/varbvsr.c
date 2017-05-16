@@ -5,6 +5,12 @@
 
 // FUNCTION DEFINITIONS
 // ---------------------------------------------------------------------
+// Get a pointer to column j of n x m matrix X.
+double* getMatrixColumn (double* X, Index j, Size n) {
+  return X + n*j;
+}
+
+// ---------------------------------------------------------------------
 // This function is used to implement the R function varbvsnormupdate.
 // It is called in R using the .Call interface.
 SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp,
@@ -132,3 +138,51 @@ SEXP varbvsbinzupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
 
   return R_NilValue;
 }
+
+// ---------------------------------------------------------------------
+// This function is used to implement the R function varbvsmixupdate.
+// It is called in R using the .Call interface.
+SEXP varbvsmixupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP wp, SEXP xyp,
+			   SEXP dp, SEXP alphap, SEXP mup, SEXP Xrp, SEXP ip, 
+			   SEXP epsp) {
+
+  // (1) GET INPUTS AND OUTPUTS
+  // --------------------------
+  double* X       = REAL(Xp);       // Input X.
+  double  sigma   = *REAL(sigmap);  // Input sigma.
+  double* sa      = REAL(sap);      // Input sa.
+  double* w       = REAL(wp);       // Input w.
+  double* xy      = REAL(xyp);      // Input xy.
+  double* d       = REAL(dp);       // Input d.
+  double* alpha   = REAL(alphap);   // Input and output alpha.
+  double* mu      = REAL(mup);      // Input and output mu.
+  double* Xr      = REAL(Xrp);      // Input and output Xr.
+  int*    I       = INTEGER(ip);    // Input i.
+  double  eps     = *REAL(epsp);    // Input eps.
+
+  // Get the number of samples (n), the number of mixture components
+  // (k), and the number of coordinate ascent updates (numiter).
+  R_xlen_t n       = length(Xrp);
+  R_xlen_t k       = length(wp);
+  R_xlen_t numiter = length(ip);
+
+  // These arrays are used to store some intermediate calculations.
+  double s[k];
+  double logw[k];
+
+  // (2) CYCLE THROUGH COORDINATE ASCENT UPDATES
+  // -------------------------------------------
+  for (R_xlen_t j = 0; j < numiter; j++) {
+    R_xlen_t i = (R_xlen_t) I[j];
+
+    // Get the kth column of matrix X.
+    const double* x = getColumn(X,k,n);
+
+    // Perform the update.
+    varbvsmixupdate(x,xy[i],d[i],sigma,sa,w,getMatrixColumn(alpha,i,k),
+		    getMatrixColumn(mu,i,k),Xr,s,logw,n,k,eps);
+  }
+
+  return R_NilValue;
+}
+

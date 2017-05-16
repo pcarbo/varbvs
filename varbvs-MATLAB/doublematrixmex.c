@@ -28,7 +28,7 @@ const double* getConstDoubleColumn (const double* X, Index j, Size n) {
   return X + n*j;
 }
 
-// Get a pointer to column j of matrix X.
+// Get a pointer to column j of n x m matrix X.
 double* getDoubleColumn (double* X, Index j, Size n) {
   return X + n*j;
 }
