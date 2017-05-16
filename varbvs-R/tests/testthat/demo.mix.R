@@ -1,5 +1,6 @@
 # This script illustrates the "varbvsmix" function on a simulated data
 # set, in which all candidate variables (predictors) are uncorrelated.
+library(lattice)
 library(varbvs)  
 
 # SCRIPT PARAMETERS
@@ -76,3 +77,21 @@ y <- c(y)
 cat("2. FITTING MODEL TO DATA.\n")
 fit <- varbvsmix(X,Z,y,sd^2)
 
+# Plot the estimated coefficients against the ground-truth coefficients.
+print(xyplot(beta.est ~ beta.true,
+             data.frame(beta.true = beta,
+                        beta.est  = rowSums(fit$alpha * fit$mu)),
+             pch = 4,col = "black",cex = 0.75,
+             xlab = "ground-truth regression coefficient",
+             ylab = "estimated regression coefficient"))
+
+# Show the change in the variational lower bound at each iteration of the
+# co-ordinate ascent algorithm.
+## niter = length(fit.logw);
+## subplot(1,2,2);
+## plot(1:niter,max(fit.logw) - fit.logw,'-','Color',rgb('darkorange'),...
+##      'LineWidth',2);
+## set(gca,'FontSize',12,'FontName','fixed');
+## set(gca,'XLim',[0 niter+1],'TickDir','out','YScale','log');
+## xlabel('iteration');
+## ylabel('log10-distance from final lower bound');

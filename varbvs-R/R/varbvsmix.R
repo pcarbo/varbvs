@@ -281,6 +281,21 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   }
   if (verbose)
     cat("\n")
+
+  # (6) CREATE FINAL OUTPUT
+  # -----------------------
+  fit <- list(n = n,mu.cov = mu.cov,update.sigma = update.sigma,
+              update.sa = update.sa,update.w = update.w,w.penalty = w.penalty,
+              sigma = sigma,sa = sa,w = w,alpha = alpha,mu = mu,s = s)
+
+  # Add column names to some of the outputs.
+  rownames(fit$alpha) <- colnames(X)
+  rownames(fit$mu)    <- colnames(X)
+  rownames(fit$s)     <- colnames(X)
+  
+  # Declare the return value as an instance of class 'varbvsmix'.
+  class(fit) <- c("varbvs","list")
+  return(fit)
 }
 
 # ----------------------------------------------------------------------
