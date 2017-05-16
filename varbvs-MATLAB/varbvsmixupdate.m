@@ -6,10 +6,10 @@ function [alpha, mu, Xr] = varbvsmixupdate (X, sigma, sa, q, xy, d, ...
                                             alpha0, mu0, Xr0, i)
   fast_version = true;
     
-  % Get the number of samples, (n) the number of variables (p), and the
-  % number of mixture components including the "spike" (K)..
+  % Get the number of samples (n), the number of variables (p), and the
+  % number of mixture components including the "spike" (K).
   [n p] = size(X);
-  K     = length(q);
+  K     = numel(q);
 
   % X should be single precision.
   if ~isa(X,'single')
@@ -21,7 +21,12 @@ function [alpha, mu, Xr] = varbvsmixupdate (X, sigma, sa, q, xy, d, ...
     error('Input sigma should be a scalar');
   end
 
-  % Check input xy and d.
+  % Check input sa.
+  if (numel(sa) ~= K)
+    error('Input sa should have length = numel(q)');
+  end
+
+  % Check inputs xy and d.
   if ~(length(xy) == p & length(d) == p)
     error('Inputs xy and d should have length = size(X,2).');
   end
@@ -55,9 +60,6 @@ function [alpha, mu, Xr] = varbvsmixupdate (X, sigma, sa, q, xy, d, ...
                          double(Xr0),double(i-1),eps);
     alpha = alpha';
     mu    = mu';
-    if any(isnan(alpha(:))) | any(isnan(mu(:))) | any(isnan(Xr(:)))
-      error('Found a Nan');
-    end
   else
 
     % Initialize the outputs.
