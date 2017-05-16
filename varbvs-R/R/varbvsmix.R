@@ -216,8 +216,11 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
       i <- 1:p
     else
       i <- p:1
-    # TO DO: Fix this.
-    [alpha mu Xr] = varbvsmixupdate(X,sigma,sa,q,xy,d,alpha,mu,Xr,i);
+    out   <- varbvsmixupdate(X,sigma,sa,w,xy,d,alpha,mu,Xr,i)
+    alpha <- out$alpha
+    mu    <- out$mu
+    Xr    <- out$Xr
+    rm(out)
 
     # (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------

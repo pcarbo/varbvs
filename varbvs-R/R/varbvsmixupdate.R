@@ -27,7 +27,7 @@ varbvsmixupdate <- function (X, sigma, sa, w, xy, d, alpha0, mu0, Xr0, i) {
     stop("Inputs xy and d should have length = ncol(X)")
 
   # Check inputs alpha0 and mu0.
-  if (any(c(dim(alpha0),dim(mu0)) ~= c(p,K,p,K)))
+  if (any(c(dim(alpha0),dim(mu0)) != c(p,K,p,K)))
     stop(paste("Inputs alpha0 and mu0 should be p x K matrices,",
                "with p = ncol(X) and K = length(w)"))
    
@@ -40,8 +40,8 @@ varbvsmixupdate <- function (X, sigma, sa, w, xy, d, alpha0, mu0, Xr0, i) {
     stop("Input i contains invalid variable indices")
 
   # Initialize storage for the results.
-  alpha <- c(alpha0)
-  mu    <- c(mu0)
+  alpha <- t(alpha0)
+  mu    <- t(mu0)
   Xr    <- c(Xr0)
   
   # Execute the C routine using the .Call interface and return the
@@ -53,11 +53,9 @@ varbvsmixupdate <- function (X, sigma, sa, w, xy, d, alpha0, mu0, Xr0, i) {
   # arrays start at 0. Also note that the alpha and mu matrices are
   # stored differently in the C implementation---variables correspond
   # to columns---so we need to first transpose these matrices.
-  #
-  # TO DO: Update this.
-  # [alpha mu Xr] = ...
-  #   varbvsmixupdatemex(X,double(sigma),double(sa),double(q),double(xy),...
-  #                      double(d),double(alpha0)',double(mu0)',...
-  #                      double(Xr0),double(i-1),eps);
+  out <- .Call(C_varbvsmixupdate_Call,X = X,sigma = as.double(sigma),
+               sa = as.double(sa),w = as.double(w),xy = as.double(xy),
+               d = as.double(d),alpha = alpha,mu = mu,Xr = Xr,
+               i = as.integer(i-1))
   return(list(alpha = t(alpha),mu = t(mu),Xr = Xr))
 }
