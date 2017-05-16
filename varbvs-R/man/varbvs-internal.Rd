@@ -16,6 +16,7 @@
 \alias{varbvsnormupdate}
 \alias{varbvsbinupdate}
 \alias{varbvsbinzupdate}
+\alias{varbvsmixupdate}
 \alias{varbvspve}
 \alias{var1}
 \alias{var1.cols}
