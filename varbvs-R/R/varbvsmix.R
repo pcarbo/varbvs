@@ -74,7 +74,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   
   # Specify the penalty term for the mixture weights.
   if (missing(w.penalty))
-    w.penalty <- rep(1/K,K)
+    w.penalty <- rep(1,K)
   else
     w.penalty <- c(w.penalty)
   
@@ -99,7 +99,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   # parameters are stored as a p x K matrix.
   if (missing(alpha)) {
     alpha <- rand(p,K)
-    alpha <- alpha / rep.row(colSums(alpha),p)
+    alpha <- alpha / rep.col(rowSums(alpha),K)
   }
   if (nrow(alpha) != p)
     stop("Input alpha should have as many rows as X has columns")
@@ -222,8 +222,6 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     Xr    <- out$Xr
     rm(out)
 
-    browser()
-    
     # (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
@@ -283,8 +281,6 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   }
   if (verbose)
     cat("\n")
-
-  browser()
 }
 
 # ----------------------------------------------------------------------

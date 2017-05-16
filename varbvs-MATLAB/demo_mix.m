@@ -70,16 +70,7 @@ y = double(y);
 % quantitative trait (Y), with the mixture-of-normals prior on the
 % coefficients.
 fprintf('2. FITTING MODEL TO DATA.\n');
-% *** DEBUGGING *** 
-K       = length(q);
-alpha   = rand(p,K);
-alpha   = alpha ./ repmat(sum(alpha,2),1,K);
-mu      = randn(p,K);
-mu(:,1) = 0;
-options = struct('alpha',alpha,'mu',mu);
-save('temp.mat','X','Z','y','alpha','mu','-v6');
-% *** end debugging *** 
-fit = varbvsmix(X,Z,y,sd.^2,labels,options);
+fit = varbvsmix(X,Z,y,sd.^2,labels);
 
 % Plot the estimated coefficients against the ground-truth coefficients.
 figure(1)

@@ -15,7 +15,7 @@ covariates <- c("age","weight")
 # additive effects on the quantitative trait. Note that the first
 # mixture component must have a standard deviation of exactly zero.
 sd <- c(0,   0.1, 0.2, 0.5)
-q  <- c(0.95,0.03,0.01,0.01)
+w  <- c(0.95,0.03,0.01,0.01)
 
 # Set the random number generator seed.
 set.seed(1)
@@ -34,15 +34,15 @@ cat("Data simulation settings:\n")
 cat(sprintf("  - Num. data samples       %d\n",n))
 cat(sprintf("  - Num. covariates         %d\n",m))
 cat(sprintf("  - Num. variables (SNPs)   %d\n",p))
-cat(sprintf("  - Num. mixture components %d\n",length(q)))
+cat(sprintf("  - Num. mixture components %d\n",length(w)))
 maf <- 0.05 + 0.45*runif(p)
 X   <- (runif(n*p) < maf) +
        (runif(n*p) < maf)
 X   <- matrix(as.double(X),n,p,byrow = TRUE)
 
 # Generate additive effects according to the specified standard
-# deviations (sd) and mixture weights (q).
-k    <- sample(length(q),p,replace = TRUE,prob = q)
+# deviations (sd) and mixture weights (w).
+k    <- sample(length(w),p,replace = TRUE,prob = w)
 beta <- sd[k] * rnorm(p)
 
 # Generate random labels for the markers.
@@ -74,14 +74,5 @@ y <- c(y)
 # the quantitative trait (Y), with the mixture-of-normals prior on the
 # coefficients.
 cat("2. FITTING MODEL TO DATA.\n")
-# *** DEBUGGING *** 
-library(R.matlab)
-out    <- readMat("../../../varbvs-MATLAB/temp.mat")
-X      <- out$X
-Z      <- out$Z
-y      <- c(out$y)
-alpha0 <- out$alpha
-mu0    <- out$mu
-rm(out)
-# *** end debugging *** 
-fit <- varbvsmix(X,Z,y,sd^2,alpha = alpha0,mu = mu0)
+fit <- varbvsmix(X,Z,y,sd^2)
+
