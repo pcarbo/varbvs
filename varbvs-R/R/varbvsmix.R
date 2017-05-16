@@ -182,8 +182,8 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   for (i in 2:K)
     s[,i] <- sigma*sa[i]/(sa[i]*d + 1)
 
-  # Initialize storage for outputs logw and err.
-  logw <- rep(0,maxiter)
+  # Initialize storage for outputs logZ and err.
+  logZ <- rep(0,maxiter)
   err  <- rep(0,maxiter)
   
   # (4) FIT MODEL TO DATA
@@ -207,7 +207,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
-    logw0 <- computevarlbmix(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
+    logZ0 <- computevarlbmix(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
     
     # (4b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
@@ -225,7 +225,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
-    logw[iter] <- computevarlbmix(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
+    logZ[iter] <- computevarlbmix(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
     
     # (4d) UPDATE RESIDUAL VARIANCE
     # -----------------------------
@@ -261,14 +261,14 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     if (verbose) {
       progress.str <-
         sprintf("%04d %+13.6e %0.1e %0.1e %13s [%0.3f,%0.3f]",
-                iter,logw[iter],err[iter],sigma,
+                iter,logZ[iter],err[iter],sigma,
                 sprintf("[%0.1g,%0.1g]",sqrt(min(sa[-1])),sqrt(max(sa))),
                 min(w),max(w))
       cat(progress.str)
       cat(rep("\r",nchar(progress.str)))
     }
-    if (logw[iter] < logw0) {
-      logw[iter] <- logw0
+    if (logZ[iter] < logZ0) {
+      logZ[iter] <- logZ0
       err[iter]  <- 0
       sigma      <- sigma0
       w          <- w0
@@ -284,10 +284,16 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
 
   # (6) CREATE FINAL OUTPUT
   # -----------------------
-  fit <- list(n = n,mu.cov = mu.cov,update.sigma = update.sigma,
+  fit <- list(n = n,mu.cov = NULL,update.sigma = update.sigma,
               update.sa = update.sa,update.w = update.w,w.penalty = w.penalty,
-              sigma = sigma,sa = sa,w = w,alpha = alpha,mu = mu,s = s)
+              sigma = sigma,sa = sa,w = w,alpha = alpha,mu = mu,s = s,
+              logZ = logZ[1:iter],err = err[1:iter])
 
+  # Compute the posterior mean estimate of the regression
+  # coefficients for the covariates under the current variational
+  # approximation.
+  fit$mu.cov <- c(SZy - SZX %*% rowSums(alpha * mu))
+ 
   # Add column names to some of the outputs.
   rownames(fit$alpha) <- colnames(X)
   rownames(fit$mu)    <- colnames(X)
