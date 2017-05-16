@@ -100,8 +100,7 @@ print(xyplot(beta.est ~ beta.true,
 numiter <- length(fit$logZ)
 print(xyplot(y ~ x,data.frame(x = 1:numiter,y = max(fit$logZ) - fit$logZ),
              type = "l",col = "darkorange",lwd = 2,
-             scales = list(y = list(log = 10)),
-             xlab = "iteration",
-             ylab = "log10-distance from final lower bound"),
+             scales = list(y = list(log = 10)),xlab = "iteration",
+             ylab = "distance from final lower bound"),
       split = c(2,1,2,1),
       more = FALSE)

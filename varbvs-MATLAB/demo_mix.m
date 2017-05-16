@@ -96,4 +96,4 @@ plot(1:niter,max(fit.logw) - fit.logw,'-','Color',rgb('darkorange'),...
 set(gca,'FontSize',12,'FontName','fixed');
 set(gca,'XLim',[0 niter+1],'TickDir','out','YScale','log');
 xlabel('iteration');
-ylabel('log10-distance from final lower bound');
+ylabel('distance from final lower bound');
