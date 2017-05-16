@@ -288,8 +288,6 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
 
   \item{n}{Number of data samples used to fit model.}
 
-  \item{ncov}{Number of covariates (columns of Z).}
-
   \item{sigma}{Settings for sigma (family = "gaussian" only).}
 
   \item{sa}{Settings for prior variance parameter.}
