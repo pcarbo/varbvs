@@ -229,7 +229,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # variable (sigma), if requested. Note that we should also
     # recalculate the variance of the regression coefficients when this
     # parameter is updated. 
-    if (update_sigma) {
+    if (update.sigma) {
       sigma <- (norm2(y - Xr)^2 + dot(d,betavarmix(alpha,mu,s))
                  + sum(colSums(alpha[,-1]*(s[,-1] + mu[,-1]^2))/sa[-1]))/
                (n + sum(alpha[,-1]))
@@ -253,10 +253,32 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # between the posterior inclusion probabilities at two successive
     # iterations is less than the specified tolerance, or when the
     # variational lower bound has decreased.
-    # TO DO.
+    err[iter] <- max(abs(alpha - alpha0))
+    if (verbose) {
+      progress.str <-
+        sprintf("%04d %+13.6e %0.1e %0.1e %13s [%0.3f,%0.3f]",
+                iter,logw[iter],err[iter],sigma,
+                sprintf("[%0.1g,%0.1g]",sqrt(min(sa[-1])),sqrt(max(sa))),
+                min(w),max(w))
+      cat(progress.str)
+      cat(rep("\r",nchar(progress.str)))
+    }
+    if (logw[iter] < logw0) {
+      logw[iter] <- logw0
+      err[iter]  <- 0
+      sigma      <- sigma0
+      q          <- q0
+      alpha      <- alpha0
+      mu         <- mu0
+      s          <- s0
+      break
+    } else if (err[iter] < tol)
+      break
   }
   if (verbose)
     cat("\n")
+
+  browser()
 }
 
 # ----------------------------------------------------------------------
