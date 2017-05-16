@@ -5,12 +5,6 @@
 
 // FUNCTION DEFINITIONS
 // ---------------------------------------------------------------------
-// Get a pointer to column j of n x m matrix X.
-double* getMatrixColumn (double* X, Index j, Size n) {
-  return X + n*j;
-}
-
-// ---------------------------------------------------------------------
 // This function is used to implement the R function varbvsnormupdate.
 // It is called in R using the .Call interface.
 SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp,
@@ -41,7 +35,7 @@ SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp,
     R_xlen_t k = (R_xlen_t) i[j];
 
     // Get the kth column of matrix X.
-    const double* x = getColumn(X,k,n);
+    const double* x = getConstColumn(X,k,n);
 
     // Perform the update.
     varbvsnormupdate(x,xy[k],d[k],sigma,sa,logodds[k],alpha + k,mu + k,Xr,n);
@@ -82,7 +76,7 @@ SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
     R_xlen_t k = (R_xlen_t) i[j];
 
     // Get the kth column of matrix X.
-    const double* x = getColumn(X,k,n);
+    const double* x = getConstColumn(X,k,n);
 
     // Perform the update.
     varbvsbinupdate(x,xy[k],xd[k],xdx[k],d,sa,logodds[k],alpha+k,mu+k,Xr,n);
@@ -129,7 +123,7 @@ SEXP varbvsbinzupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
     R_xlen_t k = (R_xlen_t) i[j];
 
     // Get the kth column of matrix X.
-    const double* x = getColumn(X,k,n);
+    const double* x = getConstColumn(X,k,n);
 
     // Perform the update.
     varbvsbinzupdate(x,xy[k],xdx[k],d,dzr,sa,logodds[k],alpha + k,mu + k,Xr,
@@ -176,11 +170,11 @@ SEXP varbvsmixupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP wp, SEXP xyp,
     R_xlen_t i = (R_xlen_t) I[j];
 
     // Get the kth column of matrix X.
-    const double* x = getColumn(X,k,n);
+    const double* x = getConstColumn(X,i,n);
 
     // Perform the update.
-    varbvsmixupdate(x,xy[i],d[i],sigma,sa,w,getMatrixColumn(alpha,i,k),
-		    getMatrixColumn(mu,i,k),Xr,s,logw,n,k,eps);
+    varbvsmixupdate(x,xy[i],d[i],sigma,sa,w,getColumn(alpha,i,k),
+		    getColumn(mu,i,k),Xr,s,logw,n,k,eps);
   }
 
   return R_NilValue;

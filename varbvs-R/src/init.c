@@ -5,7 +5,6 @@
 
 // See "Registering native routines" in "Writing R Extensions" manual
 // for an explanation of what these lines of code do.
-
 #define CALLDEF(name, n) {#name, (DL_FUNC) &name, n}
 
 const static R_CallMethodDef R_CallDef[] = {
@@ -14,6 +13,7 @@ const static R_CallMethodDef R_CallDef[] = {
   CALLDEF(varbvsnormupdate_Call,10),
   CALLDEF(varbvsbinupdate_Call,11),
   CALLDEF(varbvsbinzupdate_Call,11),
+  CALLDEF(varbvsmixupdate_Call,11),
   CALLDEF(varbvs_varbvsnormupdate_rcpp,10),
   {NULL, NULL, 0}
 };

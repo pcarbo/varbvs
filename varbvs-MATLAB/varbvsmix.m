@@ -225,7 +225,8 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
     if size(alpha,1) ~= p
       error('options.alpha should have 1 row for each variable (column of X)');
     end
-    if size(alpha,2) ~= K
+n
+if size(alpha,2) ~= K
       error('options.alpha should have 1 column for each mixture component');
     end
   else

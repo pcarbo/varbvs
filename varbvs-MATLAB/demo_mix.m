@@ -75,7 +75,7 @@ K       = length(q);
 alpha   = rand(p,K);
 alpha   = alpha ./ repmat(sum(alpha,2),1,K);
 mu      = randn(p,K);
-mu(1,:) = 0;
+mu(:,1) = 0;
 options = struct('alpha',alpha,'mu',mu);
 save('temp.mat','X','Z','y','alpha','mu','-v6');
 % *** end debugging *** 

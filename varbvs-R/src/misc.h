@@ -26,7 +26,10 @@ void copy (const double* source, double* dest, Size n);
 // Get a pointer to column j of matrix X. The entries in a single
 // column of the matrix are assumed to be stored consecutively in
 // memory. Input n is the number of rows in the matrix.
-const MatrixElem* getColumn (const MatrixElem* X, Index j, Size n);
+const MatrixElem* getConstColumn (const MatrixElem* X, Index j, Size n);
+
+// Get a pointer to column j of matrix X.
+MatrixElem* getColumn (MatrixElem* X, Index j, Size n);
 
 // Copy column j of matrix X. The entries in a single column of the
 // matrix are assumed to be stored consecutively in memory. Input n

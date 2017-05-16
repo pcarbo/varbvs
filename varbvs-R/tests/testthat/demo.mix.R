@@ -76,7 +76,7 @@ y <- c(y)
 cat("2. FITTING MODEL TO DATA.\n")
 # *** DEBUGGING *** 
 library(R.matlab)
-out    <- readMat("../../varbvs-MATLAB/temp.mat")
+out    <- readMat("../../../varbvs-MATLAB/temp.mat")
 X      <- out$X
 Z      <- out$Z
 y      <- c(out$y)

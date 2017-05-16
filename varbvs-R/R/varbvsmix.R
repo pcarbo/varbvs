@@ -222,6 +222,8 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     Xr    <- out$Xr
     rm(out)
 
+    browser()
+    
     # (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
@@ -271,7 +273,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
       logw[iter] <- logw0
       err[iter]  <- 0
       sigma      <- sigma0
-      q          <- q0
+      w          <- w0
       alpha      <- alpha0
       mu         <- mu0
       s          <- s0

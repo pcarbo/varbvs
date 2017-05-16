@@ -42,13 +42,18 @@ void copy (const double* source, double* dest, Size n) {
 }
 
 // Get a pointer to column j of matrix X.
-const MatrixElem* getColumn (const MatrixElem* X, Index j, Size n) {
+const MatrixElem* getConstColumn (const MatrixElem* X, Index j, Size n) {
+  return X + n*j;
+}
+
+// Get a pointer to column j of matrix X.
+MatrixElem* getColumn (MatrixElem* X, Index j, Size n) {
   return X + n*j;
 }
 
 // Copy column j of matrix X.
 void copyColumn (const MatrixElem* X, double* y, Index j, Size n) {
-  const MatrixElem* xij = getColumn(X,j,n);
+  const MatrixElem* xij = getConstColumn(X,j,n);
   for (Index i = 0; i < n; i++, xij++, y++)
     *y = (double) *xij;
 }
