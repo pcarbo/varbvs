@@ -76,3 +76,20 @@ test_that(paste("model fitting works for simulated data with a binary",
                check.attributes = FALSE)
 })
 
+test_that(paste("model fitting works for linear regression with",
+                "mixture-of-normals priors in simulated data"),{
+  tol <- 0.05
+                    
+  # Run the R script that demonstrates varbvsmix on a simulated data
+  # set in which all the candidate variables are uncorrelated.
+  source("demo.mix.R")
+
+  # The variational lower bound should always be increasing.
+  expect_true(all(diff(fit$logZ) > 0))
+  
+  # Check the estimates of the model parameters against the
+  # settings used to simulate the data.
+  expect_equal(w,fit$w,tolerance = tol)
+  expect_equal(fit$sigma,se,tolerance = tol*se)
+})
+
