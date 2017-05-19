@@ -234,9 +234,10 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # recalculate the variance of the regression coefficients when this
     # parameter is updated. 
     if (update.sigma) {
-      sigma <- (norm2(y - Xr)^2 + dot(d,betavarmix(alpha,mu,s))
-                 + sum(colSums(alpha[,-1]*(s[,-1] + mu[,-1]^2))/sa[-1]))/
-               (n + sum(alpha[,-1]))
+      sigma <-
+        (norm2(y - Xr)^2 + dot(d,betavarmix(alpha,mu,s))
+         + sum(colSums(as.matrix(alpha[,-1]*(s[,-1] + mu[,-1]^2)))/sa[-1]))/
+           (n + sum(alpha[,-1]))
       for (i in 2:K)
         s[,i] <- sigma*sa[i]/(sa[i]*d + 1)
     }
