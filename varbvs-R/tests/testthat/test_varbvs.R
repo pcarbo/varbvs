@@ -93,3 +93,16 @@ test_that(paste("model fitting works for linear regression with",
   expect_equal(fit$sigma,se,tolerance = tol*se)
 })
 
+test_that("varbvs and varbvsmix produce same estimates when K=2",{
+  tol <- 1e-4
+  source("demo.test.mix.R")
+  rownames(fit$alpha) <- NULL
+  rownames(fit$mu)    <- NULL
+  
+  # Check that the varbvs and varbvsmix parameter estimates are the
+  # same.
+  niter <- length(fit$logZ)
+  expect_equal(fit$alpha[,2],c(fit2$alpha),tolerance = tol)
+  expect_equal(fit$mu[,2],c(fit2$mu),tolerance = tol)
+  expect_equal(fit$logZ[niter],fit2$logw,tolerance = tol)
+})
