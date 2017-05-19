@@ -126,6 +126,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     alpha <- alpha / rep.row(colSums(alpha),p)
   } else
     initialize.params.default <- FALSE
+  if (!is.matrix(alpha))
+    alpha <- matrix(alpha)
   if (nrow(alpha) != p)
     stop("Input alpha must have as many rows as X has columns")
   if (ncol(alpha) == 1)
@@ -136,6 +138,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     mu <- randn(p,ns)
   else
     initialize.params.default <- FALSE    
+  if (!is.matrix(mu))
+    mu <- matrix(mu)
   if (nrow(mu) != p)
     stop("Input mu must have as many rows as X has columns")
   if (ncol(mu) == 1)
