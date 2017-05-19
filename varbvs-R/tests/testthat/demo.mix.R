@@ -9,7 +9,7 @@ n  <- 1000  # Number of samples.
 p  <- 2000  # Number of variables (genetic markers).
 se <- 4     # Variance of residual.
 
-# Names of covariates.
+# Names of the covariates.
 covariates <- c("age","weight")
 
 # The standard deviations and mixture weights used to simulate the
