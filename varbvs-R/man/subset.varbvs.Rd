@@ -25,7 +25,7 @@ inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. \emph{Bayesian Analysis}
 \bold{7}, 73--108.}
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
-\seealso{\code{varbvs}}
+\seealso{\code{\link{varbvs}}}
 \examples{
 
   # First run one of the examples in help(varbvs), then try running 

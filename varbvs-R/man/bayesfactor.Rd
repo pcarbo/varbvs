@@ -51,4 +51,4 @@ respectively.
   Computing} \bold{11}, 125--139.
 }
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
-\seealso{\code{varbvs}, \code{normalizelogweights}}
+\seealso{\code{\link{varbvs}}, \code{\link{normalizelogweights}}}

@@ -92,6 +92,7 @@ inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. \emph{Bayesian Analysis}
 \bold{7}, 73--108.}
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
-\seealso{\code{xyplot}, \code{ltext}, \code{panel.abline},
-  \code{varbvs}, \code{summary.varbvs}, \code{varbvsindep}
+\seealso{\code{\link[lattice]{xyplot}}, \code{\link[lattice]{ltext}},
+  \code{\link[lattice]{panel.abline}, \code{\lnk{varbvs}},
+  \code{\link{summary.varbvs}}, \code{\link{varbvsindep}}
 }
