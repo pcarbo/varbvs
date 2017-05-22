@@ -93,6 +93,6 @@ accuracy in genetic association studies. \emph{Bayesian Analysis}
 \bold{7}, 73--108.}
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \seealso{\code{\link[lattice]{xyplot}}, \code{\link[lattice]{ltext}},
-  \code{\link[lattice]{panel.abline}, \code{\lnk{varbvs}},
+  \code{\link[lattice]{panel.abline}}, \code{\link{varbvs}},
   \code{\link{summary.varbvs}}, \code{\link{varbvsindep}}
 }

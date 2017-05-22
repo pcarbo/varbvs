@@ -1,5 +1,6 @@
 \name{varbvs-internal}
 \title{Internal varbvs functions}
+\alias{varbvs-internal}
 \alias{logit}
 \alias{logpexp}
 \alias{sigmoid}
