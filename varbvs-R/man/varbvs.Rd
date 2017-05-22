@@ -99,9 +99,9 @@
     to data, in which case input vector sa is used to provide initial
     estimates.}
 
-  \item{optimize.eta}{When optimize.eta = TRUE, eta is fitted to the
-    data during the inner loop coordinate ascent updates, even when good
-    estimates of eta are provided as input.}
+  \item{optimize.eta}{When \code{optimize.eta = TRUE}, eta is fitted to
+    the data during the inner loop coordinate ascent updates, even when
+    good estimates of eta are provided as input.}
 
   \item{initialize.params}{If FALSE, the initialization stage of the
     variational inference algorithm (see below) will be skipped, which
@@ -119,8 +119,8 @@
 
   \item{maxiter}{Maximum number of inner loop iterations.}
 
-  \item{verbose}{If verbose = TRUE, print progress of algorithm to
-    console.}
+  \item{verbose}{If \code{verbose = TRUE}, print progress of algorithm
+    to console.}
 }
 \section{Regression models}{
     Two types of outcomes (y) are modeled: (1) a continuous outcome,
