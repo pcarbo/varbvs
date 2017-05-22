@@ -321,7 +321,7 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
     hyperparameter setting.}
 
   \item{mu.cov}{Posterior mean regression coefficients for covariates,
-  including intercept, for each hyperparameter setting.}
+    including intercept, for each hyperparameter setting.}
   
   \item{eta}{Additional variational parameters for \code{family =
     "binomial"} only.}

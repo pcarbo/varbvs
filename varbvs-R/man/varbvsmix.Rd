@@ -85,15 +85,44 @@
 
   \item{n}{Number of data samples used to fit model.}
 
-  \item{ncov}{Number of covariates (columns of Z).}
+  \item{mu.cov}{Posterior mean regression coefficients for covariates,
+    including intercept.}
+
+  \item{update.sigma}{If \code{TRUE}, residual variance parameter
+    \code{sigma} was fit to data.}
+
+  \item{update.sa}{If \code{TRUE}, mixture variances were fit to data.}
+
+  \item{update.w}{If \code{TRUE}, mixture weights were fit to data.}
+
+  \item{w.penalty}{Penalty used for updating mixture weights.}
+
+  \item{sigma}{Fitted or user-specified residual variance parameter.}
+  
+  \item{sa}{User-specified mixture variances.}
+
+  \item{w}{Fitted or user-specified mixture weights.}
+
+  \item{alpha}{Variational estimates of posterior mixture assignent
+    probabilities.}
+
+  \item{mu}{Variational estimates of posterior mean coefficients.}
+
+  \item{s}{Variational estimates of posterior variances.}
+
+  \item{logZ}{Variational lower bound to marginal log-likelihood at each
+    iteration of the co-ordinate ascent algorithm.}
+
+  \item{err}{Maximum difference in the variational posterior
+    probabilities at each iteration of the co-ordinate ascent
+    algorithm.}
 }
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \seealso{\code{\link{varbvs}}}
 \examples{
 
-set.seed(1)
-
 # Generate the data set.
+set.seed(1)
 n    <- 200
 p    <- 500
 X    <- randn(n,p)
@@ -101,7 +130,7 @@ sd   <- c(0,0.2,0.5)
 w    <- c(0.9,0.05,0.05)
 k    <- sample(length(w),p,replace = TRUE,prob = w)
 beta <- sd[k] * rnorm(p)
-y    <- c(X %*% beta + rnorm(n))
+y    <- c(X \%*\% beta + rnorm(n))
 
 # Fit the model to the data.
 fit <- varbvsmix(X,NULL,y,sd^2)
@@ -110,7 +139,7 @@ fit <- varbvsmix(X,NULL,y,sd^2)
 library(lattice)
 print(xyplot(beta.est ~ beta.true,
              data.frame(beta.true = beta,
-                        beta.est  = rowSums(fit$alpha * fit$mu)),
-             pch = 4,col = "black",cex = 0.6))
+                        beta.fitted = rowSums(fit$alpha * fit$mu)),
+             pch = 20,col = "royalblue",cex = 1))
 }
 }
