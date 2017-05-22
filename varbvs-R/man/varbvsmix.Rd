@@ -62,11 +62,13 @@
     approximate EM algorithm, in which case argument \code{w}, if
     provided, is the initial estimate.}
 
-  \item{w.penalty}{Penalty term for the mixture weights. It should be a
-    vector with one positive entry for each mixture component. Larger
-    values place more weight on the corresponding mixture
-    components. The default is a vector of ones, corresponding to a
-    uniform prior on \code{w}.}
+  \item{w.penalty}{Penalty term for the mixture weights. It is useful
+    for "regularizing" the estimate of \code{w} when we do not have a
+    lot of information. It should be a vector with one positive entry
+    for each mixture component. Larger values place more weight on the
+    corresponding mixture components. It is based on the Dirichlet
+    distribution with parameters \code{w.penalty}. The default is a
+    vector of ones, which reduces to a uniform prior on \code{w}.}
 
   \item{tol}{Convergence tolerance for co-ordinate ascent updates.}
 
@@ -76,7 +78,7 @@
     to console.}
 }
 \details{
-  Details go here.
+  See \url{https://www.overleaf.com/8954189vvpqnwpxhvhq}.
 }
 \value{
   An object with S3 class \code{c("varbvsmix","list")}.
@@ -88,5 +90,27 @@
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \seealso{\code{\link{varbvs}}}
 \examples{
-  # Add at least one example here.
+
+set.seed(1)
+
+# Generate the data set.
+n    <- 200
+p    <- 500
+X    <- randn(n,p)
+sd   <- c(0,0.2,0.5)
+w    <- c(0.9,0.05,0.05)
+k    <- sample(length(w),p,replace = TRUE,prob = w)
+beta <- sd[k] * rnorm(p)
+y    <- c(X %*% beta + rnorm(n))
+
+# Fit the model to the data.
+fit <- varbvsmix(X,NULL,y,sd^2)
+
+\dontrun{
+library(lattice)
+print(xyplot(beta.est ~ beta.true,
+             data.frame(beta.true = beta,
+                        beta.est  = rowSums(fit$alpha * fit$mu)),
+             pch = 4,col = "black",cex = 0.6))
+}
 }
