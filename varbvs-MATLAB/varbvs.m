@@ -668,7 +668,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if verbose
     fprintf('Welcome to           ');
     fprintf('--       *                              *               \n');
-    fprintf('VARBVS version 2.1-0 ');
+    fprintf('VARBVS version 2.1-1 ');
     fprintf('--       |              |               |               \n');
     fprintf('large-scale Bayesian ');
     fprintf('--       ||           | |    |          || |     |   |  \n');
