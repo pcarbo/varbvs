@@ -52,8 +52,8 @@
 # chi-square distribution with scale sa0 and degrees of freedom n0.
 varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4,
                         maxiter = 1e4, verbose = TRUE, outer.iter = NULL,
-                        update.sigma = TRUE, update.sa = TRUE, n0 = 0,
-                        sa0 = 0) {
+                        update.sigma = TRUE, update.sa = TRUE, n0 = 10,
+                        sa0 = 1) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)

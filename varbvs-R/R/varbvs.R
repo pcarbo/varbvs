@@ -16,8 +16,8 @@
 # regression (family = "binomial"). See varbvs.Rd for details.
 varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                     logodds, alpha, mu, eta, update.sigma, update.sa,
-                    optimize.eta, initialize.params, nr = 100, sa0 = 0,
-                    n0 = 0, tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
+                    optimize.eta, initialize.params, nr = 100, sa0 = 1,
+                    n0 = 10, tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
