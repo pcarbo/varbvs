@@ -52,8 +52,8 @@
 %          options.sa = 1 (prior variance parameter settings)
 %          options.logodds = linspace(-log10(p),-1,20) (log-odds settings)
 %          options.update_sa (fit model parameter sa to data)
-%          options.sa0 = 0 (scale parameter for prior on sa)
-%          options.n0 = 0 (degrees of freedom for prior on sa)
+%          options.sa0 = 1 (scale parameter for prior on sa)
+%          options.n0 = 10 (degrees of freedom for prior on sa)
 %          options.alpha (initial estimate of variational parameter alpha)
 %          options.mu (initial estimate of variational parameter mu)
 %          options.initialize_params (see below)
@@ -173,10 +173,15 @@
 %    approximate maximum a posteriori (MAP) estimate of sa is computed by
 %    setting options.sa0 and options.n0 to positive scalars; these two
 %    numbers specify the scale parameter and number of degrees of freedom
-%    for a scaled inverse chi-square prior on sa. Note it is not possible to
-%    fit the logodds parameter; if options.logodds is not provided, then it
-%    is set to the default value when options.sa and options.sigma are
-%    scalars, and otherwise an error is generated.
+%    for a scaled inverse chi-square prior on sa. Large settings of n0
+%    provide greater stability of the parameter estimates for cases when the
+%    model is "sparse"; that is, when few variables are included in the
+%    model.
+%
+%    Note it is not possible to fit the logodds parameter; if
+%    options.logodds is not provided, then it is set to the default value
+%    when options.sa and options.sigma are scalars, and otherwise an error
+%    is generated.
 %
 % VARIATIONAL APPROXIMATION:
 %    Outputs fit.alpha, fit.mu and fit.s specify the approximate posterior
@@ -546,7 +551,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isfield(options,'sa0')
     sa0 = options.sa0;
   else
-    sa0 = 0;
+    sa0 = 1;
   end
 
   % OPTIONS.N0
@@ -555,7 +560,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isfield(options,'n0')
     n0 = options.n0;
   else
-    n0 = 0;
+    n0 = 10;
   end
 
   % OPTIONS.ALPHA
