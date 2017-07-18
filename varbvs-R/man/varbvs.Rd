@@ -13,7 +13,7 @@
 \usage{
   varbvs (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
           logodds, alpha, mu, eta, update.sigma, update.sa,
-          optimize.eta, initialize.params, nr = 100, sa0 = 0, n0 = 0,
+          optimize.eta, initialize.params, nr = 100, sa0 = 1, n0 = 10,
           tol = 1e-4, maxiter = 1e4, verbose = TRUE)
 }
 \arguments{
@@ -113,7 +113,10 @@
     hyperparameter sa. Must be >= 0.}
   
   \item{n0}{Number of degrees of freedom for a scaled inverse chi-square
-    prior on hyperparameter sa. Must be >= 0.}
+    prior on hyperparameter sa. Must be >= 0. Large settings of
+    \code{n0} provide greater stability of the parameter estimates for
+    cases when the model is "sparse"; that is, when few variables are
+    included in the model}
 
   \item{tol}{Convergence tolerance for inner loop.}
 
