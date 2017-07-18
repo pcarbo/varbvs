@@ -75,7 +75,7 @@ y <- as.double(runif(n) < sigmoid(w))
 # a binary outcome (case-control status), with spike and slab priors
 # on the coefficients.
 cat("2. FITTING MODEL TO DATA.\n")
-fit <- varbvs(X,Z,y,"binomial",logodds = logodds)
+fit <- varbvs(X,Z,y,"binomial",logodds = logodds,n0 = 0)
 
 # Compute final estimates of the posterior inclusion probabilities
 # averaged over the hyperparameter settings.
