@@ -116,7 +116,7 @@
     prior on hyperparameter sa. Must be >= 0. Large settings of
     \code{n0} provide greater stability of the parameter estimates for
     cases when the model is "sparse"; that is, when few variables are
-    included in the model}
+    included in the model.}
 
   \item{tol}{Convergence tolerance for inner loop.}
 
