@@ -807,12 +807,26 @@ function fit = varbvs (X, Z, y, labels, family, options)
 
   % (6) CREATE FINAL OUTPUT
   % -----------------------
+  % Compute the normalized importance weights and the posterior inclusion
+  % probabilities (PIPs) and mean regression coefficients averaged over the
+  % hyperparameter settings.
+  if ns == 1
+    w    = 1;
+    pip  = fit.alpha;
+    beta = fit.mu;
+  else
+    w    = normalizelogweights(logw);
+    pip  = alpha * w(:);
+    beta = mu * w(:);
+  end
+  
   if strcmp(family,'gaussian')
     fit = struct('family',family,'n',n,'labels',{labels},'n0',n0,'sa0',sa0,...
                  'mu_cov',{mu_cov},'update_sigma',update_sigma,'update_sa',...
-                 update_sa,'prior_same',prior_same,'logw',{logw},...
-                 'sigma',{sigma},'sa',sa,'logodds',{logodds},'alpha',...
-                 {alpha},'mu',{mu},'s',{s},'eta',[],'optimize_eta',false);
+                 update_sa,'prior_same',prior_same,'logw',{logw},'w',{w},...
+                 'sigma',{sigma},'sa',{sa},'logodds',{logodds},'alpha',...
+                 {alpha},'mu',{mu},'s',{s},'eta',[],'pip',{pip},'beta',...
+                 {beta},'optimize_eta',false);
 
     % Compute the proportion of variance in Y, after removing linear
     % effects of covariates, explained by the regression model.
@@ -832,23 +846,11 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fit = struct('family',family,'n',n,'labels',{labels},'n0',n0,'sa0',sa0,...
                  'mu_cov',{mu_cov},'update_sa',update_sa,'optimize_eta',...
                  optimize_eta,'prior_same',prior_same,'logw',{logw},...
-                 'sa',sa,'logodds',{logodds},'alpha',{alpha},'mu',{mu},...
-                 's',{s},'eta',{eta},'update_sigma',false,'pve',[]);
+                 'w',{w},'sa',{sa},'logodds',{logodds},'alpha',{alpha},...
+                 'mu',{mu},'s',{s},'eta',{eta},'pip',{pip},'beta',{beta},...
+                 'update_sigma',false,'pve',[]);
   end
 
-  % Compute the normalized importance weights and the posterior inclusion
-  % probabilities (PIPs) and mean regression coefficients averaged over the
-  % hyperparameter settings.
-  if ns == 1
-    fit.w    = 1;
-    fit.pip  = fit.alpha;
-    fit.beta = fit.mu;
-  else
-    fit.w    = normalizelogweights(fit.logw);
-    fit.pip  = fit.alpha * fit.w(:);
-    fit.beta = fit.mu * fit.w(:);
-  end
-  
 % ------------------------------------------------------------------
 % This function implements one iteration of the "outer loop".
 function [logw, sigma, sa, alpha, mu, s, eta, mu_cov] = ...

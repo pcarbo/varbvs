@@ -90,17 +90,12 @@ y = double(y);
 % the coefficients.
 fprintf('2. FITTING MODEL TO DATA.\n')
 fit = varbvs(X,Z,y,labels,[],struct('logodds',logodds));
-
-% Compute final estimates of the posterior inclusion probabilities
-% averaged over the hyperparameter settings.
-w   = normalizelogweights(fit.logw);
-PIP = fit.alpha * w(:);
 fprintf('\n');
 
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------
 fprintf('3. SUMMARIZING RESULTS.\n')
-varbvsprint(fit);
+gvarbvsprint(fit);
 fprintf('\n');
 
 % EVALUATE MODEL PREDICTIONS

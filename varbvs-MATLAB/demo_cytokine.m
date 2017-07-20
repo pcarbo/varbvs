@@ -66,8 +66,7 @@ save('~/data/varbvs_demo_cytokine.mat','fit_null','fit_cytokine','BF',...
 % Show two "genome-wide scans" from the multi-marker PIPs, with and without
 % conditioning on enrichment of cytokine signaling genes.
 subplot(2,1,1);
-w = normalizelogweights(fit_cytokine.logw);
-i = find(fit_null.alpha > 0.5 | fit_cytokine.alpha*w(:) > 0.5);
+i = find(fit_null.alpha > 0.5 | fit_cytokine.pip > 0.5);
 varbvsplot(fit_null,struct('groups',chr,'vars',i,'gap',5000));
 ylabel('posterior probability');
 subplot(2,1,2);
