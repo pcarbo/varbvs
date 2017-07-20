@@ -401,15 +401,17 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   else
     rownames(fit$logodds) <- colnames(X)
 
-  # Compute the normalized importance weights an the posterior
-  # inclusion probabilities (PIPs) averaged over the hyperparameter
-  # settings.
+  # Compute the normalized importance weights and the posterior
+  # inclusion probabilities (PIPs) and mean regression coefficients
+  # averaged over the hyperparameter settings.
   if (ns == 1) {
-    fit$w   <- 1
-    fit$pip <- c(fit$alpha)
+    fit$w    <- 1
+    fit$pip  <- c(fit$alpha)
+    fit$beta <- c(fit$mu)
   } else {
-    fit$w   <- c(normalizelogweights(fit$logw))
-    fit$pip <- c(with(fit,alpha %*% w))
+    fit$w    <- c(normalizelogweights(fit$logw))
+    fit$pip  <- c(with(fit,alpha %*% w))
+    fit$beta <- c(with(fit,mu %*% w))
   }
   
   # Declare the return value as an instance of class 'varbvs'.
