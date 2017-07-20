@@ -82,9 +82,11 @@
 % fit.update_sa       whether hyperparameter sa was fit to data.
 % fit.logw            approximate marginal log-likelihood for each
 %                     setting of hyperparameters.
+% fit.w               normalized weights compute from logw.
 % fit.alpha           variational estimates of posterior inclusion probs.
 % fit.mu              variational estimates of posterior mean coefficients.
 % fit.s               variational estimates of posterior variances.
+% fit.pip             "Averaged" posterior inclusion probabilities.
 % fit.mu_cov          posterior estimates of coefficients for covariates.
 % fit.eta             variational parameters for family = 'binomial' only.
 % fit.optimize_eta    whether eta was fit to data (family = 'binomial' only).
@@ -255,16 +257,9 @@
 %    log-marginal probabilities. Even when conditions (1), (2) and/or (3)
 %    are not satisfied, this can approach can still often yield reasonable
 %    estimates of averaged posterior quantities. For example, do the
-%    following to compute posterior inclusion probabilities (PIPs) averaged
-%    over the hyperparameter settings:
+%    following to compute the posterior mean estimate of sa:
 %
-%        w   = normalizelogweights(fit.logw);
-%        PIP = fit.alpha * w(:);
-%
-%    And do the following to compute the posterior mean estimate of sa:
-%
-%        w       = normalizelogweights(fit.logw);
-%        mean_sa = dot(fit.sa(:),w(:));
+%        mean_sa = dot(fit.sa(:),fit.w(:));
 %
 %    This is precisely how final posterior quantities are reported by
 %    varbvsprint (type 'help varbvsprint' for more details). To account for
@@ -839,6 +834,19 @@ function fit = varbvs (X, Z, y, labels, family, options)
                  optimize_eta,'prior_same',prior_same,'logw',{logw},...
                  'sa',sa,'logodds',{logodds},'alpha',{alpha},'mu',{mu},...
                  's',{s},'eta',{eta},'update_sigma',false,'pve',[]);
+  end
+
+  % Compute the normalized importance weights and the posterior inclusion
+  % probabilities (PIPs) and mean regression coefficients averaged over the
+  % hyperparameter settings.
+  if ns == 1
+    fit.w    = 1;
+    fit.pip  = fit.alpha;
+    fit.beta = fit.mu;
+  else
+    fit.w    = normalizelogweights(fit.logw);
+    fit.pip  = fit.alpha * fit.w(:);
+    fit.beta = fit.mu * fit.w(:);
   end
   
 % ------------------------------------------------------------------

@@ -41,14 +41,11 @@ function pve = varbvspve (X, fit, nr)
   % explained.
   pve = zeros(nr,1);
 
-  % Compute the normalized (approximate) probabilities.
-  w = normalizelogweights(fit.logw);
-
   % For each sample, compute the proportion of variance explained.
   for i = 1:nr
 
     % Draw a hyperparameter setting from the posterior distribution.
-    j = randtable(w);
+    j = randtable(fit.w);
     
     % Sample the region coefficients.
     b = fit.mu(:,j) + sqrt(fit.s(:,j)) .* randn(p,1);

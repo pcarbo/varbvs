@@ -92,9 +92,6 @@ function [a, b] = varbvscoefcred (fit, vars, c, nr)
     nr = 1000;
   end
 
-  % Compute the normalized (approximate) probabilities.
-  w = normalizelogweights(fit.logw);
-
   % Initialize storage for the result.
   a = zeros(p,1);
   b = zeros(p,1);
@@ -102,7 +99,7 @@ function [a, b] = varbvscoefcred (fit, vars, c, nr)
   % Repeat for each selected variable.
   for i = 1:p
     j    = vars(i);
-    k    = randtable(w,nr);
+    k    = randtable(fit.w,nr);
     x    = fit.mu(j,k) + sqrt(fit.s(j,k)) .* randn(1,nr);
     x    = sort(x);
     a(i) = x(floor((0.5 - c/2)*nr));

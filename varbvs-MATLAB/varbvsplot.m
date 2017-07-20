@@ -45,8 +45,7 @@
 %    correlations between variables, then set options.score to these PIPs
 %    on the log-scale:
 %
-%      w = normalizelogweights(fit.logw);
-%      options.score = log10(varbvsindep(fit,X,Z,y) * w(:) + 1e-5);
+%      options.score = log10(varbvsindep(fit,X,Z,y) * fit.w(:) + 1e-5);
 %
 %    Finally, options.vars can be used to highlight and label variables in
 %    the plot. This must be an array containing the indices of the variables
@@ -106,8 +105,7 @@ function varbvsplot (fit, options)
   if isfield(options,'score')
     y = options.score;
   else
-    w = normalizelogweights(fit.logw);
-    y = fit.alpha * w(:);
+    y = fit.pip;
   end
   p = numel(y);
   

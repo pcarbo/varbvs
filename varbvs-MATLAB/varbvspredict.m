@@ -103,8 +103,8 @@ function y = varbvspredict (fit, X, Z)
     error('Inputs Z and fit are not compatible');
   end
 
-  % Compute the normalized (approximate) probabilities.
-  w = normalizelogweights(fit.logw);
+  % Get the normalized (approximate) probabilities.
+  w = fit.w;
 
   % For each hyperparameter setting, and for each sample, compute the
   % posterior mean estimate of Y, and then average these estimates
