@@ -308,12 +308,17 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
     prior logodds (\code{family = "gaussian"} only).}
 
   \item{update.sa}{If TRUE, sa was fit to data for each setting of prior
-  logodds.}
+    logodds.}
 
   \item{logw}{An array with ns elements, in which \code{logw[i]} is the
     variational lower bound on the marginal log-likelihood for setting i
-    of the hyperparameters.}
+    of the hyperparameters. These provide approximate values of the
+    marginal log-likelihood for each hyperparameter setting.}
 
+  \item{w}{Normalized weights (posterior probabilities) for each of the
+    hyperparameter settings computed from \code{logw} using
+    \code{\link{normalizelogweights}}.}
+  
   \item{alpha}{Variational estimates of posterior inclusion
     probabilities for each hyperparameter setting.}
 
@@ -323,6 +328,12 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
   \item{s}{Variational estimates of posterior variances for each
     hyperparameter setting.}
 
+  \item{pip}{"Averaged" posterior inclusion probabilities computed as a
+    weighted average of the individual PIPs (\code{alpha}), with weights
+    given by \code{w}.}
+
+  \item{beta}{"Averaged" posterior mean regression coefficients.}
+  
   \item{mu.cov}{Posterior mean regression coefficients for covariates,
     including intercept, for each hyperparameter setting.}
   
@@ -391,13 +402,6 @@ y <- c(-2 + Z \%*\% u + X \%*\% beta + rnorm(400))
 # Fit the variable selection model.
 fit <- varbvs(X,Z,y,logodds = seq(-3,-1,0.1))
 print(summary(fit))
-
-# Compute posterior inclusion probabilities (pip) and posterior mean
-# regression coefficients (beta) averaged over the hyperparameter
-# settings.
-w    <- normalizelogweights(fit$logw);
-pip  <- fit$alpha \%*\% c(w)
-beta <- fit$mu \%*\% c(w)
 
 # Compute the posterior mean estimate of hyperparameter sa.
 sa <- sum(fit$sa * w)
