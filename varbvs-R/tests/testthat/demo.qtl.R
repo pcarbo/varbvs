@@ -73,14 +73,9 @@ y <- c(y)
 # Fit the fully-factorized variational approximation to the posterior
 # distribution of the coefficients for a linear regression model of a
 # continuous outcome (quantitiative trait), with spike and slab priors on
-# the coefficients.
+# the coefficients. 
 cat("2. FITTING MODEL TO DATA.\n")
 fit <- varbvs(X,Z,y,"gaussian",logodds = logodds,n0 = 0)
-
-# Compute final estimates of the posterior inclusion probabilities
-# averaged over the hyperparameter settings.
-w   <- c(normalizelogweights(fit$logw))
-PIP <- c(fit$alpha %*% w)
 cat("\n")
 
 # SUMMARIZE RESULTS

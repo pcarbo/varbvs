@@ -76,11 +76,6 @@ y <- as.double(runif(n) < sigmoid(w))
 # on the coefficients.
 cat("2. FITTING MODEL TO DATA.\n")
 fit <- varbvs(X,Z,y,"binomial",logodds = logodds,n0 = 0)
-
-# Compute final estimates of the posterior inclusion probabilities
-# averaged over the hyperparameter settings.
-w   <- c(normalizelogweights(fit$logw))
-PIP <- c(fit$alpha %*% w)
 cat("\n")
 
 # SUMMARIZE POSTERIOR DISTRIBUTION

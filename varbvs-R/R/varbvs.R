@@ -409,7 +409,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     fit$pip <- c(fit$alpha)
   } else {
     fit$w   <- c(normalizelogweights(fit$logw))
-    fit$pip <- c(fit$alpha %*% w)
+    fit$pip <- c(with(fit,alpha %*% w))
   }
   
   # Declare the return value as an instance of class 'varbvs'.
