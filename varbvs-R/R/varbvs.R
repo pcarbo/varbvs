@@ -371,6 +371,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                 prior.same = prior.same,optimize.eta = FALSE,logw = logw,
                 sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
                 mu = mu,s = s,eta = NULL)
+    class(fit) <- c("varbvs","list")
 
     # Compute the proportion of variance in Y, after removing linear
     # effects of covariates, explained by the regression model.
@@ -385,12 +386,14 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     sx                <- var1.cols(X)
     for (i in 1:ns) 
       fit$pve[,i] <- sx*(mu[,i]^2 + s[,i])/var1(y)
-  } else if (family == "binomial")
+  } else if (family == "binomial") {
     fit <- list(family = family,n = n,n0 = n0,mu.cov = mu.cov,sa0 = sa0,
                 update.sigma = FALSE,update.sa = update.sa,
                 optimize.eta = optimize.eta,prior.same = prior.same,
                 logw = logw,sigma = NULL,sa = sa,logodds = logodds,
                 alpha = alpha,mu = mu,s = s,eta = eta,model.pve = NA)
+    class(fit) <- c("varbvs","list")
+  }
   
   # Add column names to some of the outputs.
   rownames(fit$alpha) <- colnames(X)
@@ -414,8 +417,6 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     fit$beta <- c(with(fit,mu %*% w))
   }
   
-  # Declare the return value as an instance of class 'varbvs'.
-  class(fit) <- c("varbvs","list")
   return(fit)
 }
 
