@@ -404,7 +404,7 @@ fit <- varbvs(X,Z,y,logodds = seq(-3,-1,0.1))
 print(summary(fit))
 
 # Compute the posterior mean estimate of hyperparameter sa.
-sa <- sum(fit$sa * w)
+sa <- with(fit,sum(sa * w))
 
 # Compare estimated outcomes against observed outcomes.
 y.fit <- predict(fit,X,Z)
