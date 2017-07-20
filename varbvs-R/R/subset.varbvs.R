@@ -33,6 +33,7 @@ subset.varbvs <- function (x, subset, ...) {
   out$sa      <- out$sa[i]
   out$logodds <- out$logodds[i]
   out$logw    <- out$logw[i]
+  out$w       <- out$w[i]
   out$mu.cov  <- as.matrix(out$mu.cov[,i])
   out$alpha   <- as.matrix(out$alpha[,i])
   out$mu      <- as.matrix(out$mu[,i])

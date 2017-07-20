@@ -33,11 +33,10 @@ plot.varbvs <-
   
   # PROCESS OPTIONS
   # ---------------
-  # Calculate the posterior inclusion probabilities (PIPs) if a
+  # Get the posterior inclusion probabilities (PIPs) if a
   # "score" isn't provided as one of the inputs.
   if (missing(score)) {
-    w <- c(normalizelogweights(x$logw))
-    y <- x$alpha %*% w
+    y <- x$pip
   } else
     y <- score
   p <- length(y)

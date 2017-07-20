@@ -27,19 +27,22 @@ varbvspve <- function (X, fit, nr = 1000) {
     stop("Input X must be a numeric matrix with no missing values.")
   if (nrow(fit$alpha) != p)
     stop("Inputs X and fit are not compatible.")
+
+  # Check input "fit".
+  if (!is(fit,"varbvs"))
+    stop("Input argument \"fit\" must be an instance of class \"varbvs\".")
+  if (fit$family != "gaussian")
+    stop("varbvspve is only implemented for family = \"gaussian\"")
   
   # Initialize storage for posterior estimates of the proportion of
   # variance explained.
   pve <- rep(0,nr)
 
-  # Compute the normalized (approximate) probabilities.
-  w <- normalizelogweights(fit$logw)
-
   # For each sample, compute the proportion of variance explained.
   for (i in 1:nr) {
 
     # Draw a hyperparameter setting from the posterior distribution.
-    j <- sample(ns,1,prob = w)
+    j <- sample(ns,1,prob = fit$w)
     
     # Sample the region coefficients.
     b <- with(fit,mu[,j] + sqrt(s[,j]) * rnorm(p))

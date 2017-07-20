@@ -43,8 +43,8 @@ predict.varbvs <- function (object, X, Z = NULL, ...) {
   if (ncol(Z) != nrow(object$mu.cov))
     stop("Inputs arguments object and Z are not compatible")
 
-  # Compute the normalized (approximate) probabilities.
-  w <- c(normalizelogweights(object$logw))
+  # Get the normalized (approximate) probabilities.
+  w <- object$w
   
   # For each hyperparameter setting, and for each sample, compute the
   # posterior mean estimate of Y, and then average these estimates
