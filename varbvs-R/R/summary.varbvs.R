@@ -97,7 +97,7 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   # Summarize the number of variables selected at different PIP thresholds.
   out$num.included <-
       with(object,as.table(c(sum(pip>0.1),sum(pip>0.25),sum(pip>0.5),
-                             sum(pip>0.75),sum(pip>0.9),sum(pip>0.95)))
+                             sum(pip>0.75),sum(pip>0.9),sum(pip>0.95))))
   names(out$num.included) <- c(">0.10",">0.25",">0.50",">0.75",">0.90",">0.95")
   
   # Get more detailed statistics about the top nv variables by the
