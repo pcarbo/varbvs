@@ -365,12 +365,25 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     
   # (6) CREATE FINAL OUTPUT
   # -----------------------
+  # Compute the normalized importance weights and the posterior
+  # inclusion probabilities (PIPs) and mean regression coefficients
+  # averaged over the hyperparameter settings.
+  if (ns == 1) {
+    w    <- 1
+    pip  <- fit$alpha
+    beta <- fit$mu
+  } else {
+    w    <- normalizelogweights(logw)
+    pip  <- c(alpha %*% w)
+    beta <- c(mu %*% w)
+  }
+  
   if (family == "gaussian") {
     fit <- list(family = family,n = n,n0 = n0,sa0 = sa0,mu.cov = mu.cov,
                 update.sigma = update.sigma,update.sa = update.sa,
                 prior.same = prior.same,optimize.eta = FALSE,logw = logw,
-                sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
-                mu = mu,s = s,eta = NULL)
+                w = w,sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
+                mu = mu,s = s,eta = NULL,pip = pip,beta = beta)
     class(fit) <- c("varbvs","list")
 
     # Compute the proportion of variance in Y, after removing linear
@@ -390,8 +403,9 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     fit <- list(family = family,n = n,n0 = n0,mu.cov = mu.cov,sa0 = sa0,
                 update.sigma = FALSE,update.sa = update.sa,
                 optimize.eta = optimize.eta,prior.same = prior.same,
-                logw = logw,sigma = NULL,sa = sa,logodds = logodds,
-                alpha = alpha,mu = mu,s = s,eta = eta,model.pve = NA)
+                logw = logw,w = w,sigma = NULL,sa = sa,logodds = logodds,
+                alpha = alpha,mu = mu,s = s,eta = eta,pip = pip,beta = beta,
+                model.pve = NA)
     class(fit) <- c("varbvs","list")
   }
   
@@ -404,19 +418,6 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   else
     rownames(fit$logodds) <- colnames(X)
 
-  # Compute the normalized importance weights and the posterior
-  # inclusion probabilities (PIPs) and mean regression coefficients
-  # averaged over the hyperparameter settings.
-  if (ns == 1) {
-    fit$w    <- 1
-    fit$pip  <- c(fit$alpha)
-    fit$beta <- c(fit$mu)
-  } else {
-    fit$w    <- c(normalizelogweights(fit$logw))
-    fit$pip  <- c(with(fit,alpha %*% w))
-    fit$beta <- c(with(fit,mu %*% w))
-  }
-  
   return(fit)
 }
 
