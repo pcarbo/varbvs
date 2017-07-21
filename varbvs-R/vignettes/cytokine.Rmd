@@ -68,7 +68,7 @@ fit.cytokine <- varbvs(X,NULL,y,"binomial",logodds = logodds,
 Compute the Bayes factor.
 
 ```{r}
-BF <- bayesfactor(fit.null$logw,fit.cytokine$logw)
+BF <- varbvsbf(fit.null,fit.cytokine)
 ```
 
 ## Save the results to a file
@@ -84,8 +84,7 @@ Show two "genome-wide scans" from the multi-marker PIPs, with and
 without conditioning on enrichment of cytokine signaling genes.
 
 ```{r, fig.width = 9,fig.height = 4,fig.align = "center"}
-w <- normalizelogweights(fit.cytokine$logw)
-i <- which(fit.null$alpha > 0.5 | fit.cytokine$alpha %*% w > 0.5)
+i <- which(fit.null$pip > 0.5 | fit.cytokine$pip > 0.5)
 var.labels <- paste0(round(map$pos[i]/1e6,digits = 2),"Mb")
 print(plot(fit.null,groups = map$chr,vars = i,var.labels = NULL,
            gap = 7500,ylab = "posterior prob."),
