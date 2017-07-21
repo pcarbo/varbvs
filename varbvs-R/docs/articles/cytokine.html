@@ -56,7 +56,7 @@
     <div class="page-header toc-ignore">
       <h1>Assessing support for gene sets in disease using varbvs</h1>
             
-            <h4 class="date">2017-04-30</h4>
+            <h4 class="date">2017-07-21</h4>
           </div>
 
     
@@ -86,7 +86,7 @@ fit.cytokine &lt;-<span class="st"> </span><span class="kw"><a href="../referenc
                        <span class="dt">alpha =</span> fit.null$alpha,<span class="dt">mu =</span> fit.null$mu,
                        <span class="dt">eta =</span> fit.null$eta,<span class="dt">optimize.eta =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <p>Compute the Bayes factor.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BF &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bayesfactor.html">bayesfactor</a></span>(fit.null$logw,fit.cytokine$logw)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BF &lt;-<span class="st"> </span><span class="kw"><a href="../reference/varbvsbf.html">varbvsbf</a></span>(fit.null,fit.cytokine)</code></pre></div>
 </div>
 <div id="save-the-results-to-a-file" class="section level2">
 <h2 class="hasAnchor">
@@ -98,8 +98,7 @@ fit.cytokine &lt;-<span class="st"> </span><span class="kw"><a href="../referenc
 <h2 class="hasAnchor">
 <a href="#summarize-the-results-of-model-fitting" class="anchor"></a>Summarize the results of model fitting</h2>
 <p>Show two “genome-wide scans” from the multi-marker PIPs, with and without conditioning on enrichment of cytokine signaling genes.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">w &lt;-<span class="st"> </span><span class="kw"><a href="../reference/normalizelogweights.html">normalizelogweights</a></span>(fit.cytokine$logw)
-i &lt;-<span class="st"> </span><span class="kw">which</span>(fit.null$alpha &gt;<span class="st"> </span><span class="fl">0.5</span> |<span class="st"> </span>fit.cytokine$alpha %*%<span class="st"> </span>w &gt;<span class="st"> </span><span class="fl">0.5</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">i &lt;-<span class="st"> </span><span class="kw">which</span>(fit.null$pip &gt;<span class="st"> </span><span class="fl">0.5</span> |<span class="st"> </span>fit.cytokine$pip &gt;<span class="st"> </span><span class="fl">0.5</span>)
 var.labels &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="kw">round</span>(map$pos[i]/<span class="fl">1e6</span>,<span class="dt">digits =</span> <span class="dv">2</span>),<span class="st">"Mb"</span>)
 <span class="kw">print</span>(<span class="kw">plot</span>(fit.null,<span class="dt">groups =</span> map$chr,<span class="dt">vars =</span> i,<span class="dt">var.labels =</span> <span class="ot">NULL</span>,
            <span class="dt">gap =</span> <span class="dv">7500</span>,<span class="dt">ylab =</span> <span class="st">"posterior prob."</span>),

@@ -145,7 +145,9 @@ directory is set to `varbvs-R`):
 
 ```R
 library(pkgdown)
-build_site(mathjax = FALSE)
+build_home()
+build_reference(examples = FALSE,mathjax = FALSE)
+build_articles()
 ```
 
 Before building the website, move the `RcppExports.R` file temporarily

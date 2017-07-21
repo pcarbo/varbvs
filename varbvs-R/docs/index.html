@@ -83,7 +83,7 @@
 <p>This subdirectory has all the necessary files to build and install a package for R. To install this package, follow the <a href="https://cran.r-project.org/doc/manuals/R-admin.html">standard instructions</a> for installing an R package from source. On a Unix or Unix-like platform (e.g., Mac OS X), the following steps should install the R package:</p>
 <div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">mv</span> varbvs-R varbvs
 <span class="ex">R</span> CMD build varbvs
-<span class="ex">R</span> CMD INSTALL varbvs_2.0.9.tar.gz</code></pre></div>
+<span class="ex">R</span> CMD INSTALL varbvs_2.3-1.tar.gz</code></pre></div>
 </div>
 <div id="using-the-package" class="section level3">
 <h3 class="hasAnchor">
@@ -117,7 +117,7 @@ fit &lt;-<span class="st"> </span><span class="kw"><a href="reference/varbvs.htm
 <a href="#how-to-build-static-html-documentation" class="anchor"></a>How to build static HTML documentation</h2>
 <p>These are the R commands to build the website (make sure you are connected to Internet while running these commands, and the working directory is set to <code>varbvs-R</code>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pkgdown)
-<span class="kw">build_site</span>(<span class="dt">mathjax =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<span class="kw">build_articles</span>()</code></pre></div>
 <p>Before building the website, move the <code>RcppExports.R</code> file temporarily outside the <code>R</code> directory, otherwise <code>build_site</code> will report an error. Once the pkgdown site is successfully built, move the <code>RcppExports.R</code> file back to its original location, overwriting the newly generated file.</p>
 <div id="credits" class="section level3">
 <h3 class="hasAnchor">

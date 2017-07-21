@@ -56,7 +56,7 @@
     <div class="page-header toc-ignore">
       <h1>Mapping QTLs in outbred mice using varbvs</h1>
             
-            <h4 class="date">2017-04-30</h4>
+            <h4 class="date">2017-07-21</h4>
           </div>
 
     
@@ -107,8 +107,7 @@ geno  &lt;-<span class="st"> </span>geno[rows,]</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">trellis.par.set</span>(<span class="dt">axis.text     =</span> <span class="kw">list</span>(<span class="dt">cex =</span> <span class="fl">0.7</span>),
                 <span class="dt">par.ylab.text =</span> <span class="kw">list</span>(<span class="dt">cex =</span> <span class="fl">0.7</span>),
                 <span class="dt">par.main.text =</span> <span class="kw">list</span>(<span class="dt">cex =</span> <span class="fl">0.7</span>,<span class="dt">font =</span> <span class="dv">1</span>))
-w &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw"><a href="../reference/normalizelogweights.html">normalizelogweights</a></span>(fit$logw))
-j &lt;-<span class="st"> </span><span class="kw">which</span>(fit$alpha %*%<span class="st"> </span>w &gt;<span class="st"> </span><span class="fl">0.5</span>)
+j &lt;-<span class="st"> </span><span class="kw">which</span>(fit$pip &gt;<span class="st"> </span><span class="fl">0.5</span>)
 r &lt;-<span class="st"> </span>gwscan.gemma[[trait]]
 r[<span class="kw">is.na</span>(r)] &lt;-<span class="st"> </span><span class="dv">0</span>
 chromosomes   &lt;-<span class="st"> </span><span class="kw">levels</span>(gwscan.bvsr$chr)
@@ -137,6 +136,12 @@ for (i in chromosomes) {
              <span class="dt">xlab =</span> <span class="st">""</span>,<span class="dt">ylab =</span> <span class="st">"probability"</span>,<span class="dt">main =</span> <span class="st">"c. multi-marker (BVSR)"</span>),
       <span class="dt">split =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">3</span>),<span class="dt">more =</span> <span class="ot">FALSE</span>)</code></pre></div>
 </div>
+<div id="session-information" class="section level2">
+<h2 class="hasAnchor">
+<a href="#session-information" class="anchor"></a>Session information</h2>
+<p>This is the version of R and the packages that were used to generate these results.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
+</div>
 </div>
   </div>
 
@@ -148,6 +153,7 @@ for (i in chromosomes) {
       <li><a href="#load-the-genotype-and-phenotype-data">Load the genotype and phenotype data</a></li>
       <li><a href="#fit-variational-approximation-to-posterior">Fit variational approximation to posterior</a></li>
       <li><a href="#summarize-the-results-of-model-fitting">Summarize the results of model fitting</a></li>
+      <li><a href="#session-information">Session information</a></li>
       </ul>
 </div>
       </div>
