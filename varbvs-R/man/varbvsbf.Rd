@@ -1,7 +1,29 @@
-\name{bayesfactor}
+\name{varbvsbf}
+\alias{varbvsbf}
 \alias{bayesfactor}
 \title{Compute numerical estimate of Bayes factor.}
-\description{
+\description{The Bayes factor is the ratio of the marginal likelihoods
+  under two different models (see Kass & Raftery, 1995). Function
+  \code{varbvsbf} provides a convenient interface for computing the
+  Bayes factor comparing the fit of two different \code{varbvs} models.}
+\usage{
+  varbvsbf (fit0, fit1)  
+
+  bayesfactor (logw0, logw1)
+}
+\arguments{
+  \item{fit0}{An output returned from \code{\link{varbvs}}.}
+
+  \item{fit1}{Another output returned from \code{\link{varbvs}}.}
+  
+  \item{logw0}{log-probabilities or log-importance weights under H0.}
+  
+  \item{logw1}{log-probabilities or log-importance weights under H1.}
+}
+\value{
+  The estimated Bayes factor.
+}
+\details{
 Computes numerical estimate of
 \deqn{
   BF = Pr(data | H1) / Pr(data | H0),
@@ -27,16 +49,6 @@ formulation described above is a special case of importance sampling
 when the settings of the latent variable Z0 and A1 are drawn from the
 same (uniform) distribution as the prior, Pr(Z0 | H0) and Pr(Z1 | H1),
 respectively.
-}
-\usage{
-  bayesfactor (logw0, logw1)
-}
-\arguments{
-  \item{logw0}{log-probabilities or log-importance weights under H0.}
-  \item{logw1}{log-probabilities or log-importance weights under H1.}
-}
-\value{
-  The estimated Bayes factor.
 }
 \references{
   P. Carbonetto and M. Stephens (2012). Scalable variational inference
