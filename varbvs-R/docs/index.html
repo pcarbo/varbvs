@@ -29,10 +29,13 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="index.html">Home</a>
 </li>
 <li>
-  <a href="articles/index.html">Articles</a>
+  <a href="articles/index.html">Vignettes</a>
+</li>
+<li>
+  <a href="reference/index.html">Reference</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -117,7 +120,7 @@ fit &lt;-<span class="st"> </span><span class="kw"><a href="reference/varbvs.htm
 <a href="#how-to-build-static-html-documentation" class="anchor"></a>How to build static HTML documentation</h2>
 <p>These are the R commands to build the website (make sure you are connected to Internet while running these commands, and the working directory is set to <code>varbvs-R</code>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pkgdown)
-<span class="kw">build_articles</span>()</code></pre></div>
+<span class="kw">build_site</span>(<span class="dt">examples =</span> <span class="ot">FALSE</span>,<span class="dt">mathjax =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <p>Before building the website, move the <code>RcppExports.R</code> file temporarily outside the <code>R</code> directory, otherwise <code>build_site</code> will report an error. Once the pkgdown site is successfully built, move the <code>RcppExports.R</code> file back to its original location, overwriting the newly generated file.</p>
 <div id="credits" class="section level3">
 <h3 class="hasAnchor">

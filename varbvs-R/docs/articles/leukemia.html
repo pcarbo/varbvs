@@ -29,10 +29,13 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../index.html">Home</a>
 </li>
 <li>
-  <a href="../articles/index.html">Articles</a>
+  <a href="../articles/index.html">Vignettes</a>
+</li>
+<li>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -94,7 +97,7 @@ y &lt;-<span class="st"> </span>leukemia$y
 r &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.glmnet &lt;-
 <span class="st">       </span><span class="kw">glmnet</span>(X,y,<span class="dt">family =</span> <span class="st">"binomial"</span>,<span class="dt">lambda =</span> lambda,<span class="dt">alpha =</span> alpha))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Model fitting took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,r[<span class="st">"elapsed"</span>]))
-<span class="co"># Model fitting took 0.07 seconds.</span>
+<span class="co"># Model fitting took 0.06 seconds.</span>
 
 <span class="co"># This is the cross-validation step.</span>
 r &lt;-<span class="st"> </span><span class="kw">system.time</span>(out.cv.glmnet &lt;-
@@ -102,7 +105,7 @@ r &lt;-<span class="st"> </span><span class="kw">system.time</span>(out.cv.glmne
                  <span class="dt">alpha =</span> alpha,<span class="dt">nfolds =</span> nfolds,<span class="dt">lambda =</span> lambda))
 lambda &lt;-<span class="st"> </span>out.cv.glmnet$lambda
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Cross-validation took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,r[<span class="st">"elapsed"</span>]))
-<span class="co"># Cross-validation took 2.28 seconds.</span>
+<span class="co"># Cross-validation took 2.24 seconds.</span>
 
 <span class="co"># Choose the largest value of lambda that is within 1 standard error</span>
 <span class="co"># of the smallest misclassification error.</span>
@@ -214,7 +217,7 @@ Y       &lt;-<span class="st"> </span><span class="kw">predict</span>(fit.glmnet
 <p>Fit the fully-factorized variational approximation to the posterior distribution of the coefficients for a logistic regression model of the binary outcome (the type of leukemia), with spike-and-slab priors on the coefficients.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">r &lt;-<span class="st"> </span><span class="kw">system.time</span>(fit.varbvs &lt;-<span class="st"> </span><span class="kw"><a href="../reference/varbvs.html">varbvs</a></span>(X,<span class="ot">NULL</span>,y,<span class="st">"binomial"</span>,<span class="dt">verbose =</span> <span class="ot">FALSE</span>))
 <span class="kw">cat</span>(<span class="kw">sprintf</span>(<span class="st">"Model fitting took %0.2f seconds.</span><span class="ch">\n</span><span class="st">"</span>,r[<span class="st">"elapsed"</span>]))
-<span class="co"># Model fitting took 31.58 seconds.</span></code></pre></div>
+<span class="co"># Model fitting took 31.50 seconds.</span></code></pre></div>
 </div>
 <div id="evaluate-the-varbvs-predictions" class="section level2">
 <h2 class="hasAnchor">

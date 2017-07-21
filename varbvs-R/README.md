@@ -145,16 +145,11 @@ directory is set to `varbvs-R`):
 
 ```R
 library(pkgdown)
-build_home()
-build_reference(examples = FALSE,mathjax = FALSE)
-build_articles()
+build_site(examples = FALSE,mathjax = FALSE)
 ```
 
-Before building the website, move the `RcppExports.R` file temporarily
-outside the `R` directory, otherwise `build_site` will report an
-error. Once the pkgdown site is successfully built, move the
-`RcppExports.R` file back to its original location, overwriting the
-newly generated file.
+After updating the webpages, I reorder the vignettes manually and
+change the unordered list to an ordered list.
 
 ### Credits
 
