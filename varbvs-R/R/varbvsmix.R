@@ -12,7 +12,7 @@
 # General Public License for more details.
 #
 # Fit linear regression model with mixture-of-normals prior using
-# variational approximation. See varbvsmix.Rd for details.
+# variational approximation techniques. See varbvsmix.Rd for details.
 varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
                        update.sa, update.w, w.penalty, tol = 1e-4,
                        maxiter = 1e4, verbose = TRUE) {

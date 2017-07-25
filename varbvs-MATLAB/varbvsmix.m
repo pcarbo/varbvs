@@ -1,6 +1,6 @@
 %--------------------------------------------------------------------------
 % varbvsmix.m: Fit linear regression model with mixture-of-normals prior
-% using variational approximation.
+% using variational approximation techniques.
 %--------------------------------------------------------------------------
 %
 % DESCRIPTION:
@@ -205,7 +205,7 @@ function fit = varbvsmix (X, Z, y, sa, labels, options)
   
   % OPTIONS.UPDATE_SIGMA
   % Determine whether to update the residual variance parameter. Note
-  % that the default seting is determined by whether options.sigma is
+  % that the default setting is determined by whether options.sigma is
   % provided.
   if isfield(options,'update_sigma')
     update_sigma = options.update_sigma;
