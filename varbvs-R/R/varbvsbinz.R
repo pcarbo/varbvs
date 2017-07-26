@@ -1,3 +1,16 @@
+# Part of the varbvs package, https://github.com/pcarbo/varbvs
+#
+# Copyright (C) 2012-2017, Peter Carbonetto
+#
+# This program is free software: you can redistribute it under the
+# terms of the GNU General Public License; either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANY; without even the implied warranty of
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
 # This function implements the fully-factorized variational
 # approximation for Bayesian variable selection in logistic
 # regression, allowing for covariates. It is the same as varbvsbin,
@@ -9,8 +22,8 @@
 # covariate is specified, the intercept, and Z = ones(n,1).
 varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
                         maxiter = 1e4, verbose = TRUE, outer.iter = NULL,
-                        update.sa = TRUE, optimize.eta = TRUE,n0 = 0,
-                        sa0 = 0) {
+                        update.sa = TRUE, optimize.eta = TRUE,n0 = 10,
+                        sa0 = 1) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -100,9 +113,11 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
         status <- NULL
       else
         status <- sprintf("%05d ",outer.iter)
-      caterase(paste(status,sprintf("%05d %+13.6e %0.1e %06.1f      NA %0.1e",
-                                    iter,logw[iter],err[iter],sum(alpha),
-                                    sa),sep=""))
+      progress.str <- 
+        paste(status,sprintf("%05d %+13.6e %0.1e %06.1f      NA %0.1e",
+                             iter,logw[iter],err[iter],sum(alpha),sa),sep="")
+      cat(progress.str)
+      cat(rep("\r",nchar(progress.str)))
     }
     if (logw[iter] < logw0) {
       logw[iter]  <- logw0

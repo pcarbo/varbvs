@@ -1,3 +1,16 @@
+# Part of the varbvs package, https://github.com/pcarbo/varbvs
+#
+# Copyright (C) 2012-2017, Peter Carbonetto
+#
+# This program is free software: you can redistribute it under the
+# terms of the GNU General Public License; either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANY; without even the implied warranty of
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
 # Predict Y (outcome) given X (variables), Z (covariates) and objectted model.
 predict.varbvs <- function (object, X, Z = NULL, ...) {
   
@@ -30,8 +43,8 @@ predict.varbvs <- function (object, X, Z = NULL, ...) {
   if (ncol(Z) != nrow(object$mu.cov))
     stop("Inputs arguments object and Z are not compatible")
 
-  # Compute the normalized (approximate) probabilities.
-  w <- c(normalizelogweights(object$logw))
+  # Get the normalized (approximate) probabilities.
+  w <- object$w
   
   # For each hyperparameter setting, and for each sample, compute the
   # posterior mean estimate of Y, and then average these estimates

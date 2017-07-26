@@ -1,3 +1,16 @@
+// Part of the varbvs package, https://github.com/pcarbo/varbvs
+//
+// Copyright (C) 2012-2017, Peter Carbonetto
+//
+// This program is free software: you can redistribute it under the
+// terms of the GNU General Public License; either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANY; without even the implied warranty of
+// MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
 #include "misc.h"
 #include <string.h>
 #include <math.h>
@@ -19,19 +32,41 @@ double logsigmoid (double x) {
   return -logpexp(-x);
 }
 
+// This function takes as input an array of unnormalized
+// log-probabilities "logw" and returns normalized probabilities "w"
+// such that the sum is equal to 1.
+void normalizelogweights (const double* logw, double* w, Size n) {
+
+  // Guard against underflow or overflow by adjusting the
+  // log-probabilities so that the largest probability is 1.
+  double c = max(logw,n);
+  for (Index i = 0; i < n; i++)
+    w[i] = exp(logw[i] - c);
+
+  // Normalize the probabilities.
+  double r = sum(w,n);
+  for (Index i = 0; i < n; i++)
+    w[i] /= r;
+}
+  
 // Copy entries of one vector to another vector.
 void copy (const double* source, double* dest, Size n) {
   memcpy(dest,source,sizeof(double)*n);
 }
 
 // Get a pointer to column j of matrix X.
-const MatrixElem* getColumn (const MatrixElem* X, Index j, Size n) {
+const MatrixElem* getConstColumn (const MatrixElem* X, Index j, Size n) {
+  return X + n*j;
+}
+
+// Get a pointer to column j of matrix X.
+MatrixElem* getColumn (MatrixElem* X, Index j, Size n) {
   return X + n*j;
 }
 
 // Copy column j of matrix X.
 void copyColumn (const MatrixElem* X, double* y, Index j, Size n) {
-  const MatrixElem* xij = getColumn(X,j,n);
+  const MatrixElem* xij = getConstColumn(X,j,n);
   for (Index i = 0; i < n; i++, xij++, y++)
     *y = (double) *xij;
 }
@@ -53,13 +88,12 @@ double sum (const double* x, Size n) {
 // Return the largest entry in the vector.
 double max (const double* x, Size n) {
   double y = x[0];
-  for (Index i = 1; i < n; i++, x++) {
-    y  = (x[i] > y) * x[i] + (x[i] <= y) * y;
-  }
+  for (Index i = 1; i < n; i++)
+    y = (x[i] > y) * x[i] + (x[i] <= y) * y;
   return y;
 }
 
-// Add a to all the entries in vector x, and store the result in vector y.
+// Add a*x to vector y, and store the result in y.
 void add (double* y, double a, const double* x, Size n) {
   for (Index i = 0; i < n; i++)
     y[i] += a * x[i];

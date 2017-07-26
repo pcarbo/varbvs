@@ -10,6 +10,19 @@
 % Note that file cd.mat cannot be made publicly available due to data
 % sharing restrictions, so this script is for viewing only.
 %
+% Part of the varbvs package, https://github.com/pcarbo/varbvs
+%
+% Copyright (C) 2012-2017, Peter Carbonetto
+%
+% This program is free software: you can redistribute it under the
+% terms of the GNU General Public License; either version 3 of the
+% License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful, but
+% WITHOUT ANY WARRANY; without even the implied warranty of
+% MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+% General Public License for more details.
+%
 clear
 
 % Initialize the random number generator. 
@@ -53,8 +66,7 @@ save('~/data/varbvs_demo_cytokine.mat','fit_null','fit_cytokine','BF',...
 % Show two "genome-wide scans" from the multi-marker PIPs, with and without
 % conditioning on enrichment of cytokine signaling genes.
 subplot(2,1,1);
-w = normalizelogweights(fit_cytokine.logw);
-i = find(fit_null.alpha > 0.5 | fit_cytokine.alpha*w(:) > 0.5);
+i = find(fit_null.alpha > 0.5 | fit_cytokine.pip > 0.5);
 varbvsplot(fit_null,struct('groups',chr,'vars',i,'gap',5000));
 ylabel('posterior probability');
 subplot(2,1,2);

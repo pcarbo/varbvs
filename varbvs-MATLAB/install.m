@@ -4,6 +4,20 @@
 % I've found that the -std=gnu99 flag is useful for successfully building
 % the MEX files in MATLAB 8.1 (R2013a), but may not be needed for other
 % MATLAB releases.
+
+% Part of the varbvs package, https://github.com/pcarbo/varbvs
+%
+% Copyright (C) 2012-2017, Peter Carbonetto
+%
+% This program is free software: you can redistribute it under the
+% terms of the GNU General Public License; either version 3 of the
+% License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful, but
+% WITHOUT ANY WARRANY; without even the implied warranty of
+% MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+% General Public License for more details.
+%
 opts = ['-O -largeArrayDims -DMATLAB_MEX_FILE -I../varbvs-R/src ' ...
         'COPTIMFLAGS="-std=gnu99"'];
 
@@ -35,6 +49,12 @@ eval(['mex ',opts,' varbvsbinupdatemex.c doublevectormex.c ',...
 % Build varbvsbinzupdatemex MEX file.
 fprintf('Building varbvsbinzupdatemex MEX file.\n');
 eval(['mex ',opts,' varbvsbinzupdatemex.c doublevectormex.c ',...
+      'singlematrixmex.c doublematrixmex.c ../varbvs-R/src/misc.c ',...
+      '../varbvs-R/src/varbvs.c']);
+
+% Build varbvsmixupdatemex MEX file.
+fprintf('Building varbvsmixupdatemex MEX file.\n');
+eval(['mex ',opts,' varbvsmixupdatemex.c doublevectormex.c ',...
       'singlematrixmex.c doublematrixmex.c ../varbvs-R/src/misc.c ',...
       '../varbvs-R/src/varbvs.c']);
 

@@ -22,10 +22,13 @@
 %          and p is the number of variables. X cannot be sparse.
 %
 % Z        n x m covariate data matrix, where m is the number of
-%          covariates. Do not supply an intercept as a covariate
-%          (i.e., a column of ones), because an intercept is
-%          automatically included in the regression model. For no
-%          covariates, set Z to the empty matrix [].
+%          covariates. Do not supply an intercept as a covariate (i.e., a
+%          column of ones), because an intercept is automatically included
+%          in the regression model. For no covariates, set Z to the empty
+%          matrix []. The covariates are assigned an improper, uniform
+%          prior. Although improper priors are generally not advisable
+%          because they can result in improper posteriors and Bayes factors,
+%          this choice allows us to easily integrate out these covariates.
 %
 % y        Vector of length n containing observations of binary
 %          (family = 'binomial') or continuous (family = 'gaussian')
@@ -47,10 +50,10 @@
 %          options.maxiter = 1e4 (maximum number of inner loop iterations)
 %          options.verbose = true (print progress of algorithm to console)
 %          options.sa = 1 (prior variance parameter settings)
-%          options.logodds = linspace(-log10(p),-0.3,20) (log-odds settings)
+%          options.logodds = linspace(-log10(p),-1,20) (log-odds settings)
 %          options.update_sa (fit model parameter sa to data)
-%          options.sa0 = 0 (scale parameter for prior on sa)
-%          options.n0 = 0 (degrees of freedom for prior on sa)
+%          options.sa0 = 1 (scale parameter for prior on sa)
+%          options.n0 = 10 (degrees of freedom for prior on sa)
 %          options.alpha (initial estimate of variational parameter alpha)
 %          options.mu (initial estimate of variational parameter mu)
 %          options.initialize_params (see below)
@@ -79,9 +82,11 @@
 % fit.update_sa       whether hyperparameter sa was fit to data.
 % fit.logw            approximate marginal log-likelihood for each
 %                     setting of hyperparameters.
+% fit.w               normalized weights compute from logw.
 % fit.alpha           variational estimates of posterior inclusion probs.
 % fit.mu              variational estimates of posterior mean coefficients.
 % fit.s               variational estimates of posterior variances.
+% fit.pip             "Averaged" posterior inclusion probabilities.
 % fit.mu_cov          posterior estimates of coefficients for covariates.
 % fit.eta             variational parameters for family = 'binomial' only.
 % fit.optimize_eta    whether eta was fit to data (family = 'binomial' only).
@@ -117,13 +122,15 @@
 % HYPERPARAMETERS:
 %    Hyperparameter sa is the prior variance of regression coefficients for
 %    variables that are included in the model. This prior variance is always
-%    scaled by sigma (for logistic regression, we take sigma = 1).
-%    Hyperparameter logodds is the prior log-odds that a variable is
-%    included in the regression model; it is defined as logodds =
-%    log10(q/(1-q)), where q is the prior probability that a variable is
-%    included in the regression model. Note that we use the base-10
-%    logarithm instead of the natural logarithm because it is usually
-%    more natural to specify prior log-odds settings in this way.
+%    scaled by sigma (for logistic regression, we take sigma = 1).  Scaling
+%    the variance of the coefficients in this way is necessary to ensure
+%    that this prior is invariant to measurement scale (e.g., switching from
+%    grams to kilograms). Hyperparameter logodds is the prior log-odds that
+%    a variable is included in the regression model; it is defined as
+%    logodds = log10(q/(1-q)), where q is the prior probability that a
+%    variable is included in the regression model. Note that we use the
+%    base-10 logarithm instead of the natural logarithm because it is
+%    usually more natural to specify prior log-odds settings in this way.
 %
 %    The prior log-odds may also be specified separately for each variable,
 %    which is useful is there is prior information about which variables are
@@ -168,10 +175,15 @@
 %    approximate maximum a posteriori (MAP) estimate of sa is computed by
 %    setting options.sa0 and options.n0 to positive scalars; these two
 %    numbers specify the scale parameter and number of degrees of freedom
-%    for a scaled inverse chi-square prior on sa. Note it is not possible to
-%    fit the logodds parameter; if options.logodds is not provided, then it
-%    is set to the default value when options.sa and options.sigma are
-%    scalars, and otherwise an error is generated.
+%    for a scaled inverse chi-square prior on sa. Large settings of n0
+%    provide greater stability of the parameter estimates for cases when the
+%    model is "sparse"; that is, when few variables are included in the
+%    model.
+%
+%    Note it is not possible to fit the logodds parameter; if
+%    options.logodds is not provided, then it is set to the default value
+%    when options.sa and options.sigma are scalars, and otherwise an error
+%    is generated.
 %
 % VARIATIONAL APPROXIMATION:
 %    Outputs fit.alpha, fit.mu and fit.s specify the approximate posterior
@@ -198,8 +210,31 @@
 %    options.optimize_eta = true, in which case options.eta is treated as an
 %    initial estimate).
 %
-%    Note that special care is required for interpreting the results of the
-%    variational approximation with the logistic regression model. In
+%    The variational estimates should be interpreted carefully, especially
+%    when variables are strongly correlated. For example, consider the
+%    simple scenario in which 2 candidate variables are closely correlated,
+%    and at least one of them explains the outcome with probability close to
+%    1. Under the correct posterior distribution, we would expect that each
+%    variable is included with probability ~0.5. However, the variational
+%    approximation, due to the conditional independence assumption, will
+%    typically get this wrong, and concentrate most of the posterior weight
+%    on one variable (the actual variable that is chosen will depend on the
+%    starting conditions of the optimization). Although the individual PIPs
+%    are incorrect, a statistic summarizing the variable selection for both
+%    correlated variables (e.g., the total number of variables included in
+%    the model) should be reasonably accurate.
+%
+%    More generally, if variables can be reasonably grouped together based
+%    on their correlations, we recommend interpreting the variable selection
+%    results at a group level. For example, in genome-wide association
+%    studies (see the vignettes) ,a SNP with a high PIP indicates that this
+%    SNP is probably associated with the trait, and one or more nearby SNPs
+%    within a chromosomal region, or ``locus,'' may be associated as
+%    well. Therefore, we interpreted the GWAS variable selection results at
+%    the level of loci, rather than at the level of individual SNPs.
+%
+%    Also note that special care is required for interpreting the results of
+%    the variational approximation with the logistic regression model. In
 %    particular, interpretation of the individual estimates of the
 %    regression coefficients (e.g., the posterior mean estimates fit.mu) is
 %    not straightforward due to the additional approximation introduced on
@@ -222,16 +257,9 @@
 %    log-marginal probabilities. Even when conditions (1), (2) and/or (3)
 %    are not satisfied, this can approach can still often yield reasonable
 %    estimates of averaged posterior quantities. For example, do the
-%    following to compute posterior inclusion probabilities (PIPs) averaged
-%    over the hyperparameter settings:
+%    following to compute the posterior mean estimate of sa:
 %
-%        w   = normalizelogweights(fit.logw);
-%        PIP = fit.alpha * w(:);
-%
-%    And do the following to compute the posterior mean estimate of sa:
-%
-%        w       = normalizelogweights(fit.logw);
-%        mean_sa = dot(fit.sa(:),w(:));
+%        mean_sa = dot(fit.sa(:),fit.w(:));
 %
 %    This is precisely how final posterior quantities are reported by
 %    varbvsprint (type 'help varbvsprint' for more details). To account for
@@ -326,6 +354,20 @@
 %
 function fit = varbvs (X, Z, y, labels, family, options)
 
+  % Part of the varbvs package, https://github.com/pcarbo/varbvs
+  %
+  % Copyright (C) 2012-2017, Peter Carbonetto
+  %
+  % This program is free software: you can redistribute it under the
+  % terms of the GNU General Public License; either version 3 of the
+  % License, or (at your option) any later version.
+  %
+  % This program is distributed in the hope that it will be useful, but
+  % WITHOUT ANY WARRANY; without even the implied warranty of
+  % MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  % General Public License for more details.
+  %
+
   % Get the number of samples (n) and variables (p).
   [n p] = size(X);
 
@@ -333,7 +375,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % ----------------
   % Input X must be single precision, and cannot be sparse.
   if issparse(X)
-    error('Input X cannot be sparse')
+    error('Input X cannot be sparse');
   end
   if ~isa(X,'single')
     X = single(X);
@@ -424,7 +466,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     sigma        = double(options.sigma(:)');
     update_sigma = false;
     if strcmp(family,'binomial')
-      error('options.sigma is not valid with family = binomial')
+      error('options.sigma is not valid with family = binomial');
     end
   else
     sigma        = var(y);
@@ -451,13 +493,13 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % each variable. A default setting is only available if the number of
   % other hyperparameter settings is 1, in which case we select 20 candidate
   % settings for the prior log-odds, evenly spaced between log10(1/p) and
-  % log10(0.5).
+  % -1.
   if isfield(options,'logodds')
     logodds = double(options.logodds);
   elseif isscalar(sigma) & isscalar(sa)
-    logodds = linspace(-log10(p),-0.3,20);
+    logodds = linspace(-log10(p),-1,20);
   else
-    error('options.logodds must be specified')
+    error('options.logodds must be specified');
   end
   if size(logodds,1) == p
     prior_same = false;
@@ -479,7 +521,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     logodds = repmat(logodds,1,ns);
   end
   if numel(sigma) ~= ns | numel(sa) ~= ns | size(logodds,2) ~= ns
-    error('options.sigma, options.sa and options.logodds are inconsistent')
+    error('options.sigma, options.sa and options.logodds are inconsistent');
   end
 
   % OPTIONS.UPDATE_SIGMA
@@ -488,7 +530,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isfield(options,'update_sigma')
     update_sigma = options.update_sigma;
     if strcmp(family,'binomial')
-      error('options.update_sigma is not valid with family = binomial')
+      error('options.update_sigma is not valid with family = binomial');
     end
   end
 
@@ -504,7 +546,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isfield(options,'sa0')
     sa0 = options.sa0;
   else
-    sa0 = 0;
+    sa0 = 1;
   end
 
   % OPTIONS.N0
@@ -513,7 +555,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if isfield(options,'n0')
     n0 = options.n0;
   else
-    n0 = 0;
+    n0 = 10;
   end
 
   % OPTIONS.ALPHA
@@ -523,7 +565,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     alpha = double(options.alpha);
     initialize_params = false;  
     if size(alpha,1) ~= p
-      error('options.alpha must have as many rows as X has columns')
+      error('options.alpha must have as many rows as X has columns');
     end
     if size(alpha,2) == 1
       alpha = repmat(alpha,1,ns);
@@ -536,10 +578,10 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % OPTIONS.MU
   % Set initial estimates of variational parameter mu.
   if isfield(options,'mu')
-    mu = double(options.mu(:));
+    mu = double(options.mu);
     initialize_params = false;  
     if size(mu,1) ~= p
-      error('options.mu must have as many rows as X has columns')
+      error('options.mu must have as many rows as X has columns');
     end
     if size(mu,2) == 1
       mu = repmat(mu,1,ns);
@@ -559,7 +601,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
       error('options.eta is only valid for family = binomial');
     end
     if size(eta,1) ~= n
-      error('options.eta must have as many rows as X')
+      error('options.eta must have as many rows as X');
     end
     if size(eta,2) == 1
       eta = repmat(eta,1,ns);
@@ -618,7 +660,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     % "outerloop"), to efficiently compute estimates of the regression
     % coefficients for the covariates.
     SZy = (Z'*Z)\(Z'*y);
-    SZX = (Z'*Z)\(Z'*X);
+    SZX = double((Z'*Z)\(Z'*X));
     
     if ncov == 0
       X = X - repmat(mean(X),length(y),1);
@@ -640,7 +682,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
   if verbose
     fprintf('Welcome to           ');
     fprintf('--       *                              *               \n');
-    fprintf('VARBVS version 2.0.0 ');
+    fprintf('VARBVS version 2.3-1 ');
     fprintf('--       |              |               |               \n');
     fprintf('large-scale Bayesian ');
     fprintf('--       ||           | |    |          || |     |   |  \n');
@@ -648,7 +690,7 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fprintf('-- |     || | |    |  | ||  ||        |||| ||    |   || \n');
     fprintf('*********************');
     fprintf('********************************************************\n');
-    fprintf('Copyright (C) 2012-2016 Peter Carbonetto.\n')
+    fprintf('Copyright (C) 2012-2017 Peter Carbonetto.\n')
     fprintf('See http://www.gnu.org/licenses/gpl.html for the full ');
     fprintf('license.\n');
     fprintf('Fitting variational approximation for Bayesian variable ');
@@ -765,12 +807,26 @@ function fit = varbvs (X, Z, y, labels, family, options)
 
   % (6) CREATE FINAL OUTPUT
   % -----------------------
+  % Compute the normalized importance weights and the posterior inclusion
+  % probabilities (PIPs) and mean regression coefficients averaged over the
+  % hyperparameter settings.
+  if ns == 1
+    w    = 1;
+    pip  = fit.alpha;
+    beta = fit.mu;
+  else
+    w    = normalizelogweights(logw);
+    pip  = alpha * w(:);
+    beta = mu * w(:);
+  end
+  
   if strcmp(family,'gaussian')
     fit = struct('family',family,'n',n,'labels',{labels},'n0',n0,'sa0',sa0,...
                  'mu_cov',{mu_cov},'update_sigma',update_sigma,'update_sa',...
-                 update_sa,'prior_same',prior_same,'logw',{logw},...
-                 'sigma',{sigma},'sa',sa,'logodds',{logodds},'alpha',...
-                 {alpha},'mu',{mu},'s',{s},'eta',[],'optimize_eta',false);
+                 update_sa,'prior_same',prior_same,'logw',{logw},'w',{w},...
+                 'sigma',{sigma},'sa',{sa},'logodds',{logodds},'alpha',...
+                 {alpha},'mu',{mu},'s',{s},'eta',[],'pip',{pip},'beta',...
+                 {beta},'optimize_eta',false);
 
     % Compute the proportion of variance in Y, after removing linear
     % effects of covariates, explained by the regression model.
@@ -790,10 +846,11 @@ function fit = varbvs (X, Z, y, labels, family, options)
     fit = struct('family',family,'n',n,'labels',{labels},'n0',n0,'sa0',sa0,...
                  'mu_cov',{mu_cov},'update_sa',update_sa,'optimize_eta',...
                  optimize_eta,'prior_same',prior_same,'logw',{logw},...
-                 'sa',sa,'logodds',{logodds},'alpha',{alpha},'mu',{mu},...
-                 's',{s},'eta',{eta},'update_sigma',false,'pve',[]);
+                 'w',{w},'sa',{sa},'logodds',{logodds},'alpha',{alpha},...
+                 'mu',{mu},'s',{s},'eta',{eta},'pip',{pip},'beta',{beta},...
+                 'update_sigma',false,'pve',[]);
   end
-  
+
 % ------------------------------------------------------------------
 % This function implements one iteration of the "outer loop".
 function [logw, sigma, sa, alpha, mu, s, eta, mu_cov] = ...

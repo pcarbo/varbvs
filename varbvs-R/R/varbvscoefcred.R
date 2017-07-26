@@ -1,3 +1,16 @@
+# Part of the varbvs package, https://github.com/pcarbo/varbvs
+#
+# Copyright (C) 2012-2017, Peter Carbonetto
+#
+# This program is free software: you can redistribute it under the
+# terms of the GNU General Public License; either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANY; without even the implied warranty of
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
 # Compute Monte Carlo estimates of credible intervals for coefficients
 # in the fitted variable selection model. This function is used by
 # summary.varbvs to generate credible intervals for coefficients of
@@ -6,7 +19,7 @@ varbvscoefcred <- function (fit, vars, cred.int = 0.95, nr = 1000) {
 
   # Check that the first input is an instance of class "varbvs".
   if (!is(fit,"varbvs"))
-    stop("Input fit must be an instance of class varbvs")
+    stop("Input \"fit\" must be an instance of class \"varbvs\"")
   
   # Get the number of hyperparameter settings.
   ns <- length(fit$logw)
@@ -18,9 +31,6 @@ varbvscoefcred <- function (fit, vars, cred.int = 0.95, nr = 1000) {
   } else
     p <- length(vars)
 
-  # Compute the normalized (approximate) probabilities.
-  w <- normalizelogweights(fit$logw)
-
   # Initialize storage for the result.
   a <- rep(0,p)
   b <- rep(0,p)
@@ -28,7 +38,7 @@ varbvscoefcred <- function (fit, vars, cred.int = 0.95, nr = 1000) {
   # Repeat for each selected variable.
   for (i in 1:p) {
     j    <- vars[i]
-    k    <- sample(ns,nr,prob = w,replace = TRUE)
+    k    <- sample(ns,nr,prob = fit$w,replace = TRUE)
     x    <- fit$mu[j,k] + sqrt(fit$s[j,k]) * rnorm(nr)
     a[i] <- quantile(x,0.5 - cred.int/2)
     b[i] <- quantile(x,0.5 + cred.int/2)

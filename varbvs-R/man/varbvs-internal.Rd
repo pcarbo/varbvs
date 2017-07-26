@@ -1,5 +1,6 @@
 \name{varbvs-internal}
 \title{Internal varbvs functions}
+\alias{varbvs-internal}
 \alias{logit}
 \alias{logpexp}
 \alias{sigmoid}
@@ -16,6 +17,7 @@
 \alias{varbvsnormupdate}
 \alias{varbvsbinupdate}
 \alias{varbvsbinzupdate}
+\alias{varbvsmixupdate}
 \alias{varbvspve}
 \alias{var1}
 \alias{var1.cols}
@@ -28,13 +30,13 @@ var1.cols(X)
 varbvspve(X,fit,nr = 1000)
 varbvsnorm(X,y,sigma,sa,logodds,alpha,mu,tol = 1e-4,maxiter = 1e4,
            verbose = TRUE,outer.iter = NULL,update.sigma = TRUE,
-           update.sa = TRUE,n0 = 0,sa0 = 0)
+           update.sa = TRUE,n0 = 10,sa0 = 1)
 varbvsbin(X,y,sa,logodds,alpha,mu,eta,tol = 1e-4,maxiter = 1e4,
           verbose = TRUE,outer.iter = NULL,update.sa = TRUE,
-          optimize.eta = TRUE,n0 = 0,sa0 = 0)
+          optimize.eta = TRUE,n0 = 10,sa0 = 1)
 varbvsbinz(X,Z,y,sa,logodds,alpha,mu,eta,tol = 1e-4,maxiter = 1e4,
            verbose = TRUE,outer.iter = NULL,update.sa = TRUE,
-           optimize.eta = TRUE,n0 = 0,sa0 = 0)
+           optimize.eta = TRUE,n0 = 10,sa0 = 1)
 }
 \author{Peter Carbonetto <peter.carbonetto@gmail.com>}
 

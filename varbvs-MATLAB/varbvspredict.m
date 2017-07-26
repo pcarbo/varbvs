@@ -59,6 +59,20 @@
 %
 function y = varbvspredict (fit, X, Z)
 
+  % Part of the varbvs package, https://github.com/pcarbo/varbvs
+  %
+  % Copyright (C) 2012-2017, Peter Carbonetto
+  %
+  % This program is free software: you can redistribute it under the
+  % terms of the GNU General Public License; either version 3 of the
+  % License, or (at your option) any later version.
+  %
+  % This program is distributed in the hope that it will be useful, but
+  % WITHOUT ANY WARRANY; without even the implied warranty of
+  % MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  % General Public License for more details.
+  %
+
   % Get the number of samples (n), variables (p) and hyperparameter
   % settings (ns).
   [n p] = size(X);
@@ -66,13 +80,13 @@ function y = varbvspredict (fit, X, Z)
     
   % Input X must be single precision, and cannot be sparse.
   if issparse(X)
-    error('Input X cannot be sparse')
+    error('Input X cannot be sparse');
   end
   if ~isa(X,'single')
     X = single(X);
   end
   if (numel(fit.labels) ~= p)
-    error('Inputs X and fit are not compatible')
+    error('Inputs X and fit are not compatible');
   end
 
   % If input Z is not empty, it must be double precision, and must have as
@@ -86,11 +100,11 @@ function y = varbvspredict (fit, X, Z)
   end
   Z = [ones(n,1) Z];
   if (size(Z,2) ~= size(fit.mu_cov,1))
-    error('Inputs Z and fit are not compatible')
+    error('Inputs Z and fit are not compatible');
   end
 
-  % Compute the normalized (approximate) probabilities.
-  w = normalizelogweights(fit.logw);
+  % Get the normalized (approximate) probabilities.
+  w = fit.w;
 
   % For each hyperparameter setting, and for each sample, compute the
   % posterior mean estimate of Y, and then average these estimates

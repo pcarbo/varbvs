@@ -1,3 +1,16 @@
+# Part of the varbvs package, https://github.com/pcarbo/varbvs
+#
+# Copyright (C) 2012-2017, Peter Carbonetto
+#
+# This program is free software: you can redistribute it under the
+# terms of the GNU General Public License; either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANY; without even the implied warranty of
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
 # Implements the fully-factorized variational approximation for
 # Bayesian variable selection in linear regression. It finds the
 # "best" fully-factorized variational approximation to the posterior
@@ -39,8 +52,8 @@
 # chi-square distribution with scale sa0 and degrees of freedom n0.
 varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4,
                         maxiter = 1e4, verbose = TRUE, outer.iter = NULL,
-                        update.sigma = TRUE, update.sa = TRUE, n0 = 0,
-                        sa0 = 0) {
+                        update.sigma = TRUE, update.sa = TRUE, n0 = 10,
+                        sa0 = 1) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -133,9 +146,12 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4,
         status <- NULL
       else
         status <- sprintf("%05d ",outer.iter)
-      caterase(paste(status,sprintf("%05d %+13.6e %0.1e %06.1f %0.1e %0.1e",
-                                    iter,logw[iter],err[iter],sum(alpha),
-                                    sigma,sa),sep=""))
+      progress.str <-
+          paste(status,sprintf("%05d %+13.6e %0.1e %06.1f %0.1e %0.1e",
+                               iter,logw[iter],err[iter],sum(alpha),
+                               sigma,sa),sep="")
+      cat(progress.str)
+      cat(rep("\r",nchar(progress.str)))
     }
     if (logw[iter] < logw0) {
       logw[iter] <- logw0
@@ -161,6 +177,6 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, tol = 1e-4,
 # variational approximation.
 int.linear <- function (Xr, d, y, sigma, alpha, mu, s) {
   n <- length(y)
-  return(-length(y)/2*log(2*pi*sigma) - norm2(y - Xr)^2/(2*sigma) 
+  return(-n/2*log(2*pi*sigma) - norm2(y - Xr)^2/(2*sigma) 
          - dot(d,betavar(alpha,mu,s))/(2*sigma))
 }

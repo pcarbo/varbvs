@@ -5,6 +5,19 @@
 % Note that file cd.mat cannot be made publicly available due to data
 % sharing restrictions, so this script is for viewing only.
 %
+% Part of the varbvs package, https://github.com/pcarbo/varbvs
+%
+% Copyright (C) 2012-2017, Peter Carbonetto
+%
+% This program is free software: you can redistribute it under the
+% terms of the GNU General Public License; either version 3 of the
+% License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful, but
+% WITHOUT ANY WARRANY; without even the implied warranty of
+% MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+% General Public License for more details.
+%
 clear
 
 % Initialize the random number generator. 
@@ -26,13 +39,12 @@ fprintf('FITTING MODEL TO DATA.\n')
 fit = varbvs(X,[],y,labels,'binomial',struct('logodds',-6:0.25:-3));
 
 % Compute "single-marker" posterior inclusion probabilities.
-w   = normalizelogweights(fit.logw);
-pip = varbvsindep(fit,X,[],y) * w(:);
+pip = varbvsindep(fit,X,[],y) * fit.w(:);
 
 % SAVE RESULTS
 % ------------
 fprintf('SAVING RESULTS.\n');
-save('varbvs_demo_cd.mat','fit','w','pip','chr','pos','-v7.3');
+save('varbvs_demo_cd.mat','fit','pip','chr','pos','-v7.3');
 
 % SUMMARIZE POSTERIOR DISTRIBUTION
 % --------------------------------
@@ -45,7 +57,7 @@ varbvsprint(fit,0.95,9);
 % latter is meant to look like a typical genome-wide "Manhattan" plot used
 % to summarize the results of a genome-wide association study. Variables
 % with PIP > 0.5 are highlighted.
-i = find(fit.alpha*w(:) > 0.5);
+i = find(fit.pip > 0.5);
 subplot(2,1,1);
 varbvsplot(fit,struct('groups',chr,'vars',i,'gap',5000));
 ylabel('posterior probability');

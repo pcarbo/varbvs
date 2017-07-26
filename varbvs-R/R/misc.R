@@ -1,3 +1,16 @@
+# Part of the varbvs package, https://github.com/pcarbo/varbvs
+#
+# Copyright (C) 2012-2017, Peter Carbonetto
+#
+# This program is free software: you can redistribute it under the
+# terms of the GNU General Public License; either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANY; without even the implied warranty of
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
 # SUMMARY
 # -------
 # This file contains various functions to implement the variational
@@ -5,7 +18,6 @@
 # overview of the functions defined in this file:
 #
 #   tf2yn(x)
-#   caterase(s)
 #   var1(x)
 #   var1.cols(X)
 #   dot(x,y)
@@ -40,13 +52,6 @@ tf2yn <- function (x) {
   else
     return("no")
 }
-
-# ----------------------------------------------------------------------
-# Output the string using 'cat', then move the cursor back to the
-# beginning of the string so that subsequent output will overwrite
-# this string.
-caterase <- function (s)
-  cat(s,rep("\b",nchar(s)),sep = "")
 
 # ----------------------------------------------------------------------
 # Return the second moment of x about its mean.
@@ -132,7 +137,7 @@ diagsq <- function (X, a = NULL) {
   # Execute the C routine using the .Call interface. The main reason
   # for using .Call interface is that there is less of a constraint on
   # the size of the input matrices.
-  out <- .Call("diagsq_Call",X = X,a = a,y = y)
+  out <- .Call(C_diagsq_Call,X = X,a = a,y = y)
   return(y)
 }
 
@@ -159,7 +164,7 @@ diagsqt <- function (X, a = NULL) {
   # Execute the C routine using the .Call interface. The main reason
   # for using .Call interface is that there is less of a constraint on
   # the size of the input matrices.
-  out <- .Call("diagsqt_Call",X = X,a = a,y = y)
+  out <- .Call(C_diagsqt_Call,X = X,a = a,y = y)
   return(y)
 }
 

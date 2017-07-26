@@ -13,7 +13,7 @@
 \usage{
   varbvs (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
           logodds, alpha, mu, eta, update.sigma, update.sa,
-          optimize.eta, initialize.params, nr = 100, sa0 = 0, n0 = 0,
+          optimize.eta, initialize.params, nr = 100, sa0 = 1, n0 = 10,
           tol = 1e-4, maxiter = 1e4, verbose = TRUE)
 }
 \arguments{
@@ -22,10 +22,14 @@
            and cannot have any missing values (NA).}
 
   \item{Z}{n x m covariate data matrix, where m is the number of
-           covariates. Do not supply an intercept as a covariate
-           (i.e., a column of ones), because an intercept is
-           automatically included in the regression model. For no
-	   covariates, set \code{Z = NULL}.}
+           covariates. Do not supply an intercept as a covariate (i.e.,
+           a column of ones), because an intercept is automatically
+           included in the regression model. For no covariates, set
+           \code{Z = NULL}. The covariates are assigned an improper,
+           uniform prior. Although improper priors are generally not
+           advisable because they can result in improper posteriors and
+           Bayes factors, this choice allows us to easily integrate out
+           these covariates.}
 
   \item{y}{Vector of length n containing observations of binary
           (\code{family = "binomial"}) or continuous (\code{family =
@@ -46,12 +50,15 @@
   \item{sa}{Hyperparameter sa is the prior variance of regression
     coefficients for variables that are included in the model. This
     prior variance is always scaled by sigma (for logistic regression,
-    we take sigma = 1). This input specifies the candidate settings for
-    sa, of the same length as inputs sigma and logodds (or have length
-    equal to the number of columns of logodds). If missing, prior
-    variance is automatically fitted to data by compute approximate
-    maximum (ML) estimates, or maximum a posteriori estimates when
-    \code{n0 > 0} and \code{sa0 > 0}.}
+    we take sigma = 1). Scaling the variance of the coefficients in this
+    way is necessary to ensure that this prior is invariant to
+    measurement scale (e.g., switching from grams to kilograms). This
+    input specifies the candidate settings for sa, of the same length as
+    inputs sigma and logodds (or have length equal to the number of
+    columns of logodds). If missing, prior variance is automatically
+    fitted to data by compute approximate maximum (ML) estimates, or
+    maximum a posteriori estimates when \code{n0 > 0} and \code{sa0 >
+    0}.}
 
   \item{logodds}{Hyperparameter logodds is the prior log-odds that a
     variable is included in the regression model; it is defined as
@@ -92,11 +99,11 @@
     to data, in which case input vector sa is used to provide initial
     estimates.}
 
-  \item{optimize.eta}{When optimize.eta = TRUE, eta is fitted to the
-    data during the inner loop coordinate ascent updates, even when good
-    estimates of eta are provided as input.}
+  \item{optimize.eta}{When \code{optimize.eta = TRUE}, eta is fitted to
+    the data during the inner loop coordinate ascent updates, even when
+    good estimates of eta are provided as input.}
 
-  \item{initialize.params}{If TRUE, the initialization stage of the
+  \item{initialize.params}{If FALSE, the initialization stage of the
     variational inference algorithm (see below) will be skipped, which
     saves computation time for large data sets.}
 
@@ -106,14 +113,17 @@
     hyperparameter sa. Must be >= 0.}
   
   \item{n0}{Number of degrees of freedom for a scaled inverse chi-square
-    prior on hyperparameter sa. Must be >= 0.}
+    prior on hyperparameter sa. Must be >= 0. Large settings of
+    \code{n0} provide greater stability of the parameter estimates for
+    cases when the model is "sparse"; that is, when few variables are
+    included in the model.}
 
   \item{tol}{Convergence tolerance for inner loop.}
 
   \item{maxiter}{Maximum number of inner loop iterations.}
 
-  \item{verbose}{If verbose = TRUE, print progress of algorithm to
-    console.}
+  \item{verbose}{If \code{verbose = TRUE}, print progress of algorithm
+    to console.}
 }
 \section{Regression models}{
     Two types of outcomes (y) are modeled: (1) a continuous outcome,
@@ -127,7 +137,7 @@
     \eqn{sigmoid(u0 + Z*u + X*b).} See \code{help(sigmoid)} for a
     description of the sigmoid function. Note that the regression always
     includes an intercept term (u0).
-}
+  }
 \section{Co-ordinate ascent optimization procedure}{
     For both regression models, the fitting procedure consists of an inner
     loop and an outer loop. The outer loop iterates over each of the
@@ -164,10 +174,35 @@
     "binomial")}. The fitted value of eta is returned as an n x ns
     matrix.
 
-    Note that special care is required for interpreting the results of
-    the variational approximation with the logistic regression model. In
-    particular, interpretation of the individual estimates of the
-    regression coefficients (e.g., the posterior mean estimates
+    The variational estimates should be interpreted carefully,
+    especially when variables are strongly correlated. For example,
+    consider the simple scenario in which 2 candidate variables are
+    closely correlated, and at least one of them explains the outcome
+    with probability close to 1. Under the correct posterior
+    distribution, we would expect that each variable is included with
+    probability ~0.5. However, the variational approximation, due to the
+    conditional independence assumption, will typically get this wrong,
+    and concentrate most of the posterior weight on one variable (the
+    actual variable that is chosen will depend on the starting
+    conditions of the optimization). Although the individual PIPs are
+    incorrect, a statistic summarizing the variable selection for both
+    correlated variables (e.g., the total number of variables included
+    in the model) should be reasonably accurate.
+
+    More generally, if variables can be reasonably grouped together
+    based on their correlations, we recommend interpreting the variable
+    selection results at a group level. For example, in genome-wide
+    association studies (see the vignettes) ,a SNP with a high PIP
+    indicates that this SNP is probably associated with the trait, and
+    one or more nearby SNPs within a chromosomal region, or ``locus,''
+    may be associated as well. Therefore, we interpreted the GWAS
+    variable selection results at the level of loci, rather than at the
+    level of individual SNPs. 
+    
+    Also note that special care is required for interpreting the results
+    of the variational approximation with the logistic regression
+    model. In particular, interpretation of the individual estimates of
+    the regression coefficients (e.g., the posterior mean estimates
     \code{fit$mu}) is not straightforward due to the additional
     approximation introduced on the individual nonlinear factors in the
     likelihood. As a general guideline, only the relative magnitudes of
@@ -202,7 +237,6 @@
       and Computing}, 2001.)
 }
 \section{Prior on proportion of variance explained}{
-
   Specifying the prior variance of the regression coefficients (sa) can
   be difficult, which is why we have included the option of fitting this
   hyperparameter to the data (see input argument \code{update.sa}
@@ -257,8 +291,6 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
 
   \item{n}{Number of data samples used to fit model.}
 
-  \item{ncov}{Number of covariates (columns of Z).}
-
   \item{sigma}{Settings for sigma (family = "gaussian" only).}
 
   \item{sa}{Settings for prior variance parameter.}
@@ -276,12 +308,17 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
     prior logodds (\code{family = "gaussian"} only).}
 
   \item{update.sa}{If TRUE, sa was fit to data for each setting of prior
-  logodds.}
+    logodds.}
 
   \item{logw}{An array with ns elements, in which \code{logw[i]} is the
     variational lower bound on the marginal log-likelihood for setting i
-    of the hyperparameters.}
+    of the hyperparameters. These provide approximate values of the
+    marginal log-likelihood for each hyperparameter setting.}
 
+  \item{w}{Normalized weights (posterior probabilities) for each of the
+    hyperparameter settings computed from \code{logw} using
+    \code{\link{normalizelogweights}}.}
+  
   \item{alpha}{Variational estimates of posterior inclusion
     probabilities for each hyperparameter setting.}
 
@@ -291,8 +328,14 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
   \item{s}{Variational estimates of posterior variances for each
     hyperparameter setting.}
 
+  \item{pip}{"Averaged" posterior inclusion probabilities computed as a
+    weighted average of the individual PIPs (\code{alpha}), with weights
+    given by \code{w}.}
+
+  \item{beta}{"Averaged" posterior mean regression coefficients.}
+  
   \item{mu.cov}{Posterior mean regression coefficients for covariates,
-  including intercept, for each hyperparameter setting.}
+    including intercept, for each hyperparameter setting.}
   
   \item{eta}{Additional variational parameters for \code{family =
     "binomial"} only.}
@@ -327,9 +370,11 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
   e1003264.
 }
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
-\seealso{\code{summary.varbvs}, \code{varbvscoefcred}, \code{varbvspve},
-  \code{varbvsnorm}, \code{varbvsbin}, \code{varbvsbinz},
-  \code{normalizelogweights}, \code{varbvs-internal}
+
+\seealso{\code{\link{summary.varbvs}}, \code{\link{varbvscoefcred}},
+  \code{\link{varbvspve}}, \code{\link{varbvsnorm}},
+  \code{\link{varbvsbin}}, \code{\link{varbvsbinz}},
+  \code{\link{normalizelogweights}}, \link{varbvs-internal}
 }
 \examples{
 
@@ -358,15 +403,8 @@ y <- c(-2 + Z \%*\% u + X \%*\% beta + rnorm(400))
 fit <- varbvs(X,Z,y,logodds = seq(-3,-1,0.1))
 print(summary(fit))
 
-# Compute posterior inclusion probabilities (pip) and posterior mean
-# regression coefficients (beta) averaged over the hyperparameter
-# settings.
-w    <- normalizelogweights(fit$logw);
-pip  <- fit$alpha \%*\% c(w)
-beta <- fit$mu \%*\% c(w)
-
 # Compute the posterior mean estimate of hyperparameter sa.
-sa <- sum(fit$sa * w)
+sa <- with(fit,sum(sa * w))
 
 # Compare estimated outcomes against observed outcomes.
 y.fit <- predict(fit,X,Z)

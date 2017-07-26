@@ -45,8 +45,7 @@
 %    correlations between variables, then set options.score to these PIPs
 %    on the log-scale:
 %
-%      w = normalizelogweights(fit.logw);
-%      options.score = log10(varbvsindep(fit,X,Z,y) * w(:) + 1e-5);
+%      options.score = log10(varbvsindep(fit,X,Z,y) * fit.w(:) + 1e-5);
 %
 %    Finally, options.vars can be used to highlight and label variables in
 %    the plot. This must be an array containing the indices of the variables
@@ -73,6 +72,20 @@
 %
 function varbvsplot (fit, options)
 
+  % Part of the varbvs package, https://github.com/pcarbo/varbvs
+  %
+  % Copyright (C) 2012-2017, Peter Carbonetto
+  %
+  % This program is free software: you can redistribute it under the
+  % terms of the GNU General Public License; either version 3 of the
+  % License, or (at your option) any later version.
+  %
+  % This program is distributed in the hope that it will be useful, but
+  % WITHOUT ANY WARRANY; without even the implied warranty of
+  % MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  % General Public License for more details.
+  %
+
   % Some plot settings.
   marker_color = [0.10 0.10 0.44];  % Midnight blue.
   label_color  = [1.00 0.00 1.00];  % Magenta.
@@ -92,8 +105,7 @@ function varbvsplot (fit, options)
   if isfield(options,'score')
     y = options.score;
   else
-    w = normalizelogweights(fit.logw);
-    y = fit.alpha * w(:);
+    y = fit.pip;
   end
   p = numel(y);
   

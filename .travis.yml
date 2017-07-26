@@ -1,6 +1,6 @@
 language: r
-
 cache: packages
+latex: false
 
 r_packages:
   - covr

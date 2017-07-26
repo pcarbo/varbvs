@@ -76,6 +76,20 @@
 %
 function varbvsprint (fit, c, nv, nr)
 
+  % Part of the varbvs package, https://github.com/pcarbo/varbvs
+  %
+  % Copyright (C) 2012-2017, Peter Carbonetto
+  %
+  % This program is free software: you can redistribute it under the
+  % terms of the GNU General Public License; either version 3 of the
+  % License, or (at your option) any later version.
+  %
+  % This program is distributed in the hope that it will be useful, but
+  % WITHOUT ANY WARRANY; without even the implied warranty of
+  % MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  % General Public License for more details.
+  %
+
   % Get the number of variables (p) and number of candidate hyperparameter
   % settings (ns).
   p  = numel(fit.labels);
@@ -101,13 +115,10 @@ function varbvsprint (fit, c, nv, nr)
   
   % (1) COMPUTE POSTERIOR STATISTICS
   % --------------------------------
-  % Compute the normalized (approximate) probabilities.
-  w = normalizelogweights(fit.logw);
-
-  % Compute the posterior inclusion probabilities (PIPs) and posterior mean
-  % regression coefficients averaged over settings of the hyperparameters.
-  PIP  = fit.alpha * w(:);
-  beta = fit.mu    * w(:);
+  % Get the normalized (approximate) probabilities and the posterior
+  % inclusion probabilities (PIPs).
+  w   = fit.w;
+  pip = fit.pip;
   
   % (2) SUMMARIZE ANALYSIS SETUP
   % ----------------------------
@@ -202,12 +213,12 @@ function varbvsprint (fit, c, nv, nr)
   % Summarize the number of variables selected at different PIP thresholds.
   fprintf('Selected variables:\n');
   fprintf('prob. >0.10 >0.25 >0.50 >0.75 >0.90 >0.95\n');
-  fprintf('count %5d %5d %5d %5d %5d %5d\n',sum(PIP > 0.1),sum(PIP > 0.25),...
-          sum(PIP > 0.5),sum(PIP > 0.75),sum(PIP > 0.9),sum(PIP > 0.95));
+  fprintf('count %5d %5d %5d %5d %5d %5d\n',sum(pip > 0.1),sum(pip > 0.25),...
+          sum(pip > 0.5),sum(pip > 0.75),sum(pip > 0.9),sum(pip > 0.95));
 
   % Give more detailed statistics about the top nv variables by the
   % probability that they are included.
-  [ans vars] = sort(-PIP);
+  [ans vars] = sort(-pip);
   vars       = vars(1:nv);
   vars       = vars(:)';
   fprintf('Top %d variables by inclusion probability:\n',nv);
@@ -222,11 +233,11 @@ function varbvsprint (fit, c, nv, nr)
   end
   for i = vars
     [a b] = varbvscoefcred(fit,i,c,nr);
-    fprintf('%6d %-10s %0.3f',i,fit.labels{i},PIP(i));
+    fprintf('%6d %-10s %0.3f',i,fit.labels{i},pip(i));
     if strcmp(fit.family,'gaussian')
       fprintf(' %0.3f',dot(w,fit.pve(i,:)));
     end
-    fprintf(' %+7.3f [%+0.3f,%+0.3f]\n',beta(i),a,b);
+    fprintf(' %+7.3f [%+0.3f,%+0.3f]\n',fit.beta(i),a,b);
   end
   if strcmp(fit.family,'binomial')
     fprintf('*See "help varbvs" for interpreting coefficients in ');

@@ -1,3 +1,16 @@
+# Part of the varbvs package, https://github.com/pcarbo/varbvs
+#
+# Copyright (C) 2012-2017, Peter Carbonetto
+#
+# This program is free software: you can redistribute it under the
+# terms of the GNU General Public License; either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANY; without even the implied warranty of
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
 # Execute a single iteration of the coordinate ascent updates to
 # maximize the variational lower bound for Bayesian variable selection
 # in logistic regression.
@@ -70,7 +83,7 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
   # components that change are alpha, mu and Xr. Note that I need to
   # subtract 1 from the indices because R vectors start at 1, and C
   # arrays start at 0.
-  out <- .Call("varbvsbinupdate_Call",X = X,sa = as.double(sa),
+  out <- .Call(C_varbvsbinupdate_Call,X = X,sa = as.double(sa),
                logodds = as.double(logodds),d = as.double(stats$d),
                xdx = as.double(stats$xdx),xy = as.double(stats$xy),
                xd = as.double(stats$xd),alpha = alpha,mu = mu,Xr = Xr,

@@ -1,0 +1,19 @@
+navbar:
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Vignettes"
+      href: articles/index.html
+    - text: "Reference"
+      href: reference/index.html
+
+articles:
+  - title: "Vignettes"
+    desc: >
+      The following vignettes provide detailed illustrations of the
+      varbvs package.
+    contents:
+    - leukemia
+    - cfw
+    - cd
+    - cytokine

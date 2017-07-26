@@ -1,10 +1,23 @@
+# Part of the varbvs package, https://github.com/pcarbo/varbvs
+#
+# Copyright (C) 2012-2017, Peter Carbonetto
+#
+# This program is free software: you can redistribute it under the
+# terms of the GNU General Public License; either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANY; without even the implied warranty of
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
 # Compute fully-factorized variational approximation for Bayesian
 # variable selection in linear (family = "gaussian") or logistic
 # regression (family = "binomial"). See varbvs.Rd for details.
 varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                     logodds, alpha, mu, eta, update.sigma, update.sa,
-                    optimize.eta, initialize.params, nr = 100, sa0 = 0,
-                    n0 = 0, tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
+                    optimize.eta, initialize.params, nr = 100, sa0 = 1,
+                    n0 = 10, tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -81,11 +94,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # log-odds is specified separately for each variable. A default
   # setting is only available if the number of other hyperparameter
   # settings is 1, in which case we select 20 candidate settings for
-  # the prior log-odds, evenly spaced between log10(1/p) and
-  # log10(0.5).
+  # the prior log-odds, evenly spaced between log10(1/p) and -1.
   if (missing(logodds)) {
     if (length(sigma) == 1 & length(sa) == 1)
-      logodds <- seq(-log10(p),-0.3,length.out = 20)
+      logodds <- seq(-log10(p),-1,length.out = 20)
     else
       stop("logodds can only be missing when length(sigma) = length(sa) = 1")
   }
@@ -127,6 +139,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     alpha <- alpha / rep.row(colSums(alpha),p)
   } else
     initialize.params.default <- FALSE
+  if (!is.matrix(alpha))
+    alpha <- matrix(alpha)
   if (nrow(alpha) != p)
     stop("Input alpha must have as many rows as X has columns")
   if (ncol(alpha) == 1)
@@ -137,6 +151,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     mu <- randn(p,ns)
   else
     initialize.params.default <- FALSE    
+  if (!is.matrix(mu))
+    mu <- matrix(mu)
   if (nrow(mu) != p)
     stop("Input mu must have as many rows as X has columns")
   if (ncol(mu) == 1)
@@ -211,7 +227,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.0.0 ")
+    cat("VARBVS version 2.3-1 ")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")
@@ -219,7 +235,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     cat("-- |     || | |    |  | ||  ||        |||| ||    |   || \n")
     cat("*********************")
     cat("*******************************************************\n")
-    cat("Copyright (C) 2012-2016 Peter Carbonetto.\n")
+    cat("Copyright (C) 2012-2017 Peter Carbonetto.\n")
     cat("See http://www.gnu.org/licenses/gpl.html for the full license.\n")
     cat("Fitting variational approximation for Bayesian variable",
         "selection model.\n")
@@ -349,12 +365,26 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     
   # (6) CREATE FINAL OUTPUT
   # -----------------------
+  # Compute the normalized importance weights and the posterior
+  # inclusion probabilities (PIPs) and mean regression coefficients
+  # averaged over the hyperparameter settings.
+  if (ns == 1) {
+    w    <- 1
+    pip  <- fit$alpha
+    beta <- fit$mu
+  } else {
+    w    <- normalizelogweights(logw)
+    pip  <- c(alpha %*% w)
+    beta <- c(mu %*% w)
+  }
+  
   if (family == "gaussian") {
     fit <- list(family = family,n = n,n0 = n0,sa0 = sa0,mu.cov = mu.cov,
                 update.sigma = update.sigma,update.sa = update.sa,
                 prior.same = prior.same,optimize.eta = FALSE,logw = logw,
-                sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
-                mu = mu,s = s,eta = NULL)
+                w = w,sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
+                mu = mu,s = s,eta = NULL,pip = pip,beta = beta)
+    class(fit) <- c("varbvs","list")
 
     # Compute the proportion of variance in Y, after removing linear
     # effects of covariates, explained by the regression model.
@@ -369,12 +399,15 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     sx                <- var1.cols(X)
     for (i in 1:ns) 
       fit$pve[,i] <- sx*(mu[,i]^2 + s[,i])/var1(y)
-  } else if (family == "binomial")
+  } else if (family == "binomial") {
     fit <- list(family = family,n = n,n0 = n0,mu.cov = mu.cov,sa0 = sa0,
                 update.sigma = FALSE,update.sa = update.sa,
                 optimize.eta = optimize.eta,prior.same = prior.same,
-                logw = logw,sigma = NULL,sa = sa,logodds = logodds,
-                alpha = alpha,mu = mu,s = s,eta = eta,model.pve = NA)
+                logw = logw,w = w,sigma = NULL,sa = sa,logodds = logodds,
+                alpha = alpha,mu = mu,s = s,eta = eta,pip = pip,beta = beta,
+                model.pve = NA)
+    class(fit) <- c("varbvs","list")
+  }
   
   # Add column names to some of the outputs.
   rownames(fit$alpha) <- colnames(X)
@@ -385,8 +418,6 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   else
     rownames(fit$logodds) <- colnames(X)
 
-  # Declare the return value as an instance of class 'varbvs'.
-  class(fit) <- c("varbvs","list")
   return(fit)
 }
 

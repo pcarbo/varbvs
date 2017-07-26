@@ -1,3 +1,16 @@
+# Part of the varbvs package, https://github.com/pcarbo/varbvs
+#
+# Copyright (C) 2012-2017, Peter Carbonetto
+#
+# This program is free software: you can redistribute it under the
+# terms of the GNU General Public License; either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANY; without even the implied warranty of
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
 # Generate a four-part summary of the fitted Bayesian variable
 # selection model.
 summary.varbvs <- function (object, cred.int = 0.95, nv = 5, nr = 1000, ...) {
@@ -6,23 +19,17 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   if (!is(object,"varbvs"))
     stop("Input argument object must be an instance of class \"varbvs\".")
 
+  # Get the normalized importance weights.
+  w <- object$w
+  
   # Get the number of variables (p) and number of candidate
   # hyperparameter settings (ns).
   p  <- nrow(object$alpha)
-  ns <- length(object$logw)
+  ns <- length(w)
 
   # Input nv cannot be greater than the number of variables.
   nv <- min(nv,p) 
   
-  # Compute the normalized (approximate) probabilities.
-  w <- c(normalizelogweights(object$logw))
-
-  # Compute the posterior inclusion probabilities (PIPs) and posterior
-  # mean regression coefficients averaged over settings of the
-  # hyperparameters.
-  PIP  <- object$alpha %*% w
-  beta <- object$mu    %*% w
-
   # Generate the summary.
   out <-
     list(family       = object$family,
@@ -88,16 +95,18 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   }
 
   # Summarize the number of variables selected at different PIP thresholds.
-  out$num.included <- as.table(c(sum(PIP>0.1),sum(PIP>0.25),sum(PIP>0.5),
-                                 sum(PIP>0.75),sum(PIP>0.9),sum(PIP>0.95)))
+  out$num.included <-
+      with(object,as.table(c(sum(pip>0.1),sum(pip>0.25),sum(pip>0.5),
+                             sum(pip>0.75),sum(pip>0.9),sum(pip>0.95))))
   names(out$num.included) <- c(">0.10",">0.25",">0.50",">0.75",">0.90",">0.95")
   
   # Get more detailed statistics about the top nv variables by the
   # probability that they are included.
-  vars <- order(PIP,decreasing = TRUE)[1:nv]
+  vars <- order(object$pip,decreasing = TRUE)[1:nv]
   out$top.vars <-
     data.frame(index = vars,variable = rownames(object$alpha)[vars],
-               prob = PIP[vars],PVE = NA,coef = beta[vars],cred = NA)
+               prob = object$pip[vars],PVE = NA,coef = object$beta[vars],
+               cred = NA)
   for (i in 1:length(vars)) {
     if (object$family == "gaussian")
       out$top.vars[i,"PVE"] <- dot(w,object$pve[vars[i],])
