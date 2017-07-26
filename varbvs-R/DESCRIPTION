@@ -29,6 +29,7 @@ Suggests:
     glmnet,
     qtl,
     knitr,
+    rmarkdown,
     testthat
 License: GPL (>= 3)
 NeedsCompilation: yes
