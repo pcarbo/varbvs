@@ -1,3 +1,4 @@
 ^\.codecov\.yml$
 ^travis-tool\.sh\.cmd$
 ^docs$
+^_pkgdown\.yaml$
