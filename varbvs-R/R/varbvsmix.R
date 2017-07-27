@@ -14,8 +14,8 @@
 # Fit linear regression model with mixture-of-normals prior using 
 # variational approximation techniques. See varbvsmix.Rd for details.
 varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
-                       update.sa, update.w, w.penalty, tol = 1e-4,
-                       maxiter = 1e4, verbose = TRUE) {
+                       update.sa, update.w, w.penalty, drop.threshold = 1e-8,
+                       tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
     
   # Get the number of samples (n), variables (p) and mixture
   # components (K).
@@ -195,9 +195,10 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   for (i in 2:K)
     s[,i] <- sigma*sa[i]/(sa[i]*d + 1)
 
-  # Initialize storage for outputs logZ and err.
+  # Initialize storage for outputs logZ, err and nzk.
   logZ <- rep(0,maxiter)
   err  <- rep(0,maxiter)
+  nzk  <- rep(0,maxiter)
   
   # (4) FIT MODEL TO DATA
   # ---------------------
@@ -301,7 +302,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   fit <- list(n = n,mu.cov = NULL,update.sigma = update.sigma,
               update.sa = update.sa,update.w = update.w,w.penalty = w.penalty,
               sigma = sigma,sa = sa,w = w,alpha = alpha,mu = mu,s = s,
-              logZ = logZ[1:iter],err = err[1:iter])
+              logZ = logZ[1:iter],err = err[1:iter],nzk = [1:iter])
 
   # Compute the posterior mean estimate of the regression
   # coefficients for the covariates under the current variational
@@ -314,7 +315,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   rownames(fit$s)     <- colnames(X)
   
   # Declare the return value as an instance of class 'varbvsmix'.
-  class(fit) <- c("varbvs","list")
+  class(fit) <- c("varbvsmix","list")
   return(fit)
 }
 
