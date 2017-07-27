@@ -13,7 +13,8 @@
   the ``slab'' as a mixture of normals.}
 \usage{
   varbvsmix(X, Z, y, sa, sigma, w, alpha, mu, update.sigma, update.sa,
-            update.w, w.penalty, tol = 1e-4, maxiter = 1e4, verbose = TRUE)
+            update.w, w.penalty, drop.threshold = 1e-8, tol = 1e-4,
+            maxiter = 1e4, verbose = TRUE)
 }
 \arguments{
   \item{X}{n x p input matrix, where n is the number of samples, and p
@@ -70,6 +71,16 @@
     distribution with parameters \code{w.penalty}. The default is a
     vector of ones, which reduces to a uniform prior on \code{w}.}
 
+  \item{drop.threshold}{Posterior probability threshold for dropping
+    mixture components. Should be a positive number close to zero. If,
+    at any point during the optimization, all posterior mixture
+    assignment probabilities for a given mixture component \code{k} are
+    less than \code{drop.threshold}, the mixture weight for component
+    \code{k} is automatically set to zero. Set \code{drop.threshold} to
+    zero to disable this behaviour. Setting larger values for
+    \code{drop.threshold} may improve computation speed at a small cost
+    to numerical accuracy of the final results.}
+  
   \item{tol}{Convergence tolerance for co-ordinate ascent updates.}
 
   \item{maxiter}{Maximum number of co-ordinate ascent iterations.}
@@ -97,6 +108,9 @@
 
   \item{w.penalty}{Penalty used for updating mixture weights.}
 
+  \item{drop.threshold}{Posterior probabiltiy threshold used in the
+    optimization procedure for setting mixture weights to zero.}
+  
   \item{sigma}{Fitted or user-specified residual variance parameter.}
   
   \item{sa}{User-specified mixture variances.}
@@ -116,6 +130,9 @@
   \item{err}{Maximum difference in the variational posterior
     probabilities at each iteration of the co-ordinate ascent
     algorithm.}
+
+  \item{nzw}{Number of nonzero mixture components (including the
+    "spike") at each iteration of the co-ordinate ascent algorithm.}
 }
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \seealso{\code{\link{varbvs}}}

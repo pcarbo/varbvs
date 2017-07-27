@@ -283,9 +283,9 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # ----------------------
     # Print the status of the algorithm and check the convergence
     # criterion. Convergence is reached when the maximum difference
-    # between the posterior inclusion probabilities at two successive
-    # iterations is less than the specified tolerance, or when the
-    # variational lower bound has decreased.
+    # between the posterior mixture assignment probabilities at two
+    # successive iterations is less than the specified tolerance, or
+    # when the variational lower bound has decreased.
     err[iter] <- max(abs(alpha - alpha0))
     nzw[iter] <- K0 - K
     if (verbose) {
@@ -314,12 +314,12 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # Check if any mixture components should be dropped based on
     # "drop.threshold". Note that the first mixture component (the
     # "spike") should never be droped.
-    keep <- apply(alpha[,-1],2,max) >= drop.threshold
+    keep    <- apply(alpha,2,max) >= drop.threshold
+    keep[1] <- TRUE
     if (!all(keep)) {
 
       # At least one of the mixture components satisfy the criterion
       # for being dropped, so adjust the inactive set.
-      keep      <- c(1,1 + which(keep))
       inactive  <- inactive[keep]
       sa        <- sa[keep]
       w         <- w[keep]
