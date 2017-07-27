@@ -108,17 +108,21 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   if (missing(update.w))
     update.w <- TRUE
 
-  # Set initial estimates of variational parameters alpha. These
-  # parameters are stored as a p x K matrix.
+  # Set initial estimates of variational parameters alpha, ensuring
+  # that the smallest value is not less than the "drop threshold" for
+  # the mixture components. These parameters are stored as a p x K
+  # matrix.
   if (missing(alpha)) {
-    alpha <- rand(p,K)
+    alpha <- rand(p,K) + K*drop.threshold
     alpha <- alpha / rep.col(rowSums(alpha),K)
   }
   if (nrow(alpha) != p)
     stop("Input alpha should have as many rows as X has columns")
   if (ncol(alpha) != K)
     stop("Input alpha should have one column for each mixture component")
-
+  if (any(alpha < drop.threshold))
+    stop("Initial estimates of \"alpha\" must all be above \"drop.threshold\"")
+  
   # Set initial estimates of variational parameters 'mu'. These
   # parameters are stored as a p x K matrix. Note that the first
   # column of this matrix is always zero because it corresponds to the
@@ -169,14 +173,14 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
         "model with\n")
     cat("mixture-of-normals priors.\n")
     cat(sprintf("samples:      %-6d ",n))
-    cat(sprintf("mixture component sd's:    %0.2g..%0.2g\n",
+    cat(sprintf("mixture component sd's:         %0.2g..%0.2g\n",
                 min(sqrt(sa[2:K])),max(sqrt(sa[2:K]))))
     cat(sprintf("variables:    %-6d ",p))
-    cat(sprintf("fit mixture variances:     %s\n",tf2yn(update.sa)))
+    cat(sprintf("mixture component drop thresh.: %0.1e\n",drop.threshold))
     cat(sprintf("covariates:   %-6d ",max(0,ncol(Z) - 1)))
-    cat(sprintf("fit mixture weights:       %s\n",tf2yn(update.w)))
+    cat(sprintf("fit mixture weights:            %s\n",tf2yn(update.w)))
     cat(sprintf("mixture size: %-6d ",K))
-    cat(sprintf("fit residual var. (sigma): %s\n",tf2yn(update.sigma)))
+    cat(sprintf("fit residual var. (sigma):      %s\n",tf2yn(update.sigma)))
     cat("intercept:    yes    ")
     cat(sprintf("convergence tolerance      %0.1e\n",tol))
   }
@@ -195,10 +199,20 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   for (i in 2:K)
     s[,i] <- sigma*sa[i]/(sa[i]*d + 1)
 
-  # Initialize storage for outputs logZ, err and nzk.
+  # Initialize storage for outputs logZ, err and nzw.
   logZ <- rep(0,maxiter)
   err  <- rep(0,maxiter)
-  nzk  <- rep(0,maxiter)
+  nzw  <- rep(0,maxiter)
+
+  # Initialize the "inactive set"; that is the mixture components with
+  # weights that are exactly zero. Also, keep the initial set of
+  # mixture variances (sa) and the initial number of mixture
+  # components (K). The term "inactive set" is borrowed from "active
+  # set methods" in numerical optimization.
+  inactive   <- 1:K
+  K0         <- K
+  w0.penalty <- w.penalty
+  sa0        <- sa
   
   # (4) FIT MODEL TO DATA
   # ---------------------
@@ -206,7 +220,8 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   # number of iterations is reached.
   if (verbose) {
     cat("       variational    max. --------- hyperparameters ---------\n")
-    cat("iter   lower bound  change   sigma  mixture sd's  mix. weights\n")
+    cat("iter   lower bound  change   sigma  mixture sd's  mix. weights",
+        "(drop)\n")
   }
   for (iter in 1:maxiter) {
 
@@ -215,7 +230,6 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     mu0    <- mu
     s0     <- s
     sigma0 <- sigma
-    sa0    <- sa
     w0     <- w
 
     # (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
@@ -273,12 +287,13 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # iterations is less than the specified tolerance, or when the
     # variational lower bound has decreased.
     err[iter] <- max(abs(alpha - alpha0))
+    nzw[iter] <- K0 - K
     if (verbose) {
       progress.str <-
-        sprintf("%04d %+13.6e %0.1e %0.1e %13s [%0.3f,%0.3f]",
+        sprintf("%04d %+13.6e %0.1e %0.1e %13s [%0.3f,%0.3f] (%d)",
                 iter,logZ[iter],err[iter],sigma,
                 sprintf("[%0.1g,%0.1g]",sqrt(min(sa[-1])),sqrt(max(sa))),
-                min(w),max(w))
+                min(w),max(w),nzw[iter])
       cat(progress.str)
       cat(rep("\r",nchar(progress.str)))
     }
@@ -293,17 +308,49 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
       break
     } else if (err[iter] < tol)
       break
+
+    # (4g) ADJUST INACTIVE SET
+    # ------------------------
+    # Check if any mixture components should be dropped based on
+    # "drop.threshold". Note that the first mixture component (the
+    # "spike") should never be droped.
+    keep <- apply(alpha[,-1],2,max) >= drop.threshold
+    if (!all(keep)) {
+
+      # At least one of the mixture components satisfy the criterion
+      # for being dropped, so adjust the inactive set.
+      keep      <- c(1,1 + which(keep))
+      inactive  <- inactive[keep]
+      sa        <- sa[keep]
+      w         <- w[keep]
+      w0        <- w0[keep]
+      w.penalty <- w.penalty[keep]
+      alpha     <- alpha[,keep]
+      alpha0    <- alpha0[,keep]
+      mu        <- mu[,keep]
+      mu0       <- mu0[,keep]
+      s         <- s[,keep]
+      s0        <- s0[,keep]
+      K         <- length(inactive)
+    }
   }
   if (verbose)
     cat("\n")
 
   # (6) CREATE FINAL OUTPUT
   # -----------------------
+  K   <- K0
   fit <- list(n = n,mu.cov = NULL,update.sigma = update.sigma,
-              update.sa = update.sa,update.w = update.w,w.penalty = w.penalty,
-              sigma = sigma,sa = sa,w = w,alpha = alpha,mu = mu,s = s,
-              logZ = logZ[1:iter],err = err[1:iter],nzk = [1:iter])
-
+              update.sa = update.sa,update.w = update.w,
+              w.penalty = w0.penalty,drop.threshold = drop.threshold,
+              sigma = sigma,sa = sa0,w = rep(0,K),alpha = matrix(0,p,K),
+              mu = matrix(0,p,K),s = matrix(0,p,K),logZ = logZ[1:iter],
+              err = err[1:iter],nzw = nzw[1:iter])
+  fit$w[inactive]      <- w
+  fit$alpha[,inactive] <- alpha
+  fit$mu[,inactive]    <- mu
+  fit$s[,inactive]     <- s
+  
   # Compute the posterior mean estimate of the regression
   # coefficients for the covariates under the current variational
   # approximation.
