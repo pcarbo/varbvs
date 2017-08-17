@@ -70,7 +70,7 @@ package:
 ```sh
 mv varbvs-R varbvs
 R CMD build varbvs
-R CMD INSTALL varbvs_2.3-1.tar.gz
+R CMD INSTALL varbvs_2.3-7.tar.gz
 ```
 
 ### Using the package

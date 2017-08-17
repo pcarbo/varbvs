@@ -140,32 +140,13 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   # Adjust the genotypes and phenotypes so that the linear effects of
   # the covariates are removed. This is equivalent to integrating out
   # the regression coefficients corresponding to the covariates with
-  # respect to an improper, uniform prior; see Chipman, George and
-  # McCulloch, "The Practical Implementation of Bayesian Model
-  # Selection," 2001.
-  #
-  # Here I compute two quantities that are used here to remove linear
-  # effects of the covariates (Z) on X and y, and later on (in
-  # function "outerloop"), to efficiently compute estimates of the
-  # regression coefficients for the covariates.
-  SZy <- solve(crossprod(Z),c(y %*% Z))
-  SZX <- solve(crossprod(Z),t(Z) %*% X)
-  if (ncol(Z) == 1) {
-    X <- X - rep.row(colMeans(X),n)
-    y <- y - mean(y)
-  } else {
-
-    # The equivalent expressions in MATLAB are  
-    #
-    #   y = y - Z*((Z'*Z)\(Z'*y))
-    #   X = X - Z*((Z'*Z)\(Z'*X))  
-    #
-    # This should give the same result as centering the columns of X
-    # and subtracting the mean from y when we have only one
-    # covariate, the intercept.
-    y <- y - c(Z %*% SZy)
-    X <- X - Z %*% SZX
-  }
+  # respect to an improper, uniform prior.
+  out <- remove.covariate.effects(X,Z,y)
+  X   <- out$X
+  y   <- out$y
+  SZy <- out$SZy
+  SZX <- out$SZX
+  rm(out)
 
   # Provide a brief summary of the analysis.
   if (verbose) {
