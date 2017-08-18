@@ -370,7 +370,6 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
   e1003264.
 }
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
-
 \seealso{\code{\link{summary.varbvs}}, \code{\link{varbvscoefcred}},
   \code{\link{varbvspve}}, \code{\link{varbvsnorm}},
   \code{\link{varbvsbin}}, \code{\link{varbvsbinz}},

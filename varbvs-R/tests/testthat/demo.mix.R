@@ -81,9 +81,9 @@ fit <- varbvsmix(X,Z,y,sd^2)
 trellis.par.set(par.xlab.text = list(cex = 0.75),
                 par.ylab.text = list(cex = 0.75),
                 axis.text = list(cex = 0.75))
+beta.est <- rowSums(fit$alpha * fit$mu)
 print(xyplot(beta.est ~ beta.true,
-             data.frame(beta.true = beta,
-                        beta.est  = rowSums(fit$alpha * fit$mu)),
+             data.frame(beta.true = beta,beta.est = beta.est),
              pch = 4,col = "black",cex = 0.6,
              panel = function(x, y, ...) {
                panel.xyplot(x,y,...)
@@ -92,7 +92,15 @@ print(xyplot(beta.est ~ beta.true,
              scales = list(limits = c(-1.1,1.1)),
              xlab = "ground-truth regression coefficient",
              ylab = "estimated regression coefficient"),
-      split = c(1,1,2,1),
+      split = c(1,1,3,1),
+      more = TRUE)
+
+# Plot the ground-truth coefficients against the local false sign rate.
+print(xyplot(lfsr ~ beta.est,data.frame(beta.est = beta.est,lfsr = fit$lfsr),
+             pch = 19,col = "black",cex = 0.6,
+             xlab = "estimated regression coefficient",
+             ylab = "LFSR"),
+      split = c(2,1,3,1),
       more = TRUE)
 
 # Show the change in the variational lower bound at each iteration of the
@@ -102,5 +110,5 @@ print(xyplot(y ~ x,data.frame(x = 1:numiter,y = max(fit$logZ) - fit$logZ),
              type = "l",col = "darkorange",lwd = 2,
              scales = list(y = list(log = 10)),xlab = "iteration",
              ylab = "distance from final lower bound"),
-      split = c(2,1,2,1),
+      split = c(3,1,3,1),
       more = FALSE)

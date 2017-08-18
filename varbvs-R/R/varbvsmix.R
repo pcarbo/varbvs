@@ -325,8 +325,8 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
               update.sa = update.sa,update.w = update.w,
               w.penalty = w0.penalty,drop.threshold = drop.threshold,
               sigma = sigma,sa = sa0,w = rep(0,K),alpha = matrix(0,p,K),
-              mu = matrix(0,p,K),s = matrix(0,p,K),logZ = logZ[1:iter],
-              err = err[1:iter],nzw = nzw[1:iter])
+              mu = matrix(0,p,K),s = matrix(0,p,K),lfsr = NULL,
+              logZ = logZ[1:iter],err = err[1:iter],nzw = nzw[1:iter])
   fit$w[inactive]      <- w
   fit$alpha[,inactive] <- alpha
   fit$mu[,inactive]    <- mu
@@ -336,11 +336,15 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   # coefficients for the covariates under the current variational
   # approximation.
   fit$mu.cov <- c(SZy - SZX %*% rowSums(alpha * mu))
- 
-  # Add column names to some of the outputs.
+
+  # Compute the local false sign rate (LFSR) for each variable.
+  fit$lfsr <- computelfsrmix(alpha,mu,s)
+  
+  # Add row names to some of the outputs.
   rownames(fit$alpha) <- colnames(X)
   rownames(fit$mu)    <- colnames(X)
   rownames(fit$s)     <- colnames(X)
+  names(fit$lfsr)     <- colnames(X)
   
   # Declare the return value as an instance of class 'varbvsmix'.
   class(fit) <- c("varbvsmix","list")
@@ -385,4 +389,31 @@ computevarlbmix <- function (Z, Xr, d, y, sigma, sa, w, alpha, mu, s) {
     out <- (out + (sum(alpha[,i]) + sum(alpha[,i]*log(s[,i]/(sigma*sa[i]))))/2
                 - sum(alpha[,i]*(s[,i] + mu[,i]^2))/(sigma*sa[i])/2)
   return(out)
+}
+
+# ----------------------------------------------------------------------
+# Compute the local false sign rate (LFSR) for each variable.
+computelfsrmix <- function (alpha, mu, s) {
+
+  # Get the number of variables (p) and the number of mixture components (k).
+  p <- nrow(alpha)
+  k <- ncol(alpha)
+
+  # For each variable, get the posterior probability that the
+  # regression coeffiicient is exactly zero.
+  p0 <- alpha[,1]
+
+  # For each variable, get the posterior probability that the
+  # regression coefficient is negative.
+  pn <- rowSums(alpha[,-1] * pnorm(0,mu[,-1],sqrt(s[,-1])))
+  
+  # Compute the local false sign rate (LFSR) following the formula
+  # given in the Biostatistics paper, "False discovery rates: a new
+  # deal".
+  lfsr     <- rep(0,p)
+  b        <- pn > 0.5*(1 - p0)
+  lfsr[b]  <- 1 - pn[b]
+  lfsr[!b] <- p0[!b] + pn[!b]
+
+  return(lfsr)
 }

@@ -359,7 +359,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     pip  <- c(alpha %*% w)
     beta <- c(mu %*% w)
   }
-  
+
   if (family == "gaussian") {
     fit <- list(family = family,n = n,n0 = n0,sa0 = sa0,mu.cov = mu.cov,
                 update.sigma = update.sigma,update.sa = update.sa,
@@ -391,7 +391,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     class(fit) <- c("varbvs","list")
   }
   
-  # Add column names to some of the outputs.
+  # Add row names to some of the outputs.
   rownames(fit$alpha) <- colnames(X)
   rownames(fit$mu)    <- colnames(X)
   rownames(fit$s)     <- colnames(X)

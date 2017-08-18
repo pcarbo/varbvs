@@ -124,6 +124,11 @@
 
   \item{s}{Variational estimates of posterior variances.}
 
+  \item{lfsr}{Local false sign rate (LFSR) for each variable computed
+    from variational estimates of posterior assignment probabilities and
+    posterior means and variances. See Stephens (2017) for a definition
+    of the LFSR.}
+  
   \item{logZ}{Variational lower bound to marginal log-likelihood at each
     iteration of the co-ordinate ascent algorithm.}
 
@@ -133,6 +138,10 @@
 
   \item{nzw}{Number of nonzero mixture components (including the
     "spike") at each iteration of the co-ordinate ascent algorithm.}
+}
+\references{
+  M. Stephens (2017). False discovery rates: a new deal.
+  \emph{Biostatistics} \bold{18}, 275--294.
 }
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
 \seealso{\code{\link{varbvs}}}
