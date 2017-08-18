@@ -395,7 +395,9 @@ computevarlbmix <- function (Z, Xr, d, y, sigma, sa, w, alpha, mu, s) {
 # Compute the local false sign rate (LFSR) for each variable.
 computelfsrmix <- function (alpha, mu, s) {
 
-  # Get the number of mixture components.
+  # Get the number of variables (p) and the number of mixture
+  # components (k).
+  p <- nrow(alpha)
   k <- ncol(alpha)
 
   # For each variable, get the posterior probability that the
