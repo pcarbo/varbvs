@@ -89,7 +89,7 @@ test_that(paste("model fitting works for simulated data with a binary",
                check.attributes = FALSE)
 })
 
-test_that("model fitting works when crossprod(Z) is near-singular"),{
+test_that("model fitting works when crossprod(Z) is near-singular",{
 
   # Load the data with a near-singular covariate matrix Z. To see that
   # crossprod(Z) is near-singular, run this code:
@@ -101,7 +101,6 @@ test_that("model fitting works when crossprod(Z) is near-singular"),{
   load("data.singular.cov.RData")
   expect_silent(fit <- varbvs(X,Z,y,"gaussian",verbose = FALSE))
 })
-         
 
 test_that(paste("model fitting works for linear regression with",
                 "mixture-of-normals priors in simulated data"),{
