@@ -395,8 +395,7 @@ computevarlbmix <- function (Z, Xr, d, y, sigma, sa, w, alpha, mu, s) {
 # Compute the local false sign rate (LFSR) for each variable.
 computelfsrmix <- function (alpha, mu, s) {
 
-  # Get the number of variables (p) and the number of mixture components (k).
-  p <- nrow(alpha)
+  # Get the number of mixture components.
   k <- ncol(alpha)
 
   # For each variable, get the posterior probability that the
@@ -405,7 +404,10 @@ computelfsrmix <- function (alpha, mu, s) {
 
   # For each variable, get the posterior probability that the
   # regression coefficient is negative.
-  pn <- rowSums(alpha[,-1] * pnorm(0,mu[,-1],sqrt(s[,-1])))
+  if (k == 2)
+    pn <- alpha[,2] * pnorm(0,mu[,2],sqrt(s[,2]))
+  else
+    pn <- rowSums(alpha[,-1] * pnorm(0,mu[,-1],sqrt(s[,-1])))
   
   # Compute the local false sign rate (LFSR) following the formula
   # given in the Biostatistics paper, "False discovery rates: a new
