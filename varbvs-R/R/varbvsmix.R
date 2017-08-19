@@ -392,7 +392,9 @@ computevarlbmix <- function (Z, Xr, d, y, sigma, sa, w, alpha, mu, s) {
 }
 
 # ----------------------------------------------------------------------
-# Compute the local false sign rate (LFSR) for each variable.
+# Compute the local false sign rate (LFSR) for each variable. This
+# assumes that the first mixture component is a "spike" (that is, a
+# normal density with a variance approaching zero).
 computelfsrmix <- function (alpha, mu, s) {
 
   # Get the number of variables (p) and the number of mixture
