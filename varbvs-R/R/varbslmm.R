@@ -12,7 +12,7 @@
 # General Public License for more details.
 #
 # TO DO: Add brief description of function here.
-varbslmm <- function (X, Z, y, sigma, logodds, h, d, update.sigma,
+varbslmm <- function (X, Z, y, logodds, h, d, sigma, update.sigma,
                       tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
 
   # (1) CHECK INPUTS
@@ -48,5 +48,25 @@ varbslmm <- function (X, Z, y, sigma, logodds, h, d, update.sigma,
     stop("Inputs X and y do not match")
   y <- c(as.double(y))
 
+  # (2) PROCESS OPTIONS
+  # -------------------
+  if (!is.finite(maxiter))
+    stop("Input maxiter must be a finite number")
   
+  # (3) PREPROCESSING STEPS
+  # -----------------------
+  # Adjust the genotypes and phenotypes so that the linear effects of
+  # the covariates are removed. This is equivalent to integrating out
+  # the regression coefficients corresponding to the covariates with
+  # respect to an improper, uniform prior.
+  out <- remove.covariate.effects(X,Z,y)
+  X   <- out$X
+  y   <- out$y
+  SZy <- out$SZy
+  SZX <- out$SZX
+  rm(out)
+  
+  # Compute the kinship matrix.
+  fprintf('Computing kinship matrix.\n');
+  K = tcrossprod(X)/p
 }

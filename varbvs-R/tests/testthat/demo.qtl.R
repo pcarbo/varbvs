@@ -2,7 +2,7 @@
 # mapping of a quantitative trait. The data set is simulated assuming
 # that all the genetic markers are uncorrelated with each other (i.e.,
 # they are "unlinked").
-library(varbvs)  
+library(varbvs)
 
 # SCRIPT PARAMETERS
 # -----------------
