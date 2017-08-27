@@ -1,8 +1,8 @@
 Package: varbvs
 Encoding: UTF-8
 Type: Package
-Version: 2.3-1
-Date: 2017-07-21
+Version: 2.3-5
+Date: 2017-08-18
 Title: Large-Scale Bayesian Variable Selection Using Variational Methods
 Authors@R: c(person("Peter","Carbonetto",role=c("aut","cre"),
                     email="peter.carbonetto@gmail.com"),
@@ -20,6 +20,7 @@ Description: Fast algorithms for fitting Bayesian variable selection
 Depends: R (>= 3.1.0)
 Imports:
     methods,
+    Matrix,
     stats,
     graphics,
     lattice,
@@ -29,6 +30,7 @@ Suggests:
     glmnet,
     qtl,
     knitr,
+    rmarkdown,
     testthat
 License: GPL (>= 3)
 NeedsCompilation: yes

@@ -30,6 +30,7 @@
 #   diagsq(X,a)
 #   diagsqt(X,a)
 #   diagsq2(X,A)
+#   remove.covariate.effects(X,Z,y)
 #   sigmoid(x)
 #   logit(x)
 #   logpexp(x)
@@ -173,6 +174,43 @@ diagsqt <- function (X, a = NULL) {
 # more efficiently.
 diagsq2 <- function (X, A)
   rowSums((X %*% A) * X)
+
+# Adjust variables X and continuous outcome Y so that the linear
+# effects of the covariates Z are removed. This is equivalent to
+# integrating out the regression coefficients corresponding to the
+# covariates with respect to an improper, uniform prior; see Chipman,
+# George and McCulloch, "The Practical Implementation of Bayesian
+# Model Selection," 2001. It is assumed that the first column of Z is
+# the intercept; that is, a column of ones.
+remove.covariate.effects <- function (X, Z, y) {
+
+  # Here I compute two quantities that are used here to remove linear
+  # effects of the covariates (Z) on X and y, and later on to
+  # efficiently compute estimates of the regression coefficients for
+  # the covariates.
+  A   <- forceSymmetric(crossprod(Z))
+  SZy <- as.vector(solve(A,c(y %*% Z)))
+  SZX <- as.matrix(solve(A,t(Z) %*% X))
+  if (ncol(Z) == 1) {
+    n <- nrow(X)
+    X <- X - rep.row(colMeans(X),n)
+    y <- y - mean(y)
+  } else {
+
+    # The equivalent expressions in MATLAB are  
+    #
+    #   y = y - Z*((Z'*Z)\(Z'*y))
+    #   X = X - Z*((Z'*Z)\(Z'*X))  
+    #
+    # This should give the same result as centering the columns of X
+    # and subtracting the mean from y when we have only one
+    # covariate, the intercept.
+    y <- y - c(Z %*% SZy)
+    X <- X - Z %*% SZX
+  }
+
+  return(list(X = X,y = y,SZy = SZy,SZX = SZX))
+}
 
 # ----------------------------------------------------------------------
 # sigmoid(x) returns the sigmoid of the elements of x. The sigmoid

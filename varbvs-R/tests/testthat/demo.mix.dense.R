@@ -1,5 +1,8 @@
-# This script illustrates the "varbvsmix" function on a simulated data
-# set, in which all candidate variables (predictors) are uncorrelated.
+# This is similar to demo.mix.R, except that the prior is a larger
+# mixture of normals. This script is mainly intended to illustrate the
+# use of the "drop.threshold" varbvsmix argument to speed up
+# computation when a lot of the mixture components have a negligible
+# (near zero) weight.
 library(lattice)
 library(varbvs)  
 
@@ -17,6 +20,9 @@ covariates <- c("age","weight")
 # mixture component must have a standard deviation of exactly zero.
 sd <- c(0,   0.1, 0.2, 0.5)
 w  <- c(0.95,0.03,0.01,0.01)
+
+# The dense grid of prior standard deviations used to model the data.
+sd.grid <- c(0,10^seq(-2,1,length.out = 19))
 
 # Set the random number generator seed.
 set.seed(1)
@@ -75,15 +81,15 @@ y <- c(y)
 # the quantitative trait (Y), with the mixture-of-normals prior on the
 # coefficients.
 cat("2. FITTING MODEL TO DATA.\n")
-fit <- varbvsmix(X,Z,y,sd^2)
+fit <- varbvsmix(X,Z,y,sd.grid^2)
 
 # Plot the estimated coefficients against the ground-truth coefficients.
 trellis.par.set(par.xlab.text = list(cex = 0.75),
                 par.ylab.text = list(cex = 0.75),
                 axis.text = list(cex = 0.75))
-beta.est <- rowSums(fit$alpha * fit$mu)
 print(xyplot(beta.est ~ beta.true,
-             data.frame(beta.true = beta,beta.est = beta.est),
+             data.frame(beta.true = beta,
+                        beta.est  = rowSums(fit$alpha * fit$mu)),
              pch = 4,col = "black",cex = 0.6,
              panel = function(x, y, ...) {
                panel.xyplot(x,y,...)
@@ -95,14 +101,6 @@ print(xyplot(beta.est ~ beta.true,
       split = c(1,1,3,1),
       more = TRUE)
 
-# Plot the ground-truth coefficients against the local false sign rate.
-print(xyplot(lfsr ~ beta.est,data.frame(beta.est = beta.est,lfsr = fit$lfsr),
-             pch = 19,col = "black",cex = 0.6,
-             xlab = "estimated regression coefficient",
-             ylab = "LFSR"),
-      split = c(2,1,3,1),
-      more = TRUE)
-
 # Show the change in the variational lower bound at each iteration of the
 # co-ordinate ascent algorithm.
 numiter <- length(fit$logZ)
@@ -110,5 +108,13 @@ print(xyplot(y ~ x,data.frame(x = 1:numiter,y = max(fit$logZ) - fit$logZ),
              type = "l",col = "darkorange",lwd = 2,
              scales = list(y = list(log = 10)),xlab = "iteration",
              ylab = "distance from final lower bound"),
+      split = c(2,1,3,1),
+      more = TRUE)
+
+# Plot the number of nonzero mixture components at each iteration of
+# the co-ordinate ascent algorithm.
+print(xyplot(y ~ x,data.frame(x = 1:numiter,y = length(sd.grid) - fit$nzw),
+             type = "l",col = "royalblue",lwd = 2,xlab = "iteration",
+             ylab = "nonzero mixture components"),
       split = c(3,1,3,1),
-      more = FALSE)
+      more = TRUE)

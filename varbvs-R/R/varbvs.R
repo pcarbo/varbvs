@@ -188,36 +188,18 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
   # (3) PREPROCESSING STEPS
   # -----------------------
-  # Adjust the genotypes and phenotypes so that the linear effects of
-  # the covariates are removed. This is equivalent to integrating out
-  # the regression coefficients corresponding to the covariates with
-  # respect to an improper, uniform prior; see Chipman, George and
-  # McCulloch, "The Practical Implementation of Bayesian Model
-  # Selection," 2001.
   if (family == "gaussian") {
 
-    # Here I compute two quantities that are used here to remove
-    # linear effects of the covariates (Z) on X and y, and later on
-    # (in function "outerloop"), to efficiently compute estimates of
-    # the regression coefficients for the covariates.
-    SZy <- solve(crossprod(Z),c(y %*% Z))
-    SZX <- solve(crossprod(Z),t(Z) %*% X)
-    if (ncol(Z) == 1) {
-      X <- X - rep.row(colMeans(X),n)
-      y <- y - mean(y)
-    } else {
-
-      # The equivalent expressions in MATLAB are  
-      #
-      #   y = y - Z*((Z'*Z)\(Z'*y))
-      #   X = X - Z*((Z'*Z)\(Z'*X))  
-      #
-      # This should give the same result as centering the columns of X
-      # and subtracting the mean from y when we have only one
-      # covariate, the intercept.
-      y <- y - c(Z %*% SZy)
-      X <- X - Z %*% SZX
-    }
+    # Adjust the genotypes and phenotypes so that the linear effects of
+    # the covariates are removed. This is equivalent to integrating out
+    # the regression coefficients corresponding to the covariates with
+    # respect to an improper, uniform prior.
+    out <- remove.covariate.effects(X,Z,y)
+    X   <- out$X
+    y   <- out$y
+    SZy <- out$SZy
+    SZX <- out$SZX
+    rm(out)
   } else {
     SZy <- NULL
     SZX <- NULL
@@ -227,7 +209,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.3-1 ")
+    cat("VARBVS version 2.3-5 ")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")
@@ -377,7 +359,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     pip  <- c(alpha %*% w)
     beta <- c(mu %*% w)
   }
-  
+
   if (family == "gaussian") {
     fit <- list(family = family,n = n,n0 = n0,sa0 = sa0,mu.cov = mu.cov,
                 update.sigma = update.sigma,update.sa = update.sa,
@@ -409,7 +391,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     class(fit) <- c("varbvs","list")
   }
   
-  # Add column names to some of the outputs.
+  # Add row names to some of the outputs.
   rownames(fit$alpha) <- colnames(X)
   rownames(fit$mu)    <- colnames(X)
   rownames(fit$s)     <- colnames(X)
