@@ -391,10 +391,12 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     class(fit) <- c("varbvs","list")
   }
   
-  # Add row names to some of the outputs.
+  # Add names to some of the outputs.
   rownames(fit$alpha) <- colnames(X)
   rownames(fit$mu)    <- colnames(X)
   rownames(fit$s)     <- colnames(X)
+  names(fit$beta)     <- colnames(X)
+  names(fit$pip)      <- colnames(X)
   if (prior.same)
     fit$logodds <- c(fit$logodds)
   else
