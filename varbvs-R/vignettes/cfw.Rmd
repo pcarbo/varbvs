@@ -33,9 +33,10 @@ settings, the prior variance of the coefficients, and which trait to
 analyze. Set trait to "edl", "soleus" or "testis".
 
 ```{r, eval = TRUE}
-trait   <- "testis"
-logodds <- seq(-5,-3,0.25)
-sa      <- 0.05
+trait      <- "testis"
+covariates <- "sacwt"
+logodds    <- seq(-5,-3,0.25)
+sa         <- 0.05
 ```
 
 Set the random number generator seed.
@@ -48,11 +49,6 @@ set.seed(1)
 
 ```{r}
 load("cfw.RData")
-if (trait == "edl" | trait == "soleus") {
-  covariates <- c("batch16","tibia")
-} else if (trait == "testis") {
-  covariates <- "sacwt"
-}
 ```
 
 Only analyze samples for which the phenotype and all the covariates
