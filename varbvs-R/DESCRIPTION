@@ -27,6 +27,7 @@ Imports:
     latticeExtra,
     Rcpp
 Suggests:
+    curl,
     glmnet,
     qtl,
     knitr,

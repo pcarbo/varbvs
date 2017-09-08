@@ -7,6 +7,10 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+  
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(eval = FALSE,collapse = TRUE,comment = "#")
+```
 
 In this vignette, we use **varbvs** to map QTLs for phenotypes
 measured in CFW (Carworth Farms White) outbred mice. Phenotypes
@@ -15,15 +19,12 @@ measured at sacrifice. Running this script with `trait = "testis"`
 reproduces the results and figures shown in the second example of a
 forthcoming paper (Carbonetto *et al*, 2016).
 
-```{r, echo = FALSE, message = FALSE}
-knitr::opts_chunk$set(eval = FALSE,collapse = TRUE,comment = "#")
-```
-
 ## Vignette parameters
 
 Begin by loading packages into the R environment.
 
 ```{r, eval = TRUE, message = FALSE}
+library(curl)
 library(lattice)
 library(varbvs)
 ```
@@ -47,8 +48,10 @@ set.seed(1)
 
 ## Load the genotype and phenotype data
 
+Retrieve the data from the Zenodo repository.
+
 ```{r}
-load("cfw.RData")
+load(curl("https://zenodo.org/record/546142/files/cfw.RData"))
 ```
 
 Only analyze samples for which the phenotype and all the covariates
