@@ -45,7 +45,8 @@ distribution of the coefficients for a logistic regression model of a binary
 outcome (case-control status), with spike and slab priors on the coefficients.
 
 ```{r}
-r <- system.time(fit <- varbvs(X,NULL,y,"binomial",logodds = seq(-6,-3,0.25)))
+r <- system.time(fit <- varbvs(X,NULL,y,family = "binomial",
+                               logodds = seq(-6,-3,0.25),n0 = 0)
 cat(sprintf("Model fitting took %0.2f minutes.\n",r["elapsed"]/60))
 ```
 

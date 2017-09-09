@@ -50,17 +50,19 @@ variables (genetic markers) are, *a priori*, equally likely to be included
 in the model.
 
 ```{r}
-fit.null <- varbvs(X,NULL,y,"binomial",logodds = -4)
+fit.null <- varbvs(X,NULL,y,"binomial",logodds = -4,n0 = 0)
 ```
 
 Next, compute the variational approximation given the assumption that
 genetic markers near cytokine signaling genes are more likely to be
-included in the model.
+included in the model. For faster and more accurate computation of
+posterior probabilities, the variational parameters are initialized to
+the fitted values computed above with the exchangeable prior.
 
 ```{r}
 logodds <- matrix(-4,442001,13)
 logodds[cytokine == 1,] <- matrix(-4 + seq(0,3,0.25),6711,13,byrow = TRUE)
-fit.cytokine <- varbvs(X,NULL,y,"binomial",logodds = logodds,
+fit.cytokine <- varbvs(X,NULL,y,"binomial",logodds = logodds,n0 = 0,
                        alpha = fit.null$alpha,mu = fit.null$mu,
                        eta = fit.null$eta,optimize.eta = TRUE)
 ```
