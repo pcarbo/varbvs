@@ -12,9 +12,24 @@
 # General Public License for more details.
 #
 # TO DO: Add brief description of function here.
-varbslmm <- function (X, Z, y, logodds, h, d, sigma, update.sigma,
-                      tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
+#
+# NOTES:
+#
+#   - "a" in sa is for "additive effects".
+#
+#   - "b" in sa is for "background effects".
+# 
+#   - Need to treat special case when sa = 0.
+#
+varbslmm <- function (X, Z, y, sigma, sa, sb, logodds, alpha, mu,
+                      update.sigma, update.sa, initialize.params,
+                      sa0 = 1, n0 = 10, tol = 1e-4, maxiter = 1e4,
+                      verbose = TRUE) {
 
+  # Get the number of samples (n) and variables (p).
+  n <- nrow(X)
+  p <- ncol(X)
+  
   # (1) CHECK INPUTS
   # ----------------
   # Check input X.
@@ -53,6 +68,49 @@ varbslmm <- function (X, Z, y, logodds, h, d, sigma, update.sigma,
   if (!is.finite(maxiter))
     stop("Input maxiter must be a finite number")
   
+  # Get candidate settings for the variance of the residual (sigma),
+  # if provided.
+  if (missing(sigma)) {
+    sigma <- var(y)
+    update.sigma.default <- TRUE
+  } else {
+    sigma <- c(sigma)
+    update.sigma.default <- FALSE
+  }
+
+  # Get candidate settings for the prior variance of the "background"
+  # effects, if provided.
+  if (missing(sb))
+    sb <- 0.01
+  sb <- c(sb)
+
+  # Get candidate settings for the prior variance of the "large"
+  # effects, if provided.
+  if (missing(sa)) {
+    sa <- 1
+    update.sa.default <- TRUE
+  } else {
+    sa <- c(sa)
+    update.sa.default <- FALSE
+  }
+  
+  # Get candidate settings for the prior log-odds of inclusion. A default
+  # setting is only available if the number of other hyperparameter
+  # settings is 1, in which case we select 20 candidate settings for
+  # the prior log-odds, evenly spaced between log10(1/p) and -1.
+  if (missing(logodds)) {
+    if (length(sigma) == 1 & length(sa) == 1 & length(sb) == 1)
+      logodds <- seq(-log10(p),-1,length.out = 20)
+    else
+      stop(paste("logodds can only be missing when length(sigma) =",
+                 "length(sa) = length(sb) = 1")
+  }
+  logodds <- c(logodds)
+  
+  # Determine whether to update the residual variance parameter.
+  if (missing(update.sigma))
+    update.sigma <- update.sigma.default
+
   # (3) PREPROCESSING STEPS
   # -----------------------
   # Adjust the genotypes and phenotypes so that the linear effects of
