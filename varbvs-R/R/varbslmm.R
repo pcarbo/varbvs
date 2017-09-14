@@ -229,6 +229,12 @@ varbslmm <- function (X, Z, y, sigma, sa, sb, logodds, alpha, mu,
       }
 
       # Repeat for each setting of the hyperparameters.
+      #
+      # NOTE: To make this more efficient, I will revise this so that
+      # the "outer loop" is actually implemented as two loops: (1)
+      # loop over all the unique values of "sa"; (2) loop over all
+      # hyperparameter combinations in which "sa" is the same.
+      #
       for (i in 1:ns) {
         # TO DO.
       }
