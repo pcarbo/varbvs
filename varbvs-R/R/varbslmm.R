@@ -181,4 +181,93 @@ varbslmm <- function (X, Z, y, sigma, sa, sb, logodds, alpha, mu,
   # Compute the kinship matrix.
   fprintf('Computing kinship matrix.\n');
   K = tcrossprod(X)/p
+
+  # Provide a brief summary of the analysis.
+  if (verbose) {
+    cat("Fitting variational approximation for Bayesian sparse linear",
+        "mixed model.\n")
+    cat(sprintf("samples:      %-6d ",n))
+    cat(sprintf("mixture component sd's:         %0.2g..%0.2g\n",
+                min(sqrt(sa[2:K])),max(sqrt(sa[2:K]))))
+    cat(sprintf("variables:    %-6d ",p))
+    cat(sprintf("mixture component drop thresh.: %0.1e\n",drop.threshold))
+    cat(sprintf("covariates:   %-6d ",max(0,ncol(Z) - 1)))
+    cat(sprintf("fit mixture weights:            %s\n",tf2yn(update.w)))
+    cat(sprintf("mixture size: %-6d ",K))
+    cat(sprintf("fit residual var. (sigma):      %s\n",tf2yn(update.sigma)))
+    cat("intercept:    yes    ")
+    cat(sprintf("convergence tolerance      %0.1e\n",tol))
+  }
+
+  # (4) INITIALIZE STORAGE FOR THE OUTPUTS
+  # --------------------------------------
+  # TO DO.
+    
+  # (5) FIT BSLMM MODEL TO DATA
+  # ---------------------------
+  if (ns == 1) {
+
+    # Find a set of parameters that locally minimize the K-L
+    # divergence between the approximating distribution and the exact
+    # posterior.
+    if (verbose) {
+      # TO DO.
+    }
+    # TO DO.
+    if (verbose)
+      cat("\n")
+  } else {
+
+    # If a good initialization isn't already provided, find a good
+    # initialization for the variational parameters. Repeat for each
+    # candidate setting of the hyperparameters.
+    if (initialize.params) {
+      if (verbose) {
+        cat("Finding best initialization for",ns,"combinations of",
+            "hyperparameters.\n");
+        # TO DO.
+      }
+
+      # Repeat for each setting of the hyperparameters.
+      for (i in 1:ns) {
+        # TO DO.
+      }
+      if (verbose)
+        cat("\n")
+
+      # Choose an initialization common to all the runs of the
+      # coordinate ascent algorithm. This is chosen from the
+      # hyperparameters with the highest variational estimate of the
+      # marginal likelihood.
+      # TO DO.
+    }
+
+    # Compute a variational approximation to the posterior distribution
+    # for each candidate setting of the hyperparameters.
+    if (verbose) {
+      cat("Computing marginal likelihood for",ns,"combinations of",
+          "hyperparameters.\n")
+      # TO DO.
+    }
+    
+    # For each setting of the hyperparameters, find a set of
+    # parameters that locally minimize the K-L divergence between the
+    # approximating distribution and the exact posterior.
+    for (i in 1:ns) {
+      # TO DO.
+    }
+    if (verbose)
+      cat("\n")
+  }
+    
+  # (6) CREATE FINAL OUTPUT
+  # -----------------------
+  # TO DO.
+    
+  browser()
 }
+
+# ----------------------------------------------------------------------
+# This function implements one iteration of the "outer loop".
+# TO DO.
+  
