@@ -268,6 +268,10 @@ varbslmm <- function (X, Z, y, sigma, sa, sb, logodds, alpha, mu,
 }
 
 # ----------------------------------------------------------------------
-# This function implements one iteration of the "outer loop".
-# TO DO.
-  
+# This function implements one iteration of the "outer loop" for the
+# varbslmm function.
+varbvslmm.outerloop <-
+  function (X, K, y, alpha, mu, sigma, logodds, sa, update.sigma, update.sa,
+            tol, maxiter, verbose, outer.iter, n0, sa0) {
+
+}
