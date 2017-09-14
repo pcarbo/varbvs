@@ -120,7 +120,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (ncol(logodds) == 1)
     logodds <- rep.col(logodds,ns)
   if (length(sigma) != ns | length(sa) != ns | ncol(logodds) != ns)
-    stop("options.sigma, options.sa and options.logodds are inconsistent")
+    stop("Arguments sigma, sa and logodds are inconsistent")
 
   # Determine whether to update the residual variance parameter. Note
   # that this option is only relevant for a binary trait.

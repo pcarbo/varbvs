@@ -85,7 +85,7 @@ varbslmm <- function (X, Z, y, sigma, sa, sb, logodds, alpha, mu,
   sb <- c(sb)
 
   # Get candidate settings for the prior variance of the "large"
-  # effects, if provided.
+  # additive effects, if provided.
   if (missing(sa)) {
     sa <- 1
     update.sa.default <- TRUE
@@ -107,10 +107,64 @@ varbslmm <- function (X, Z, y, sigma, sa, sb, logodds, alpha, mu,
   }
   logodds <- c(logodds)
   
+  # Here is where I ensure that the numbers of candidate hyperparameter
+  # settings are consistent.
+  ns <- max(length(sigma),length(logodds),length(sa),length(sb))
+  if (length(sigma) == 1)
+    sigma <- rep(sigma,ns)
+  if (length(logodds) == 1)
+    logodds <- rep(logodds,ns)
+  if (length(sa) == 1)
+    sa <- rep(sa,ns)
+  if (length(sb) == 1)
+    sb <- rep(sb,ns)
+  if (length(sigma) != ns | length(logodds) != ns |
+      length(sa) != ns | length(sb) != ns)
+    stop("Arguments sigma, logodds, sa and sb are inconsistent")
+
   # Determine whether to update the residual variance parameter.
   if (missing(update.sigma))
     update.sigma <- update.sigma.default
 
+  # Determine whether to update the prior variance of the "large"
+  # additive effects.
+  if (missing(update.sa))
+    update.sa <- update.sa.default
+
+  # Set initial estimates of variational parameter alpha.
+  initialize.params.default <- TRUE
+  if (missing(alpha)) {
+    alpha <- rand(p,ns)
+    alpha <- alpha / rep.row(colSums(alpha),p)
+  } else
+    initialize.params.default <- FALSE
+  if (!is.matrix(alpha))
+    alpha <- matrix(alpha)
+  if (nrow(alpha) != p)
+    stop("Input alpha must have as many rows as X has columns")
+  if (ncol(alpha) == 1)
+    alpha <- rep.col(alpha,ns)
+
+  # Set initial estimates of variational parameter mu.
+  if (missing(mu))
+    mu <- randn(p,ns)
+  else
+    initialize.params.default <- FALSE    
+  if (!is.matrix(mu))
+    mu <- matrix(mu)
+  if (nrow(mu) != p)
+    stop("Input mu must have as many rows as X has columns")
+  if (ncol(mu) == 1)
+    mu <- rep.col(mu,ns)
+
+  # Determine whether to find a good initialization for the
+  # variational parameters.
+  if (missing(initialize.params))
+    initialize.params <- initialize.params.default
+  else if (initialize.params & ns == 1)
+    stop(paste("initialize.params = TRUE has no effect when there is",
+               "only one hyperparameter setting"))
+    
   # (3) PREPROCESSING STEPS
   # -----------------------
   # Adjust the genotypes and phenotypes so that the linear effects of
