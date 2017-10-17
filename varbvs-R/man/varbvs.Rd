@@ -426,6 +426,8 @@ beta <- c(0.5*rnorm(10),rep(0,90))
 
 # Simulate the binary trait (case-control status) as a coin toss with
 # success rates given by the logistic regression.
+sigmoid <- function (x)
+  1/(1 + exp(-x))
 y <- as.double(runif(750) < sigmoid(-1 + Z \%*\% u + X \%*\% beta))
 
 # Fit the variable selection model.

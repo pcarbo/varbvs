@@ -59,14 +59,14 @@ if (m > 0) {
 }
 
 # For each sample, calculate the probability of being a case (y = 1).
-mu <- logit(p1)
+mu <- varbvs:::logit(p1)
 w  <- mu + X %*% beta
 if (m > 0)
   w <- w + Z %*% u
 
 # Simulate the binary trait (case-control status) as a coin toss with
 # success rates given by the logistic regression.
-y <- as.double(runif(n) < sigmoid(w))
+y <- as.double(runif(n) < varbvs:::sigmoid(w))
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------

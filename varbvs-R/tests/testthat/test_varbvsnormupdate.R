@@ -71,16 +71,19 @@ test_that("all versions of varbvsnormupdate produce the same result",{
   
   # Set up the inputs to varbvsnormupdate.
   xy      <- c(y %*% X)
-  d       <- diagsq(X)
+  d       <- varbvs:::diagsq(X)
   Xr0     <- c(X %*% (alpha0*mu0))
   logodds <- rep(log(10)*logodds,p)
 
-  r <- cbind(system.time(out1 <- varbvsnormupdate(X,se,sb,logodds,xy,d,
-                                                  alpha0,mu0,Xr0,1:p,"R")),
-             system.time(out2 <- varbvsnormupdate(X,se,sb,logodds,xy,d,
-                                                  alpha0,mu0,Xr0,1:p,".Call")),
-             system.time(out3 <- varbvsnormupdate(X,se,sb,logodds,xy,d,
-                                                  alpha0,mu0,Xr0,1:p,"Rcpp")))
+  r <- cbind(system.time(out1 <-
+               varbvs:::varbvsnormupdate(X,se,sb,logodds,xy,d,
+                                        alpha0,mu0,Xr0,1:p,"R")),
+             system.time(out2 <-
+               varbvs:::varbvsnormupdate(X,se,sb,logodds,xy,d,
+                                         alpha0,mu0,Xr0,1:p,".Call")),
+             system.time(out3 <-
+               varbvs:::varbvsnormupdate(X,se,sb,logodds,xy,d,
+                                         alpha0,mu0,Xr0,1:p,"Rcpp")))
   r        <- as.data.frame(r)
   names(r) <- c("R",".Call","Rcpp")
   print(r["elapsed",])
