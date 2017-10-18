@@ -6,8 +6,8 @@ library(varbvs)
 # SCRIPT PARAMETERS
 # -----------------
 # This vector specifies the additive effects of the SNPs.
-beta             <- rep(0,531)
-beta[c(161,506)] <- c(0.25,-0.35)
+beta            <- rep(0,531)
+beta[c(88,506)] <- c(0.25,-0.35)
 
 # LOAD GENOTYPE DATA
 # ------------------
@@ -57,17 +57,16 @@ xy <- c(y %*% X)
 d  <- diag(t(X) %*% X)
 
 # TO DO: Explain what this code chunk does.
-pip        <- c(fit$alpha)
-names(pip) <- markers
-pip[i]     <- 0
-Xr         <- c(X %*% (pip * c(fit$mu)))
-BF         <- rep(0,p)
+pip1    <- c(fit$alpha)
+pip1[i] <- 0
+Xr      <- c(X %*% (pip1 * c(fit$mu)))
+BF      <- rep(0,p)
     
 # Repeat for each candidate marker.
 for (k in 1:p) {
     
   # Update the variational estimate of the posterior mean.
-  b <- with(fit,s[k]/sigma * (xy[k] + d[k]*(alpha[k]*mu[k]) - sum(X[,k]*Xr)))
+  b <- with(fit,s[k]/sigma * (xy[k] - sum(X[,k]*Xr)))
         
   # Compute the variational estimate of the posterior inclusion
   # probability.
