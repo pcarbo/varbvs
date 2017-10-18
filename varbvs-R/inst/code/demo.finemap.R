@@ -40,7 +40,7 @@ y <- c(X %*% beta + rnorm(n))
 # continuous outcome (quantitiative trait), with spike and slab priors on
 # the coefficients. 
 cat("Fitting model to data.\n")
-fit <- varbvs(X,NULL,y,sa = 1,logodds = log10(1/p),verbose = FALSE)
+fit <- varbvs(X,NULL,y,sa = 1,logodds = log10(1/p),verbose = TRUE)
 
 # COMPUTE "PROXY" POSTERIOR PROBABILITIES
 # ---------------------------------------
@@ -48,24 +48,33 @@ sigmoid <- function (x)
   1/(1 + exp(-x))
 
 # TO DO: Explain what this code chunk does.
-markers <- rownames(summary(fit)$top.vars)
-i       <- markers[1]
-j       <- markers[2]
+top.markers <- summary(fit)$top.vars$index
+i <- top.markers[1]
+j <- top.markers[2]
 
-## # TO DO: Explain what this code chunk does.
-## pip <- fit$alpha
-## pip[i] <- 0
-## Xr <- c(X %*% (pip*mu))
+# Compute a few useful quantities. 
+xy <- c(y %*% X)
+d  <- diag(t(X) %*% X)
 
-## # Repeat for each candidate marker.
-## for (i in 1:p) {
+# TO DO: Explain what this code chunk does.
+pip        <- c(fit$alpha)
+names(pip) <- markers
+pip[i]     <- 0
+Xr         <- c(X %*% (pip * c(fit$mu)))
+BF         <- rep(0,p)
     
-##   # Update the variational estimate of the posterior mean.
-##   r <- with(fit,s[i]/sigma * (xy[j] + d[j]*(alpha[i]*mu[i]) - sum(X[,i]*Xr))
+# Repeat for each candidate marker.
+for (k in 1:p) {
+    
+  # Update the variational estimate of the posterior mean.
+  b <- with(fit,s[k]/sigma * (xy[k] + d[k]*(alpha[k]*mu[k]) - sum(X[,k]*Xr)))
+        
+  # Compute the variational estimate of the posterior inclusion
+  # probability.
+  BF[k] <- with(fit,s[k]/(sigma*sa) * exp(b^2/(2*s[k])))
+}
 
-##   # Compute the variational estimate of the posterior inclusion
-##   # probability.
-##   BF[j] <- with(fit,s[i]/(sa*sigma) * exp(mu[i]^2/(s[i]*2)))
+ppp <- BF / sum(BF)
 
 # PLOT RESULTS
 # ------------
@@ -82,7 +91,7 @@ regionplot1 <- ggplot(data.frame(pos = 1:p,pip = fit$pip),
   scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
   scale_color_gradientn(colors = clrs) +
   labs(x = "position on chromosome 11, 94-98 Mb",y = "varbvs PIP",
-       title = paste("correlations with",i)) +
+       title = paste("correlations with",map[i,"id"])) +
   theme_cowplot(font_size = 11) +
   theme(axis.line = element_blank())
 
@@ -94,7 +103,7 @@ regionplot2 <- ggplot(data.frame(pos = 1:p,pip = fit$pip),
   scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
   scale_color_gradientn(colors = clrs) +
   labs(x = "position on chromosome 11, 94-98 Mb",y = "varbvs PIP",
-       title = paste("correlations with",j)) +
+       title = paste("correlations with",map[j,"id"])) +
   theme_cowplot(font_size = 11) +
   theme(axis.line = element_blank())
 
