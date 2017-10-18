@@ -352,8 +352,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # averaged over the hyperparameter settings.
   if (ns == 1) {
     w    <- 1
-    pip  <- fit$alpha
-    beta <- fit$mu
+    pip  <- alpha
+    beta <- mu
   } else {
     w    <- normalizelogweights(logw)
     pip  <- c(alpha %*% w)
