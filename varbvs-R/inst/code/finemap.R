@@ -10,10 +10,10 @@ varbvsproxybf <- function (X, Z, y, fit, i, vars) {
   if (missing(vars))
     vars <- 1:ncol(X)
     
-  # Get the number of samples (n), the number of candidate variables
-  # (p), and the number of hyperparameter settings (ns).
+  # Get the number of samples (n), the number of variables (p), and
+  # the number of hyperparameter settings (ns).
   n  <- length(y)
-  p  <- length(vars)
+  p  <- ncol(X)
   ns <- length(fit$w)
 
   # Add intercept.
@@ -37,7 +37,7 @@ varbvsproxybf <- function (X, Z, y, fit, i, vars) {
   # ------------------------------
   # TO DO: Explain what this matrix will contain.
   BF           <- matrix(0,p,ns)
-  rownames(BF) <- rownames(fit$alpha)[vars]
+  rownames(BF) <- rownames(fit$alpha)
   
   # COMPUTE PROXY PROBABILITIES
   # ---------------------------
@@ -102,5 +102,5 @@ varbvsproxybf <- function (X, Z, y, fit, i, vars) {
   }
 
   # Output the Bayes factors.
-  return(BF)
+  return(BF[vars,])
 }

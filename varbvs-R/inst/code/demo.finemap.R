@@ -7,7 +7,7 @@ library(varbvs)
 # -----------------
 # This vector specifies the additive effects of the SNPs.
 beta            <- rep(0,531)
-beta[c(88,506)] <- c(0.25,-0.35)
+beta[c(88,506)] <- c(0.2,-0.35)
 
 # LOAD GENOTYPE DATA
 # ------------------
@@ -48,10 +48,12 @@ fit <- varbvs(X,NULL,y,sa = 1,verbose = FALSE)
 cat("Computing proxy probabilities for the top 2 SNPs.\n")
 source("finemap.R")
 top.markers <- summary(fit)$top.vars$index
-i   <- top.markers[1]
-j   <- top.markers[2]
-BF1 <- varbvsproxybf(X,NULL,y,fit,i) 
-BF2 <- varbvsproxybf(X,NULL,y,fit,j)
+i     <- top.markers[1]
+j     <- top.markers[2]
+vars1 <- which(R[,i] >= 0.1)
+vars2 <- which(R[,j] >= 0.1)
+BF1   <- varbvsproxybf(X,NULL,y,fit,i,vars1) 
+BF2   <- varbvsproxybf(X,NULL,y,fit,j,vars2)
 
 # TO DO: Explain what this code chunk does.
 bf1 <- BF1[,1]
@@ -81,7 +83,8 @@ clrs <- c("midnightblue","darkviolet","darkorchid","maroon",
 dat1 <- data.frame(pos = 1:p,pip = fit$pip)
 regionplot1 <- ggplot(mapping = aes(x = pos,y = pip,color = abs(R[,i]))) +
   geom_point(data = dat1,size = 2,shape = 19) +
-  geom_point(data = dat1[markers1,],color = "black",shape = 4,size = 0.5) +
+  geom_point(data = dat1[vars1[markers1],],color = "black",shape = 4,
+             size = 0.5) +
   scale_x_continuous(breaks = NULL) +
   scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
   scale_color_gradientn(colors = clrs) +
@@ -94,7 +97,8 @@ regionplot1 <- ggplot(mapping = aes(x = pos,y = pip,color = abs(R[,i]))) +
 dat2 <- data.frame(pos = 1:p,pip = fit$pip)
 regionplot2 <- ggplot(mapping = aes(x = pos,y = pip,color = abs(R[,j]))) +
   geom_point(data = dat2,size = 2,shape = 19) +
-  geom_point(data = dat2[markers2,],color = "black",shape = 4,size = 0.5) +
+  geom_point(data = dat2[vars2[markers2],],color = "black",shape = 4,
+             size = 0.5) +
   scale_x_continuous(breaks = NULL) +
   scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
   scale_color_gradientn(colors = clrs) +
