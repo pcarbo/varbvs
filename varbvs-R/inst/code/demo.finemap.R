@@ -40,12 +40,14 @@ y <- c(X %*% beta + rnorm(n))
 # continuous outcome (quantitiative trait), with spike and slab priors on
 # the coefficients. 
 cat("Fitting model to data.\n")
-fit <- varbvs(X,NULL,y,sa = 1,logodds = log10(1/p),verbose = TRUE)
+fit <- varbvs(X,NULL,y,sa = 1,verbose = TRUE)
 
 # COMPUTE "PROXY" POSTERIOR PROBABILITIES
 # ---------------------------------------
 sigmoid <- function (x)
   1/(1 + exp(-x))
+
+stop()
 
 # TO DO: Explain what this code chunk does.
 top.markers <- summary(fit)$top.vars$index
