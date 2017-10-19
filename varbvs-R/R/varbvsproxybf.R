@@ -16,6 +16,7 @@
 #   - This only works for family = "gaussian".
 #
 #   - This function is currently not documented in the package.
+#
 varbvsproxybf <- function (X, Z, y, fit, i, vars) {
 
   # Get the number of samples (n), the number of variables (p), and
