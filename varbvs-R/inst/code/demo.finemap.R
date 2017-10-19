@@ -5,7 +5,7 @@ library(varbvs)
 
 # SCRIPT PARAMETERS
 # -----------------
-# This vector specifies the additive effects of the SNPs.
+# This vector specifies the (additive) phenotypic effects of the SNPs.
 beta            <- rep(0,531)
 beta[c(88,506)] <- c(0.2,-0.35)
 

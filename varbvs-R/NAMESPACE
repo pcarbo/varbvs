@@ -18,7 +18,8 @@ importFrom(Rcpp,sourceCpp)
 
 export(normalizelogweights,cred,varbvs,varbvsnorm,varbvsbin,varbvsbinz,
        varbvsmix,varbvscoefcred,varbvsindep,varbvspve,varbvs,varbvsbf,
-       bayesfactor,rand,randn,var1,var1.cols)
+       bayesfactor,rand,randn,var1,var1.cols,
+       varbvsproxybf)
 
 S3method(summary,varbvs)
 S3method(predict,varbvs)
