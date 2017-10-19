@@ -20,7 +20,10 @@ knitr::opts_chunk$set(
 
 ## Outline
 
-The aim of this analysis is to try out a simple fine-mapping idea.
+The aim of this analysis is to try out a simple fine-mapping idea.  We
+can also build on this analysis to test out other ideas for
+fine-mapping (that is, estimating credible sets for the location of
+the causal variant near an identified assocation).
 
 ## Set up environment
 
@@ -49,6 +52,16 @@ SNPs. In this case, exactly two SNPs (about 3 Mb apart on chromosome
 beta            <- rep(0,531)
 beta[c(88,506)] <- c(0.2,-0.35)
 ```
+
+The causal variant should be within the credible set with this
+probability.
+
+```{r}
+credint.prob <- 0.95
+```
+
+For identifying the credible set, compute proxy probabilities for all
+SNPs in LD with the target SNP based on this threshold.
 
 ```{r}
 ld.threshold <- 0.2
@@ -119,39 +132,53 @@ SNPs (based on a pre-specified threshold), then compute the Bayes
 factors measuring the improvement in "fit" by using the candidate SNPs
 instead of each of the top SNPs.
 
+First, do this for the top SNP.
+
 ```{r}
 top.markers <- summary(fit)$top.vars$index
 i     <- top.markers[1]
+vars1 <- which(R[,i]^2 >= ld.threshold)
+BF1   <- varbvsproxybf(X,NULL,y,fit,i,vars1) 
+```
+
+Note that the Bayes factors are computed separately for each
+hyperparameter setting. Here, to simplify the example, we will just
+use the Bayes factors from the first hyperparameter setting
+(corresponding to the smallest prior inclusion probability).
+
+Also note that the implementation of `varbvsproxybf` is currently very
+inefficient and probably will be too slow for examples with thousands
+of SNPs.
+
+Next, do the same for the SNP with the second-highest PIP.
+
+```{r}
+top.markers <- summary(fit)$top.vars$index
 j     <- top.markers[2]
 vars1 <- which(R[,i]^2 >= ld.threshold)
-vars2 <- which(R[,j]^2 >= ld.threshold)
-BF1   <- varbvsproxybf(X,NULL,y,fit,i,vars1) 
 BF2   <- varbvsproxybf(X,NULL,y,fit,j,vars2)
 ```
 
-The 
+This function computes the "probability probabilities" assuming that
+exactly 1 SNP is causal, then selects the smallest set of SNPs such
+that the sum of the proxy probabilities is greater than "pr".
 
 ```{r}
-bf1 <- BF1[,1]
-bf2 <- BF2[,1]
-pp1 <- bf1/sum(bf1)
-pp2 <- bf2/sum(bf2)
+get.credible.set <- function (bf, pr) {
+  pp      <- bf/sum(bf)
+  markers <- order(bf,decreasing = TRUE)
+  n       <- min(which(cumsum(pp[markers]) > credint.prob))
+  return(markers[1:n])
+}
 ```
 
-Explain what this code chunk does.
+Get the credible SNP sets for the top two SNPs (using the first
+hyperparameter setting only).
 
 ```{r}
-markers1 <- order(bf1,decreasing = TRUE)
-n1       <- min(which(cumsum(pp1[markers1]) > 0.95))
-markers1 <- markers1[1:n1]
-```
-
-TO DO: Explain what this code chunk does.
-
-```{r}
-markers2 <- order(bf2,decreasing = TRUE)
-n2       <- min(which(cumsum(pp2[markers2]) > 0.95))
-markers2 <- markers2[1:n2]
+markers1 <- get.credible.set(BF1[,1],credint.prob)
+markers2 <- get.credible.set(BF2[,1],credint.prob)
+print(c(length(markers1),length(markers2)))
 ```
 
 ## Plot fine-mapping results
