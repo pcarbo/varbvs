@@ -28,7 +28,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # Check input X.
   if (!(is.matrix(X) & is.double(X) & sum(is.na(X)) == 0))
     stop(paste("Input X must be a double-precision matrix with no missing",
-               "values. Coerce matrix to double-precision with",
+               "values. To coerce matrix to double-precision, use",
                "storage.mode(X) <- \"double\""))
   
   # Add column names to X if they are not provided.
