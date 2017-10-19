@@ -13,11 +13,11 @@ varbvsproxybf <- function (X, y, fit, i, vars) {
   # Get the number of candidate variables (p) and the number of
   # hyperparameter settings (ns).
   p  <- length(vars)
-  ns <- length(w)
+  ns <- length(fit$w)
     
   # Compute a couple useful quantities. 
   xy <- c(y %*% X)
-  d  <- diagsq(X)
+  d  <- varbvs:::diagsq(X)
 
   # INITIALIZE STORAGE FOR OUTPUTS
   # ------------------------------
@@ -40,6 +40,7 @@ varbvsproxybf <- function (X, y, fit, i, vars) {
       logodds <- fit$logodds[,k]
     else
       logodds <- rep(fit$logodds[k],ncol(X))
+    logodds <- log(10)*logodds
     
     # Get the posterior mean and variances of the regression and the
     # posterior inclusion probabilities, and set the probability for
@@ -49,8 +50,6 @@ varbvsproxybf <- function (X, y, fit, i, vars) {
     s        <- fit$s[,k]
     alpha[i] <- 0
     Xr       <- c(X %*% (alpha * mu))
-
-    browser()
 
     # Repeat for each candidate variable.
     for (j in vars) {
@@ -66,12 +65,15 @@ varbvsproxybf <- function (X, y, fit, i, vars) {
       # Update the variational estimate of the posterior inclusion
       # probability.
       alpha[j] <-
-        varbvs::sigmoid(logodds[j] + (log(s[j]/(sa*sigma)) + mu[j]^2/s[j])/2)
+        varbvs:::sigmoid(logodds[j] + (log(s[j]/(sa*sigma)) + mu[j]^2/s[j])/2)
+      
+      # Update Xr = X*r.
+      Xrj <- Xr + (alpha[j]*mu[j] - r) * X[,j]
       
       # Compute the variational estimate of the Bayes factor.
-      logw1   <- int.linear(Xr,d,y,sigma,alpha,mu,s) +
-                 int.gamma(logodds,alpha) +
-                 int.klbeta(alpha,mu,s,sigma*sa)
+      logw1   <- varbvs:::int.linear(Xrj,d,y,sigma,alpha,mu,s) +
+                 varbvs:::int.gamma(logodds,alpha) +
+                 varbvs:::int.klbeta(alpha,mu,s,sigma*sa)
       BF[j,k] <- exp(logw1 - logw0)
 
       # Restore the variational parameters for variable j.
@@ -79,4 +81,7 @@ varbvsproxybf <- function (X, y, fit, i, vars) {
       mu[j]    <- mu0
     }
   }
+
+  # Output the Bayes factors.
+  return(BF)
 }
