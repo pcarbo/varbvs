@@ -2,7 +2,7 @@
 #
 # NOTE: The set of candidate variables could include variable i.
 #
-varbvsproxybf <- function (X, y, fit, i, vars) {
+varbvsproxybf <- function (X, Z, y, fit, i, vars) {
 
   # CHECK INPUTS
   # ------------
@@ -10,15 +10,29 @@ varbvsproxybf <- function (X, y, fit, i, vars) {
   if (missing(vars))
     vars <- 1:ncol(X)
     
-  # Get the number of candidate variables (p) and the number of
-  # hyperparameter settings (ns).
+  # Get the number of samples (n), the number of candidate variables
+  # (p), and the number of hyperparameter settings (ns).
+  n  <- length(y)
   p  <- length(vars)
   ns <- length(fit$w)
-    
-  # Compute a couple useful quantities. 
-  xy <- c(y %*% X)
-  d  <- varbvs:::diagsq(X)
 
+  # Add intercept.
+  if (is.null(Z))
+    Z <- matrix(1,n,1)
+  else
+    Z <- cbind(1,Z)
+  
+  # PREPROCESSING STEPS
+  # -------------------
+  # Adjust the genotypes and phenotypes so that the linear effects of
+  # the covariates are removed. This is equivalent to integrating out
+  # the regression coefficients corresponding to the covariates with
+  # respect to an improper, uniform prior.
+  out <- varbvs:::remove.covariate.effects(X,Z,y)
+  X   <- out$X
+  y   <- out$y
+  rm(out)
+  
   # INITIALIZE STORAGE FOR OUTPUTS
   # ------------------------------
   # TO DO: Explain what this matrix will contain.
@@ -27,6 +41,10 @@ varbvsproxybf <- function (X, y, fit, i, vars) {
   
   # COMPUTE PROXY PROBABILITIES
   # ---------------------------
+  # Compute a couple useful quantities. 
+  xy <- c(y %*% X)
+  d  <- varbvs:::diagsq(X)
+
   # Repeat for each hyperparameter setting.
   for (k in 1:ns) {
 
@@ -73,7 +91,8 @@ varbvsproxybf <- function (X, y, fit, i, vars) {
       # Compute the variational estimate of the Bayes factor.
       logw1   <- varbvs:::int.linear(Xrj,d,y,sigma,alpha,mu,s) +
                  varbvs:::int.gamma(logodds,alpha) +
-                 varbvs:::int.klbeta(alpha,mu,s,sigma*sa)
+                 varbvs:::int.klbeta(alpha,mu,s,sigma*sa) -
+                 determinant(crossprod(Z),logarithm = TRUE)$modulus/2
       BF[j,k] <- exp(logw1 - logw0)
 
       # Restore the variational parameters for variable j.
