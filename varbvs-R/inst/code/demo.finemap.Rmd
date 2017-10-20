@@ -197,7 +197,7 @@ create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
     geom_point(data = dat[markers,],color = "black",shape = 4,size = 0.5) +
     scale_x_continuous(breaks = NULL) +
     scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
-    scale_color_gradientn(colors = clrs) +
+    scale_color_gradientn(colors = clrs,name = "abs(r)") +
     labs(x = "position on chromosome 11, 94-98 Mb",y = "varbvs PIP",
          title = plot.title) +
     theme_cowplot(font_size = 11) +
@@ -206,10 +206,9 @@ create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
 }
 regionplot1 <-
   create.finemap.plot(fit$pip,abs(R[,i]),cred1,
-                      paste("colors indicate correlation with",map[i,"id"]))
+                      paste("colors indicate correlations with",map[i,"id"]))
 regionplot2 <-
   create.finemap.plot(fit$pip,abs(R[,j]),cred2,
-                      paste("colors indicate correlation with",map[j,"id"]))
+                      paste("colors indicate correlations with",map[j,"id"]))
 plot_grid(regionplot1,regionplot2,nrow = 2)
 ```
-
