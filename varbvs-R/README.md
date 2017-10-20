@@ -5,7 +5,7 @@
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/xqnqhsk5na3855nq?svg=true)](https://ci.appveyor.com/project/pcarbo/varbvs)
 [![codecov](https://codecov.io/gh/pcarbo/varbvs/branch/master/graph/badge.svg)](https://codecov.io/gh/pcarbo/varbvs)
 
-See also the
+See also the 
 [varbvs R package website](https://pcarbo.github.io/varbvs/varbvs-R/docs)
 generated using [pkgdown](http://hadley.github.io/pkgdown).
 
