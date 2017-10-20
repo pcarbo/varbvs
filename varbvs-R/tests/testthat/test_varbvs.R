@@ -15,9 +15,9 @@ context("varbvs")
 
 test_that("model fitting works for simulated data with a continuous outcome",{
 
-  # Run the R script that demonstrates varbvs for mapping of a
-  # quantitative trait in a simulated data set.
-  source("demo.qtl.R")
+  # Run the varbvs demo for mapping a quantitative trait in a
+  # simulated data set.
+  demo("varbvs.qtl",package = "varbvs")
 
   # Check the number of included variables at different probability
   # thresholds.
@@ -41,9 +41,9 @@ test_that(paste("model fitting works for simulated data with a binary",
                 "outcome, and no covariates"),{
 
   # Run the R script that demonstrates mapping of a binary trait in a
-  # simulated data set, with no covariates included.
+  # simulated genetic data set, with no covariates included.
   covariates <- NULL
-  source("demo.cc.R",local = TRUE)
+  demo("varbvs.cc",package = "varbvs")
 
   # Check the number of included variables at different probability
   # thresholds.
@@ -67,9 +67,9 @@ test_that(paste("model fitting works for simulated data with a binary",
                 "outcome, and 2 covariates"),{
 
   # Run the R script that demonstrates mapping of a binary trait in a
-  # simulated data set, with two covariates included in the model.
+  # simulated genetic data set, with two covariates included.
   covariates <- c("age","weight")
-  source("demo.cc.R",local = TRUE)
+  demo("varbvs.cc",package = "varbvs")
 
   # Check the number of included variables at different probability
   # thresholds.
@@ -98,7 +98,7 @@ test_that("model fitting works when crossprod(Z) is near-singular",{
   #  v <- eigen(R)$values
   #  print(v)
   #
-  load("data.singular.cov.RData")
+  load(system.file("datafiles/singular.RData",package = "varbvs"))
   expect_silent(fit <- varbvs(X,Z,y,"gaussian",verbose = FALSE))
 })
 
@@ -108,7 +108,7 @@ test_that(paste("model fitting works for linear regression with",
                     
   # Run the R script that demonstrates varbvsmix on a simulated data
   # set in which all the candidate variables are uncorrelated.
-  source("demo.mix.R")
+  demo("varbvsmix",package = "varbvs")
 
   # The variational lower bound should always be increasing.
   expect_true(all(diff(fit$logZ) > 0))
@@ -121,7 +121,7 @@ test_that(paste("model fitting works for linear regression with",
 
 test_that("varbvs and varbvsmix produce same estimates when K=2",{
   tol <- 1e-4
-  source("demo.test.mix.R")
+  demo("varbvsmix.test",package = "varbvs")
   rownames(fit$alpha) <- NULL
   rownames(fit$mu)    <- NULL
   

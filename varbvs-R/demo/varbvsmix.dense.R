@@ -1,8 +1,8 @@
-# This is similar to demo.mix.R, except that the prior is a larger
-# mixture of normals. This script is mainly intended to illustrate the
-# use of the "drop.threshold" varbvsmix argument to speed up
-# computation when a lot of the mixture components have a negligible
-# (near zero) weight.
+# This is similar to the "varbvsmix" demo, except that the prior is a
+# larger mixture of normals. This script is mainly intended to
+# illustrate the use of the "drop.threshold" varbvsmix argument to
+# speed up computation when a lot of the mixture components have a
+# negligible (near zero) weight.
 library(lattice)
 library(varbvs)  
 
