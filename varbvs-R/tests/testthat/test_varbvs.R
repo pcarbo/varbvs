@@ -43,7 +43,7 @@ test_that(paste("model fitting works for simulated data with a binary",
   # Run the R script that demonstrates mapping of a binary trait in a
   # simulated genetic data set, with no covariates included.
   covariates <- NULL
-  demo("varbvs.cc",package = "varbvs")
+  source(system.file("demo/varbvs.cc.R",package = "varbvs"))
 
   # Check the number of included variables at different probability
   # thresholds.
@@ -69,7 +69,7 @@ test_that(paste("model fitting works for simulated data with a binary",
   # Run the R script that demonstrates mapping of a binary trait in a
   # simulated genetic data set, with two covariates included.
   covariates <- c("age","weight")
-  demo("varbvs.cc",package = "varbvs")
+  source(system.file("demo/varbvs.cc.R",package = "varbvs"))
 
   # Check the number of included variables at different probability
   # thresholds.
