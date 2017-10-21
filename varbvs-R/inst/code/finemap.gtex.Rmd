@@ -1,5 +1,5 @@
 ---
-title: "Illustration of credible set using Matthew's \"proxy SNP\" idea"
+title: "Illustration of Matthew's \"proxy SNP\" idea on GTEx data set"
 author: "Peter Carbonetto"
 date: October 19, 2017
 output:
@@ -44,15 +44,6 @@ install_github("pcarbo/varbvs",ref = "finemap",subdir = "varbvs-R")
 
 ## Script parameters
 
-This vector specifies the (additive) phenotypic effects of the
-SNPs. In this case, exactly 2 SNPs (about 3 Mb apart on chromosome
-11) affect the quantitative trait.
-
-```{r}
-beta            <- rep(0,531)
-beta[c(88,506)] <- c(0.2,-0.35)
-```
-
 The causal variant should be within the credible set with this
 probability.
 
@@ -79,7 +70,7 @@ don't have to worry about about making the mouse data publicly
 available.
 
 ```{r}
-load("../datafiles/cfw.chr11bmd.RData")
+load("../datafiles/Muscle_Skeletal.ACTN3.1Mb.RData")
 n <- nrow(X)
 p <- ncol(X)
 ```
