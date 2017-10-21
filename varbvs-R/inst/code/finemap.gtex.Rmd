@@ -60,41 +60,13 @@ ld.threshold <- 0.2
 
 ## Load genotype data
 
-Load the genotype data for the 531 SNPs at the bone-mineral density
-locus on chromosome 11 that was identified in the *Nature Genetics*
-manuscript.
-
-These are data from outbred (CFW) mice, so will not have the same LD
-patterns as humans. I'm using mouse instead of human data because we
-don't have to worry about about making the mouse data publicly
-available.
+Load the GTEx genotype data for the 4,546 SNPs at ACTN3 locus.
 
 ```{r}
 load("../datafiles/Muscle_Skeletal.ACTN3.1Mb.RData")
+storage.mode(X) <- "double"
 n <- nrow(X)
 p <- ncol(X)
-```
-
-Center the columns of X so that each column has a mean of zero.
-
-```{r}
-rep.row <- function (x, n)
-  matrix(x,n,length(x),byrow = TRUE)
-X <- X - rep.row(colMeans(X),n)
-```
-
-## Simulate phenotype data
-
-Set the random number generator seed.
-
-```{r}
-set.seed(1)
-```
-
-Generate the quantitative trait measurements.
-
-```{r}
-y <- c(X %*% beta + rnorm(n))
 ```
 
 ## Fit variational approximation to posterior
@@ -105,7 +77,7 @@ continuous outcome (quantitiative trait), with spike and slab priors on
 the coefficients. 
 
 ```{r}
-fit <- varbvs(X,NULL,y,sa = 1,verbose = FALSE)
+fit <- varbvs(X,Z,y,verbose = FALSE)
 ```
 
 ## Compute proxy probabilities
@@ -117,19 +89,17 @@ R <- cor(X)
 ```
 
 To test the idea of computing credible SNP sets based on "proxy
-probabilities", here I choose the top 2 SNPs by posterior inclusion
-probability (PIP), take all candidate SNPs in LD with these top 2 SNPs
+probabilities", here I choose the top SNP by posterior inclusion
+probability (PIP), take all candidate SNPs in LD with this top SNP
 (based on a pre-specified threshold), then compute the Bayes factors
 measuring the improvement in "fit" by using the candidate SNPs instead
-of each of the top SNPs.
-
-First, do this for the top SNP.
+of the top SNP.
 
 ```{r}
 top.markers <- summary(fit)$top.vars$index
-i     <- top.markers[1]
-vars1 <- which(R[,i]^2 >= ld.threshold)
-BF1   <- varbvsproxybf(X,NULL,y,fit,i,vars1) 
+i    <- top.markers[1]
+vars <- which(R[,i]^2 >= ld.threshold)
+BF   <- varbvsproxybf(X,Z,y,fit,i,vars) 
 ```
 
 Note that the Bayes factors are computed separately for each
@@ -140,15 +110,6 @@ use the Bayes factors from the first hyperparameter setting
 Also note that the implementation of `varbvsproxybf` is currently very
 inefficient and probably will be too slow for examples with thousands
 of SNPs.
-
-Next, do the same for the SNP with the second-highest PIP.
-
-```{r}
-top.markers <- summary(fit)$top.vars$index
-j     <- top.markers[2]
-vars2 <- which(R[,j]^2 >= ld.threshold)
-BF2   <- varbvsproxybf(X,NULL,y,fit,j,vars2)
-```
 
 This function computes the "probability probabilities" assuming that
 exactly 1 SNP is causal, then selects the smallest set of SNPs such
@@ -163,13 +124,12 @@ get.credible.set <- function (bf, pr) {
 }
 ```
 
-Get the credible SNP sets for the top 2 SNPs (using the first
+Get the credible SNP sets for the top SNP (using the first
 hyperparameter setting only).
 
 ```{r}
-cred1 <- vars1[get.credible.set(BF1[,1],credint.prob)]
-cred2 <- vars2[get.credible.set(BF2[,1],credint.prob)]
-print(c(length(cred1),length(cred2)))
+cred.snps <- vars[get.credible.set(BF[,1],credint.prob)]
+print(length(cred.snps))
 ```
 
 ## Plot fine-mapping results
