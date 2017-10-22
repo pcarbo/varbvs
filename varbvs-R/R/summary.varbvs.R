@@ -201,3 +201,8 @@ print.summary.varbvs <- function (x, digits = 3, ...) {
   
   return(invisible(x))
 }
+
+# ----------------------------------------------------------------------
+# Display summary of pcaviz object.
+print.varbvs <- function (x, digits = 3, ...)
+  print(summary(x),digits,...)

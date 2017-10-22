@@ -23,5 +23,6 @@ export(normalizelogweights,cred,varbvs,varbvsnorm,varbvsbin,varbvsbinz,
 S3method(summary,varbvs)
 S3method(predict,varbvs)
 S3method(subset,varbvs)
-S3method(print,summary.varbvs)
+S3method(print,varbvs)
 S3method(plot,varbvs)
+S3method(print,summary.varbvs)
