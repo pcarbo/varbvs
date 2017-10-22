@@ -99,7 +99,8 @@ of the top SNP.
 top.markers <- summary(fit)$top.vars$index
 i    <- top.markers[1]
 vars <- which(R[,i]^2 >= ld.threshold)
-BF   <- varbvsproxybf(X,Z,y,fit,i,vars) 
+BF   <- varbvsproxybf(X,Z,y,fit,i,vars)
+# out <- varbvsindep(fit,X,Z,y)
 ```
 
 Note that the Bayes factors are computed separately for each
@@ -137,7 +138,7 @@ print(length(cred.snps))
 Plot the PIPs of the SNPs, marking the two credible SNP sets with
 crosses, and colouring the points according to LD with the top 2 SNPs.
 
-```{r, fig.height=6, fig.width=8}
+```{r, fig.height=6, fig.width=8, eval=FALSE}
 create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
   clrs <- c("midnightblue","darkviolet","darkorchid","maroon",
             "tomato","orange","gold","yellow")
