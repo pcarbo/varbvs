@@ -64,67 +64,42 @@ varbvsproxybf <- function (X, Z, y, fit, i, vars) {
   
   # COMPUTE PROXY PROBABILITIES
   # ---------------------------
-  # Compute a couple useful quantities. 
-  xy <- c(y %*% X)
-  d  <- diagsq(X)
+  d <- diagsq(X)
 
   # Repeat for each hyperparameter setting.
   for (k in 1:ns) {
 
-    # Get the variational lower bound to the marginal log-likelihood.
-    logw0 <- fit$logw[k]
-      
     # Get the hyperparameter settings.
     sigma <- fit$sigma[k]
     sa    <- fit$sa[k]
-    if (is.matrix(fit$logodds))
-      logodds <- log(10)*fit$logodds[,k]
-    else
-      logodds <- rep(log(10)*fit$logodds[k],ncol(X))
     
-    # Get the posterior mean and variances of the regression and the
+    # Get the posterior means of the regression coefficients, and the
     # posterior inclusion probabilities.
-    alpha    <- fit$alpha[,k]
-    mu       <- fit$mu[,k]
-    s        <- fit$s[,k]
+    alpha0 <- fit$alpha[,k]
+    mu0    <- fit$mu[,k]
 
-    # Set the probability for variable i to zero.
-    alpha[i] <- 0
+    # Remove from the outcome y the linear effects of all variables
+    # except for variable i.
+    alpha0[i] <- 0
+    y0        <- c(y - X %*% (alpha0*mu0))
     
     # Repeat for each candidate variable.
-    Xr <- c(X %*% (alpha * mu))
     for (j in vars) {
 
-      # Save the current variational parameters for variable j.
-      alpha0 <- alpha[j]
-      mu0    <- mu[j]
-        
-      # Update the variational estimate of the posterior mean.
-      r     <- alpha[j] * mu[j]
-      mu[j] <- s[j]/sigma * (xy[j] + d[j]*r - sum(X[,j]*Xr))
+      # Add back in the linear effect of variable j (except in the
+      # special case when i = j, because the effect was not removed in
+      # the first place).
+      if (i != j)
+        y0 <- y0 + alpha0[j]*mu0[j] * X[,j]
 
-      # Update the variational estimate of the posterior inclusion
-      # probability.
-      alpha[j] <- sigmoid(logodds[j] + (log(s[j]/(sa*sigma)) + mu[j]^2/s[j])/2)
-      
-      # Update Xr = X*r.
-      Xr1 <- Xr + (alpha[j]*mu[j] - r) * X[,j]
-      
-      # Compute the variational estimate of the Bayes factor.
-      #
-      # TO DO: Speed up the calculation of the Bayes factor by
-      # removing all the terms that automatically cancel out because
-      # they are the unchanged after the update above.
-      #
-      logw1   <- int.linear(Xr1,d,y,sigma,alpha,mu,s) +
-                 int.gamma(logodds,alpha) +
-                 int.klbeta(alpha,mu,s,sigma*sa) -
-                 determinant(crossprod(Z),logarithm = TRUE)$modulus/2
-      BF[j,k] <- exp(logw1 - logw0)
+      # Compute the Bayes factor.
+      s       <- sa*sigma/(sa*d[j] + 1)
+      mu      <- s*dot(y0,X[,j])/sigma
+      BF[j,k] <- s/(sa*sigma) * exp(mu^2/(2*s))
 
-      # Restore the variational parameters for variable j.
-      alpha[j] <- alpha0
-      mu[j]    <- mu0
+      # Remove the linear effect of variable j (except when i = j).
+      if (i != j)
+        y0 <- y0 - alpha0[j]*mu0[j] * X[,j]
     }
   }
 

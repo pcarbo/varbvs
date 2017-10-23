@@ -4,6 +4,7 @@ storage.mode(X) <- "double"
 n <- nrow(X)
 p <- ncol(X)
 
+Z   <- cbind(1,Z)
 out <- varbvs:::remove.covariate.effects(X,Z,y)
 X   <- out$X
 y   <- out$y
@@ -18,7 +19,7 @@ y  <- c(y - X[,markers] %*% with(fit,alpha[markers,1] * mu[markers,1]))
 
 sigma <- fit$sigma[1]
 sa    <- fit$sa[1]
-s     <- sa*sigma/(sa*varbvs:::diagsq(X) + 1)
-mu    <- s*c(y %*% X)/sigma
-logBF <- log(s/(sa*sigma)) + mu^2/s/2
+s     <- sa*sigma/(sa*varbvs:::diagsq(X)[c(i,j)] + 1)
+mu    <- s*c(y %*% X[,c(i,j)])/sigma
+logBF <- log(s/(sa*sigma)) + mu^2/(2*s)
 
