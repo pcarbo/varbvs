@@ -7,9 +7,9 @@
   fitted using variational approximation methods.
 }
 \usage{
-  \method{summary}{varbvs}(object, cred.int = 0.95, nv = 5, nr = 1000, \ldots)
-  \method{print}{summary.varbvs}(x, digits = 3, \ldots)
-  \method{print}{varbvs}(x, digits = 3, \ldots)
+  \method{summary}{varbvs}(object, cred.int = 0.95, nv = 5, nr = 1000, \dots)
+  \method{print}{summary.varbvs}(x, digits = 3, \dots)
+  \method{print}{varbvs}(x, digits = 3, \dots)
 }
 \arguments{
   \item{object}{Output of function \code{\link{varbvs}}.}

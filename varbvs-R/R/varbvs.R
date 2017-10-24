@@ -51,6 +51,12 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   else
     Z <- cbind(1,Z)
 
+  # Add column names to Z if they are not already provided.
+  if (is.null(colnames(Z)) & ncol(Z) > 1)
+    colnames(Z) <- c("(Intercept)",paste0("Z",1:(ncol(Z) - 1)))
+  else
+    colnames(Z)[1] <- "(Intercept)"
+  
   # Check input y.
   if (!is.numeric(y) | sum(is.na(y)) > 0)
     stop("Input y must be a numeric vector with no missing values.")
@@ -394,16 +400,16 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   }
   
   # Add names to some of the outputs.
-  rownames(fit$alpha) <- colnames(X)
-  rownames(fit$mu)    <- colnames(X)
-  rownames(fit$s)     <- colnames(X)
-  names(fit$beta)     <- colnames(X)
-  names(fit$pip)      <- colnames(X)
+  rownames(fit$alpha)  <- colnames(X)
+  rownames(fit$mu)     <- colnames(X)
+  rownames(fit$s)      <- colnames(X)
+  names(fit$beta)      <- colnames(X)
+  names(fit$pip)       <- colnames(X)
+  rownames(fit$mu.cov) <- colnames(Z)
   if (prior.same)
     fit$logodds <- c(fit$logodds)
   else
     rownames(fit$logodds) <- colnames(X)
-
   return(fit)
 }
 
