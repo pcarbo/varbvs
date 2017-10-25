@@ -359,6 +359,13 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # Compute the fitted values for each hyperparameter setting.
   fitted.values <- varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu)
 
+  # Compute the residuals for each hyperparameter setting.
+  if (family == "gaussian")
+    residuals <- y - fitted.values
+  else if (family == "binomial") {
+
+  }
+  
   # TO DO: Fix this.
   residuals <- matrix(0,n,ns)
   

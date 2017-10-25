@@ -39,8 +39,7 @@ i       <- sample(p,na)
 beta    <- rep(0,p)
 beta[i] <- rnorm(na)
 
-# Generate labels for the samples and markers.
-rownames(X) <- sprintf("A%05d",sample(99999,n))
+# Generate labels for the markers.
 colnames(X) <- paste0("rs",sample(1e6,p))
 
 # Adjust the QTL effects so that we control for the proportion of variance
@@ -70,6 +69,12 @@ if (m > 0)
   y <- y + Z %*% u
 y <- c(y)
 
+# Generate labels for the samples.
+names(y)    <- sprintf("A%05d",sample(99999,n))
+rownames(X) <- names(y)
+if (!is.null(Z))
+  rownames(Z) <- names(y)
+    
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 # Fit the fully-factorized variational approximation to the posterior

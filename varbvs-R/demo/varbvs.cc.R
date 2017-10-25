@@ -2,9 +2,6 @@
 # (e.g., case-control) trait in a simulated data set in which all the
 # genetic markers are uncorrelated with each other (i.e., they are
 # "unlinked").
-#
-# Note that variable "covariates" must be specified before running
-# this script.
 library(lattice)
 library(varbvs)
 
@@ -16,10 +13,10 @@ na <- 10    # Number of markers that affect the binary outcome.
 sa <- 0.2   # Variance of log-odds ratios.
 p1 <- 0.5   # Target proportion of subjects that are cases (y = 1).
 
-# Names of covariates. Example:
-# 
-#   covariates <- c("age","weight")
-#
+# Names of covariates.
+if (!exists("covariates")) {
+  covariates <- c("age","weight")
+}
 
 # Candidate values for the prior log-odds of inclusion.
 logodds <- seq(-3,-1.5,0.5)
@@ -45,7 +42,7 @@ i       <- sample(p,na)
 beta    <- rep(0,p)
 beta[i] <- sqrt(sa)*rnorm(na)
 
-# Generate random labels for the markers.
+# Generate labels for the markers.
 colnames(X) <- paste0("rs",sample(1e6,p))
 
 # Generate the covariate data (Z), and the linear effects of the
@@ -68,6 +65,12 @@ if (m > 0)
 # Simulate the binary trait (case-control status) as a coin toss with
 # success rates given by the logistic regression.
 y <- as.double(runif(n) < varbvs:::sigmoid(w))
+
+# Generate labels for the samples.
+names(y)    <- sprintf("A%05d",sample(99999,n))
+rownames(X) <- names(y)
+if (!is.null(Z))
+  rownames(Z) <- names(y)
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------

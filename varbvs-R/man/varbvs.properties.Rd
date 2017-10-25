@@ -1,8 +1,10 @@
 \name{varbvs.properties}
 \alias{nobs.varbvs}
+\alias{case.names.varbvs}
 \alias{variable.names.varbvs}
 \alias{labels.varbvs}
 \alias{coef.varbvs}
+\alias{fitted.varbvs}
 \title{Accessing Properties of Fitted varbvs Models}
 \usage{
 \method{nobs}{varbvs}(object, \dots)
