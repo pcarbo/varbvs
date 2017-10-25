@@ -63,3 +63,7 @@ predict.varbvs <- function (object, X, Z = NULL, ...) {
   else
     stop("Invalid setting for object$family")
 }
+
+predict.varbvs.matrix <- function (X, Z, alpha, mu, mu.cov) {
+
+}

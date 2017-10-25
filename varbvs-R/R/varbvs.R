@@ -31,7 +31,9 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                "values. To coerce matrix to double-precision, use",
                "storage.mode(X) <- \"double\""))
   
-  # Add column names to X if they are not provided.
+  # Add row and column names to X if they are not provided.
+  if (is.null(rownames(X)))
+    rownames(X) <- 1:p
   if (is.null(colnames(X)))
     colnames(X) <- paste0("X",1:p)
   
@@ -63,7 +65,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (length(y) != n)
     stop("Inputs X and y do not match")
   y <- c(as.double(y))
-  
+
   # Get choice of regression model.
   family <- match.arg(family)
 
@@ -352,8 +354,12 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     if (verbose)
       cat("\n")
   }
-    
-  # (6) CREATE FINAL OUTPUT
+
+  # (6) COMPUTE FITTED VALUES AND RESIDUALS
+  # ---------------------------------------
+  # TO DO.
+  
+  # (7) CREATE FINAL OUTPUT
   # -----------------------
   # Compute the normalized importance weights and the posterior
   # inclusion probabilities (PIPs) and mean regression coefficients
@@ -376,7 +382,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                 prior.same = prior.same,optimize.eta = FALSE,logw = logw,
                 w = w,sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
                 mu = mu,s = s,eta = NULL,pip = pip,beta = beta,
-                beta.cov = beta.cov)
+                beta.cov = beta.cov,y = y,fitted.values = fitted.values)
     class(fit) <- c("varbvs","list")
 
     # Compute the proportion of variance in Y, after removing linear
@@ -398,18 +404,21 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                 optimize.eta = optimize.eta,prior.same = prior.same,
                 logw = logw,w = w,sigma = NULL,sa = sa,logodds = logodds,
                 alpha = alpha,mu = mu,s = s,eta = eta,pip = pip,beta = beta,
-                beta.cov = beta.cov,model.pve = NA)
+                beta.cov = beta.cov,model.pve = NA,
+                fitted.values = fitted.values,residuals = residuals)
     class(fit) <- c("varbvs","list")
   }
   
   # Add names to some of the outputs.
-  rownames(fit$alpha)  <- colnames(X)
-  rownames(fit$mu)     <- colnames(X)
-  rownames(fit$s)      <- colnames(X)
-  names(fit$beta)      <- colnames(X)
-  names(fit$pip)       <- colnames(X)
-  rownames(fit$mu.cov) <- colnames(Z)
-  names(fit$beta.cov)  <- colnames(Z)
+  rownames(fit$alpha)      <- colnames(X)
+  rownames(fit$mu)         <- colnames(X)
+  rownames(fit$s)          <- colnames(X)
+  names(fit$beta)          <- colnames(X)
+  names(fit$pip)           <- colnames(X)
+  rownames(fit$mu.cov)     <- colnames(Z)
+  names(fit$beta.cov)      <- colnames(Z)
+  names(fit$fitted.values) <- rownames(X)
+  names(fit$residuals)     <- rownames(X)
   if (prior.same)
     fit$logodds <- c(fit$logodds)
   else

@@ -39,7 +39,7 @@ coef.varbvs <- function (object, ...) {
   else {
     out <- with(object,rbind(cbind(mu.cov,beta.cov),
                              cbind(mu,beta)))
-    colnames(out)[ns+1] <- "Averaged"
+    colnames(out) <- c(paste0("theta_",1:ns),"Averaged")
   }
   return(out)
 }
