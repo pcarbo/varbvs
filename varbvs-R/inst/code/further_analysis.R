@@ -7,12 +7,12 @@ j <- "chr11_66561248_T_C_b38"
 res <- summary(lm(y ~ X[,i] + Z))$coef[2,]
 mu1 <- res[1]
 s1  <- res[2]^2
-BF1 <- sqrt(s/(sa*sigma)) * exp(mu1^2/(2*s1))
+BF1 <- sqrt(s1/(sa*sigma)) * exp(mu1^2/(2*s1))
 
 res <- summary(lm(y ~ X[,j] + Z))$coef[2,]
 mu2 <- res[1]
 s2  <- res[2]^2
-BF2 <- sqrt(s/(sa*sigma)) * exp(mu2^2/(2*s2))
+BF2 <- sqrt(s2/(sa*sigma)) * exp(mu2^2/(2*s2))
 
 # My calculations.
 out <- varbvsproxybf(X,Z,y,fit,i)
