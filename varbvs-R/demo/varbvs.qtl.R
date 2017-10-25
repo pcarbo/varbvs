@@ -2,6 +2,7 @@
 # mapping of a quantitative trait. The data set is simulated assuming
 # that all the genetic markers are uncorrelated with each other (i.e.,
 # they are "unlinked").
+library(lattice)
 library(varbvs)  
 
 # SCRIPT PARAMETERS
@@ -84,11 +85,32 @@ cat("3. SUMMARIZING RESULTS.\n")
 print(summary(fit))
 cat("\n")
 
+# COMPARE ESTIMATES AGAINST GROUND-TRUTH
+# --------------------------------------
+# Plot the estimated coefficients against the ground-truth coefficients.
+# It is expected that oefficients near zero will be "shrunk" to zero.
+cat("4. PLOTTING COEFFICIENT ESTIMATES.\n")
+trellis.par.set(par.xlab.text = list(cex = 0.75),
+                par.ylab.text = list(cex = 0.75),
+                axis.text = list(cex = 0.75))
+markers  <- labels(fit)
+beta.est <- coef(fit)[markers,"Averaged"]
+print(xyplot(beta.est ~ beta.true,
+             data.frame(beta.true = beta,beta.est = beta.est),
+             pch = 4,col = "black",cex = 0.6,
+             panel = function(x, y, ...) {
+               panel.xyplot(x,y,...)
+               panel.abline(a = 0,b = 1,col = "magenta",lty = "dotted")
+             },
+             scales = list(limits = c(-1.1,1.1)),
+             xlab = "ground-truth regression coefficient",
+             ylab = "estimated regression coefficient"))
+
 # EVALUATE MODEL PREDICTIONS
 # --------------------------
 # Compute estimates of the quantitative trait using the fitted model,
 # and compare against the observed values.
-cat("4. EVALUATING FITTED MODEL.\n")
+cat("5. EVALUATING FITTED MODEL.\n")
 y.fit <- predict(fit,X,Z)
 cat(sprintf("r^2 between predicted Y and observed Y is %0.3f.\n",
             cor(y,y.fit)^2))

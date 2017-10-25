@@ -337,6 +337,9 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
   \item{mu.cov}{Posterior mean regression coefficients for covariates,
     including intercept, for each hyperparameter setting.}
   
+  \item{beta.cov}{"Averaged" posterior mean regression coefficients for
+    covariates, including intercept.}
+  
   \item{eta}{Additional variational parameters for \code{family =
     "binomial"} only.}
   

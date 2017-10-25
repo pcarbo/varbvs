@@ -21,7 +21,9 @@ export(normalizelogweights,cred,varbvs,varbvsnorm,varbvsbin,varbvsbinz,
        bayesfactor,rand,randn,var1,var1.cols)
 
 S3method(nobs,varbvs)
+S3method(labels,varbvs)
 S3method(variable.names,varbvs)
+S3method(coef,varbvs)
 S3method(summary,varbvs)
 S3method(predict,varbvs)
 S3method(subset,varbvs)

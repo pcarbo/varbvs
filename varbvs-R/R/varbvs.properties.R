@@ -12,3 +12,21 @@ variable.names.varbvs <- function (object, full = FALSE,
     return(with(object,c(rownames(mu.cov),rownames(alpha)[i])))
   }
 }
+
+# Return the names of the candidate variables.
+labels.varbvs <- function (object, ...)
+  rownames(object$alpha)
+
+# Return the estimates of the regression coefficients at each
+# hyperparameter setting, as well as the "averaged" estimates.
+coef.varbvs <- function (object, ...) {
+  ns <- length(object$w)
+  if (ns == 1)
+    out <- with(object,c(beta.cov,beta))
+  else {
+    out <- with(object,rbind(cbind(mu.cov,beta.cov),
+                             cbind(mu,beta)))
+    colnames(out)[ns+1] <- "Averaged"
+  }
+  return(out)
+}

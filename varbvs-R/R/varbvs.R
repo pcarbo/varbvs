@@ -359,13 +359,15 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # inclusion probabilities (PIPs) and mean regression coefficients
   # averaged over the hyperparameter settings.
   if (ns == 1) {
-    w    <- 1
-    pip  <- alpha
-    beta <- mu
+    w        <- 1
+    pip      <- c(alpha)
+    beta     <- c(alpha*mu)
+    beta.cov <- c(mu.cov)
   } else {
-    w    <- normalizelogweights(logw)
-    pip  <- c(alpha %*% w)
-    beta <- c(mu %*% w)
+    w        <- normalizelogweights(logw)
+    pip      <- c(alpha %*% w)
+    beta     <- c((alpha*mu) %*% w)
+    beta.cov <- c(mu.cov %*% w)
   }
 
   if (family == "gaussian") {
@@ -373,7 +375,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                 update.sigma = update.sigma,update.sa = update.sa,
                 prior.same = prior.same,optimize.eta = FALSE,logw = logw,
                 w = w,sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
-                mu = mu,s = s,eta = NULL,pip = pip,beta = beta)
+                mu = mu,s = s,eta = NULL,pip = pip,beta = beta,
+                beta.cov = beta.cov)
     class(fit) <- c("varbvs","list")
 
     # Compute the proportion of variance in Y, after removing linear
@@ -395,7 +398,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                 optimize.eta = optimize.eta,prior.same = prior.same,
                 logw = logw,w = w,sigma = NULL,sa = sa,logodds = logodds,
                 alpha = alpha,mu = mu,s = s,eta = eta,pip = pip,beta = beta,
-                model.pve = NA)
+                beta.cov = beta.cov,model.pve = NA)
     class(fit) <- c("varbvs","list")
   }
   
@@ -406,6 +409,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   names(fit$beta)      <- colnames(X)
   names(fit$pip)       <- colnames(X)
   rownames(fit$mu.cov) <- colnames(Z)
+  names(fit$beta.cov)  <- colnames(Z)
   if (prior.same)
     fit$logodds <- c(fit$logodds)
   else
