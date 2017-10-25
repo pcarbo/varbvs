@@ -26,14 +26,13 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # (1) CHECK INPUTS
   # ----------------
   # Check input X.
-  if (!(is.matrix(X) & is.double(X) & sum(is.na(X)) == 0))
-    stop(paste("Input X must be a double-precision matrix with no missing",
-               "values. To coerce matrix to double-precision, use",
-               "storage.mode(X) <- \"double\""))
-  
+  if (!(is.matrix(X) & is.numeric(X) & sum(is.na(X)) == 0))
+    stop("Input X must be a numeric matrix with no missing values.")
+  storage.mode(X) <- "double"
+
   # Add row and column names to X if they are not provided.
   if (is.null(rownames(X)))
-    rownames(X) <- 1:p
+    rownames(X) <- 1:n
   if (is.null(colnames(X)))
     colnames(X) <- paste0("X",1:p)
   
@@ -357,7 +356,11 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
   # (6) COMPUTE FITTED VALUES AND RESIDUALS
   # ---------------------------------------
-  # TO DO.
+  # Compute the fitted values for each hyperparameter setting.
+  fitted.values <- varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu)
+
+  # TO DO: Fix this.
+  residuals <- matrix(0,n,ns)
   
   # (7) CREATE FINAL OUTPUT
   # -----------------------
@@ -377,12 +380,13 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   }
 
   if (family == "gaussian") {
-    fit <- list(family = family,n = n,n0 = n0,sa0 = sa0,mu.cov = mu.cov,
+    fit <- list(family = family,n0 = n0,sa0 = sa0,mu.cov = mu.cov,
                 update.sigma = update.sigma,update.sa = update.sa,
                 prior.same = prior.same,optimize.eta = FALSE,logw = logw,
                 w = w,sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
                 mu = mu,s = s,eta = NULL,pip = pip,beta = beta,
-                beta.cov = beta.cov,y = y,fitted.values = fitted.values)
+                beta.cov = beta.cov,y = y,fitted.values = fitted.values,
+                residuals = residuals)
     class(fit) <- c("varbvs","list")
 
     # Compute the proportion of variance in Y, after removing linear
@@ -399,26 +403,27 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     for (i in 1:ns) 
       fit$pve[,i] <- sx*(mu[,i]^2 + s[,i])/var1(y)
   } else if (family == "binomial") {
-    fit <- list(family = family,n = n,n0 = n0,mu.cov = mu.cov,sa0 = sa0,
+    fit <- list(family = family,n0 = n0,mu.cov = mu.cov,sa0 = sa0,
                 update.sigma = FALSE,update.sa = update.sa,
                 optimize.eta = optimize.eta,prior.same = prior.same,
                 logw = logw,w = w,sigma = NULL,sa = sa,logodds = logodds,
                 alpha = alpha,mu = mu,s = s,eta = eta,pip = pip,beta = beta,
                 beta.cov = beta.cov,model.pve = NA,
-                fitted.values = fitted.values,residuals = residuals)
+                fitted.values = fitted.values,
+                residuals = residuals)
     class(fit) <- c("varbvs","list")
   }
   
   # Add names to some of the outputs.
-  rownames(fit$alpha)      <- colnames(X)
-  rownames(fit$mu)         <- colnames(X)
-  rownames(fit$s)          <- colnames(X)
-  names(fit$beta)          <- colnames(X)
-  names(fit$pip)           <- colnames(X)
-  rownames(fit$mu.cov)     <- colnames(Z)
-  names(fit$beta.cov)      <- colnames(Z)
-  names(fit$fitted.values) <- rownames(X)
-  names(fit$residuals)     <- rownames(X)
+  rownames(fit$alpha)         <- colnames(X)
+  rownames(fit$mu)            <- colnames(X)
+  rownames(fit$s)             <- colnames(X)
+  names(fit$beta)             <- colnames(X)
+  names(fit$pip)              <- colnames(X)
+  rownames(fit$mu.cov)        <- colnames(Z)
+  names(fit$beta.cov)         <- colnames(Z)
+  rownames(fit$fitted.values) <- rownames(X)
+  rownames(fit$residuals)     <- rownames(X)
   if (prior.same)
     fit$logodds <- c(fit$logodds)
   else

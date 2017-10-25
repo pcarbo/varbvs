@@ -13,8 +13,14 @@
 #
 # Return the number of observations used to fit a model.
 nobs.varbvs <- function (object, ...)
-  object$n
+  nrow(object$fitted.values)
 
+# ----------------------------------------------------------------------
+# Return the names of the samples.
+case.names.varbvs <- function (object, ...)
+  names(object$fitted.values)
+
+# ----------------------------------------------------------------------
 # Return the names of the (included) variables.
 variable.names.varbvs <- function (object, full = FALSE,
                                    include.threshold = 0.01, ...) {
@@ -26,10 +32,12 @@ variable.names.varbvs <- function (object, full = FALSE,
   }
 }
 
+# ----------------------------------------------------------------------
 # Return the names of the candidate variables.
 labels.varbvs <- function (object, ...)
   rownames(object$alpha)
 
+# ----------------------------------------------------------------------
 # Return the estimates of the regression coefficients at each
 # hyperparameter setting, as well as the "averaged" estimates.
 coef.varbvs <- function (object, ...) {
@@ -43,3 +51,8 @@ coef.varbvs <- function (object, ...) {
   }
   return(out)
 }
+
+# ----------------------------------------------------------------------
+# Extract the fitted values.
+fitted.varbvs <- function (object, ...)
+  object$fitted.values
