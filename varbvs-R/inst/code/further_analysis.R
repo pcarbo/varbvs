@@ -1,3 +1,5 @@
+# Run this code after running finemap.gtex.Rmd.
+
 sa    <- 1.035   # sa*sigma is prior variance.
 sigma <- 0.1381  # Residual variance.
 
