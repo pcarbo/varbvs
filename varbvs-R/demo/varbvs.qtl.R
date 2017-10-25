@@ -39,7 +39,8 @@ i       <- sample(p,na)
 beta    <- rep(0,p)
 beta[i] <- rnorm(na)
 
-# Generate random labels for the markers.
+# Generate labels for the samples and markers.
+rownames(X) <- sprintf("A%05d",sample(99999,n))
 colnames(X) <- paste0("rs",sample(1e6,p))
 
 # Adjust the QTL effects so that we control for the proportion of variance

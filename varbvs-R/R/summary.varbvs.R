@@ -34,7 +34,7 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   out <-
     list(family       = object$family,
          cred.int     = cred.int,
-         n            = nrow(object$fitted.values),
+         n            = nobs(object),
          p            = p,
          ns           = ns,
          ncov         = nrow(object$mu.cov),

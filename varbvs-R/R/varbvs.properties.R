@@ -18,7 +18,7 @@ nobs.varbvs <- function (object, ...)
 # ----------------------------------------------------------------------
 # Return the names of the samples.
 case.names.varbvs <- function (object, ...)
-  names(object$fitted.values)
+  rownames(object$fitted.values)
 
 # ----------------------------------------------------------------------
 # Return the names of the (included) variables.
