@@ -99,7 +99,7 @@ of the top SNP.
 top.markers <- summary(fit)$top.vars$index
 i    <- top.markers[1]
 vars <- which(R[,i]^2 >= ld.threshold)
-BF   <- varbvsproxybf(X,Z,y,fit,i,vars)
+out  <- varbvsproxybf(X,Z,y,fit,i)
 ```
 
 Note that the Bayes factors are computed separately for each

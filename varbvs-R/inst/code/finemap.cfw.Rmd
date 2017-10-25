@@ -138,7 +138,7 @@ First, do this for the top SNP.
 top.markers <- summary(fit)$top.vars$index
 i     <- top.markers[1]
 vars1 <- which(R[,i]^2 >= ld.threshold)
-BF1   <- varbvsproxybf(X,NULL,y,fit,i,vars1) 
+out1  <- varbvsproxybf(X,NULL,y,fit,i,vars1) 
 ```
 
 Note that the Bayes factors are computed separately for each
@@ -156,7 +156,7 @@ Next, do the same for the SNP with the second-highest PIP.
 top.markers <- summary(fit)$top.vars$index
 j     <- top.markers[2]
 vars2 <- which(R[,j]^2 >= ld.threshold)
-BF2   <- varbvsproxybf(X,NULL,y,fit,j,vars2)
+out2  <- varbvsproxybf(X,NULL,y,fit,j,vars2)
 ```
 
 This function computes the "probability probabilities" assuming that
@@ -176,8 +176,8 @@ Get the credible SNP sets for the top 2 SNPs (using the first
 hyperparameter setting only).
 
 ```{r}
-cred1 <- vars1[get.credible.set(BF1[,1],credint.prob)]
-cred2 <- vars2[get.credible.set(BF2[,1],credint.prob)]
+cred1 <- vars1[get.credible.set(out1$BF[,1],credint.prob)]
+cred2 <- vars2[get.credible.set(out2$BF[,1],credint.prob)]
 print(c(length(cred1),length(cred2)))
 ```
 

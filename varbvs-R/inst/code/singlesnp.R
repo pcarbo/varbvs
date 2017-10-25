@@ -21,5 +21,5 @@ sigma <- fit$sigma[1]
 sa    <- fit$sa[1]
 s     <- sa*sigma/(sa*varbvs:::diagsq(X)[c(i,j)] + 1)
 mu    <- s*c(y %*% X[,c(i,j)])/sigma
-logBF <- log(s/(sa*sigma)) + mu^2/(2*s)
+logBF <- log(s/(sa*sigma))/2 + mu^2/(2*s)
 

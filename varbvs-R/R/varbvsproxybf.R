@@ -60,7 +60,11 @@ varbvsproxybf <- function (X, Z, y, fit, i, vars) {
   # ------------------------------
   # Create a p x ns matrix containing the Bayes factors.
   BF           <- matrix(0,p,ns)
+  mu           <- matrix(0,p,ns)
+  s            <- matrix(0,p,ns)
   rownames(BF) <- rownames(fit$alpha)
+  rownames(mu) <- rownames(fit$alpha)
+  rownames(s)  <- rownames(fit$alpha)
   
   # COMPUTE PROXY PROBABILITIES
   # ---------------------------
@@ -93,9 +97,9 @@ varbvsproxybf <- function (X, Z, y, fit, i, vars) {
         y0 <- y0 + alpha0[j]*mu0[j] * X[,j]
 
       # Compute the Bayes factor.
-      s       <- sa*sigma/(sa*d[j] + 1)
-      mu      <- s*dot(y0,X[,j])/sigma
-      BF[j,k] <- s/(sa*sigma) * exp(mu^2/(2*s))
+      s[j,k]  <- sa*sigma/(sa*d[j] + 1)
+      mu[j,k] <- s[j,k]*dot(y0,X[,j])/sigma
+      BF[j,k] <- sqrt(s[j,k]/(sa*sigma)) * exp(mu[j,k]^2/(2*s[j,k]))
 
       # Remove the linear effect of variable j (except when i = j).
       if (i != j)
@@ -103,6 +107,8 @@ varbvsproxybf <- function (X, Z, y, fit, i, vars) {
     }
   }
 
-  # Output the Bayes factors for the selected candidate variables only.
-  return(BF[vars,])
+  # Output the Bayes factors for the selected candidate variables
+  # only, as well as the estimated (posterior) means and variances of
+  # the regression coefficients.
+  return(list(BF = BF[vars,],mu = mu[vars,],s = s[vars,]))
 }
