@@ -210,3 +210,12 @@ regionplot2 <-
                       paste("colors indicate correlations with",map[j,"id"]))
 plot_grid(regionplot1,regionplot2,nrow = 2)
 ```
+
+## Session information
+
+This is the computing environment, version of R and packages that were
+used to generate these results.
+
+```{r session-info}
+sessionInfo()
+```

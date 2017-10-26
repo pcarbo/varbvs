@@ -180,3 +180,13 @@ do.call("plot_grid",c(plots,list(nrow = 6,ncol = 2)))
 
 In these plots, the number in the parentheses gives the number of SNPs
 in the credible SNP set.
+
+
+## Session information
+
+This is the computing environment, version of R and packages that were
+used to generate these results.
+
+```{r session-info}
+sessionInfo()
+```

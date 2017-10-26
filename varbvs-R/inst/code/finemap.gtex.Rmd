@@ -161,3 +161,12 @@ second-largest Bayes factor.
 ```{r}
 head(sort(out$BF[,1],decreasing = TRUE),n = 2)
 ```
+
+## Session information
+
+This is the computing environment, version of R and packages that were
+used to generate these results.
+
+```{r session-info}
+sessionInfo()
+```
