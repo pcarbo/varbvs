@@ -5,6 +5,8 @@
 \alias{labels.varbvs}
 \alias{coef.varbvs}
 \alias{fitted.varbvs}
+\alias{resid.varbvs}
+\alias{residuals.varbvs}
 \title{Accessing Properties of Fitted varbvs Models}
 \usage{
 \method{nobs}{varbvs}(object, \dots)
