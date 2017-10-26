@@ -285,11 +285,9 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
     \code{family = "gaussian"}, and none for \code{family = "binomial"}.
 }
 \value{
-    An object with S3 class \code{c("varbvs","list")}.
+  An object with S3 class \code{c("varbvs","list")}.
 
   \item{family}{Either "gaussian" or "binomial".}
-
-  \item{n}{Number of data samples used to fit model.}
 
   \item{sigma}{Settings for sigma (family = "gaussian" only).}
 
@@ -344,7 +342,17 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
     "binomial"} only.}
   
   \item{optimize.eta}{If TRUE, eta was fit to data (\code{family =
-  "binomial"} only).}
+    "binomial"} only).}
+
+  \item{fitted.values}{Matrix containing the predicted (or "fitted")
+    values of the outcome at each hyperparameter setting. For the
+    logistic regression model (\code{family = "binomial"}), each matrix
+    entry gives the probability that the binary outcome is equal to 1.}
+
+  \item{residuals}{Matrix containing the model residuals at each
+    hyperparameter setting. For \code{family = "binomial"}, these are
+    the deviance residuals based on the likelihood ratio chi-squared
+    statistic.}
 
   \item{pve}{For each hyperparameter setting, and for each variable,
     mean estimate of the proportion of variance in outcome explained
@@ -354,7 +362,7 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
   \item{model.pve}{Samples drawn from posterior distribution giving
   estimates of proportion of variance in outcome (y) explained by fitted
   variable selection model. This is for \code{family = "gaussian"}
-  only). To obtain the posterior mean estimate of the proportion of
+  only. To obtain the posterior mean estimate of the proportion of
   variance explained (PVE), for example, simply type
   \code{mean(fit$model.pve)}.}
 }

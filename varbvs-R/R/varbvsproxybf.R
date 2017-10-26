@@ -1,22 +1,6 @@
-# For each variable j in "vars", this function returns a Bayes factor
-# measuring the improvement in "fit" when variable j is included in
-# the model instead of variable i; that is, a larger Bayes factor
-# indicates a better model fit by swapping variables i and j. From an
-# optimization perspective, this could be viewed as addressing the
-# question, if you had to update the variational parameters for one
-# variable so as to improve the "fit" of the variational
-# approximation, after setting the posterior inclusion probability for
-# variable i to zero, which variable would you choose?
-#
-# A few notes:
-#
-#   - The set of candidate variables "vars" could include variable i,
-#     but does not have to.
-#
-#   - This only works for family = "gaussian".
-#
-#   - This function is currently not documented in the package.
-#
+# Compute Bayes factors measuring improvement in "fit" when each
+# candidate variable from "vars" is included in the model instead of
+# variable i.
 varbvsproxybf <- function (X, Z, y, fit, i, vars) {
 
   # Get the number of samples (n), the number of variables (p), and
@@ -73,7 +57,7 @@ varbvsproxybf <- function (X, Z, y, fit, i, vars) {
   # Repeat for each hyperparameter setting.
   for (k in 1:ns) {
 
-    # Get the hyperparameter settings.
+    # Get the hyperparameter values.
     sigma <- fit$sigma[k]
     sa    <- fit$sa[k]
     
@@ -107,7 +91,7 @@ varbvsproxybf <- function (X, Z, y, fit, i, vars) {
     }
   }
 
-  # Output the Bayes factors for the selected candidate variables
+  # Output the Bayes factors for the selected candidate proxy variables
   # only, as well as the estimated (posterior) means and variances of
   # the regression coefficients.
   return(list(BF = BF[vars,],mu = mu[vars,],s = s[vars,]))
