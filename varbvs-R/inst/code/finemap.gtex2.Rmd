@@ -65,6 +65,7 @@ Load the GTEx genotype data for the 4,546 SNPs at ACTN3 locus.
 ```{r}
 load("../datafiles/Thyroid.ENSG00000237846.1Mb.RData")
 storage.mode(X) <- "double"
+X <- X[,400:1200]
 n <- nrow(X)
 p <- ncol(X)
 ```
@@ -95,6 +96,30 @@ get.credible.set <- function (bf, pr) {
 }
 ```
 
+## Plot fine-mapping results
+
+To plot the fine-mapping results, I mark the credible SNP sets with
+crosses, and coloring the points according to LD with the top 2 SNPs.
+
+```{r, fig.height=20, fig.width=6}
+create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
+  clrs <- c("midnightblue","darkviolet","darkorchid","maroon",
+            "tomato","orange","gold","yellow")
+  dat <- data.frame(pos = 1:p,pip = fit$pip,r = r)
+  return(ggplot(mapping = aes(x = pos,y = pip,color = r),
+                environment = environment()) +
+    geom_point(data = dat,size = 1,shape = 20) +
+    geom_point(data = dat[markers,],color = "limegreen",shape = 20,size = 1) +
+    scale_x_continuous(breaks = NULL) +
+    scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
+    scale_color_gradientn(colors = clrs,guide = FALSE) +
+    labs(x = "",y = "varbvs PIP",title = plot.title) +
+    theme_cowplot(font_size = 7) +
+    theme(axis.line  = element_blank(),
+	      plot.title = element_text(size = 7,face = "plain")))
+}
+```
+
 Compute the correlations between all the SNPs.
 
 ```{r}
@@ -109,15 +134,22 @@ factors measuring the improvement in "fit" by using alternative SNPs
 instead of the top SNP.
 
 ```{r}
-top.markers <- summary(fit,nv = 20)$top.vars
-top.markers <- subset(top.markers,prob > 0.95)
-top.markers <- top.markers$variable
-cr          <- vector("list",1:length(top.markers))
-names(cr)   <- top.markers
+top.markers  <- summary(fit,nv = 20)$top.vars
+top.markers  <- subset(top.markers,prob > 0.95)
+top.markers  <- as.character(top.markers$variable)
+cr           <- vector("list",length(top.markers))
+plots        <- vector("list",length(top.markers))
+names(cr)    <- top.markers
+names(plots) <- top.markers
+temp <- NULL
 for (i in top.markers) {
-  vars    <- which(R[,i]^2 >= ld.threshold)
-  out     <- varbvsproxybf(X,Z,y,fit,i,vars)
-  cr[[i]] <- vars[get.credible.set(out$BF[,1],credint.prob)]
+  vars       <- which(R[,i]^2 >= ld.threshold)
+  out        <- varbvsproxybf(X,Z,y,fit,which(colnames(X) == i),vars)
+  cr[[i]]    <- vars[get.credible.set(out$BF[,1],credint.prob)]
+  j <- names(which.max(out$BF[,1]))
+  temp <- c(temp,j)
+  plots[[i]] <- create.finemap.plot(fit$pip,abs(R[,j]),cr[[i]],
+                                      sprintf("%s (%d)",j,length(cr[[i]])))
 }
 ```
 
@@ -126,29 +158,6 @@ hyperparameter setting. Here, to simplify the example, we just
 use the Bayes factors from the first hyperparameter setting
 (corresponding to the smallest prior inclusion probability).
 
-## Plot fine-mapping results
-
-Plot the PIPs of the SNPs, marking the two credible SNP sets with
-crosses, and colouring the points according to LD with the top 2 SNPs.
-
-```{r, fig.height=6, fig.width=8, eval=FALSE}
-create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
-  clrs <- c("midnightblue","darkviolet","darkorchid","maroon",
-            "tomato","orange","gold","yellow")
-  dat <- data.frame(pos = 1:p,pip = fit$pip,r = r)
-  return(ggplot(mapping = aes(x = pos,y = pip,color = r),
-                environment = environment()) +
-    geom_point(data = dat,size = 2,shape = 1) +
-    geom_point(data = dat[markers,],color = "black",shape = 4,size = 0.5) +
-    scale_x_continuous(breaks = NULL) +
-    scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
-    scale_color_gradientn(colors = clrs,name = "abs(r)") +
-    labs(x = "position on chromosome 11, 94-98 Mb",y = "varbvs PIP",
-         title = plot.title) +
-    theme_cowplot(font_size = 11) +
-    theme(axis.line  = element_blank(),
-	      plot.title = element_text(size = 11,face = "plain")))
-}
-print(create.finemap.plot(fit$pip,abs(R[,i]),cr,
-      paste("colors indicate correlations with",colnames(X)[i])))
+```{r}
+do.call("plot_grid",c(plots,list(nrow = 6,ncol = 2)))
 ```

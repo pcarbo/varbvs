@@ -94,7 +94,7 @@ probability (PIP), take all candidate SNPs in LD with this top SNP
 (based on a pre-specified threshold), then compute the Bayes factors
 measuring the improvement in "fit" by using the candidate SNPs instead
 of the top SNP.
-
+ 
 ```{r}
 top.markers <- summary(fit)$top.vars$index
 i    <- top.markers[1]
@@ -129,8 +129,8 @@ cr <- vars[get.credible.set(out$BF[,1],credint.prob)]
 
 ## Plot fine-mapping results
 
-Plot the PIPs of the SNPs, marking the two credible SNP sets with
-crosses, and colouring the points according to LD with the top 2 SNPs.
+Plot the PIPs of the SNPs, marking the credible SNP set with crosses,
+and colouring the points according to LD with the top SNP.
 
 ```{r, fig.height=6, fig.width=8}
 create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
