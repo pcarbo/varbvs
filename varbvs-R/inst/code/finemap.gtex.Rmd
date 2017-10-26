@@ -63,7 +63,8 @@ ld.threshold <- 0.2
 Load the GTEx genotype data for the 4,546 SNPs at ACTN3 locus.
 
 ```{r}
-load("../datafiles/Muscle_Skeletal.ACTN3.1Mb.RData")
+# load("../datafiles/Muscle_Skeletal.ACTN3.1Mb.RData")
+load("../datafiles/Thyroid.ENSG00000237846.1Mb.RData")
 storage.mode(X) <- "double"
 n <- nrow(X)
 p <- ncol(X)
