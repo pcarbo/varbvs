@@ -106,7 +106,7 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   out$top.vars <-
     data.frame(index = vars,variable = rownames(object$alpha)[vars],
                prob = object$pip[vars],PVE = NA,coef = object$beta[vars],
-               cred = NA)
+               cred = NA,stringsAsFactors = FALSE)
   for (i in 1:length(vars)) {
     if (object$family == "gaussian")
       out$top.vars[i,"PVE"] <- dot(w,object$pve[vars[i],])
