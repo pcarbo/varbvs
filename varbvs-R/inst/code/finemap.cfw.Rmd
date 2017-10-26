@@ -157,9 +157,9 @@ vars2 <- which(R[,j]^2 >= ld.threshold)
 out2  <- varbvsproxybf(X,NULL,y,fit,j,vars2)
 ```
 
-This function computes the "probability probabilities" assuming that
-exactly 1 SNP is causal, then selects the smallest set of SNPs such
-that the sum of the proxy probabilities is greater than "pr".
+This function computes the "proxy probabilities" assuming that exactly
+1 SNP is causal, then selects the smallest set of SNPs such that the
+sum of the proxy probabilities is greater than "pr".
 
 ```{r}
 get.credible.set <- function (bf, pr) {

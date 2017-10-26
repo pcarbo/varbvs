@@ -20,16 +20,15 @@ knitr::opts_chunk$set(
 
 ## Outline
 
-The aim of this analysis is to try out a simple fine-mapping idea.  We
-can also build on this analysis to test out other ideas for
-fine-mapping (that is, estimating credible sets for the location of
-the causal variant near an identified assocation).
+In this example, we consider fine-mapping for a more complicated
+scenario in which multiple SNPs are independently associated with a
+(gene expression) quantitative trait within a single locus.
 
 ## Set up environment
 
 Load a few packages.
 
-```{r}
+```{r, message=FALSE}
 library(ggplot2)
 library(cowplot)
 library(varbvs)
@@ -60,12 +59,13 @@ ld.threshold <- 0.2
 
 ## Load genotype data
 
-Load the GTEx genotype data for the 4,546 SNPs at ACTN3 locus.
+Retrieve genotype data for 800 SNPs near the pseudogene
+`ENSG00000237846`.
 
 ```{r}
 load("../datafiles/Thyroid.ENSG00000237846.1Mb.RData")
 storage.mode(X) <- "double"
-X <- X[,400:1200]
+X <- X[,401:1200]
 n <- nrow(X)
 p <- ncol(X)
 ```
@@ -74,11 +74,15 @@ p <- ncol(X)
 
 Fit the fully-factorized variational approximation to the posterior
 distribution of the coefficients for a linear regression model of a
-continuous outcome (quantitiative trait), with spike and slab priors on
-the coefficients. 
+continuous outcome (quantitiative trait), with spike and slab priors
+on the coefficients. We find that several SNPs in this locus are
+independently associated with gene expression, even when the prior is
+very conservative (1 SNP is associated with the gene expression trait
+*a priori*).
 
 ```{r}
 fit <- varbvs(X,Z,y,verbose = FALSE)
+sum(fit$alpha[,1] > 0.95)
 ```
 
 ## Compute proxy probabilities
@@ -98,18 +102,20 @@ get.credible.set <- function (bf, pr) {
 
 ## Plot fine-mapping results
 
-To plot the fine-mapping results, I mark the credible SNP sets with
-crosses, and coloring the points according to LD with the top 2 SNPs.
+To plot the fine-mapping results, I highlight the credible SNP sets in
+green , and otherwise points are coloured according to LD with each of
+the top SNPs.
 
-```{r, fig.height=20, fig.width=6}
+```{r}
 create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
   clrs <- c("midnightblue","darkviolet","darkorchid","maroon",
             "tomato","orange","gold","yellow")
   dat <- data.frame(pos = 1:p,pip = fit$pip,r = r)
   return(ggplot(mapping = aes(x = pos,y = pip,color = r),
                 environment = environment()) +
-    geom_point(data = dat,size = 1,shape = 20) +
-    geom_point(data = dat[markers,],color = "limegreen",shape = 20,size = 1) +
+    geom_point(data = dat,size = 1.5,shape = 20) +
+    geom_point(data = dat[markers,],color = "limegreen",
+	           shape = 20,size = 1.5) +
     scale_x_continuous(breaks = NULL) +
     scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
     scale_color_gradientn(colors = clrs,guide = FALSE) +
@@ -133,31 +139,44 @@ SNPs (based on a pre-specified threshold), then compute the Bayes
 factors measuring the improvement in "fit" by using alternative SNPs
 instead of the top SNP.
 
+Get the SNPs with PIP > 0.95.
+
 ```{r}
-top.markers  <- summary(fit,nv = 20)$top.vars
-top.markers  <- subset(top.markers,prob > 0.95)
-top.markers  <- as.character(top.markers$variable)
-cr           <- vector("list",length(top.markers))
-plots        <- vector("list",length(top.markers))
+top.markers <- summary(fit,nv = 20)$top.vars
+top.markers <- subset(top.markers,prob > 0.95)$variable
+m           <- length(top.markers)
+```
+
+Compute the credible SNP sets, taking the strategy as described
+above. Note that the credible set may not include the top SNP---this
+could happen because the Bayes factor calculations do not control for
+the effects of nearby, independently associated SNPs as effectively as
+the multi-SNP regression analysis (as implemented in `varbvs`).
+
+```{r}
+cr           <- vector("list",m)
+plots        <- vector("list",m)
 names(cr)    <- top.markers
 names(plots) <- top.markers
-temp <- NULL
 for (i in top.markers) {
+  idx        <- which(colnames(X) == i)
   vars       <- which(R[,i]^2 >= ld.threshold)
-  out        <- varbvsproxybf(X,Z,y,fit,which(colnames(X) == i),vars)
+  out        <- varbvsproxybf(X,Z,y,fit,idx,vars)
   cr[[i]]    <- vars[get.credible.set(out$BF[,1],credint.prob)]
-  j <- names(which.max(out$BF[,1]))
-  temp <- c(temp,j)
+  j          <- names(which.max(out$BF[,1]))
   plots[[i]] <- create.finemap.plot(fit$pip,abs(R[,j]),cr[[i]],
-                                      sprintf("%s (%d)",j,length(cr[[i]])))
+                                    sprintf("%s (%d)",j,length(cr[[i]])))
 }
 ```
 
-Note that the Bayes factors are computed separately for each
-hyperparameter setting. Here, to simplify the example, we just
-use the Bayes factors from the first hyperparameter setting
-(corresponding to the smallest prior inclusion probability).
+Also note that the Bayes factors are computed separately for each
+hyperparameter setting. Here, to simplify the example, I've taken the
+Bayes factors from the first hyperparameter setting (corresponding to
+the smallest prior inclusion probability).
 
-```{r}
+```{r, fig.height=11, fig.width=8}
 do.call("plot_grid",c(plots,list(nrow = 6,ncol = 2)))
 ```
+
+In these plots, the number in the parentheses gives the number of SNPs
+in the credible SNP set.

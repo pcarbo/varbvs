@@ -20,16 +20,15 @@ knitr::opts_chunk$set(
 
 ## Outline
 
-The aim of this analysis is to try out a simple fine-mapping idea.  We
-can also build on this analysis to test out other ideas for
-fine-mapping (that is, estimating credible sets for the location of
-the causal variant near an identified assocation).
+This is another vignette exploring a simple fine-mapping idea. In this
+case, the effect size is very large, sufficient to isolate the
+association signal to a single SNP.
 
 ## Set up environment
 
 Load a few packages.
 
-```{r}
+```{r, message=FALSE}
 library(ggplot2)
 library(cowplot)
 library(varbvs)
@@ -60,7 +59,7 @@ ld.threshold <- 0.2
 
 ## Load genotype data
 
-Load the GTEx genotype data for the 4,546 SNPs at ACTN3 locus.
+Load the GTEx genotype data for the 4,546 SNPs in the ACTN3 locus.
 
 ```{r}
 load("../datafiles/Muscle_Skeletal.ACTN3.1Mb.RData")
@@ -82,7 +81,7 @@ fit <- varbvs(X,Z,y,verbose = FALSE)
 
 ## Compute proxy probabilities
 
-Compute the correlations between all the SNPs.
+Compute the correlations between all available SNPs.
 
 ```{r}
 R <- cor(X)
@@ -107,9 +106,9 @@ hyperparameter setting. Here, to simplify the example, we will just
 use the Bayes factors from the first hyperparameter setting
 (corresponding to the smallest prior inclusion probability).
 
-This function computes the "probability probabilities" assuming that
-exactly 1 SNP is causal, then selects the smallest set of SNPs such
-that the sum of the proxy probabilities is greater than "pr".
+This function computes the "proxy probabilities" assuming that exactly
+1 SNP is causal, then selects the smallest set of SNPs such that the
+sum of the proxy probabilities is greater than "pr".
 
 ```{r}
 get.credible.set <- function (bf, pr) {
@@ -120,8 +119,8 @@ get.credible.set <- function (bf, pr) {
 }
 ```
 
-Get the credible SNP set for the top SNP (using the first
-hyperparameter setting only).
+Get the credible SNP set for the top SNP (for simplicity, using the
+first hyperparameter setting only).
 
 ```{r}
 cr <- vars[get.credible.set(out$BF[,1],credint.prob)]
@@ -132,19 +131,19 @@ cr <- vars[get.credible.set(out$BF[,1],credint.prob)]
 Plot the PIPs of the SNPs, marking the credible SNP set with crosses,
 and colouring the points according to LD with the top SNP.
 
-```{r, fig.height=6, fig.width=8}
+```{r, fig.height=4, fig.width=8}
 create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
   clrs <- c("midnightblue","darkviolet","darkorchid","maroon",
             "tomato","orange","gold","yellow")
   dat <- data.frame(pos = 1:p,pip = fit$pip,r = r)
   return(ggplot(mapping = aes(x = pos,y = pip,color = r),
                 environment = environment()) +
-    geom_point(data = dat,size = 2,shape = 1) +
+    geom_point(data = dat,size = 1.75,shape = 20) +
     geom_point(data = dat[markers,],color = "black",shape = 4,size = 0.5) +
     scale_x_continuous(breaks = NULL) +
     scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
     scale_color_gradientn(colors = clrs,name = "abs(r)") +
-    labs(x = "position on chromosome 11, 94-98 Mb",y = "varbvs PIP",
+    labs(x = "position on chromosome 11, 65.5-67.5Mb",y = "varbvs PIP",
          title = plot.title) +
     theme_cowplot(font_size = 11) +
     theme(axis.line  = element_blank(),
@@ -152,4 +151,13 @@ create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
 }
 print(create.finemap.plot(fit$pip,abs(R[,i]),cr,
       paste("colors indicate correlations with",colnames(X)[i])))
+```
+
+We see here that the credible SNP set contains only one SNP, at
+position 66,560,624 bp on chromosome 11. To understand why, observe
+that the Bayes factor for this SNP is over 50 times greater than the
+second-largest Bayes factor.
+
+```{r}
+head(sort(out$BF[,1],decreasing = TRUE),n = 2)
 ```
