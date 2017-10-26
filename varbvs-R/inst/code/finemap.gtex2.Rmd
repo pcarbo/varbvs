@@ -1,7 +1,7 @@
 ---
-title: "Illustration of Matthew's \"proxy SNP\" idea on CFW data set"
+title: "Another illustration of Matthew's \"proxy SNP\" idea on GTEx data set"
 author: "Peter Carbonetto"
-date: October 20, 2017
+date: October 19, 2017
 output:
   html_document:
     theme: readable
@@ -44,15 +44,6 @@ install_github("pcarbo/varbvs",ref = "finemap",subdir = "varbvs-R")
 
 ## Script parameters
 
-This vector specifies the (additive) phenotypic effects of the
-SNPs. In this case, exactly 2 SNPs (about 3 Mb apart on chromosome
-11) affect the quantitative trait.
-
-```{r}
-beta            <- rep(0,531)
-beta[c(88,506)] <- c(0.2,-0.35)
-```
-
 The causal variant should be within the credible set with this
 probability.
 
@@ -69,41 +60,13 @@ ld.threshold <- 0.2
 
 ## Load genotype data
 
-Load the genotype data for the 531 SNPs at the bone-mineral density
-locus on chromosome 11 that was identified in the *Nature Genetics*
-manuscript.
-
-These are data from outbred (CFW) mice, so will not have the same LD
-patterns as humans. I'm using mouse instead of human data because we
-don't have to worry about about making the mouse data publicly
-available.
+Load the GTEx genotype data for the 4,546 SNPs at ACTN3 locus.
 
 ```{r}
-load("../datafiles/cfw.chr11bmd.RData")
+load("../datafiles/Thyroid.ENSG00000237846.1Mb.RData")
+storage.mode(X) <- "double"
 n <- nrow(X)
 p <- ncol(X)
-```
-
-Center the columns of X so that each column has a mean of zero.
-
-```{r}
-rep.row <- function (x, n)
-  matrix(x,n,length(x),byrow = TRUE)
-X <- X - rep.row(colMeans(X),n)
-```
-
-## Simulate phenotype data
-
-Set the random number generator seed.
-
-```{r}
-set.seed(1)
-```
-
-Generate the quantitative trait measurements.
-
-```{r}
-y <- c(X %*% beta + rnorm(n))
 ```
 
 ## Fit variational approximation to posterior
@@ -114,46 +77,10 @@ continuous outcome (quantitiative trait), with spike and slab priors on
 the coefficients. 
 
 ```{r}
-fit <- varbvs(X,NULL,y,sa = 1,verbose = FALSE)
+fit <- varbvs(X,Z,y,verbose = FALSE)
 ```
 
 ## Compute proxy probabilities
-
-Compute the correlations between all the SNPs.
-
-```{r}
-R <- cor(X)
-```
-
-To test the idea of computing credible SNP sets based on "proxy
-probabilities", here I choose the top 2 SNPs by posterior inclusion
-probability (PIP), take all candidate SNPs in LD with these top 2 SNPs
-(based on a pre-specified threshold), then compute the Bayes factors
-measuring the improvement in "fit" by using the candidate SNPs instead
-of each of the top SNPs.
-
-First, do this for the top SNP.
-
-```{r}
-top.markers <- summary(fit)$top.vars$index
-i     <- top.markers[1]
-vars1 <- which(R[,i]^2 >= ld.threshold)
-out1  <- varbvsproxybf(X,NULL,y,fit,i,vars1) 
-```
-
-Note that the Bayes factors are computed separately for each
-hyperparameter setting. Here, to simplify the example, we will just
-use the Bayes factors from the first hyperparameter setting
-(corresponding to the smallest prior inclusion probability).
-
-Next, do the same for the SNP with the second-highest PIP.
-
-```{r}
-top.markers <- summary(fit)$top.vars$index
-j     <- top.markers[2]
-vars2 <- which(R[,j]^2 >= ld.threshold)
-out2  <- varbvsproxybf(X,NULL,y,fit,j,vars2)
-```
 
 This function computes the "probability probabilities" assuming that
 exactly 1 SNP is causal, then selects the smallest set of SNPs such
@@ -168,28 +95,50 @@ get.credible.set <- function (bf, pr) {
 }
 ```
 
-Get the credible SNP sets for the top 2 SNPs (using the first
-hyperparameter setting only).
+Compute the correlations between all the SNPs.
 
 ```{r}
-cred1 <- vars1[get.credible.set(out1$BF[,1],credint.prob)]
-cred2 <- vars2[get.credible.set(out2$BF[,1],credint.prob)]
-print(c(length(cred1),length(cred2)))
+R <- cor(X)
 ```
+
+To test the idea of computing credible SNP sets based on "proxy
+probabilities", here I choose the top SNPs by posterior inclusion
+probability (PIP), take all candidate SNPs in LD with each of the top
+SNPs (based on a pre-specified threshold), then compute the Bayes
+factors measuring the improvement in "fit" by using alternative SNPs
+instead of the top SNP.
+
+```{r}
+top.markers <- summary(fit,nv = 20)$top.vars
+top.markers <- subset(top.markers,prob > 0.95)
+top.markers <- top.markers$variable
+cr          <- vector("list",1:length(top.markers))
+names(cr)   <- top.markers
+for (i in top.markers) {
+  vars    <- which(R[,i]^2 >= ld.threshold)
+  out     <- varbvsproxybf(X,Z,y,fit,i,vars)
+  cr[[i]] <- vars[get.credible.set(out$BF[,1],credint.prob)]
+}
+```
+
+Note that the Bayes factors are computed separately for each
+hyperparameter setting. Here, to simplify the example, we just
+use the Bayes factors from the first hyperparameter setting
+(corresponding to the smallest prior inclusion probability).
 
 ## Plot fine-mapping results
 
 Plot the PIPs of the SNPs, marking the two credible SNP sets with
 crosses, and colouring the points according to LD with the top 2 SNPs.
 
-```{r, fig.height=6, fig.width=8}
+```{r, fig.height=6, fig.width=8, eval=FALSE}
 create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
   clrs <- c("midnightblue","darkviolet","darkorchid","maroon",
             "tomato","orange","gold","yellow")
   dat <- data.frame(pos = 1:p,pip = fit$pip,r = r)
   return(ggplot(mapping = aes(x = pos,y = pip,color = r),
                 environment = environment()) +
-    geom_point(data = dat,size = 2,shape = 19) +
+    geom_point(data = dat,size = 2,shape = 1) +
     geom_point(data = dat[markers,],color = "black",shape = 4,size = 0.5) +
     scale_x_continuous(breaks = NULL) +
     scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
@@ -200,11 +149,6 @@ create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
     theme(axis.line  = element_blank(),
 	      plot.title = element_text(size = 11,face = "plain")))
 }
-regionplot1 <-
-  create.finemap.plot(fit$pip,abs(R[,i]),cred1,
-                      paste("colors indicate correlations with",map[i,"id"]))
-regionplot2 <-
-  create.finemap.plot(fit$pip,abs(R[,j]),cred2,
-                      paste("colors indicate correlations with",map[j,"id"]))
-plot_grid(regionplot1,regionplot2,nrow = 2)
+print(create.finemap.plot(fit$pip,abs(R[,i]),cr,
+      paste("colors indicate correlations with",colnames(X)[i])))
 ```
