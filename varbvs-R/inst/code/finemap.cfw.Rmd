@@ -20,16 +20,18 @@ knitr::opts_chunk$set(
 
 ## Outline
 
-The aim of this analysis is to try out a simple fine-mapping idea.  We
-can also build on this analysis to test out other ideas for
-fine-mapping (that is, estimating credible sets for the location of
-the causal variant near an identified assocation).
+The aim of this analysis is to try out a simple fine-mapping idea when
+the effect sizes are reasonably large, but there is widespread linkage
+disequilibrium famong SNPs in the locus. We can also build on this
+analysis to test out other ideas for fine-mapping (that is, estimating
+credible sets for the location of the causal variant near an
+identified assocation).
 
 ## Set up environment
 
 Load a few packages.
 
-```{r}
+```{r, message=FALSE}
 library(ggplot2)
 library(cowplot)
 library(varbvs)
