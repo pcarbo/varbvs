@@ -26,8 +26,9 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   # (1) CHECK INPUTS
   # ----------------
   # Check input X.
-  if (!(is.matrix(X) & is.double(X) & sum(is.na(X)) == 0))
-    stop("Input X must be a double-precision matrix with no missing values.")
+  if (!(is.matrix(X) & is.numeric(X) & sum(is.na(X)) == 0))
+    stop("Input X must be a numeric matrix with no missing values.")
+  storage.mode(X) <- "double"
 
   # Add column names to X if they are not provided.
   if (is.null(colnames(X)))

@@ -26,10 +26,13 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # (1) CHECK INPUTS
   # ----------------
   # Check input X.
-  if (!(is.matrix(X) & is.double(X) & sum(is.na(X)) == 0))
-    stop("Input X must be a double-precision matrix with no missing values.")
-  
-  # Add column names to X if they are not provided.
+  if (!(is.matrix(X) & is.numeric(X) & sum(is.na(X)) == 0))
+    stop("Input X must be a numeric matrix with no missing values.")
+  storage.mode(X) <- "double"
+
+  # Add row and column names to X if they are not provided.
+  if (is.null(rownames(X)))
+    rownames(X) <- 1:n
   if (is.null(colnames(X)))
     colnames(X) <- paste0("X",1:p)
   
@@ -49,13 +52,19 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   else
     Z <- cbind(1,Z)
 
+  # Add column names to Z if they are not already provided.
+  if (is.null(colnames(Z)) & ncol(Z) > 1)
+    colnames(Z) <- c("(Intercept)",paste0("Z",1:(ncol(Z) - 1)))
+  else
+    colnames(Z)[1] <- "(Intercept)"
+  
   # Check input y.
   if (!is.numeric(y) | sum(is.na(y)) > 0)
     stop("Input y must be a numeric vector with no missing values.")
   if (length(y) != n)
     stop("Inputs X and y do not match")
   y <- c(as.double(y))
-  
+
   # Get choice of regression model.
   family <- match.arg(family)
 
@@ -209,7 +218,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.4-0 ")
+    cat("VARBVS version 2.4-8 ")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")
@@ -344,28 +353,31 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     if (verbose)
       cat("\n")
   }
-    
+
   # (6) CREATE FINAL OUTPUT
   # -----------------------
   # Compute the normalized importance weights and the posterior
   # inclusion probabilities (PIPs) and mean regression coefficients
   # averaged over the hyperparameter settings.
   if (ns == 1) {
-    w    <- 1
-    pip  <- fit$alpha
-    beta <- fit$mu
+    w        <- 1
+    pip      <- c(alpha)
+    beta     <- c(alpha*mu)
+    beta.cov <- c(mu.cov)
   } else {
-    w    <- normalizelogweights(logw)
-    pip  <- c(alpha %*% w)
-    beta <- c(mu %*% w)
+    w        <- normalizelogweights(logw)
+    pip      <- c(alpha %*% w)
+    beta     <- c((alpha*mu) %*% w)
+    beta.cov <- c(mu.cov %*% w)
   }
 
   if (family == "gaussian") {
-    fit <- list(family = family,n = n,n0 = n0,sa0 = sa0,mu.cov = mu.cov,
+    fit <- list(family = family,n0 = n0,sa0 = sa0,mu.cov = mu.cov,
                 update.sigma = update.sigma,update.sa = update.sa,
                 prior.same = prior.same,optimize.eta = FALSE,logw = logw,
                 w = w,sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
-                mu = mu,s = s,eta = NULL,pip = pip,beta = beta)
+                mu = mu,s = s,eta = NULL,pip = pip,beta = beta,
+                beta.cov = beta.cov,y = y)
     class(fit) <- c("varbvs","list")
 
     # Compute the proportion of variance in Y, after removing linear
@@ -381,27 +393,46 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     sx                <- var1.cols(X)
     for (i in 1:ns) 
       fit$pve[,i] <- sx*(mu[,i]^2 + s[,i])/var1(y)
+
+    # Restore the inputted X and y.
+    X <- X + Z %*% SZX
+    y <- y + c(Z %*% SZy)
+  
+    # Compute the fitted values for each hyperparameter setting.
+    fit$fitted.values <- varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu)
+
+    # Compute the residuals for each hyperparameter setting.
+    fit$residuals <- y - fit$fitted.values
   } else if (family == "binomial") {
-    fit <- list(family = family,n = n,n0 = n0,mu.cov = mu.cov,sa0 = sa0,
+    fit <- list(family = family,n0 = n0,mu.cov = mu.cov,sa0 = sa0,
                 update.sigma = FALSE,update.sa = update.sa,
                 optimize.eta = optimize.eta,prior.same = prior.same,
                 logw = logw,w = w,sigma = NULL,sa = sa,logodds = logodds,
                 alpha = alpha,mu = mu,s = s,eta = eta,pip = pip,beta = beta,
-                model.pve = NA)
+                beta.cov = beta.cov,model.pve = NA)
     class(fit) <- c("varbvs","list")
+
+    # Compute the fitted values for each hyperparameter setting.
+    fit$fitted.values <- varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu)
+    
+    # TO DO: Fix this.
+    fit$residuals <- matrix(0,n,ns)
   }
   
   # Add names to some of the outputs.
-  rownames(fit$alpha) <- colnames(X)
-  rownames(fit$mu)    <- colnames(X)
-  rownames(fit$s)     <- colnames(X)
-  names(fit$beta)     <- colnames(X)
-  names(fit$pip)      <- colnames(X)
+  rownames(fit$alpha)         <- colnames(X)
+  rownames(fit$mu)            <- colnames(X)
+  rownames(fit$s)             <- colnames(X)
+  names(fit$beta)             <- colnames(X)
+  names(fit$pip)              <- colnames(X)
+  rownames(fit$mu.cov)        <- colnames(Z)
+  names(fit$beta.cov)         <- colnames(Z)
+  rownames(fit$fitted.values) <- rownames(X)
+  rownames(fit$residuals)     <- rownames(X)
   if (prior.same)
     fit$logodds <- c(fit$logodds)
   else
     rownames(fit$logodds) <- colnames(X)
-
   return(fit)
 }
 
@@ -427,8 +458,7 @@ outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, logodds,
 
     # Adjust the variational lower bound to account for integral over
     # the regression coefficients corresponding to the covariates.
-    out$logw <-
-      out$logw - determinant(crossprod(Z),logarithm = TRUE)$modulus/2
+    out$logw <- out$logw - determinant(crossprod(Z),logarithm = TRUE)$modulus/2
     
     # Compute the posterior mean estimate of the regression
     # coefficients for the covariates under the current variational

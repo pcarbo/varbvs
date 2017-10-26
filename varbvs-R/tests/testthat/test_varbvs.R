@@ -15,9 +15,9 @@ context("varbvs")
 
 test_that("model fitting works for simulated data with a continuous outcome",{
 
-  # Run the R script that demonstrates varbvs for mapping of a
-  # quantitative trait in a simulated data set.
-  source("demo.qtl.R")
+  # Run the varbvs demo for mapping a quantitative trait in a
+  # simulated data set.
+  demo("varbvs.qtl",package = "varbvs",ask = FALSE)
 
   # Check the number of included variables at different probability
   # thresholds.
@@ -31,19 +31,37 @@ test_that("model fitting works for simulated data with a continuous outcome",{
   # Check the posterior mean of the hyperparameters.
   expect_equal(summary(fit)$logodds$x0,-2.08,tolerance = 0.01)
   expect_equal(summary(fit)$sigma$x0,4.13,tolerance = 0.01)
-  expect_equal(summary(fit)$sa$x0,0.158,tolerance = 0.001)
+  expect_equal(summary(fit)$sa$x0,0.158,tolerance = 0.01)
 
   # Evaluate fitted model.
-  expect_equal(cor(y,y.fit)^2,0.650,tolerance = 0.001)
+  expect_equal(cor(y,y.fit)^2,0.650,tolerance = 0.01)
+})
+
+test_that(paste("model fitting works for simulated data with a continuous",
+                "outcome and one hyperparameter setting"),{
+
+  # The prior inclusion probability is approximately 1/1000.
+  logodds <- (-3)
+                    
+  # Run the varbvs demo for mapping a quantitative trait in a
+  # simulated data set.
+  source(system.file("demo","varbvs.qtl.R",package = "varbvs"),local = TRUE)
+
+  # Check the posterior mean of the hyperparameters.
+  expect_equal(summary(fit)$sigma$x0,4.26,tolerance = 0.01)
+  expect_equal(summary(fit)$sa$x0,0.23,tolerance = 0.01)
+
+  # Evaluate fitted model.
+  expect_equal(cor(y,y.fit)^2,0.626,tolerance = 0.01)
 })
 
 test_that(paste("model fitting works for simulated data with a binary",
                 "outcome, and no covariates"),{
 
   # Run the R script that demonstrates mapping of a binary trait in a
-  # simulated data set, with no covariates included.
+  # simulated genetic data set, with no covariates included.
   covariates <- NULL
-  source("demo.cc.R",local = TRUE)
+  source(system.file("demo","varbvs.cc.R",package = "varbvs"),local = TRUE)
 
   # Check the number of included variables at different probability
   # thresholds.
@@ -53,23 +71,24 @@ test_that(paste("model fitting works for simulated data with a binary",
   
   # Check the posterior mean of the hyperparameters.
   expect_equal(summary(fit)$logodds$x0,-2.06,tolerance = 0.01)
-  expect_equal(summary(fit)$sa$x0,0.209,tolerance = 0.001)
+  expect_equal(summary(fit)$sa$x0,0.209,tolerance = 0.01)
   expect_true(is.na(summary(fit)$sigma$x0))
 
   # Evaluate fitted model.
   expect_equal(table(factor(y),factor(y.fit)),
                as.table(rbind(c(879,67),
                               c(325,129))),
-               check.attributes = FALSE)
+               check.attributes = FALSE,
+               tolerance = 0.02)
 })
 
 test_that(paste("model fitting works for simulated data with a binary",
                 "outcome, and 2 covariates"),{
 
   # Run the R script that demonstrates mapping of a binary trait in a
-  # simulated data set, with two covariates included in the model.
+  # simulated genetic data set, with two covariates included.
   covariates <- c("age","weight")
-  source("demo.cc.R",local = TRUE)
+  source(system.file("demo","varbvs.cc.R",package = "varbvs"),local = TRUE)
 
   # Check the number of included variables at different probability
   # thresholds.
@@ -79,14 +98,36 @@ test_that(paste("model fitting works for simulated data with a binary",
   
   # Check the posterior mean of the hyperparameters.
   expect_equal(summary(fit)$logodds$x0,-2.07,tolerance = 0.01)
-  expect_equal(summary(fit)$sa$x0,0.119,tolerance = 0.001)
+  expect_equal(summary(fit)$sa$x0,0.119,tolerance = 0.01)
   expect_true(is.na(summary(fit)$sigma$x0))
 
   # Evaluate fitted model.
   expect_equal(table(factor(y),factor(y.fit)),
                as.table(rbind(c(792,124),
                               c(244,240))),
-               check.attributes = FALSE)
+               check.attributes = FALSE,
+               tolerance = 0.02)
+})
+
+test_that(paste("model fitting works for simulated data with a binary",
+                "outcome, 2 covariates, and only 1 hyperparameter setting"),{
+
+  # Run the R script that demonstrates mapping of a binary trait in a
+  # simulated genetic data set, with two covariates included.
+  logodds    <- (-3)
+  covariates <- c("age","weight")
+  source(system.file("demo","varbvs.cc.R",package = "varbvs"),local = TRUE)
+  
+  # Check the posterior mean of the hyperparameters.
+  expect_equal(summary(fit)$sa$x0,0.203,tolerance = 0.01)
+  expect_true(is.na(summary(fit)$sigma$x0))
+
+  # Evaluate fitted model.
+  expect_equal(table(factor(y),factor(y.fit)),
+               as.table(rbind(c(794,122),
+                              c(248,236))),
+               check.attributes = FALSE,
+               tolerance = 0.02)
 })
 
 test_that("model fitting works when crossprod(Z) is near-singular",{
@@ -98,7 +139,7 @@ test_that("model fitting works when crossprod(Z) is near-singular",{
   #  v <- eigen(R)$values
   #  print(v)
   #
-  load("data.singular.cov.RData")
+  load(system.file("datafiles","singular.RData",package = "varbvs"))
   expect_silent(fit <- varbvs(X,Z,y,"gaussian",verbose = FALSE))
 })
 
@@ -108,7 +149,7 @@ test_that(paste("model fitting works for linear regression with",
                     
   # Run the R script that demonstrates varbvsmix on a simulated data
   # set in which all the candidate variables are uncorrelated.
-  source("demo.mix.R")
+  demo("varbvsmix",package = "varbvs",ask = FALSE)
 
   # The variational lower bound should always be increasing.
   expect_true(all(diff(fit$logZ) > 0))
@@ -121,7 +162,7 @@ test_that(paste("model fitting works for linear regression with",
 
 test_that("varbvs and varbvsmix produce same estimates when K=2",{
   tol <- 1e-4
-  source("demo.test.mix.R")
+  demo("varbvsmix.test",package = "varbvs",ask = FALSE)
   rownames(fit$alpha) <- NULL
   rownames(fit$mu)    <- NULL
   

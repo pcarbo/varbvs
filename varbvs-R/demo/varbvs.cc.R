@@ -2,9 +2,7 @@
 # (e.g., case-control) trait in a simulated data set in which all the
 # genetic markers are uncorrelated with each other (i.e., they are
 # "unlinked").
-#
-# Note that variable "covariates" must be specified before running
-# this script.
+library(lattice)
 library(varbvs)
 
 # SCRIPT PARAMETERS
@@ -15,13 +13,15 @@ na <- 10    # Number of markers that affect the binary outcome.
 sa <- 0.2   # Variance of log-odds ratios.
 p1 <- 0.5   # Target proportion of subjects that are cases (y = 1).
 
-# Names of covariates. Example:
-# 
-#   covariates <- c("age","weight")
-#
+# Names of covariates.
+if (!exists("covariates")) {
+  covariates <- c("age","weight")
+}
 
 # Candidate values for the prior log-odds of inclusion.
-logodds <- seq(-3,-1.5,0.5)
+if (!exists("logodds")) {
+  logodds <- seq(-3,-1.5,0.5)
+}
 
 # Set the random number generator seed.
 set.seed(1)
@@ -44,7 +44,7 @@ i       <- sample(p,na)
 beta    <- rep(0,p)
 beta[i] <- sqrt(sa)*rnorm(na)
 
-# Generate random labels for the markers.
+# Generate labels for the markers.
 colnames(X) <- paste0("rs",sample(1e6,p))
 
 # Generate the covariate data (Z), and the linear effects of the
@@ -68,6 +68,12 @@ if (m > 0)
 # success rates given by the logistic regression.
 y <- as.double(runif(n) < varbvs:::sigmoid(w))
 
+# Generate labels for the samples.
+names(y)    <- sprintf("A%05d",sample(99999,n))
+rownames(X) <- names(y)
+if (!is.null(Z))
+  rownames(Z) <- names(y)
+
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 # Fit the fully-factorized variational approximation to the posterior
@@ -84,11 +90,33 @@ cat("3. SUMMARIZING RESULTS.\n")
 print(summary(fit))
 cat("\n")
 
+# COMPARE ESTIMATES AGAINST GROUND-TRUTH
+# --------------------------------------
+# Plot the estimated coefficients against the ground-truth coefficients.
+# It is expected that oefficients near zero will be "shrunk" to zero.
+cat("4. PLOTTING COEFFICIENT ESTIMATES.\n")
+trellis.par.set(par.xlab.text = list(cex = 0.75),
+                par.ylab.text = list(cex = 0.75),
+                axis.text = list(cex = 0.75))
+markers  <- labels(fit)
+beta.est <- coef(fit)
+beta.est <- beta.est[markers,ncol(beta.est)]
+print(xyplot(beta.est ~ beta.true,
+             data.frame(beta.true = beta,beta.est = beta.est),
+             pch = 4,col = "black",cex = 0.6,
+             panel = function(x, y, ...) {
+               panel.xyplot(x,y,...)
+               panel.abline(a = 0,b = 1,col = "magenta",lty = "dotted")
+             },
+             scales = list(limits = c(-1.1,1.1)),
+             xlab = "ground-truth regression coefficient",
+             ylab = "estimated regression coefficient"))
+
 # EVALUATE MODEL PREDICTIONS
 # --------------------------
 # Compute estimates of the binary trait using the fitted model, and
 # compare against the observed values.
-cat("4. EVALUATING FITTED MODEL.\n")
+cat("5. EVALUATING FITTED MODEL.\n")
 y.fit <- predict(fit,X,Z)
 cat("Comparison of observed case-control status against estimated outcome:\n")
 print(table(y = factor(y),y.fit = factor(y.fit)))

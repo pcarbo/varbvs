@@ -7,7 +7,7 @@
   \code{\link{varbvs}}.}
 
 \usage{
-  \method{predict}{varbvs}(object, X, Z = NULL, \ldots)
+  \method{predict}{varbvs}(object, X, Z = NULL, \dots)
 }
 \arguments{
   \item{object}{Output of function \code{\link{varbvs}}.}

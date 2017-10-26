@@ -2,6 +2,7 @@
 # mapping of a quantitative trait. The data set is simulated assuming
 # that all the genetic markers are uncorrelated with each other (i.e.,
 # they are "unlinked").
+library(lattice)
 library(varbvs)  
 
 # SCRIPT PARAMETERS
@@ -16,7 +17,9 @@ r  <- 0.5   # Proportion of variance in trait explained by QTLs.
 covariates <- c("age","weight","glucose")
 
 # Candidate values for the prior log-odds of inclusion.
-logodds <- seq(-3,-1,0.1)
+if (!exists("logodds")) {
+  logodds <- seq(-3,-1,0.1)
+}
 
 # Set the random number generator seed.
 set.seed(1)
@@ -38,7 +41,7 @@ i       <- sample(p,na)
 beta    <- rep(0,p)
 beta[i] <- rnorm(na)
 
-# Generate random labels for the markers.
+# Generate labels for the markers.
 colnames(X) <- paste0("rs",sample(1e6,p))
 
 # Adjust the QTL effects so that we control for the proportion of variance
@@ -68,6 +71,12 @@ if (m > 0)
   y <- y + Z %*% u
 y <- c(y)
 
+# Generate labels for the samples.
+names(y)    <- sprintf("A%05d",sample(99999,n))
+rownames(X) <- names(y)
+if (!is.null(Z))
+  rownames(Z) <- names(y)
+    
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 # Fit the fully-factorized variational approximation to the posterior
@@ -84,11 +93,33 @@ cat("3. SUMMARIZING RESULTS.\n")
 print(summary(fit))
 cat("\n")
 
+# COMPARE ESTIMATES AGAINST GROUND-TRUTH
+# --------------------------------------
+# Plot the estimated coefficients against the ground-truth coefficients.
+# It is expected that oefficients near zero will be "shrunk" to zero.
+cat("4. PLOTTING COEFFICIENT ESTIMATES.\n")
+trellis.par.set(par.xlab.text = list(cex = 0.75),
+                par.ylab.text = list(cex = 0.75),
+                axis.text = list(cex = 0.75))
+markers  <- labels(fit)
+beta.est <- coef(fit)
+beta.est <- beta.est[markers,ncol(beta.est)]
+print(xyplot(beta.est ~ beta.true,
+             data.frame(beta.true = beta,beta.est = beta.est),
+             pch = 4,col = "black",cex = 0.6,
+             panel = function(x, y, ...) {
+               panel.xyplot(x,y,...)
+               panel.abline(a = 0,b = 1,col = "magenta",lty = "dotted")
+             },
+             scales = list(limits = c(-1.1,1.1)),
+             xlab = "ground-truth regression coefficient",
+             ylab = "estimated regression coefficient"))
+
 # EVALUATE MODEL PREDICTIONS
 # --------------------------
 # Compute estimates of the quantitative trait using the fitted model,
 # and compare against the observed values.
-cat("4. EVALUATING FITTED MODEL.\n")
+cat("5. EVALUATING FITTED MODEL.\n")
 y.fit <- predict(fit,X,Z)
 cat(sprintf("r^2 between predicted Y and observed Y is %0.3f.\n",
             cor(y,y.fit)^2))

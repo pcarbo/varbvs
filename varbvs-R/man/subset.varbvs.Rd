@@ -5,7 +5,7 @@
 and return a new varbvs analysis object with these hyperparameter
 settings only.}
 \usage{
-  \method{subset}{varbvs}(x, subset, \ldots)
+  \method{subset}{varbvs}(x, subset, \dots)
 }
 \arguments{
   \item{x}{Output of function \code{\link{varbvs}}.}

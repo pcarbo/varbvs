@@ -25,8 +25,9 @@ predict.varbvs <- function (object, X, Z = NULL, ...) {
   ns <- length(object$logw)
   
   # Check input X.
-  if (!(is.matrix(X) & is.double(X) & sum(is.na(X)) == 0))
-    stop("Input X must be a double-precision matrix with no missing values.")
+  if (!(is.matrix(X) & is.numeric(X) & sum(is.na(X)) == 0))
+    stop("Input X must be a numeric matrix with no missing values.")
+  storage.mode(X) <- "double"
 
   # Check input Z, and add an intercept.
   if (is.null(Z))
@@ -46,20 +47,30 @@ predict.varbvs <- function (object, X, Z = NULL, ...) {
   # Get the normalized (approximate) probabilities.
   w <- object$w
   
-  # For each hyperparameter setting, and for each sample, compute the
-  # posterior mean estimate of Y, and then average these estimates
-  # over the hyperparameter settings. For the logistic regression, the
-  # final "averaged" estimate is obtained by collecting the "votes"
-  # from each hyperparameter setting, weighting the votes by the
-  # marginal probabilities, and outputing the estimate that wins by
-  # majority. The averaged estimate is computed this way because the
-  # estimates conditioned on each hyperparameter setting are not
-  # necessarily calibrated in the same way.
-  Y <- with(object,Z %*% mu.cov + X %*% (alpha*mu))
+  # Average these estimatesof Y over the hyperparameter settings. For
+  # the logistic regression, the final "averaged" estimate is obtained
+  # by collecting the "votes" from each hyperparameter setting,
+  # weighting the votes by the marginal probabilities, and outputing
+  # the estimate that wins by majority. The averaged estimate is
+  # computed this way because the estimates conditioned on each
+  # hyperparameter setting are not necessarily calibrated in the same
+  # way.
+  Y <- with(object,varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu))
   if (object$family == "gaussian")
     return(c(Y %*% w))
   else if (object$family == "binomial")
-    return(round(c(round(sigmoid(Y)) %*% w)))
+    return(round(c(round(Y) %*% w)))
   else
     stop("Invalid setting for object$family")
+}
+
+# ----------------------------------------------------------------------
+# For each hyperparameter setting, and for each sample, compute a
+# posterior mean estimate of Y. (For the logistic regression model, Y
+# contains the posterior probability that the binary outcome is 1.)
+varbvs.fitted.matrix <- function (X, Z, family, mu.cov, alpha, mu) {
+  Y <- Z %*% mu.cov + X %*% (alpha*mu)
+  if (family == "binomial")
+    Y <- sigmoid(Y)
+  return(Y)
 }

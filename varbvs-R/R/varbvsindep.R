@@ -25,8 +25,9 @@ varbvsindep <- function (fit, X, Z, y) {
   ns <- length(fit$logw)
 
   # Check input X.
-  if (!(is.matrix(X) & is.double(X) & sum(is.na(X)) == 0))
-    stop("Input X must be a double-precision matrix with no missing values.")
+  if (!(is.matrix(X) & is.numeric(X) & sum(is.na(X)) == 0))
+    stop("Input X must be a numeric matrix with no missing values.")
+  storage.mode(X) <- "double"
   if (nrow(fit$alpha) != p)
     stop("Inputs X and fit are not compatible.")
 

@@ -34,7 +34,7 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   out <-
     list(family       = object$family,
          cred.int     = cred.int,
-         n            = object$n,
+         n            = nobs(object),
          p            = p,
          ns           = ns,
          ncov         = nrow(object$mu.cov),
@@ -106,14 +106,15 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, nr = 1000, ...) {
   out$top.vars <-
     data.frame(index = vars,variable = rownames(object$alpha)[vars],
                prob = object$pip[vars],PVE = NA,coef = object$beta[vars],
-               cred = NA)
+               cred = NA,stringsAsFactors = FALSE)
   for (i in 1:length(vars)) {
     if (object$family == "gaussian")
       out$top.vars[i,"PVE"] <- dot(w,object$pve[vars[i],])
     out$top.vars[i,"cred"] <- with(varbvscoefcred(object,vars[i],cred.int,nr),
                                    sprintf("[%+0.3f,%+0.3f]",a,b))
   }
-  names(out$top.vars)[6] <- sprintf("Pr(coef.>%0.2f)",cred.int)
+  colnames(out$top.vars)[6] <- sprintf("Pr(coef.>%0.2f)",cred.int)
+  rownames(out$top.vars)    <- NULL
   
   class(out) <- c("summary.varbvs","list")
   return(out)
@@ -201,3 +202,8 @@ print.summary.varbvs <- function (x, digits = 3, ...) {
   
   return(invisible(x))
 }
+
+# ----------------------------------------------------------------------
+# Display summary of pcaviz object.
+print.varbvs <- function (x, digits = 3, ...)
+  print(summary(x),digits,...)

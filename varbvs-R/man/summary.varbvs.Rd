@@ -1,13 +1,15 @@
 \name{summary.varbvs,print.summary.varbvs}
 \alias{summary.varbvs}
 \alias{print.summary.varbvs}
+\alias{print.varbvs}
 \title{Summarize a fitted variable selection model.}
 \description{Generate a summary of the Bayesian variable selection model
   fitted using variational approximation methods.
 }
 \usage{
-  \method{summary}{varbvs}(object, cred.int = 0.95, nv = 5, nr = 1000, \ldots)
-  \method{print}{summary.varbvs}(x, digits = 3, \ldots)
+  \method{summary}{varbvs}(object, cred.int = 0.95, nv = 5, nr = 1000, \dots)
+  \method{print}{summary.varbvs}(x, digits = 3, \dots)
+  \method{print}{varbvs}(x, digits = 3, \dots)
 }
 \arguments{
   \item{object}{Output of function \code{\link{varbvs}}.}
@@ -19,7 +21,7 @@
   \item{x}{Output of function \code{summary.varbvs}.}
   \item{digits}{Number of digits shown when printing posterior
     probabilities of top nv variables.}
-  \item{...}{Additional print arguments.}
+  \item{...}{Additional summary or print arguments.}
 }
 \details{
   The printed summary is divided into three parts. The first part
