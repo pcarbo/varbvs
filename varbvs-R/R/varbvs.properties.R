@@ -39,20 +39,29 @@ labels.varbvs <- function (object, ...)
 
 # ----------------------------------------------------------------------
 # Return the estimates of the regression coefficients at each
-# hyperparameter setting, as well as the "averaged" estimates.
+# hyperparameter setting, as well as the "averaged" estimates in the
+# last column of this matrix.
 coef.varbvs <- function (object, ...) {
   ns <- length(object$w)
   if (ns == 1)
-    out <- with(object,c(beta.cov,beta))
+    out <- with(object,rbind(mu.cov,alpha*mu))
   else {
     out <- with(object,rbind(cbind(mu.cov,beta.cov),
-                             cbind(mu,beta)))
-    colnames(out) <- c(paste0("theta_",1:ns),"Averaged")
+                             cbind(alpha*mu,beta)))
+    colnames(out) <- c(paste0("theta_",1:ns),"averaged")
   }
   return(out)
 }
 
 # ----------------------------------------------------------------------
-# Extract the fitted values.
+# Return the fitted values stored in an n x ns matrix, where n is the
+# number of samples and ns is the number of hyperparameter settings.
 fitted.varbvs <- function (object, ...)
   object$fitted.values
+
+# ----------------------------------------------------------------------
+# Return the residuals stored in an n x ns matrix, where n is the
+# number of samples and ns is the number of hyperparameter settings.
+resid.varbvs <- function (object, ...)
+  object$residuals
+residuals.varbvs <- resid.varbvs

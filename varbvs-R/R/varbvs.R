@@ -218,7 +218,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.4-0 ")
+    cat("VARBVS version 2.4-8 ")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")
@@ -354,22 +354,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
       cat("\n")
   }
 
-  # (6) COMPUTE FITTED VALUES AND RESIDUALS
-  # ---------------------------------------
-  # Compute the fitted values for each hyperparameter setting.
-  fitted.values <- varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu)
-
-  # Compute the residuals for each hyperparameter setting.
-  if (family == "gaussian")
-    residuals <- y - fitted.values
-  else if (family == "binomial") {
-
-  }
-  
-  # TO DO: Fix this.
-  residuals <- matrix(0,n,ns)
-  
-  # (7) CREATE FINAL OUTPUT
+  # (6) CREATE FINAL OUTPUT
   # -----------------------
   # Compute the normalized importance weights and the posterior
   # inclusion probabilities (PIPs) and mean regression coefficients
@@ -392,8 +377,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                 prior.same = prior.same,optimize.eta = FALSE,logw = logw,
                 w = w,sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
                 mu = mu,s = s,eta = NULL,pip = pip,beta = beta,
-                beta.cov = beta.cov,y = y,fitted.values = fitted.values,
-                residuals = residuals)
+                beta.cov = beta.cov,y = y)
     class(fit) <- c("varbvs","list")
 
     # Compute the proportion of variance in Y, after removing linear
@@ -409,16 +393,30 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     sx                <- var1.cols(X)
     for (i in 1:ns) 
       fit$pve[,i] <- sx*(mu[,i]^2 + s[,i])/var1(y)
+
+    # Restore the inputted X and y.
+    X <- X + Z %*% SZX
+    y <- y + c(Z %*% SZy)
+  
+    # Compute the fitted values for each hyperparameter setting.
+    fit$fitted.values <- varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu)
+
+    # Compute the residuals for each hyperparameter setting.
+    fit$residuals <- y - fitted.values
   } else if (family == "binomial") {
     fit <- list(family = family,n0 = n0,mu.cov = mu.cov,sa0 = sa0,
                 update.sigma = FALSE,update.sa = update.sa,
                 optimize.eta = optimize.eta,prior.same = prior.same,
                 logw = logw,w = w,sigma = NULL,sa = sa,logodds = logodds,
                 alpha = alpha,mu = mu,s = s,eta = eta,pip = pip,beta = beta,
-                beta.cov = beta.cov,model.pve = NA,
-                fitted.values = fitted.values,
-                residuals = residuals)
+                beta.cov = beta.cov,model.pve = NA)
     class(fit) <- c("varbvs","list")
+
+    # Compute the fitted values for each hyperparameter setting.
+    fit$fitted.values <- varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu)
+    
+    # TO DO: Fix this.
+    fit$residuals <- matrix(0,n,ns)
   }
   
   # Add names to some of the outputs.

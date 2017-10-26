@@ -14,6 +14,8 @@
 \method{labels}{varbvs}(object, \dots)
 \method{coef}{varbvs}(object, \dots)
 \method{fitted}{varbvs}(object, \dots)
+\method{resid}{varbvs}(object, \dots)
+\method{residuals}{varbvs}(object, \dots)
 }
 \arguments{
   \item{object}{An object inheriting from class \code{varbvs}, usually
@@ -50,6 +52,9 @@
   values of the outcome at each hyperparameter setting. For the logistic
   regression model (\code{family = "binomial"}), each matrix entry gives
   the probability that the binary outcome is equal to 1.
+
+  Likewise, \code{resid} and \code{residuals} each return a matrix
+  containing the model residuals at each hyperparameter setting.
 }
 \seealso{
   \code{\link{varbvs}}, \code{\link[stats]{nobs}},

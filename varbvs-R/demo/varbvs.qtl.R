@@ -17,7 +17,9 @@ r  <- 0.5   # Proportion of variance in trait explained by QTLs.
 covariates <- c("age","weight","glucose")
 
 # Candidate values for the prior log-odds of inclusion.
-logodds <- seq(-3,-1,0.1)
+if (!exists("logodds")) {
+  logodds <- seq(-3,-1,0.1)
+}
 
 # Set the random number generator seed.
 set.seed(1)
@@ -100,7 +102,8 @@ trellis.par.set(par.xlab.text = list(cex = 0.75),
                 par.ylab.text = list(cex = 0.75),
                 axis.text = list(cex = 0.75))
 markers  <- labels(fit)
-beta.est <- coef(fit)[markers,"Averaged"]
+beta.est <- coef(fit)
+beta.est <- beta.est[markers,ncol(beta.est)]
 print(xyplot(beta.est ~ beta.true,
              data.frame(beta.true = beta,beta.est = beta.est),
              pch = 4,col = "black",cex = 0.6,
