@@ -113,7 +113,8 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, nr = 1000, ...) {
     out$top.vars[i,"cred"] <- with(varbvscoefcred(object,vars[i],cred.int,nr),
                                    sprintf("[%+0.3f,%+0.3f]",a,b))
   }
-  names(out$top.vars)[6] <- sprintf("Pr(coef.>%0.2f)",cred.int)
+  colnames(out$top.vars)[6] <- sprintf("Pr(coef.>%0.2f)",cred.int)
+  rownames(out$top.vars)    <- NULL
   
   class(out) <- c("summary.varbvs","list")
   return(out)
