@@ -11,6 +11,30 @@
 # MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Public License for more details.
 #
+# TO DO: Explain here what this function does, and how to use it.
+# NOTE: Only works for one variable at a time.
+confint.varbvs <- function (object, parm, level = 0.95, ...) {
+
+  # If input "parm" is not provided, ...
+  # TO DO.
+    
+  # Get the number of selected variables.
+  n <- length(parm)
+  
+  # Set up the data structure for storing the output.
+  out <- vector("list",n)
+  
+  # Repeat for each requested variable.
+  for (i in 1:n) {
+     # TO DO.
+  }
+
+  # No need to return a list if only one parameter was requested.
+  if (n == 1)
+    out <- unlist(out,recursive = FALSE)
+  return(out)
+}
+
 # Compute Monte Carlo estimates of credible intervals for coefficients
 # in the fitted variable selection model. This function is used by
 # summary.varbvs to generate credible intervals for coefficients of
