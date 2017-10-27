@@ -17,7 +17,7 @@
 \method{labels}{varbvs}(object, \dots)
 \method{coef}{varbvs}(object, \dots)
 \method{fitted}{varbvs}(object, \dots)
-\method{resid}{varbvs}(object, \dots)
+\method{resid}{varbvs}(object, type = c("deviance","response"), \dots)
 \method{residuals}{varbvs}(object, type = c("deviance","response"), \dots)
 \method{deviance}{varbvs}(object, \ldots)
 }

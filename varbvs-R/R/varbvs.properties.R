@@ -74,10 +74,13 @@ resid.varbvs <- function (object, type = c("deviance","response"), ...) {
     else if (type == "response")
       out <- object$residuals$response
     else
-      error("Argument \"type\" should be \"deviance\" or \"response\"")
+      stop("Argument \"type\" should be \"deviance\" or \"response\"")
   }
   return(out)
 }
 residuals.varbvs <- resid.varbvs
 
 # ----------------------------------------------------------------------
+# Return the deviance for each hyperparameter setting.
+deviance.varbvs <- function (object, ...)
+  colSums(resid(object,type = "deviance")^2)
