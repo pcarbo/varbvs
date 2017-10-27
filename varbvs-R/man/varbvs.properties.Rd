@@ -7,6 +7,7 @@
 \alias{fitted.varbvs}
 \alias{resid.varbvs}
 \alias{residuals.varbvs}
+\alias{deviance.varbvs}
 \title{Accessing Properties of Fitted varbvs Models}
 \usage{
 \method{nobs}{varbvs}(object, \dots)
@@ -18,6 +19,7 @@
 \method{fitted}{varbvs}(object, \dots)
 \method{resid}{varbvs}(object, \dots)
 \method{residuals}{varbvs}(object, type = c("deviance","response"), \dots)
+\method{deviance}{varbvs}(object, \ldots)
 }
 \arguments{
   \item{object}{An object inheriting from class \code{varbvs}, usually
@@ -34,7 +36,7 @@
   \item{type}{Type of residuals to be returned. This argument is only
     relevant for logistic regression models (\code{family =
     "binomial"}). See \code{\link{varbvs}} for more details about the
-    two types of residuals in a logistic regression.}
+    two available types of residuals for logistic regression.}
   
   \item{\dots}{Further arguments passed to or from other methods.}
 }
@@ -44,12 +46,11 @@
 }
 \details{
   The generic accessor functions \code{nobs}, \code{case.names},
-  \code{variable.names}, \code{labels}, ... can be used to extract
-  various useful properties of the fitted \code{varbvs} model.
-
-  Method \code{labels} returns the names of the candidate variables
-  (columns of \code{X}) which may be used, for example, to plot
-  posterior inclusion probabilities or effect estimates.
+  \code{variable.names} and \code{labels} can be used to extract various
+  useful properties of the fitted \code{varbvs} model.  Method
+  \code{labels}, in particular, returns the names of the candidate
+  variables (columns of \code{X}) which may be used, for example, to
+  plot posterior inclusion probabilities or effect estimates.
 
   \code{coef} returns a matrix containing the posterior estimates of the
   regression coefficients at each hyperparameter setting, as well as an
@@ -62,10 +63,14 @@
 
   Likewise, \code{resid} and \code{residuals} each return a matrix
   containing the model residuals at each hyperparameter setting.
+
+  \code{deviance} returns the deviance for the fitted model at each
+  hyperparameter setting.
 }
 \seealso{
   \code{\link{varbvs}}, \code{\link[stats]{nobs}},
   \code{\link[stats]{case.names}}, 
   \code{\link[stats]{variable.names}}, \code{\link{labels}},
-  \code{\link[stats]{coef}}, \code{\link[stats]{fitted}}
+  \code{\link[stats]{coef}}, \code{\link[stats]{fitted}},
+  \code{\link[stats]{residuals}}, \code{\link[stats]{deviance}}
 }
