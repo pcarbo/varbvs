@@ -61,7 +61,23 @@ fitted.varbvs <- function (object, ...)
 
 # ----------------------------------------------------------------------
 # Return the residuals stored in an n x ns matrix, where n is the
-# number of samples and ns is the number of hyperparameter settings.
-resid.varbvs <- function (object, ...)
-  object$residuals
+# number of samples and ns is the number of hyperparameter
+# settings. For a logistic regression model, there are two types of
+# residuals ("deviance" and "response").
+resid.varbvs <- function (object, type = c("deviance","response"), ...) {
+  if (object$family == "gaussian")
+    out <- object$residuals
+  else {
+    type <- match.arg(type)
+    if (type == "deviance")
+      out <- object$residuals$deviance
+    else if (type == "response")
+      out <- object$residuals$response
+    else
+      error("Argument \"type\" should be \"deviance\" or \"response\"")
+  }
+  return(out)
+}
 residuals.varbvs <- resid.varbvs
+
+# ----------------------------------------------------------------------

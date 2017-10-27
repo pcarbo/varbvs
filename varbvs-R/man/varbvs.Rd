@@ -349,10 +349,15 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
     logistic regression model (\code{family = "binomial"}), each matrix
     entry gives the probability that the binary outcome is equal to 1.}
 
-  \item{residuals}{Matrix containing the model residuals at each
-    hyperparameter setting. For \code{family = "binomial"}, these are
-    the deviance residuals based on the likelihood ratio chi-squared
-    statistic.}
+  \item{residuals}{For linear regression, this is a matrix containing
+    the model residuals at each hyperparameter setting. For \code{family
+    = "binomial"}, this is a list with two matrices of the same size;
+    \code{residuals$deviance} contains the deviance residuals based on
+    the likelihood ratio chi-squared statistic;
+    \code{residuals$response} contains the "response" residuals simply
+    defined as the difference between the actual binary values (0 or 1)
+    and the fitted binomial probabilities (\emph{i.e.},
+    \code{fitted.values}).}
 
   \item{pve}{For each hyperparameter setting, and for each variable,
     mean estimate of the proportion of variance in outcome explained

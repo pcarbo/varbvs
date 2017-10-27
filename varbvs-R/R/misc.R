@@ -40,6 +40,7 @@
 #   int.klbeta(alpha,mu,s,sa)
 #   betavar(p,mu,s)
 #   normalizelogweights(logw)
+#   resid.dev.logistic(y,p)
 #   cred(x,x0,w,c)
 #
 # Shorthand for machine precision.
@@ -300,6 +301,22 @@ normalizelogweights <- function (logw) {
 }
 
 # ----------------------------------------------------------------------
+# Compute the deviance residuals for a logistic regression
+# model. Argument y is the vector or array of ground-truth binary
+# outcomes, and p is the model response; that is, the predicted
+# probability that the outcome is equal to 1. See
+# http://data.princeton.edu/wws509/notes/c3s8.html for the
+# mathematical formula for the deviance residuals.
+resid.dev.logistic <- function (y, p) {
+  i      <- which(y == 0)
+  j      <- which(y == 1)
+  out    <- p
+  out[i] <- log(1 - p[i])
+  out[j] <- log(p[j])
+  return(sign(y - p) * sqrt(-2*out))
+}
+
+# ----------------------------------------------------------------------
 # Returns a c% credible interval [a,b], in which c is a number between
 # 0 and 1. Precisely, we define the credible interval [a,b] to be the
 # smallest interval containing x0 that contains c% of the probability
@@ -355,3 +372,4 @@ cred <- function  (x, x0, w = NULL, cred.int = 0.95) {
   i <- which.min(x[b] - x[a])
   return(list(a = x[a[i]],b = x[b[i]]))
 }
+

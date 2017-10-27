@@ -403,6 +403,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
     # Compute the residuals for each hyperparameter setting.
     fit$residuals <- y - fit$fitted.values
+    fit$residuals.response
   } else if (family == "binomial") {
     fit <- list(family = family,n0 = n0,mu.cov = mu.cov,sa0 = sa0,
                 update.sigma = FALSE,update.sa = update.sa,
@@ -415,8 +416,11 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     # Compute the fitted values for each hyperparameter setting.
     fit$fitted.values <- varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu)
     
-    # TO DO: Fix this.
-    fit$residuals <- matrix(0,n,ns)
+    # Compute the "deviance" and "response" residuals for
+    # hyperparameter setting.
+    fit$residuals <-
+      list(deviance = resid.dev.logistic(matrix(y,n,ns),fit$fitted.values),
+           response = y - fit$fitted.values)
   }
   
   # Add names to some of the outputs.
@@ -428,7 +432,12 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   rownames(fit$mu.cov)        <- colnames(Z)
   names(fit$beta.cov)         <- colnames(Z)
   rownames(fit$fitted.values) <- rownames(X)
-  rownames(fit$residuals)     <- rownames(X)
+  if (family == "gaussian")
+    rownames(fit$residuals) <- rownames(X)
+  else {
+    rownames(fit$residuals$deviance) <- rownames(X)
+    rownames(fit$residuals$response) <- rownames(X)
+  }
   if (prior.same)
     fit$logodds <- c(fit$logodds)
   else

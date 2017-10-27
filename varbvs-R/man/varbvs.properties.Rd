@@ -17,7 +17,7 @@
 \method{coef}{varbvs}(object, \dots)
 \method{fitted}{varbvs}(object, \dots)
 \method{resid}{varbvs}(object, \dots)
-\method{residuals}{varbvs}(object, \dots)
+\method{residuals}{varbvs}(object, type = c("deviance","response"), \dots)
 }
 \arguments{
   \item{object}{An object inheriting from class \code{varbvs}, usually
@@ -30,6 +30,11 @@
   \item{include.threshold}{When \code{full = FALSE}, names of all
     variables (columns of \code{X}) with "averaged" posterior inclusion
     probability greater than \code{include.threshold} are returned.}
+
+  \item{type}{Type of residuals to be returned. This argument is only
+    relevant for logistic regression models (\code{family =
+    "binomial"}). See \code{\link{varbvs}} for more details about the
+    two types of residuals in a logistic regression.}
   
   \item{\dots}{Further arguments passed to or from other methods.}
 }

@@ -32,7 +32,7 @@ varbvspve <- function (X, fit, nr = 1000) {
   if (!is(fit,"varbvs"))
     stop("Input argument \"fit\" must be an instance of class \"varbvs\".")
   if (fit$family != "gaussian")
-    stop("varbvspve is only implemented for family = \"gaussian\"")
+    stop("varbvspve is only implemented for family = \"gaussian\".")
   
   # Initialize storage for posterior estimates of the proportion of
   # variance explained.
