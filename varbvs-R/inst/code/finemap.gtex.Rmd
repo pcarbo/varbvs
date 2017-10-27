@@ -76,6 +76,7 @@ continuous outcome (quantitiative trait), with spike and slab priors on
 the coefficients. 
 
 ```{r}
+set.seed(1)
 fit <- varbvs(X,Z,y,verbose = FALSE)
 ```
 
@@ -128,8 +129,8 @@ cr <- vars[get.credible.set(out$BF[,1],credint.prob)]
 
 ## Plot fine-mapping results
 
-Plot the PIPs of the SNPs, marking the credible SNP set with crosses,
-and colouring the points according to LD with the top SNP.
+Plot the PIPs of the SNPs, marking the credible SNP set with green
+circles, and colouring the points according to LD with the top SNP.
 
 ```{r, fig.height=4, fig.width=8}
 create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
@@ -139,7 +140,7 @@ create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
   return(ggplot(mapping = aes(x = pos,y = pip,color = r),
                 environment = environment()) +
     geom_point(data = dat,size = 1.75,shape = 20) +
-    geom_point(data = dat[markers,],color = "black",shape = 4,size = 0.5) +
+    geom_point(data = dat[markers,],color = "limegreen",shape = 1,size = 1.75) +
     scale_x_continuous(breaks = NULL) +
     scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
     scale_color_gradientn(colors = clrs,name = "abs(r)") +

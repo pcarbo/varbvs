@@ -103,7 +103,7 @@ get.credible.set <- function (bf, pr) {
 ## Plot fine-mapping results
 
 To plot the fine-mapping results, I highlight the credible SNP sets in
-green , and otherwise points are coloured according to LD with each of
+green, and otherwise points are coloured according to LD with each of
 the top SNPs.
 
 ```{r}

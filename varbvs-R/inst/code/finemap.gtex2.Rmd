@@ -20,9 +20,12 @@ knitr::opts_chunk$set(
 
 ## Outline
 
-In this example, we consider fine-mapping for a more complicated
-scenario in which multiple SNPs are independently associated with a
-(gene expression) quantitative trait within a single locus.
+In this example, we consider fine-mapping for a slightly more
+complicated scenario in which multiple SNPs are independently
+associated with a (gene expression) quantitative trait within a single
+locus. Despite the added complexity, the simple fine-mapping scheme
+seems to work well for this example, although some potential issues
+could occur in similar examples.
 
 ## Set up environment
 
@@ -59,11 +62,12 @@ ld.threshold <- 0.2
 
 ## Load genotype data
 
-Retrieve genotype data for 7,651 SNPs in the *FMO2* locus.
+Retrieve genotype data for 1,000 SNPs near gene *FMO2*.
 
 ```{r}
-load("../datafiles/Thyroid.ENSG00000237846.1Mb.RData")
+load("../datafiles/Thyroid.FMO2.1Mb.RData")
 storage.mode(X) <- "double"
+X <- X[,3501:4500]
 n <- nrow(X)
 p <- ncol(X)
 ```
@@ -73,12 +77,13 @@ p <- ncol(X)
 Fit the fully-factorized variational approximation to the posterior
 distribution of the coefficients for a linear regression model of a
 continuous outcome (quantitiative trait), with spike and slab priors
-on the coefficients. We find that several SNPs in this locus are
+on the coefficients. We find that multiple SNPs in this locus are
 independently associated with gene expression, even when the prior is
-very conservative (1 SNP is associated with the gene expression trait
-*a priori*).
+very conservative (that is, 1 SNP is associated with the gene
+expression trait *a priori*).
 
 ```{r}
+set.seed(1)
 fit <- varbvs(X,Z,y,verbose = FALSE)
 sum(fit$alpha[,1] > 0.95)
 ```
@@ -101,7 +106,7 @@ get.credible.set <- function (bf, pr) {
 ## Plot fine-mapping results
 
 To plot the fine-mapping results, I highlight the credible SNP sets in
-green , and otherwise points are coloured according to LD with each of
+green, and otherwise points are coloured according to LD with each of
 the top SNPs.
 
 ```{r}
@@ -111,16 +116,16 @@ create.finemap.plot <- function (pip, r, markers, plot.title = NULL) {
   dat <- data.frame(pos = 1:p,pip = fit$pip,r = r)
   return(ggplot(mapping = aes(x = pos,y = pip,color = r),
                 environment = environment()) +
-    geom_point(data = dat,size = 1.5,shape = 20) +
+    geom_point(data = dat,size = 2,shape = 20) +
     geom_point(data = dat[markers,],color = "limegreen",
-	           shape = 20,size = 1.5) +
+	           shape = 20,size = 2) +
     scale_x_continuous(breaks = NULL) +
     scale_y_continuous(trans = "log10",breaks = 10^(-4:0)) +
     scale_color_gradientn(colors = clrs,guide = FALSE) +
     labs(x = "",y = "varbvs PIP",title = plot.title) +
-    theme_cowplot(font_size = 7) +
+    theme_cowplot(font_size = 9) +
     theme(axis.line  = element_blank(),
-	      plot.title = element_text(size = 7,face = "plain")))
+	      plot.title = element_text(size = 9,face = "plain")))
 }
 ```
 
@@ -172,13 +177,21 @@ hyperparameter setting. Here, to simplify the example, I've taken the
 Bayes factors from the first hyperparameter setting (corresponding to
 the smallest prior inclusion probability).
 
-```{r, fig.height=11, fig.width=8}
-do.call("plot_grid",c(plots,list(nrow = 6,ncol = 2)))
+```{r, fig.height=8, fig.width=8}
+do.call("plot_grid",c(plots,list(nrow = 4,ncol = 1)))
 ```
 
 In these plots, the number in the parentheses gives the number of SNPs
 in the credible SNP set.
 
+None of the credible sets overlap, so in this particular example it is
+safe to treat the independent associations as implicating distinct
+causal variants.
+
+```{r}
+sum(sapply(cr,length))
+length(unique(do.call("c",cr)))
+```
 
 ## Session information
 
