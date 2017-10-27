@@ -59,13 +59,11 @@ ld.threshold <- 0.2
 
 ## Load genotype data
 
-Retrieve genotype data for 800 SNPs near the pseudogene
-`ENSG00000237846`.
+Retrieve genotype data for 7,651 SNPs in the *FMO2* locus.
 
 ```{r}
 load("../datafiles/Thyroid.ENSG00000237846.1Mb.RData")
 storage.mode(X) <- "double"
-X <- X[,401:1200]
 n <- nrow(X)
 p <- ncol(X)
 ```

@@ -59,7 +59,7 @@ ld.threshold <- 0.2
 
 ## Load genotype data
 
-Load the GTEx genotype data for the 4,546 SNPs in the ACTN3 locus.
+Load the GTEx genotype data for the 4,546 SNPs in the *ACTN3* locus.
 
 ```{r}
 load("../datafiles/Muscle_Skeletal.ACTN3.1Mb.RData")
