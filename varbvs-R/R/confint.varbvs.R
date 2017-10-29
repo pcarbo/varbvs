@@ -11,28 +11,64 @@
 # MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Public License for more details.
 #
-# TO DO: Explain here what this function does, and how to use it.
-# NOTE: Only works for one variable at a time.
+# TO DO: Explain here very briefly what this function does, and how to
+# use it.
 confint.varbvs <- function (object, parm, level = 0.95, ...) {
 
-  # If input "parm" is not provided, ...
-  # TO DO.
+  # If input "parm" is not provided, select the top 5 variables by
+  # posterior inclusion probability.
+  if (missing(vars))
+    vars <- order(object$pip,decreasing = TRUE)[1:5]
     
-  # Get the number of selected variables.
-  n <- length(parm)
+  # Get the number of hyperparameter settings (ns), the number of
+  # selected variables (n), and the total number of variables (p).
+  ns <- length(object$w)
+  n  <- length(parm)
+  p  <- nrow(object$alpha)
+  
+  # Check and process input "parm".
+  variable.names <- rownames(object$alpha)
+  if (is.numeric(parm))
+    parm <- variable.names[parm]
+  if (any(is.na(parm)) | !all(is.element(parm,variable.names)))
+    stop(paste("Argument \"parm\" should contain only valid variable names",
+               "or variable indices (columns of X)"))
   
   # Set up the data structure for storing the output.
-  out <- vector("list",n)
+  out        <- vector("list",n)
+  names(out) <- variable.names
   
   # Repeat for each requested variable.
-  for (i in 1:n) {
-     # TO DO.
+  for (i in parm) {
+    # TO DO.
   }
 
-  # No need to return a list if only one parameter was requested.
+  # No need to return a list if only one parameter (i.e., variable)
+  # was requested. And in the special case when there is only 1
+  # hyperparameter setting, return the confidence intervals in a
+  # matrix.
   if (n == 1)
     out <- unlist(out,recursive = FALSE)
+  else if (ns == 1)
+    out <- do.call(rbind,out)
   return(out)
+}
+
+# TO DO: Explain here what this function does, and how to use it.
+get.confint.matrix <- function (fit, i, level) {
+
+  # Get the number of hyperparameter settings.
+  ns <- length(fit$w)
+
+  if (ns == 1) {
+
+    # In the special case when there is only one hyperparmaeter
+    # setting, return the confidence interval in a 1 x 2 matrix.
+    return()
+  } else {
+  
+    # Set up the data structure for storing the output.
+  }
 }
 
 # Compute Monte Carlo estimates of credible intervals for coefficients

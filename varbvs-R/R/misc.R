@@ -39,6 +39,7 @@
 #   int.gamma(logodds,alpha)
 #   int.klbeta(alpha,mu,s,sa)
 #   betavar(p,mu,s)
+#   credintnorm(x,mu,s)
 #   normalizelogweights(logw)
 #   resid.dev.logistic(y,p)
 #   cred(x,x0,w,c)
@@ -284,6 +285,13 @@ int.klbeta <- function (alpha, mu, s, sa)
 #
 betavar <- function (p, mu, s)
   p*(s + (1 - p)*mu^2)
+
+# ----------------------------------------------------------------------
+# Return the x% credible interval (or "confidence interval") for a
+# normal distribution with mean mu and variance s (note: *not*
+# standard deviation). Also note that x, mu and s must be scalars.
+credintnorm <- function (x, mu, s)
+  qnorm(c(0.5 - x/2,0.5 + x/2),mu,sqrt(s)),
 
 # ----------------------------------------------------------------------
 # normalizelogweights takes as input an array of unnormalized
