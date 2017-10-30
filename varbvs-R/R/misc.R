@@ -40,6 +40,7 @@
 #   int.klbeta(alpha,mu,s,sa)
 #   betavar(p,mu,s)
 #   credintnorm(x,mu,s)
+#   credintmix(x,w,mu,s)
 #   normalizelogweights(logw)
 #   resid.dev.logistic(y,p)
 #   cred(x,x0,w,c)
@@ -292,6 +293,14 @@ betavar <- function (p, mu, s)
 # standard deviation). Also note that x, mu and s must be scalars.
 credintnorm <- function (x, mu, s)
   qnorm(c(0.5 - x/2,0.5 + x/2),mu,sqrt(s)),
+
+# ----------------------------------------------------------------------
+# Return the x% credible interval (or "confidence interval") for a
+# mixture of normals with means mu, variances s and mixture weights w.
+credintmix <- function (x, w, mu, s) {
+  mix <- norMix(mu = mu,sigma = s,w = w,name = "mix")
+  return(qnorMix(c(0.5 - x/2,0.5 + x/2),mix,method = "root2"))
+}
 
 # ----------------------------------------------------------------------
 # normalizelogweights takes as input an array of unnormalized

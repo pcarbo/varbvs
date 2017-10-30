@@ -25,7 +25,8 @@ Imports:
     graphics,
     lattice,
     latticeExtra,
-    Rcpp
+    Rcpp,
+    nor1mix
 Suggests:
     curl,
     glmnet,

@@ -11,8 +11,9 @@
 # MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Public License for more details.
 #
-# TO DO: Explain here very briefly what this function does, and how to
-# use it.
+# Return "credible" or "confidence" intervals for all hyperparameter
+# settings, as well as intervals averaging over all hyperparameter
+# settings.
 confint.varbvs <- function (object, parm, level = 0.95, ...) {
 
   # If input "parm" is not provided, select the top 5 variables by
@@ -38,10 +39,9 @@ confint.varbvs <- function (object, parm, level = 0.95, ...) {
   out        <- vector("list",n)
   names(out) <- variable.names
   
-  # Repeat for each requested variable.
-  for (i in parm) {
-    # TO DO.
-  }
+  # Compute the confidence intervals for for each requested variable.
+  for (i in parm)
+    out[[i]] <- get.confint.matrix(object,i,level)
 
   # No need to return a list if only one parameter (i.e., variable)
   # was requested. And in the special case when there is only 1
@@ -54,21 +54,39 @@ confint.varbvs <- function (object, parm, level = 0.95, ...) {
   return(out)
 }
 
-# TO DO: Explain here what this function does, and how to use it.
+# Return an n x 2 matrix containing the x% confidence intervals (x =
+# level) for variable i at each of the n hyperparameter settings, plus
+# the confidence interval averaging over all hyperparameter settings.
 get.confint.matrix <- function (fit, i, level) {
 
   # Get the number of hyperparameter settings.
   ns <- length(fit$w)
-
+  
   if (ns == 1) {
 
     # In the special case when there is only one hyperparmaeter
     # setting, return the confidence interval in a 1 x 2 matrix.
-    return()
+    out <- credintnorm(level,fit$mu[i,],fit$s[i,])
+    out <- matrix(out,1,2)
   } else {
   
     # Set up the data structure for storing the output.
+    out           <- matrix(0,ns + 1,2)
+    rownames(out) <- c(paste0("theta_",1:ns),"averaged")
+        
+    # Compute the credible interval for each hyperparameter setting.
+    for (j in 1:ns)
+      out[j,] <- credintnorm(level,fit$mu[i,j],fit$s[i,j])
+
+    # Compute the credible interval averaging over all hyperparameter
+    # settings.
+    out[ns + 1,] <- credintmix(x,fit$w,fit$mu[i,],fit$s[i,])
   }
+
+  # Add column labels indicating the lower and upper confidence limits.
+  colnames(out) <- paste(round(100*c(0.5 - level/2,0.5 + level/2),
+                               digits = 3),"%")
+  return(out)
 }
 
 # Compute Monte Carlo estimates of credible intervals for coefficients
