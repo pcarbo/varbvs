@@ -213,6 +213,7 @@ int.logitz <- function (Z, y, stats, alpha, mu, s, Xr, eta) {
   # log-likelihood with respect to the approximate posterior distribution.
   return(sum(logsigmoid(eta)) + dot(eta,d*eta - 1)/2 +
          c(determinant(S,logarithm = TRUE)$modulus/2) +
-         qnorm(t(Z) %*% (y - 0.5),S)^2/2 + dot(yhat,Xr) - qnorm(Xr,d)^2/2 +
-         qnorm(t(Z) %*% (Xr * d),S)^2/2 - dot(xdx,betavar(alpha,mu,s))/2)
+         quadnorm(t(Z) %*% (y - 0.5),S)^2/2 + dot(yhat,Xr) -
+         quadnorm(Xr,d)^2/2 + quadnorm(t(Z) %*% (Xr * d),S)^2/2 -
+         dot(xdx,betavar(alpha,mu,s))/2)
 }

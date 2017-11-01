@@ -22,7 +22,7 @@
 #   var1.cols(X)
 #   dot(x,y)
 #   norm2(x)
-#   qnorm(x,a)
+#   quadnorm(x,a)
 #   rep.col(x,n)
 #   rep.row(x,n)
 #   rand(m,n)
@@ -85,7 +85,7 @@ norm2 <- function (x)
 # function returns the norm of x with respect to A = diag(a). For a
 # definition of the quadratic norm, see p. 635 of Convex Optimization
 # (2004) by Boyd & Vandenberghe.
-qnorm <- function (x, a) {
+quadnorm <- function (x, a) {
   x <- c(x)
   if (is.matrix(a))
     y <- sqrt(c(x %*% a %*% x))
@@ -292,13 +292,13 @@ betavar <- function (p, mu, s)
 # normal distribution with mean mu and variance s (note: *not*
 # standard deviation). Also note that x, mu and s must be scalars.
 credintnorm <- function (x, mu, s)
-  qnorm(c(0.5 - x/2,0.5 + x/2),mu,sqrt(s)),
+  qnorm(c(0.5 - x/2,0.5 + x/2),mu,sqrt(s))
 
 # ----------------------------------------------------------------------
 # Return the x% credible interval (or "confidence interval") for a
 # mixture of normals with means mu, variances s and mixture weights w.
 credintmix <- function (x, w, mu, s) {
-  mix <- norMix(mu = mu,sigma = s,w = w,name = "mix")
+  mix <- norMix(mu = mu,sigma = sqrt(s),w = w,name = "mix")
   return(qnorMix(c(0.5 - x/2,0.5 + x/2),mix,method = "root2"))
 }
 

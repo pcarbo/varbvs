@@ -18,8 +18,8 @@ confint.varbvs <- function (object, parm, level = 0.95, ...) {
 
   # If input "parm" is not provided, select the top 5 variables by
   # posterior inclusion probability.
-  if (missing(vars))
-    vars <- order(object$pip,decreasing = TRUE)[1:5]
+  if (missing(parm))
+    parm <- order(object$pip,decreasing = TRUE)[1:5]
     
   # Get the number of hyperparameter settings (ns), the number of
   # selected variables (n), and the total number of variables (p).
@@ -37,7 +37,7 @@ confint.varbvs <- function (object, parm, level = 0.95, ...) {
   
   # Set up the data structure for storing the output.
   out        <- vector("list",n)
-  names(out) <- variable.names
+  names(out) <- parm
   
   # Compute the confidence intervals for for each requested variable.
   for (i in parm)
@@ -49,8 +49,10 @@ confint.varbvs <- function (object, parm, level = 0.95, ...) {
   # matrix.
   if (n == 1)
     out <- unlist(out,recursive = FALSE)
-  else if (ns == 1)
-    out <- do.call(rbind,out)
+  else if (ns == 1) {
+    out           <- do.call(rbind,out)
+    rownames(out) <- parm
+  }
   return(out)
 }
 
@@ -61,7 +63,7 @@ get.confint.matrix <- function (fit, i, level) {
 
   # Get the number of hyperparameter settings.
   ns <- length(fit$w)
-  
+
   if (ns == 1) {
 
     # In the special case when there is only one hyperparmaeter
@@ -80,7 +82,7 @@ get.confint.matrix <- function (fit, i, level) {
 
     # Compute the credible interval averaging over all hyperparameter
     # settings.
-    out[ns + 1,] <- credintmix(x,fit$w,fit$mu[i,],fit$s[i,])
+    out[ns + 1,] <- credintmix(level,fit$w,fit$mu[i,],fit$s[i,])
   }
 
   # Add column labels indicating the lower and upper confidence limits.

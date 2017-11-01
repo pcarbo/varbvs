@@ -244,6 +244,6 @@ int.logit <- function (y, stats, alpha, mu, s, Xr, eta) {
   # Compute the variational approximation to the expectation of the
   # log-likelihood with respect to the variational approximation.
   return(sum(logsigmoid(eta)) + dot(eta,d*eta - 1)/2 + log(a)/2 +
-         a*sum(y - 0.5)^2/2 + dot(yhat,Xr) - qnorm(Xr,d)^2/2 +
+         a*sum(y - 0.5)^2/2 + dot(yhat,Xr) - quadnorm(Xr,d)^2/2 +
          a*dot(d,Xr)^2/2 - dot(xdx,betavar(alpha,mu,s))/2)
 }
