@@ -77,8 +77,12 @@
   a list, with one list element per selected variable, and each list
   element is a matrix with columns giving lower and upper confidence
   limits for each hyperparameter setting, as well as the averaged
-  limits. Note that confidence intervals cannot be requested for
-  covariates (columns of \code{Z}) because they are difficult to obtain.
+  limits. In the special case when there is only one hyperparameter
+  setting, the confidence intervals are returned in a single matrix,
+  with one row for each selected variable.
+
+  Note that confidence intervals cannot be requested for covariates
+  (columns of \code{Z}) because they are difficult to obtain.
   
   \code{fitted} returns a matrix containing the predicted (or "fitted")
   values of the outcome at each hyperparameter setting. For the logistic
