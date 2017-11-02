@@ -13,7 +13,8 @@
 }
 \arguments{
   \item{object}{Output of function \code{\link{varbvs}}.}
-  \item{cred.int}{Size of credible interval (number between 0 and 1).}
+  \item{cred.int}{Size of credible interval, a number
+    between 0 and 1.}
   \item{nv}{Show detailed statistics for top nv variables, ranked
   according to their posterior inclusion probabilities.}
   \item{x}{Output of function \code{summary.varbvs}.}
@@ -35,10 +36,11 @@
 
   The second part summarizes the approximate posterior distribution of
   the hyperparameters (sigma, sa, logodds). The "estimate" column is the
-  value averaged over hyperparameter settings, treating \code{objectlogw}
-  as (unnormalized) log-marginal probabilities. The next column, labeled
-  "Pr>x", where \code{x = cred.int} gives the credible interval based on
-  these weights (computed using function \code{\link{cred}}).
+  value averaged over hyperparameter settings, treating
+  \code{objectlogw} as (unnormalized) log-marginal probabilities. The
+  next column, labeled "Pr>x", where \code{x = cred.int} gives the
+  credible interval based on these weights (computed using function
+  \code{\link{cred}}).
 
   The third part summarizes the variable selection results. This
   includes the total number of variables included in the model at
@@ -59,7 +61,7 @@ inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. \emph{Bayesian Analysis}
 \bold{7}, 73--108.}
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
-\seealso{\code{\link{varbvs}}}
+\seealso{\code{\link{varbvs}}, \link{varbvs.properties}}
 \examples{
   # See help(varbvs) for examples.
 }

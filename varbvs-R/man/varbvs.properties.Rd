@@ -44,7 +44,7 @@
     Confidence intervals are not provided for covariates (columns of
     \code{Z}); see below for details.}
 
-  \item{level}{The requested confidence level.}
+  \item{level}{Size of confidence level.}
   
   \item{type}{Type of residuals to be returned. This argument is only
     relevant for logistic regression models (\code{family =
@@ -69,18 +69,22 @@
   regression coefficients at each hyperparameter setting, as well as an
   additional column containing "averaged" coefficient estimates.
 
-  \code{confint} returns confidence intervals (also called "credible"
-  intervals) for all selected variables \code{parm}. The return value is
-  different from the usual confidence interval (e.g., for an
-  \code{\link[stats]{lm}} result) because a confidence interval is
-  provided for each hyperparameter setting, as well as an additional
-  "averaged" confidence interval. The confidence intervals are returned
-  a list, with one list element per selected variable, and each list
-  element is a matrix with columns giving lower and upper confidence
-  limits for each hyperparameter setting, as well as the averaged
-  limits. In the special case when there is only one hyperparameter
-  setting, the confidence intervals are returned in a single matrix,
-  with one row for each selected variable.
+  \code{confint} returns confidence intervals (also, equivalently in
+  this case, "credible intervals") for all selected variables
+  \code{parm}. These are \emph{conditional} confidence intervals; that
+  is, conditioned on each variable being included in the regression
+  model.
+
+  The \code{confint} return value is different from the usual confidence
+  interval (e.g., for an \code{\link[stats]{lm}} result) because a
+  confidence interval is provided for each hyperparameter setting, as
+  well as an additional "averaged" confidence interval. The confidence
+  intervals are returned a list, with one list element per selected
+  variable, and each list element is a matrix with columns giving lower
+  and upper confidence limits for each hyperparameter setting, as well
+  as the averaged limits. In the special case when there is only one
+  hyperparameter setting, the confidence intervals are returned in a
+  single matrix, with one row for each selected variable.
 
   Note that confidence intervals cannot be requested for covariates
   (columns of \code{Z}) because they are difficult to obtain.
