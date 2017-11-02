@@ -15,16 +15,16 @@
 plot.varbvs <-
     function (x, score, groups, vars = NULL, var.labels, draw.threshold = NA,
               gap = 0,col = "midnightblue", pch = 20, scales = NULL,
-              xlab = "", ylab = "",
+              xlab = "variable", ylab = "posterior probability", 
+              main = "fitted varbvs model: variable selection results",
               abline.args = list(lty = "dotted",col = "orangered"),
               vars.xyplot.args = list(pch = 20,col = "magenta"),
-              vars.ltext.args = list(col = "black",pos = 4,cex = 0.5), ...) {
+              vars.ltext.args = list(col = "black",pos = 4,cex = 0.5),
+              par.settings = list(par.main.text = list(font = 1,cex = 0.8),
+                                  layout.heights = list(axis.top = 0,
+                                                        axis.bottom = 0)),
+              ...) {
 
-  # Plotting defaults.
-  abline.defaults      <- list(lty = "dotted",col = "orangered")
-  vars.xyplot.defaults <- list(pch = 20,col = "magenta")
-  vars.ltext.defaults  <- list(col = "black",pos = 4,cex = 0.5)
-  
   # CHECK INPUTS
   # ------------
   # Check that the first input is an instance of class "varbvs".
@@ -56,18 +56,6 @@ plot.varbvs <-
   if (is.null(var.labels))
     var.labels <- rep("",length(vars))
   
-  # Get the defaults for abline.args if not provided.
-  abline.args <- c(abline.args,abline.defaults)
-  abline.args <- abline.args[!duplicated(names(abline.args))]
-
-  # Get the defaults for vars.xyplot.args if not provided.
-  vars.xyplot.args <- c(vars.xyplot.args,vars.xyplot.defaults)
-  vars.xyplot.args <- vars.xyplot.args[!duplicated(names(vars.xyplot.args))]
-
-  # Get the defaults for vars.ltext.args if not provided.
-  vars.ltext.args <- c(vars.ltext.args,vars.ltext.defaults)
-  vars.ltext.args <- vars.ltext.args[!duplicated(names(vars.ltext.args))]
-  
   # GENERATE GENOME-WIDE SCAN
   # -------------------------
   # Determine the positions of the variables and, if necessary, group
@@ -96,7 +84,8 @@ plot.varbvs <-
   out <- xyplot(y ~ x,data.frame(x=x,y=y),pch = pch,col = col,
                 scales = c(scales,
                   list(x = list(at = xticks,labels = group.labels))),
-                xlab = xlab,ylab = ylab,
+                xlab = xlab,ylab = ylab,main = main,
+                par.settings = par.settings,
                 panel = function (x,y,...) {
                   panel.xyplot(x,y,...);
                   if (!is.na(draw.threshold))

@@ -13,10 +13,14 @@ quantitative trait locus (QTL) mapping study.
 \usage{
   \method{plot}{varbvs}(x, score, groups, vars = NULL, var.labels,
   draw.threshold = NA, gap = 0,col = "midnightblue", pch = 20,
-  scales = NULL, xlab = "", ylab = "",
+  scales = NULL, xlab = "variable", ylab = "posterior probability",
+  main = "fitted varbvs model: variable selection results",
   abline.args = list(lty = "dotted",col = "orangered"),
   vars.xyplot.args = list(pch = 20,col = "magenta"),
-  vars.ltext.args = list(col = "black",pos = 4,cex = 0.5), ...)
+  vars.ltext.args = list(col = "black",pos = 4,cex = 0.5), 
+  par.settings = list(par.main.text = list(font = 1,cex = 0.8),
+                      layout.heights = list(axis.top = 0, axis.bottom = 0)),
+  \ldots)
 }
 \arguments{
   
@@ -64,6 +68,8 @@ quantitative trait locus (QTL) mapping study.
   \item{ylab}{Argument passed to \code{xyplot} specifying 
   vertical axis title.}
 
+  \item{main}{Argument passed to \code{xyplot} specifying main plot title.}
+
   \item{abline.args}{Additional arguments passed to \code{panel.abline}
   specifying how to draw the horizontal line at the location specified
   by \code{draw.threshold}.}
@@ -74,6 +80,9 @@ quantitative trait locus (QTL) mapping study.
   \item{vars.ltext.args}{Additional arguments passed to \code{ltext} for
   specifying how the labels of the highlighted variables are drawn in
   the plot.}
+
+  \item{par.settings}{Argument passed to \code{xyplot} specifying
+    additional adjustments to the plot settings.}
 
   \item{...}{Additional arguments passed to \code{xyplot} for drawing
     the un-highlighted variables.}
