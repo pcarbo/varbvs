@@ -33,7 +33,7 @@ confint.varbvs <- function (object, parm, level = 0.95, ...) {
     parm <- variable.names[parm]
   if (any(is.na(parm)) | !all(is.element(parm,variable.names)))
     stop(paste("Argument \"parm\" should contain only valid variable names",
-               "or variable indices (columns of X)"))
+               "(column names of X) or variable indices (columns of X)"))
   
   # Set up the data structure for storing the output.
   out        <- vector("list",n)

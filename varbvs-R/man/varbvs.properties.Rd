@@ -4,6 +4,7 @@
 \alias{variable.names.varbvs}
 \alias{labels.varbvs}
 \alias{coef.varbvs}
+\alias{confint.varbvs}
 \alias{fitted.varbvs}
 \alias{resid.varbvs}
 \alias{residuals.varbvs}
@@ -16,6 +17,7 @@
                                 include.threshold = 0.01, \dots)
 \method{labels}{varbvs}(object, \dots)
 \method{coef}{varbvs}(object, \dots)
+\method{confint}{varbvs}(object, parm, level = 0.95, ...)
 \method{fitted}{varbvs}(object, \dots)
 \method{resid}{varbvs}(object, type = c("deviance","response"), \dots)
 \method{residuals}{varbvs}(object, type = c("deviance","response"), \dots)
@@ -33,6 +35,16 @@
     variables (columns of \code{X}) with "averaged" posterior inclusion
     probability greater than \code{include.threshold} are returned.}
 
+  \item{parm}{Confidence intervals are computed for these selected
+    variables. These may either be specified as numbers (column indices
+    of \code{varbvs} input matrix \code{X}) or names (column names of
+    \code{X}). If not specified, confidence intervals will be computed
+    for the top 5 variables by posterior inclusion probability.
+    Confidence intervals are not provided for covariates (columns of
+    \code{Z}); see below for details.}
+
+  \item{level}{The requested confidence level.}
+  
   \item{type}{Type of residuals to be returned. This argument is only
     relevant for logistic regression models (\code{family =
     "binomial"}). See \code{\link{varbvs}} for more details about the
@@ -56,6 +68,18 @@
   regression coefficients at each hyperparameter setting, as well as an
   additional column containing "averaged" coefficient estimates.
 
+  \code{confint} returns confidence intervals (also called "credible"
+  intervals) for all selected variables \code{parm}. The return value is
+  different from the usual confidence interval (e.g., for an
+  \code{\link[stats]{lm}} result) because a confidence interval is
+  provided for each hyperparameter setting, as well as an additional
+  "averaged" confidence interval. The confidence intervals are returned
+  a list, with one list element per selected variable, and each list
+  element is a matrix with columns giving lower and upper confidence
+  limits for each hyperparameter setting, as well as the averaged
+  limits. Note that confidence intervals cannot be requested for
+  covariates (columns of \code{Z}) because they are difficult to obtain.
+  
   \code{fitted} returns a matrix containing the predicted (or "fitted")
   values of the outcome at each hyperparameter setting. For the logistic
   regression model (\code{family = "binomial"}), each matrix entry gives
@@ -71,6 +95,7 @@
   \code{\link{varbvs}}, \code{\link[stats]{nobs}},
   \code{\link[stats]{case.names}}, 
   \code{\link[stats]{variable.names}}, \code{\link{labels}},
-  \code{\link[stats]{coef}}, \code{\link[stats]{fitted}},
-  \code{\link[stats]{residuals}}, \code{\link[stats]{deviance}}
+  \code{\link[stats]{coef}}, \code{\link[stats]{coef}},
+  \code{\link[stats]{fitted}}, \code{\link[stats]{residuals}},
+  \code{\link[stats]{deviance}}
 }
