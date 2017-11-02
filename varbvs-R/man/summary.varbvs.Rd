@@ -7,7 +7,7 @@
   fitted using variational approximation methods.
 }
 \usage{
-  \method{summary}{varbvs}(object, cred.int = 0.95, nv = 5, nr = 1000, \dots)
+  \method{summary}{varbvs}(object, cred.int = 0.95, nv = 5, \dots)
   \method{print}{summary.varbvs}(x, digits = 3, \dots)
   \method{print}{varbvs}(x, digits = 3, \dots)
 }
@@ -16,8 +16,6 @@
   \item{cred.int}{Size of credible interval (number between 0 and 1).}
   \item{nv}{Show detailed statistics for top nv variables, ranked
   according to their posterior inclusion probabilities.}
-  \item{nr}{Number of Monte Carlo samples to draw to estimate credible
-    intervals for coefficients of selected variables.}
   \item{x}{Output of function \code{summary.varbvs}.}
   \item{digits}{Number of digits shown when printing posterior
     probabilities of top nv variables.}
@@ -50,11 +48,7 @@
   the estimated proportion of variance in the outcome explained by the
   variable (conditioned on being included in the model). Again, this is
   the PVE after removing variance in the outcome due to linear effects
-  of the covariates. Finally, note that the credible intervals reported
-  in the right-most column are Monte Carlo estimates, so the interval
-  will be slightly different each time \code{summary} is called; a
-  more accurate estimate can be obtained by setting input \code{nr} to a
-  larger number, at the cost of increased computation time.  
+  of the covariates.
 }  
 \value{
   An object of class \code{summary.varbvs}, to be printed by
@@ -65,7 +59,7 @@ inference for Bayesian variable selection in regression, and its
 accuracy in genetic association studies. \emph{Bayesian Analysis}
 \bold{7}, 73--108.}
 \author{Peter Carbonetto \email{peter.carbonetto@gmail.com}}
-\seealso{\code{\link{varbvs}}, \code{\link{varbvscoefcred}}}
+\seealso{\code{\link{varbvs}}}
 \examples{
   # See help(varbvs) for examples.
 }
