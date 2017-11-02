@@ -1,4 +1,5 @@
 \name{varbvs.properties}
+\alias{varbvs.properties}
 \alias{nobs.varbvs}
 \alias{case.names.varbvs}
 \alias{variable.names.varbvs}
