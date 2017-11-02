@@ -12,12 +12,19 @@
 # General Public License for more details.
 #
 # Predict Y (outcome) given X (variables), Z (covariates) and objectted model.
-predict.varbvs <- function (object, X, Z = NULL, ...) {
+predict.varbvs <-
+  function (object, X, Z = NULL, type = c("link","response","class"), ...) {
   
   # Check that the first input is an instance of class "varbvs".
   if (!is(object,"varbvs"))
     stop("Input argument object must be an instance of class \"varbvs\".")
 
+  # Process and check input argument "type".
+  type <- match.arg(type)
+  if (object$family == "gaussian" & type != "link")
+    stop(paste("Prediction types \"response\" and \"class\" apply only to",
+               "logistic regression (family = \"binomial\")"))
+  
   # Get the number of samples (n), variables (p) and hyperparameter
   # settings (ns).
   n  <- nrow(X)
@@ -47,30 +54,30 @@ predict.varbvs <- function (object, X, Z = NULL, ...) {
   # Get the normalized (approximate) probabilities.
   w <- object$w
   
-  # Average these estimatesof Y over the hyperparameter settings. For
-  # the logistic regression, the final "averaged" estimate is obtained
+  # Average the estimates of Y over the hyperparameter settings. For
+  # the logistic regression, the final "averaged" prediction is obtained
   # by collecting the "votes" from each hyperparameter setting,
   # weighting the votes by the marginal probabilities, and outputing
   # the estimate that wins by majority. The averaged estimate is
   # computed this way because the estimates conditioned on each
   # hyperparameter setting are not necessarily calibrated in the same
   # way.
-  Y <- with(object,varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu))
-  if (object$family == "gaussian")
-    return(c(Y %*% w))
-  else if (object$family == "binomial")
-    return(round(c(round(Y) %*% w)))
-  else
-    stop("Invalid setting for object$family")
+  Y <- with(object,varbvs.linear.predictors(X,Z,family,mu.cov,alpha,mu))
+  if (type == "link")
+    out <- c(Y %*% w)
+  else if (type == "response") {
+    Y   <- sigmoid(Y)
+    out <- c(Y %*% w)
+  } else {
+    Y   <- round(sigmoid(Y))
+    out <- c(round(Y %*% w))
+  }
+  return(out)
 }
 
 # ----------------------------------------------------------------------
 # For each hyperparameter setting, and for each sample, compute a
 # posterior mean estimate of Y. (For the logistic regression model, Y
 # contains the posterior probability that the binary outcome is 1.)
-varbvs.fitted.matrix <- function (X, Z, family, mu.cov, alpha, mu) {
-  Y <- Z %*% mu.cov + X %*% (alpha*mu)
-  if (family == "binomial")
-    Y <- sigmoid(Y)
-  return(Y)
-}
+varbvs.linear.predictors <- function (X, Z, family, mu.cov, alpha, mu)
+  Z %*% mu.cov + X %*% (alpha*mu)

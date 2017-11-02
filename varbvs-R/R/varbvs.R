@@ -399,7 +399,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     y <- y + c(Z %*% SZy)
   
     # Compute the fitted values for each hyperparameter setting.
-    fit$fitted.values <- varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu)
+    fit$fitted.values <- varbvs.linear.predictors(X,Z,family,mu.cov,alpha,mu)
 
     # Compute the residuals for each hyperparameter setting.
     fit$residuals <- y - fit$fitted.values
@@ -414,7 +414,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     class(fit) <- c("varbvs","list")
 
     # Compute the fitted values for each hyperparameter setting.
-    fit$fitted.values <- varbvs.fitted.matrix(X,Z,family,mu.cov,alpha,mu)
+    fit$fitted.values <-
+      sigmoid(varbvs.linear.predictors(X,Z,family,mu.cov,alpha,mu))
     
     # Compute the "deviance" and "response" residuals for
     # hyperparameter setting.

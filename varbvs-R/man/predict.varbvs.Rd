@@ -1,13 +1,12 @@
 \name{predict.varbvs}
 \alias{predict.varbvs}
 \title{Make predictions from a model fitted by varbvs.}
-
 \description{This function predicts outcomes (Y) given the observed
   variables (X) and observed covariates (Z), and a model fitted using
   \code{\link{varbvs}}.}
-
 \usage{
-  \method{predict}{varbvs}(object, X, Z = NULL, \dots)
+  \method{predict}{varbvs}(object, X, Z = NULL,
+                           type = c("link","response","class"), \dots)
 }
 \arguments{
   \item{object}{Output of function \code{\link{varbvs}}.}
@@ -23,6 +22,13 @@
            automatically included in the regression model. For no
 	   covariates, set \code{Z = NULL}.}
 
+  \item{type}{Type of prediction to output. The default, "link", gives
+    the linear predictors for \code{family = "binomial"}, and gives the
+    fitted values for \code{family = "gaussian"}. For logistic
+    regression (\code{family = "binomial"}), there are two alternative
+    predictions: "response" givees the fitted probabilities, and "class"
+    produces the maximum-probability outcome (0 or 1).}
+	 
   \item{\dots}{Other arguments to generic predict function. These
     extra arguments are not used here.}
 }

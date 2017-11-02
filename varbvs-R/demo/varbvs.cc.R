@@ -117,6 +117,6 @@ print(xyplot(beta.est ~ beta.true,
 # Compute estimates of the binary trait using the fitted model, and
 # compare against the observed values.
 cat("5. EVALUATING FITTED MODEL.\n")
-y.fit <- predict(fit,X,Z)
+y.fit <- predict(fit,X,Z,type = "class")
 cat("Comparison of observed case-control status against estimated outcome:\n")
 print(table(y = factor(y),y.fit = factor(y.fit)))
