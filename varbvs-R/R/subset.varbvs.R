@@ -38,6 +38,8 @@ subset.varbvs <- function (x, subset, ...) {
   out$alpha   <- as.matrix(out$alpha[,i])
   out$mu      <- as.matrix(out$mu[,i])
   out$s       <- as.matrix(out$s[,i])
+  out$fitted.values <- as.matrix(out$fitted.values)
+  out$residuals     <- as.matrix(out$residuals)
   if (out$family == "gaussian") {
     out$sigma <- out$sigma[i]
     out$pve   <- as.matrix(out$pve[,i])

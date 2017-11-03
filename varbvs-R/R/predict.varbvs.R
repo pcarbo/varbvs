@@ -13,7 +13,8 @@
 #
 # Predict Y (outcome) given X (variables), Z (covariates) and objectted model.
 predict.varbvs <-
-  function (object, X, Z = NULL, type = c("link","response","class"), ...) {
+  function (object, X, Z = NULL, type = c("link","response","class"),
+            averaged = TRUE, ...) {
   
   # Check that the first input is an instance of class "varbvs".
   if (!is(object,"varbvs"))
@@ -53,24 +54,29 @@ predict.varbvs <-
 
   # Get the normalized (approximate) probabilities.
   w <- object$w
+
+  # Compute the estimates for each hyperparameter setting.
+  out <- with(object,varbvs.linear.predictors(X,Z,family,mu.cov,alpha,mu))
+  if (type == "response")
+    out <- sigmoid(out)
+  else if (type == "class")
+    out <- round(sigmoid(out))
   
-  # Average the estimates of Y over the hyperparameter settings. For
-  # the logistic regression, the final "averaged" prediction is obtained
-  # by collecting the "votes" from each hyperparameter setting,
-  # weighting the votes by the marginal probabilities, and outputing
-  # the estimate that wins by majority. The averaged estimate is
-  # computed this way because the estimates conditioned on each
-  # hyperparameter setting are not necessarily calibrated in the same
-  # way.
-  Y <- with(object,varbvs.linear.predictors(X,Z,family,mu.cov,alpha,mu))
-  if (type == "link")
-    out <- c(Y %*% w)
-  else if (type == "response") {
-    Y   <- sigmoid(Y)
-    out <- c(Y %*% w)
-  } else {
-    Y   <- round(sigmoid(Y))
-    out <- c(round(Y %*% w))
+  # Average the estimates of Y over the hyperparameter settings, if
+  # requested. For the logistic regression, the final "averaged"
+  # prediction is obtained by collecting the "votes" from each
+  # hyperparameter setting, weighting the votes by the marginal
+  # probabilities, and outputing the estimate that wins by
+  # majority. The averaged estimate is computed this way because the
+  # estimates conditioned on each hyperparameter setting are not
+  # necessarily calibrated in the same way.
+  if (averaged) {
+    if (type == "link")
+      out <- c(out %*% w)
+    else if (type == "response")
+      out <- c(out %*% w)
+    else
+      out <- c(round(out %*% w))
   }
   return(out)
 }
@@ -79,5 +85,9 @@ predict.varbvs <-
 # For each hyperparameter setting, and for each sample, compute a
 # posterior mean estimate of Y. (For the logistic regression model, Y
 # contains the posterior probability that the binary outcome is 1.)
-varbvs.linear.predictors <- function (X, Z, family, mu.cov, alpha, mu)
-  Z %*% mu.cov + X %*% (alpha*mu)
+varbvs.linear.predictors <- function (X, Z, family, mu.cov, alpha, mu) {
+  ns <- ncol(alpha)
+  Y  <- Z %*% mu.cov + X %*% (alpha*mu)
+  colnames(Y) <- paste0("theta_",1:ns)
+  return(Y)
+}

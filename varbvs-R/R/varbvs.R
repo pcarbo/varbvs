@@ -433,9 +433,16 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   rownames(fit$mu.cov)        <- colnames(Z)
   names(fit$beta.cov)         <- colnames(Z)
   rownames(fit$fitted.values) <- rownames(X)
-  if (family == "gaussian")
+  colnames(fit$mu.cov)        <- paste("theta",1:ns,sep = "_")
+  colnames(fit$alpha)         <- paste("theta",1:ns,sep = "_")
+  colnames(fit$mu)            <- paste("theta",1:ns,sep = "_")
+  colnames(fit$s)             <- paste("theta",1:ns,sep = "_")
+  if (family == "gaussian") {
     rownames(fit$residuals) <- rownames(X)
-  else {
+    colnames(fit$pve)       <- paste("theta",1:ns,sep = "_")
+  } else {
+    rownames(fit$eta) <- rownames(X)
+    colnames(fit$eta) <- paste("theta",1:ns,sep = "_")
     rownames(fit$residuals$deviance) <- rownames(X)
     rownames(fit$residuals$response) <- rownames(X)
   }

@@ -85,7 +85,10 @@ varbvsindep <- function (fit, X, Z, y) {
   alpha <- matrix(0,p,ns)
   mu    <- matrix(0,p,ns)
   s     <- matrix(0,p,ns)
-
+  dimnames(alpha) <- dimnames(fit$alpha)
+  dimnames(mu)    <- dimnames(fit$mu)
+  dimnames(s)     <- dimnames(fit$s)
+  
   # Calculate the mean (mu) and variance (s) of the coefficients given that
   # the coefficients are included in the model, and the posterior inclusion
   # probabilities (alpha), ignoring correlations between variables. Repeat
