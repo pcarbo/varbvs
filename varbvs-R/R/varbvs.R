@@ -16,8 +16,9 @@
 # regression (family = "binomial"). See varbvs.Rd for details.
 varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                     logodds, alpha, mu, eta, update.sigma, update.sa,
-                    optimize.eta, initialize.params, nr = 100, sa0 = 1,
-                    n0 = 10, tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
+                    optimize.eta, initialize.params, update.order, nr = 100,
+                    sa0 = 1, n0 = 10, tol = 1e-4, maxiter = 1e4,
+                    verbose = TRUE) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -195,6 +196,13 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (missing(optimize.eta))
     optimize.eta <- optimize.eta.default
 
+  # Determine the order of the co-ordinate ascent updates.
+  if (missing(update.order))
+    update.order <- 1:p
+  if (!all(sort(intersect(update.order,1:p)) == 1:p))
+    stop(paste("Argument \"update.order\" should be a vector in which each",
+               "variable index (column of X) is included at least once"))
+  
   # (3) PREPROCESSING STEPS
   # -----------------------
   if (family == "gaussian") {
@@ -218,7 +226,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.4-14")
+    cat("VARBVS version 2.4-15")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")
@@ -268,8 +276,9 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
       cat(" iter   lower bound  change   vars   sigma      sa\n")
     }
     out      <- outerloop(X,Z,y,family,SZy,SZX,c(sigma),c(sa),c(logodds),
-                          c(alpha),c(mu),c(eta),tol,maxiter,verbose,NULL,
-                          update.sigma,update.sa,optimize.eta,n0,sa0)
+                          c(alpha),c(mu),c(eta),update.order,tol,maxiter,
+                          verbose,NULL,update.sigma,update.sa,optimize.eta,
+                          n0,sa0)
     logw     <- out$logw
     sigma    <- out$sigma
     sa       <- out$sa
@@ -296,8 +305,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
       # Repeat for each setting of the hyperparameters.
       for (i in 1:ns) {
         out <- outerloop(X,Z,y,family,SZy,SZX,sigma[i],sa[i],logodds[,i],
-                         alpha[,i],mu[,i],eta[,i],tol,maxiter,verbose,i,
-                         update.sigma,update.sa,optimize.eta,n0,sa0)
+                         alpha[,i],mu[,i],eta[,i],update.order,tol,maxiter,
+                         verbose,i,update.sigma,update.sa,optimize.eta,n0,sa0)
         logw[i]    <- out$logw
         sigma[i]   <- out$sigma
         sa[i]      <- out$sa
@@ -339,8 +348,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     # approximating distribution and the exact posterior.
     for (i in 1:ns) {
       out <- outerloop(X,Z,y,family,SZy,SZX,sigma[i],sa[i],logodds[,i],
-                       alpha[,i],mu[,i],eta[,i],tol,maxiter,verbose,i,
-                       update.sigma,update.sa,optimize.eta,n0,sa0)
+                       alpha[,i],mu[,i],eta[,i],update.order,tol,maxiter,
+                       verbose,i,update.sigma,update.sa,optimize.eta,n0,sa0)
       logw[i]    <- out$logw
       sigma[i]   <- out$sigma
       sa[i]      <- out$sa
@@ -461,8 +470,9 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 # ----------------------------------------------------------------------
 # This function implements one iteration of the "outer loop".
 outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, logodds,
-                       alpha, mu, eta, tol, maxiter, verbose, outer.iter,
-                       update.sigma, update.sa, optimize.eta, n0, sa0) {
+                       alpha, mu, eta, update.order, tol, maxiter, verbose,
+                       outer.iter, update.sigma, update.sa, optimize.eta,
+                       n0, sa0) {
   p <- ncol(X)
   if (length(logodds) == 1)
     logodds <- rep(logodds,p)
@@ -474,8 +484,9 @@ outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, logodds,
 
     # Optimize the variational lower bound for the Bayesian variable
     # selection model.
-    out <- varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,tol,maxiter,
-                      verbose,outer.iter,update.sigma,update.sa,n0,sa0)
+    out <- varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,update.order,
+                      tol,maxiter,verbose,outer.iter,update.sigma,update.sa,
+                      n0,sa0)
     out$eta <- eta
 
     # Adjust the variational lower bound to account for integral over
@@ -491,11 +502,13 @@ outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, logodds,
     # Optimize the variational lower bound for the Bayesian variable
     # selection model.
     if (ncol(Z) == 1)
-      out <- varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,
-                       verbose,outer.iter,update.sa,optimize.eta,n0,sa0)
+      out <- varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,update.order,tol,
+                       maxiter,verbose,outer.iter,update.sa,optimize.eta,
+                       n0,sa0)
     else
-      out <- varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,tol,maxiter,
-                        verbose,outer.iter,update.sa,optimize.eta,n0,sa0)
+      out <- varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,update.order,
+                        tol,maxiter,verbose,outer.iter,update.sa,optimize.eta,
+                        n0,sa0)
     out$sigma <- sigma
 
     # Compute the posterior mean estimate of the regression

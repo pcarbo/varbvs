@@ -20,10 +20,10 @@
 # where n is the number of samples, and m is the number of
 # covariates. This function is equivalent to varbvsbin when only one
 # covariate is specified, the intercept, and Z = ones(n,1).
-varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
-                        maxiter = 1e4, verbose = TRUE, outer.iter = NULL,
-                        update.sa = TRUE, optimize.eta = TRUE,n0 = 10,
-                        sa0 = 1) {
+varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
+                        tol = 1e-4, maxiter = 1e4, verbose = TRUE,
+                        outer.iter = NULL, update.sa = TRUE,
+                        optimize.eta = TRUE,n0 = 10, sa0 = 1) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -63,9 +63,9 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
     # -------------------------------------
     # Run a forward or backward pass of the coordinate ascent updates.
     if (iter %% 2)
-      i <- 1:p
+      i <- update.order
     else
-      i <- p:1
+      i <- rev(update.order)
     out   <- varbvsbinzupdate(X,sa,logodds,stats,alpha,mu,Xr,i)
     alpha <- out$alpha
     mu    <- out$mu

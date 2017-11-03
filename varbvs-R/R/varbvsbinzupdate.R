@@ -15,7 +15,8 @@
 # maximize the variational lower bound for Bayesian variable selection
 # in logistic regression, allowing for additional covariates. See
 # varbvsbinupdate for more details.
-varbvsbinzupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
+varbvsbinzupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0,
+                              updates) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -37,9 +38,9 @@ varbvsbinzupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
   if (length(Xr0) != n)
     stop("length(Xr0) must be equal to nrow(X)")
 
-  # Check input i.
-  if (sum(i < 1 | i > p) > 0)
-    stop("Input i contains invalid variable indices")
+  # Check input "updates".
+  if (sum(updates < 1 | updates > p) > 0)
+    stop("Input \"updates\" contains invalid variable indices")
 
   # Initialize storage for the results.
   alpha <- c(alpha0)
@@ -57,6 +58,6 @@ varbvsbinzupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
                logodds = as.double(logodds),d = as.double(stats$d),
                xdx = as.double(stats$xdx),xy = as.double(stats$xy),
                dzr = stats$dzr,alpha = alpha,mu = mu,Xr = Xr,
-               i = as.integer(i-1))
+               i = as.integer(updates - 1))
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }

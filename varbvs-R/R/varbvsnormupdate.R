@@ -54,7 +54,7 @@
 # make sure to run Rcpp::compileAttributes(), which updates
 # RcppExports.R.
 varbvsnormupdate <-
-    function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, i,
+    function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, updates,
               algorithm.version = c(".Call","Rcpp","R")) {
 
   # Get the number of samples (n) and variables (p).
@@ -81,9 +81,9 @@ varbvsnormupdate <-
   if (length(Xr0) != n)
     stop("length(Xr0) must be equal to nrow(X)")
 
-  # Check input i.
-  if (sum(i < 1 | i > p) > 0)
-    stop("Input i contains invalid variable indices")
+  # Check input "updates".
+  if (sum(updates < 1 | updates > p) > 0)
+    stop("Input \"updates\" contains invalid variable indices")
 
   # Initialize storage for the results.
   alpha <- c(alpha0)
@@ -102,17 +102,17 @@ varbvsnormupdate <-
     out <- .Call(C_varbvsnormupdate_Call,X = X,sigma = as.double(sigma),
                  sa = as.double(sa),logodds = as.double(logodds),
                  xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
-                 Xr = Xr,i = as.integer(i-1))
+                 Xr = Xr,i = as.integer(updates - 1))
   } else if (algorithm.version == "Rcpp") {
 
     # Execute the C routine using the Rcpp interface.
     varbvsnormupdate_rcpp(X = X,sigma = sigma,sa = sa,logodds = logodds,
                           xy = xy,d = d,alpha = alpha,mu = mu,Xr = Xr,
-                          i = i-1)
+                          i = updates - 1)
   } else if (algorithm.version == "R") {
 
     # Repeat for each co-ordinate to update.
-    for (j in i) {
+    for (j in updates) {
 
       # Compute the variational estimate of the posterior variance.
       s <- sa*sigma/(sa*d[j] + 1)
@@ -129,6 +129,6 @@ varbvsnormupdate <-
       Xr <- Xr + (alpha[j]*mu[j] - r) * X[,j]
     }
   } else
-    stop("Invalid input argument 'algorithm.version' in varbvsnormupdate.")
+    stop("Invalid argument \"algorithm.version\" passed to varbvsnormupdate.")
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }

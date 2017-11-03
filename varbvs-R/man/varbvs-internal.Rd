@@ -12,15 +12,15 @@
 var1(x)
 var1.cols(X)
 varbvspve(X,fit,nr = 1000)
-varbvsnorm(X,y,sigma,sa,logodds,alpha,mu,tol = 1e-4,maxiter = 1e4,
-           verbose = TRUE,outer.iter = NULL,update.sigma = TRUE,
-           update.sa = TRUE,n0 = 10,sa0 = 1)
-varbvsbin(X,y,sa,logodds,alpha,mu,eta,tol = 1e-4,maxiter = 1e4,
-          verbose = TRUE,outer.iter = NULL,update.sa = TRUE,
-          optimize.eta = TRUE,n0 = 10,sa0 = 1)
-varbvsbinz(X,Z,y,sa,logodds,alpha,mu,eta,tol = 1e-4,maxiter = 1e4,
-           verbose = TRUE,outer.iter = NULL,update.sa = TRUE,
-           optimize.eta = TRUE,n0 = 10,sa0 = 1)
+varbvsnorm(X,y,sigma,sa,logodds,alpha,mu,update.order,tol = 1e-4,
+           maxiter = 1e4,verbose = TRUE,outer.iter = NULL,
+           update.sigma = TRUE,update.sa = TRUE,n0 = 10,sa0 = 1)
+varbvsbin(X,y,sa,logodds,alpha,mu,eta,update.order,tol = 1e-4,
+          maxiter = 1e4,verbose = TRUE,outer.iter = NULL,
+          update.sa = TRUE,optimize.eta = TRUE,n0 = 10,sa0 = 1)
+varbvsbinz(X,Z,y,sa,logodds,alpha,mu,eta,update.order,tol = 1e-4,
+           maxiter = 1e4,verbose = TRUE,outer.iter = NULL,
+           update.sa = TRUE,optimize.eta = TRUE,n0 = 10,sa0 = 1)
 }
 \author{Peter Carbonetto <peter.carbonetto@gmail.com>}
 \details{

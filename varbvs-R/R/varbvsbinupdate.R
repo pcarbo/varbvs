@@ -45,7 +45,8 @@
 # C code, using the .Call interface. See the comments accompanying
 # function 'varbvsnormupdate' for instructions on building and loading
 # the shared objects (.so) file into R.
-varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
+varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0,
+                             updates) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -67,9 +68,9 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
   if (length(Xr0) != n)
     stop("length(Xr0) must be equal to nrow(X)")
 
-  # Check input i.
-  if (sum(i < 1 | i > p) > 0)
-    stop("Input i contains invalid variable indices")
+  # Check input "updates".
+  if (sum(updates < 1 | updates > p) > 0)
+    stop("Input \"updates\" contains invalid variable indices")
 
   # Initialize storage for the results.
   alpha <- c(alpha0)
@@ -87,6 +88,6 @@ varbvsbinupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0, i) {
                logodds = as.double(logodds),d = as.double(stats$d),
                xdx = as.double(stats$xdx),xy = as.double(stats$xy),
                xd = as.double(stats$xd),alpha = alpha,mu = mu,Xr = Xr,
-               i = as.integer(i-1))
+               i = as.integer(updates - 1))
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }

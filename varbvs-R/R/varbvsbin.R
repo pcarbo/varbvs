@@ -47,10 +47,10 @@
 # the coefficient given that it is included in the model. Output eta
 # is the vector of free parameters that specify the variational
 # approximation to the likelihood factors in the logistic regression.
-varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
-                       maxiter = 1e4, verbose = TRUE, outer.iter = NULL,
-                       update.sa = TRUE, optimize.eta = TRUE,n0 = 10,
-                       sa0 = 1) {
+varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, update.order,
+                       tol = 1e-4, maxiter = 1e4, verbose = TRUE,
+                       outer.iter = NULL, update.sa = TRUE,
+                       optimize.eta = TRUE, n0 = 10, sa0 = 1) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -91,9 +91,9 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, tol = 1e-4,
     # -------------------------------------
     # Run a forward or backward pass of the coordinate ascent updates.
     if (iter %% 2)
-      i <- 1:p
+      i <- update.order
     else
-      i <- p:1
+      i <- rev(update.order)
     out   <- varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,i)
     alpha <- out$alpha
     mu    <- out$mu
