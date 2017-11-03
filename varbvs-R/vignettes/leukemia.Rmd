@@ -200,7 +200,7 @@ Compute estimates of the disease outcome using the fitted model, and
 compare against the observed values.
 
 ```{r, results = "hold"}
-y.varbvs <- predict(fit.varbvs,X)
+y.varbvs <- predict(fit.varbvs,X,type = "class")
 print(table(true = factor(y),pred = factor(y.varbvs)))
 ```
 
