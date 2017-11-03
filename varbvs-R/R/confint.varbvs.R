@@ -74,7 +74,7 @@ get.confint.matrix <- function (fit, i, level) {
   
     # Set up the data structure for storing the output.
     out           <- matrix(0,ns + 1,2)
-    rownames(out) <- c(paste0("theta_",1:ns),"averaged")
+    rownames(out) <- c(colnames(fit$alpha),"averaged")
         
     # Compute the credible interval for each hyperparameter setting.
     for (j in 1:ns)

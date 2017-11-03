@@ -45,11 +45,9 @@ coef.varbvs <- function (object, ...) {
   ns <- length(object$w)
   if (ns == 1)
     out <- with(object,rbind(mu.cov,alpha*mu))
-  else {
+  else
     out <- with(object,rbind(cbind(mu.cov,beta.cov),
                              cbind(alpha*mu,beta)))
-    colnames(out) <- c(paste0("theta_",1:ns),"averaged")
-  }
   return(out)
 }
 

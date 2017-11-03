@@ -88,6 +88,5 @@ predict.varbvs <-
 varbvs.linear.predictors <- function (X, Z, family, mu.cov, alpha, mu) {
   ns <- ncol(alpha)
   Y  <- Z %*% mu.cov + X %*% (alpha*mu)
-  colnames(Y) <- paste0("theta_",1:ns)
   return(Y)
 }

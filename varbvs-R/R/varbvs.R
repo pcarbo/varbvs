@@ -425,6 +425,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   }
   
   # Add names to some of the outputs.
+  hyper.labels                <- paste("theta",1:ns,sep = "_")
   rownames(fit$alpha)         <- colnames(X)
   rownames(fit$mu)            <- colnames(X)
   rownames(fit$s)             <- colnames(X)
@@ -433,18 +434,22 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   rownames(fit$mu.cov)        <- colnames(Z)
   names(fit$beta.cov)         <- colnames(Z)
   rownames(fit$fitted.values) <- rownames(X)
-  colnames(fit$mu.cov)        <- paste("theta",1:ns,sep = "_")
-  colnames(fit$alpha)         <- paste("theta",1:ns,sep = "_")
-  colnames(fit$mu)            <- paste("theta",1:ns,sep = "_")
-  colnames(fit$s)             <- paste("theta",1:ns,sep = "_")
+  colnames(fit$mu.cov)        <- hyper.labels
+  colnames(fit$alpha)         <- hyper.labels
+  colnames(fit$mu)            <- hyper.labels
+  colnames(fit$s)             <- hyper.labels
+  colnames(fit$fitted.values) <- hyper.labels
   if (family == "gaussian") {
     rownames(fit$residuals) <- rownames(X)
-    colnames(fit$pve)       <- paste("theta",1:ns,sep = "_")
+    colnames(fit$residuals) <- hyper.labels
+    colnames(fit$pve)       <- hyper.labels
   } else {
-    rownames(fit$eta) <- rownames(X)
-    colnames(fit$eta) <- paste("theta",1:ns,sep = "_")
+    rownames(fit$eta)                <- rownames(X)
+    colnames(fit$eta)                <- hyper.labels
     rownames(fit$residuals$deviance) <- rownames(X)
     rownames(fit$residuals$response) <- rownames(X)
+    colnames(fit$residuals$deviance) <- hyper.labels
+    colnames(fit$residuals$response) <- hyper.labels
   }
   if (prior.same)
     fit$logodds <- c(fit$logodds)
