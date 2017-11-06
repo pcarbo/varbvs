@@ -16,8 +16,7 @@
 
 \maketitle
 
-\noindent First, we define the probabilistic model:
-
+\noindent First, we define the ``fine-mapping'' model:
 \begin{align*}
 p(y \, |\, {\bf X}, \beta, \sigma^2) &=
   N(y \,|\, {\bf X}\beta_1 + \cdots + {\bf X}\beta_K, \sigma^2I) \\
@@ -25,15 +24,44 @@ p(\beta_{jk} \,|\, \gamma_k = j) &= N(0, \sigma^2 \sigma_a^2) \\
 p(\beta_{jk} \,|\, \gamma_k \neq j) &= \delta_0 \\
 p(\gamma_k = j) &= \pi_j.
 \end{align*}
+
 Next, we define the variational approximation:
 \begin{align*}
+q(\beta, \gamma; \phi) &= \prod_{k=1}^K q(\beta_k, \gamma_k; \phi_k)
 \end{align*}
-The variational lower bound $F(\theta, \phi) \equiv \iint q(\beta,
-\gamma; \phi) \log \big\{ p(y, \beta, \gamma \,|\, {\bf X}, \theta) /
-q(\beta, \gamma; \phi) \big\} \, d\beta \, d\gamma$ is derived to be
+where the individual factors are of the form
 \begin{align*}
-F(
+q(\beta_k, \gamma_k; \phi_k) =
+  \prod_{j=1}^p \big\{ \alpha_{jk}
+    N(\beta_{jk} \,|\, \mu_{jk}, s_{jk}^2) \big\}^{\delta(\gamma_k = j)}
+    \delta_0(\beta_{jk})^{\delta(\gamma_k \neq j)}
 \end{align*}
+Under this approximation, the coefficients (``effects'') for the $k$th
+mixture component are independent of the coefficients for the other
+mixture components, conditioned on the hyperparameters.
+
+The variational lower bound
+\begin{equation*}
+F(\theta, \phi) \equiv \textstyle \iint q(\beta,
+\gamma; \phi) \log \big\{ p(y, \beta, \gamma \,|\, {\bf X}, \theta) /
+q(\beta, \gamma; \phi) \big\} \, d\beta \, d\gamma
+\end{equation*}
+is derived to be
+\begin{align*}
+F(\theta, \phi) =& -\frac{n}{2}\log(2\pi\sigma^2)
+  - \frac{\|y - {\bf X}r\|^2}{2\sigma^2}
+  + \frac{1}{2\sigma^2} \sum_{k=1}^K \|{\bf X}r_k \|^2 \\
+  & - \frac{1}{2\sigma^2} \sum_{k=1}^K ({\bf X}^T{\bf X})_{jj}
+    \alpha_{jk}(\mu_{jk}^2 + s_{jk}^2) 
+  + \sum_{k=1}^K \sum_{j=1}^p \alpha_{jk}
+    \log \Big(\frac{\pi_j}{\alpha_{jk}} \Big) \\
+  & + \sum_{k=1}^K \sum_{j=1}^p \frac{\alpha_{jk}}{2}
+    \bigg[1 + \log\bigg(\frac{s_{jk}^2}{\sigma^2\sigma_a^2}\bigg)
+            - \frac{\mu_{jk}^2 + s_{jk}^2}{\sigma^2\sigma_a^2}\bigg],
+\end{align*}
+in which $r_k$ is a vector with entries $r_{jk} = \alpha_{jk} \mu_{jk}$,
+and $r$ is a vector with entries $r_j = \sum_{k=1}^K \alpha_{jk}
+\mu_{jk}$.
 
 \end{document}
 
