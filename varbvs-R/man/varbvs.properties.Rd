@@ -60,7 +60,7 @@
 \details{
   The generic accessor functions \code{nobs}, \code{case.names},
   \code{variable.names} and \code{labels} can be used to extract various
-  useful properties of the fitted \code{varbvs} model.  Method
+  useful properties of the fitted \code{varbvs} model. Method
   \code{labels}, in particular, returns the names of the candidate
   variables (columns of \code{X}) which may be used, for example, to
   plot posterior inclusion probabilities or effect estimates.
