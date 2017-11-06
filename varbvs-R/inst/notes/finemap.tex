@@ -1,0 +1,39 @@
+\documentclass[final]{siamltex}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+
+\setlength{\oddsidemargin}{0.65in}
+\setlength{\evensidemargin}{0.65in}
+
+\title{Variational approximation for ``fine-mapping'' model}
+
+\author{Peter Carbonetto\thanks{Research Computing Center and the
+    Department of Human Genetics, University of Chicago, Chicago, IL,
+    60637}}
+
+\begin{document}
+
+\maketitle
+
+\noindent First, we define the probabilistic model:
+
+\begin{align*}
+p(y \, |\, {\bf X}, \beta, \sigma^2) &=
+  N(y \,|\, {\bf X}\beta_1 + \cdots + {\bf X}\beta_K, \sigma^2I) \\
+p(\beta_{jk} \,|\, \gamma_k = j) &= N(0, \sigma^2 \sigma_a^2) \\
+p(\beta_{jk} \,|\, \gamma_k \neq j) &= \delta_0 \\
+p(\gamma_k = j) &= \pi_j.
+\end{align*}
+Next, we define the variational approximation:
+\begin{align*}
+\end{align*}
+The variational lower bound $F(\theta, \phi) \equiv \iint q(\beta,
+\gamma; \phi) \log \big\{ p(y, \beta, \gamma \,|\, {\bf X}, \theta) /
+q(\beta, \gamma; \phi) \big\} \, d\beta \, d\gamma$ is derived to be
+\begin{align*}
+F(
+\end{align*}
+
+\end{document}
+
