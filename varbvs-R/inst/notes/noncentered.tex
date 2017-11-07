@@ -36,8 +36,9 @@ F(\theta; \phi) &=
        - \sum_{j=1}^p (1-\alpha_j) \log\Big(\frac{1-\alpha_j}{1-\pi}\Big)
   \nonumber \\
 &\quad + \sum_{j=1}^p \frac{\alpha_j}{2} \bigg[
-1 + \log\bigg(\frac{s_j^2}{\sigma_a^2 \sigma^2}\bigg)
-  - \frac{s_j^2 + \mu_j^2}{\sigma_a^2 \sigma^2} \bigg],
+1 + \log\bigg(\frac{s_j^2}{\sigma^2 \sigma_a^2}\bigg)
+  - \bigg(\frac{s_j}{\sigma\sigma_a}\bigg)^2
+  - \bigg(\frac{\mu_j/\sigma - \beta_0}{\sigma_a}\bigg)^2 \bigg],
 \end{align}
 Taking partial derivatives of the free parameters $\alpha_j$, $\mu_j$
 and $s_j^2$ with respect to this lower bound, setting the partial
