@@ -1,0 +1,56 @@
+\documentclass[final]{siamltex}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+
+\setlength{\oddsidemargin}{0.65in}
+\setlength{\evensidemargin}{0.65in}
+
+\title{Variational approximation for non-zero-centered prior}
+
+\author{Peter Carbonetto\thanks{Research Computing Center and the
+    Department of Human Genetics, University of Chicago, Chicago, IL,
+    60637}}
+
+\begin{document}
+
+\maketitle
+
+\noindent Here we consider a small extension to the original model
+from the {\em Bayesian Analysis} paper in which the ``slab'' in the
+spike-and-slab prior on the regression coefficients is normal with
+mean $\sigma \beta_0$ and standard deviation $\sigma \sigma_a$. The
+original model is of course recovered as a special case when $\beta_0
+= 0$.
+
+With this prior, the variational lower bound has the following
+analytical expression:
+\begin{align}
+F(\theta; \phi) &=
+ - \frac{n}{2}\log(2\pi\sigma^2)
+- \frac{\|y - {\bf X}r\|^2}{2\sigma^2} 
+- \frac{1}{2\sigma^2} \sum_{j=1}^p ({\bf X}^T{\bf X})_{jj}
+  \mathrm{Var}[\beta_j]
+  \nonumber \\
+&\quad - \sum_{j=1}^p \alpha_j \log\Big(\frac{\alpha_j}{\pi}\Big)
+       - \sum_{j=1}^p (1-\alpha_j) \log\Big(\frac{1-\alpha_j}{1-\pi}\Big)
+  \nonumber \\
+&\quad + \sum_{j=1}^p \frac{\alpha_j}{2} \bigg[
+1 + \log\bigg(\frac{s_j^2}{\sigma_a^2 \sigma^2}\bigg)
+  - \frac{s_j^2 + \mu_j^2}{\sigma_a^2 \sigma^2} \bigg],
+\end{align}
+Taking partial derivatives of the free parameters $\alpha_j$, $\mu_j$
+and $s_j^2$ with respect to this lower bound, setting the partial
+derivatives to zero, and solving for these parameters yields the
+following co-ordinate ascent updates:
+\begin{align}
+s_j^2 &= \frac{\sigma^2}{({\bf X}^T{\bf X})_{jj} + 1/\sigma_{\beta}^2} \\
+\mu_j &= \frac{s_j^2}{\sigma^2} \bigg( ({\bf X}^Ty)_j - \sum_{k \neq j} 
+({\bf X}^T{\bf X})_{jk} \alpha_k \mu_k \bigg) \\
+\frac{\alpha_j}{1-\alpha_j} &= \frac{\pi}{1-\pi} \times 
+  \frac{s_j}{\sigma_{\beta}\sigma} \times e^{\mu_j^2/(2s_j^2)}.
+\end{align}
+
+\end{document}
+
+ 
