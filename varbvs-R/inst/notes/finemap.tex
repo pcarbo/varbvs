@@ -51,7 +51,7 @@ is derived to be
 F(\theta, \phi) =& -\frac{n}{2}\log(2\pi\sigma^2)
   - \frac{\|y - {\bf X}r\|^2}{2\sigma^2}
   + \frac{1}{2\sigma^2} \sum_{k=1}^K \|{\bf X}r_k \|^2 \\
-  & - \frac{1}{2\sigma^2} \sum_{k=1}^K ({\bf X}^T{\bf X})_{jj}
+  & - \frac{1}{2\sigma^2} \sum_{k=1}^K \sum_{j=1}^p ({\bf X}^T{\bf X})_{jj}
     \alpha_{jk}(\mu_{jk}^2 + s_{jk}^2) 
   + \sum_{k=1}^K \sum_{j=1}^p \alpha_{jk}
     \log \Big(\frac{\pi_j}{\alpha_{jk}} \Big) \\
