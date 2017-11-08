@@ -93,7 +93,7 @@ varbvsnorm <- function (X, y, sigma, sa, b0, logodds, alpha, mu,
     sa.old <- sa
     b0.old <- b0
     sigma0 <- sigma
-
+    
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
