@@ -45,7 +45,7 @@ void varbvsnormupdate_rcpp (const NumericMatrix& X, double sigma, double sa,
 
     // Update the variational estimate of the posterior mean.
     double r = alpha[j] * mu[j];
-    mu[j] = s/sigma*(xy[j] + d[j]*r - sum(X.column(j) * Xr));
+    mu[j] = s/sigma*(mu0 + xy[j] + d[j]*r - sum(X.column(j) * Xr));
 
     // Update the variational estimate of the posterior inclusion probability.
     alpha[j] = sigmoid_rcpp(logodds[j] + (log(s/(sa*sigma)) +

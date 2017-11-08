@@ -69,7 +69,7 @@ SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP b0p, SEXP logoddsp, SEXP dp,
   // --------------------------
   double* X       = REAL(Xp);        // Input X.
   double  sa      = *REAL(sap);      // Input sa.
-  double  b0      = *REAL(b0p;       // Input b0.
+  double  b0      = *REAL(b0p);      // Input b0.
   double* logodds = REAL(logoddsp);  // Input logodds.
   double* d       = REAL(dp);        // Input d.
   double* xdx     = REAL(xdxp);      // Input xdx.
