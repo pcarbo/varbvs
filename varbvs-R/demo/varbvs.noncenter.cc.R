@@ -101,3 +101,8 @@ cat("r^2 between predicted Y and observed Y\n")
 cat(sprintf("zero-centered model: %0.3f\n",cor(y,y1)^2))
 cat(sprintf("non-centered model:  %0.3f\n",cor(y,y2)^2))
 
+# COMPARE POWER
+# -------------
+# Compare the performance of the zero-centered and non-zero-centered
+# models for recovering the variables that have an effect on the
+# binary trait.
