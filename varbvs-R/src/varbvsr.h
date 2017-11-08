@@ -37,4 +37,9 @@ SEXP varbvsmixupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP wp, SEXP xyp,
 			   SEXP dp, SEXP alphap, SEXP mup, SEXP Xrp, SEXP ip, 
 			   SEXP epsp);
 
+SEXP varbvs_varbvsnormupdate_rcpp (SEXP XSEXP, SEXP sigmaSEXP, SEXP saSEXP,
+				   SEXP b0SEXP, SEXP logoddsSEXP, SEXP xySEXP,
+				   SEXP dSEXP, SEXP alphaSEXP, SEXP muSEXP, 
+				   SEXP XrSEXP, SEXP iSEXP);
+
 #endif

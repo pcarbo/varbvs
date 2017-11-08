@@ -72,7 +72,7 @@ void varbvsbinupdate (const double* x, double xy, double xd, double xdx,
 // allowing for covariates.
 void varbvsbinzupdate (const double* x, double xy, double xdx, 
 		       const double* d, const double* dzr, double sa, 
-		       double logodds, double* alpha, double* mu, 
+		       double b0, double logodds, double* alpha, double* mu, 
 		       double* Xr, double* a, double* b, Size n, Size m) {
 
   // Compute the variational estimate of the posterior variance.
