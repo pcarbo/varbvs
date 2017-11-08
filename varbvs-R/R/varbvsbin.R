@@ -78,7 +78,7 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, update.order,
     mu0    <- mu
     s0     <- s
     eta0   <- eta
-    sa0    <- sa
+    sa.old <- sa
 
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
@@ -150,7 +150,7 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, update.order,
     if (logw[iter] < logw0) {
       logw[iter]  <- logw0
       err[iter]   <- 0
-      sa          <- sa0
+      sa          <- sa.old
       alpha       <- alpha0
       mu          <- mu0
       s           <- s0
