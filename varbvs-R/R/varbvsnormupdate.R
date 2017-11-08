@@ -20,11 +20,12 @@
 # variables. Input xy = X'*y, where y is the vector of samples of the
 # continuous outcome.
 #
-# Inputs sigma, sa and logodds specify other model parameters. sigma
-# and sa are scalars. sigma specifies the variance of the residual,
-# and sa is the prior variance of the regression coefficients (scaled
-# by sigma). Input logodds is the prior log-odds of inclusion for each
-# variable. It must be a vector of length p.
+# Inputs sigma, sa, b0 and logodds specify other model parameters.
+# sigma and sa are scalars. sigma specifies the variance of the
+# residual, sa is the prior variance of the regression coefficients
+# (scaled by sigma), and b0 is the prior mean of the regression
+# coefficients (scaled by sigma). Input logodds is the prior log-odds
+# of inclusion for each variable. It must be a vector of length p.
 #
 # Inputs alpha0, mu0 are the current parameters of the variational
 # approximation. Under the variational approximation, the ith
@@ -54,7 +55,7 @@
 # make sure to run Rcpp::compileAttributes(), which updates
 # RcppExports.R.
 varbvsnormupdate <-
-    function (X, sigma, sa, logodds, xy, d, alpha0, mu0, Xr0, updates,
+    function (X, sigma, sa, b0, logodds, xy, d, alpha0, mu0, Xr0, updates,
               algorithm.version = c(".Call","Rcpp","R")) {
 
   # Get the number of samples (n) and variables (p).
@@ -68,9 +69,9 @@ varbvsnormupdate <-
   if (!is.double(X) || !is.matrix(X))
     stop("Input X must be a double-precision matrix")
 
-  # Check inputs sigma and sa.
-  if (length(sigma) != 1 | length(sa) != 1)
-    stop("Inputs sigma and sa must be scalars")
+  # Check inputs sigma, sa and b0.
+  if (length(sigma) != 1 | length(sa) != 1 | length(b0) != 1)
+    stop("Inputs sigma, sa and b0 must be scalars")
 
   # Check input logodds, xy, d, alpha0 and mu0.
   if (!(length(logodds) == p & length(xy) == p & length(d) == p &
@@ -106,11 +107,14 @@ varbvsnormupdate <-
   } else if (algorithm.version == "Rcpp") {
 
     # Execute the C routine using the Rcpp interface.
-    varbvsnormupdate_rcpp(X = X,sigma = sigma,sa = sa,logodds = logodds,
-                          xy = xy,d = d,alpha = alpha,mu = mu,Xr = Xr,
-                          i = updates - 1)
+    varbvsnormupdate_rcpp(X = X,sigma = sigma,sa = sa,b0 = b0,
+                          logodds = logodds,xy = xy,d = d,alpha = alpha,
+                          mu = mu,Xr = Xr,i = updates - 1)
   } else if (algorithm.version == "R") {
 
+    # This is the prior contribution to the posterior means.
+    mu0 <- sqrt(sigma)*b0/sa
+      
     # Repeat for each co-ordinate to update.
     for (j in updates) {
 
@@ -119,7 +123,7 @@ varbvsnormupdate <-
 
       # Update the variational estimate of the posterior mean.
       r     <- alpha[j] * mu[j]
-      mu[j] <- s/sigma * (xy[j] + d[j]*r - sum(X[,j]*Xr))
+      mu[j] <- s/sigma * (mu0 + xy[j] + d[j]*r - sum(X[,j]*Xr))
 
       # Update the variational estimate of the posterior inclusion
       # probability.

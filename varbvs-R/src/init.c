@@ -23,11 +23,11 @@
 const static R_CallMethodDef R_CallDef[] = {
   CALLDEF(diagsq_Call,3),
   CALLDEF(diagsqt_Call,3),
-  CALLDEF(varbvsnormupdate_Call,10),
-  CALLDEF(varbvsbinupdate_Call,11),
-  CALLDEF(varbvsbinzupdate_Call,11),
+  CALLDEF(varbvsnormupdate_Call,11),
+  CALLDEF(varbvsbinupdate_Call,12),
+  CALLDEF(varbvsbinzupdate_Call,12),
   CALLDEF(varbvsmixupdate_Call,11),
-  CALLDEF(varbvs_varbvsnormupdate_rcpp,10),
+  CALLDEF(varbvs_varbvsnormupdate_rcpp,11),
   {NULL, NULL, 0}
 };
 

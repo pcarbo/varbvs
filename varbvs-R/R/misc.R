@@ -37,7 +37,7 @@
 #   logsigmoid(x)
 #   slope(x)
 #   int.gamma(logodds,alpha)
-#   int.klbeta(alpha,mu,s,sa)
+#   int.klbeta(alpha,mu,s,sigma,sa,b0)
 #   betavar(p,mu,s)
 #   credintnorm(x,mu,s)
 #   credintmix(x,w,mu,s)
@@ -266,10 +266,12 @@ int.gamma <- function (logodds, alpha)
 # the marginal log-likelihood. This integral is the negative K-L
 # divergence between the approximating distribution and the prior of
 # the coefficients. Note that this sa is not the same as the sa used
-# as an input to varbvsnorm.
-int.klbeta <- function (alpha, mu, s, sa)
-  (sum(alpha) + dot(alpha,log(s/sa)) - dot(alpha,s + mu^2)/sa)/2 -
-    dot(alpha,log(alpha + eps)) - dot(1 - alpha,log(1 - alpha + eps))
+# as an input to varbvsnorm; the sa parameter is already assumed to be
+# scaled by sigma.
+int.klbeta <- function (alpha, mu, s, sigma, sa, b0)
+  ((sum(alpha) + dot(alpha,log(s/sa)) - dot(alpha,s)/sa 
+    - dot(alpha,(mu - sqrt(sigma)*b0))/sa)/2 
+    - dot(alpha,log(alpha + eps)) - dot(1 - alpha,log(1 - alpha + eps)))
 
 # ----------------------------------------------------------------------
 # Compute the variance of X, in which X is drawn from the normal

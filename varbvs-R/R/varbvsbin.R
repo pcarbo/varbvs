@@ -85,7 +85,7 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, update.order,
     # Compute variational lower bound to marginal log-likelihood.
     logw0 <- int.logit(y,stats,alpha,mu,s,Xr,eta) +
              int.gamma(logodds,alpha) +
-             int.klbeta(alpha,mu,s,sa)
+             int.klbeta(alpha,mu,s,1,sa,b0)
 
     # (2b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
@@ -115,7 +115,7 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, update.order,
     # Compute variational lower bound to marginal log-likelihood.
     logw[iter] <- int.logit(y,stats,alpha,mu,s,Xr,eta) +
                   int.gamma(logodds,alpha) +
-                  int.klbeta(alpha,mu,s,sa)
+                  int.klbeta(alpha,mu,s,1,sa,b0)
 
     # (2e) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
     # -----------------------------------------------------

@@ -26,10 +26,13 @@ double sigmoid_rcpp (double x) {
 //
 // [[Rcpp::export]]
 void varbvsnormupdate_rcpp (const NumericMatrix& X, double sigma, double sa,
-			    const NumericVector& logodds,
+			    double b0, const NumericVector& logodds,
 			    const NumericVector& xy, const NumericVector& d,
 			    NumericVector& alpha, NumericVector& mu,
 			    NumericVector& Xr, const IntegerVector& i) {
+
+  // This is the prior contribution to the posterior means.
+  double mu0 = sqrt(sigma)*b0/sa;
 
   // Cycle through the coordinate ascent updates.
   for (int iter = 0; iter < i.size(); iter++) {

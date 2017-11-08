@@ -57,7 +57,7 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
     # --------------------------------------------
     logw0 <- int.logitz(Z,y,stats,alpha,mu,s,Xr,eta) +
              int.gamma(logodds,alpha) +
-             int.klbeta(alpha,mu,s,sa)
+             int.klbeta(alpha,mu,s,1,sa,b0)
 
     # (2b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
@@ -87,7 +87,7 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
     # Compute variational lower bound to marginal log-likelihood.
     logw[iter] <- int.logitz(Z,y,stats,alpha,mu,s,Xr,eta) +
                   int.gamma(logodds,alpha) +
-                  int.klbeta(alpha,mu,s,sa)
+                  int.klbeta(alpha,mu,s,1,sa,b0)
 
     # (2e) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
     # -----------------------------------------------------

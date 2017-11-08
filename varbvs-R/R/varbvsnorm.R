@@ -25,15 +25,16 @@
 # variables. Input y contains samples of the outcome; it is a vector
 # of length n.
 #
-# Inputs sigma, sa and logodds are additional model parameters; sigma
-# and sa are scalars. Input sigma specifies the variance of the
-# residual, and sa specifies the prior variance of the coefficients
-# (scaled by sigma). Input logodds is the prior log-odds of inclusion
-# for each variable. Note that the prior log-odds here is defined with
-# respect to the *natural* logarithm, whereas in function varbvs the
-# prior log-odds is defined with respect to the base-10 logarithm, so
-# a scaling factor of log(10) is needed to convert from the latter to
-# the former.
+# Inputs sigma, sa, b0 and logodds are additional model parameters;
+# sigma, sa and b0 are scalars. Input sigma specifies the variance of
+# the residual, sa specifies the prior variance of the coefficients
+# (scaled by sigma), and b0 specifies the prior mean of the
+# coefficients (also scaled by sigma). Input logodds is the prior
+# log-odds of inclusion for each variable. Note that the prior
+# log-odds here is defined with respect to the *natural* logarithm,
+# whereas in function varbvs the prior log-odds is defined with
+# respect to the base-10 logarithm, so a scaling factor of log(10) is
+# needed to convert from the latter to the former.
 #
 # Output logw is the variational estimate of the marginal
 # log-likelihood given the hyperparameters at each iteration of the
@@ -50,10 +51,16 @@
 # the maximum a posteriori (MAP) estimate of the prior variance
 # parameter (sa), in which sa is drawn from a scaled inverse
 # chi-square distribution with scale sa0 and degrees of freedom n0.
-varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, update.order,
-                        tol = 1e-4, maxiter = 1e4, verbose = TRUE,
-                        outer.iter = NULL, update.sigma = TRUE,
-                        update.sa = TRUE, n0 = 10, sa0 = 1) {
+# Similarly, when update.b0 = TRUE, there is the additional option of
+# computing the MAP estimate of the prior mean parameter (b0), in
+# which b0 is drawn from a normal distribution with mean mub0 and
+# standard deviation 1/nb0 (scaled by sa).
+varbvsnorm <- function (X, y, sigma, sa, b0, logodds, alpha, mu,
+                        update.order, tol = 1e-4, maxiter = 1e4,
+                        verbose = TRUE, outer.iter = NULL,
+                        update.sigma = TRUE, update.sa = TRUE,
+                        update.b0 = FALSE, n0 = 10, sa0 = 1,
+                        nb0 = 10, mub0 = 0) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -83,6 +90,8 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, update.order,
     alpha0 <- alpha
     mu0    <- mu
     s0     <- s
+    sa.old <- sa
+    b0.old <- b0
     sigma0 <- sigma
 
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
@@ -90,7 +99,7 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, update.order,
     # Compute the lower bound to the marginal log-likelihood.
     logw0 <- int.linear(Xr,d,y,sigma,alpha,mu,s) +
              int.gamma(logodds,alpha) +
-             int.klbeta(alpha,mu,s,sigma*sa)
+             int.klbeta(alpha,mu,s,sigma,sigma*sa,b0)
 
     # (2b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
@@ -110,7 +119,7 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, update.order,
     # Compute the lower bound to the marginal log-likelihood.
     logw[iter] <- int.linear(Xr,d,y,sigma,alpha,mu,s) +
                   int.gamma(logodds,alpha) +
-                  int.klbeta(alpha,mu,s,sigma*sa)
+                  int.klbeta(alpha,mu,s,sigma,sigma*sa,b0)
 
     # (2d) UPDATE RESIDUAL VARIANCE
     # -----------------------------
@@ -157,7 +166,8 @@ varbvsnorm <- function (X, y, sigma, sa, logodds, alpha, mu, update.order,
       logw[iter] <- logw0
       err[iter]  <- 0
       sigma      <- sigma0
-      sa         <- sa0
+      sa         <- sa.old
+      b0         <- b0.old
       alpha      <- alpha0
       mu         <- mu0
       s          <- s0
