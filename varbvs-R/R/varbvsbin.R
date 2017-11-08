@@ -25,15 +25,15 @@
 # Input y contains samples of the binary outcome; it is a vector of
 # length n.
 #
-# Inputs sa and logodds are the hyperparameters. Scalar sa is the
-# prior variance of the coefficients. Input logodds is the prior
-# log-odds of inclusion for each variable.  Note that the prior
-# log-odds here is defined with respect to the *natural* logarithm,
-# whereas in function varbvs the prior log-odds is defined with
-# respect to the base-10 logarithm, so a scaling factor of log(10) is
-# needed to convert from the latter to the former. Also, note that the
-# residual variance parameter (sigma) is not needed to model a binary
-# outcome.
+# Inputs sa, b0 and logodds are the hyperparameters. Scalar sa is the
+# prior variance of the coefficients. Scalar b0 is the prior mean of
+# the coefficients. Input logodds is the prior log-odds of inclusion
+# for each variable.  Note that the prior log-odds here is defined
+# with respect to the *natural* logarithm, whereas in function varbvs
+# the prior log-odds is defined with respect to the base-10 logarithm,
+# so a scaling factor of log(10) is needed to convert from the latter
+# to the former. Also, note that the residual variance parameter
+# (sigma) is not needed to model a binary outcome.
 #
 # Output logw is the variational estimate of the marginal
 # log-likelihood given the hyperparameters at each iteration of the
@@ -47,7 +47,7 @@
 # the coefficient given that it is included in the model. Output eta
 # is the vector of free parameters that specify the variational
 # approximation to the likelihood factors in the logistic regression.
-varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, update.order,
+varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
                        tol = 1e-4, maxiter = 1e4, verbose = TRUE,
                        outer.iter = NULL, update.sa = TRUE,
                        optimize.eta = TRUE, n0 = 10, sa0 = 1) {
@@ -78,7 +78,7 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, update.order,
     mu0    <- mu
     s0     <- s
     eta0   <- eta
-    sa0    <- sa
+    sa.old <- sa
 
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
@@ -150,7 +150,7 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, update.order,
     if (logw[iter] < logw0) {
       logw[iter]  <- logw0
       err[iter]   <- 0
-      sa          <- sa0
+      sa          <- sa.old
       alpha       <- alpha0
       mu          <- mu0
       s           <- s0
