@@ -20,15 +20,16 @@
 // ---------------------------------------------------------------------
 // This function is used to implement the R function varbvsnormupdate.
 // It is called in R using the .Call interface.
-SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp,
-			    SEXP xyp, SEXP dp, SEXP alphap, SEXP mup,
-			    SEXP Xrp, SEXP ip) {
+SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP b0p,
+			    SEXP logoddsp, SEXP xyp, SEXP dp, SEXP alphap, 
+			    SEXP mup, SEXP Xrp, SEXP ip) {
 
   // (1) GET INPUTS AND OUTPUTS
   // --------------------------
   double* X       = REAL(Xp);        // Input X.
   double  sigma   = *REAL(sigmap);   // Input sigma.
   double  sa      = *REAL(sap);      // Input sa.
+  double  b0      = *REAL(b0p);      // Input b0.
   double* logodds = REAL(logoddsp);  // Input logodds.
   double* xy      = REAL(xyp);       // Input xy.
   double* d       = REAL(dp);        // Input d.
@@ -51,7 +52,7 @@ SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp,
     const double* x = getConstColumn(X,k,n);
 
     // Perform the update.
-    varbvsnormupdate(x,xy[k],d[k],sigma,sa,logodds[k],alpha + k,mu + k,Xr,n);
+    varbvsnormupdate(x,xy[k],d[k],sigma,sa,b0,logodds[k],alpha+k,mu+k,Xr,n);
   }
 
   return R_NilValue;
@@ -60,7 +61,7 @@ SEXP varbvsnormupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP logoddsp,
 // ---------------------------------------------------------------------
 // This function is used to implement the R function varbvsbinupdate.
 // It is called in R using the .Call interface.
-SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
+SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP b0p, SEXP logoddsp, SEXP dp,
 			   SEXP xdxp, SEXP xyp, SEXP xdp, SEXP alphap,
 			   SEXP mup, SEXP Xrp, SEXP ip) {
 
@@ -68,6 +69,7 @@ SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
   // --------------------------
   double* X       = REAL(Xp);        // Input X.
   double  sa      = *REAL(sap);      // Input sa.
+  double  b0      = *REAL(b0p;       // Input b0.
   double* logodds = REAL(logoddsp);  // Input logodds.
   double* d       = REAL(dp);        // Input d.
   double* xdx     = REAL(xdxp);      // Input xdx.
@@ -92,7 +94,7 @@ SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
     const double* x = getConstColumn(X,k,n);
 
     // Perform the update.
-    varbvsbinupdate(x,xy[k],xd[k],xdx[k],d,sa,logodds[k],alpha+k,mu+k,Xr,n);
+    varbvsbinupdate(x,xy[k],xd[k],xdx[k],d,sa,b0,logodds[k],alpha+k,mu+k,Xr,n);
   }
 
   return R_NilValue;
@@ -101,14 +103,15 @@ SEXP varbvsbinupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
 // ---------------------------------------------------------------------
 // This function is used to implement the R function varbvsbinzupdate.
 // It is called in R using the .Call interface.
-SEXP varbvsbinzupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
-			    SEXP xdxp, SEXP xyp, SEXP dzrp, SEXP alphap,
-			    SEXP mup, SEXP Xrp, SEXP ip) {
+SEXP varbvsbinzupdate_Call (SEXP Xp, SEXP sap, SEXP b0p, SEXP logoddsp, 
+			    SEXP dp, SEXP xdxp, SEXP xyp, SEXP dzrp, 
+			    SEXP alphap, SEXP mup, SEXP Xrp, SEXP ip) {
 
   // (1) GET INPUTS AND OUTPUTS
   // --------------------------
   double* X       = REAL(Xp);        // Input X.
   double  sa      = *REAL(sap);      // Input sa.
+  double  b0      = *REAL(b0p);      // Input b0.
   double* logodds = REAL(logoddsp);  // Input logodds.
   double* d       = REAL(dp);        // Input d.
   double* xdx     = REAL(xdxp);      // Input xdx.
@@ -139,8 +142,8 @@ SEXP varbvsbinzupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
     const double* x = getConstColumn(X,k,n);
 
     // Perform the update.
-    varbvsbinzupdate(x,xy[k],xdx[k],d,dzr,sa,logodds[k],alpha + k,mu + k,Xr,
-		     a,b,n,m);
+    varbvsbinzupdate(x,xy[k],xdx[k],d,dzr,sa,b0,logodds[k],alpha + k,mu + k,
+		     Xr,a,b,n,m);
   }
 
   return R_NilValue;
