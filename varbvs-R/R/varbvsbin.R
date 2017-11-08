@@ -49,8 +49,9 @@
 # approximation to the likelihood factors in the logistic regression.
 varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
                        tol = 1e-4, maxiter = 1e4, verbose = TRUE,
-                       outer.iter = NULL, update.sa = TRUE,
-                       optimize.eta = TRUE, n0 = 10, sa0 = 1) {
+                       outer.iter = NULL, update.sa = TRUE, update.b0 = FALSE,
+                       optimize.eta = TRUE, n0 = 10, sa0 = 1, nb0 = 10,
+                       mub0 = 0) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)

@@ -15,10 +15,10 @@
 # variable selection in linear (family = "gaussian") or logistic
 # regression (family = "binomial"). See varbvs.Rd for details.
 varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
-                    logodds, alpha, mu, eta, update.sigma, update.sa,
-                    optimize.eta, initialize.params, update.order, nr = 100,
-                    sa0 = 1, n0 = 10, tol = 1e-4, maxiter = 1e4,
-                    verbose = TRUE) {
+                    b0, logodds, alpha, mu, eta, update.sigma, update.sa,
+                    optimize.eta, initialize.params, update.order,
+                    update.b0 = FALSE, nr = 100, sa0 = 1, n0 = 10, mub0 = 0,
+                    nb0 = 10, tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -96,6 +96,13 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     update.sa.default <- FALSE
   }
 
+  # Get candidate settings for the prior mean of the coefficients, if
+  # provided.
+  if (missing(b0)) 
+    b0 <- 0
+  else
+    b0 <- c(b0)
+  
   # Get candidate settings for the prior log-odds of inclusion. This
   # may either be specified as a vector, in which case this is the
   # prior applied uniformly to all variables, or it is a p x ns
@@ -106,10 +113,11 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # settings is 1, in which case we select 20 candidate settings for
   # the prior log-odds, evenly spaced between log10(1/p) and -1.
   if (missing(logodds)) {
-    if (length(sigma) == 1 & length(sa) == 1)
+    if (length(sigma) == 1 & length(sa) == 1 & length(b0) == 1)
       logodds <- seq(-log10(p),-1,length.out = 20)
     else
-      stop("logodds can only be missing when length(sigma) = length(sa) = 1")
+      stop(paste("logodds can only be missing when length(sigma) =",
+                 "length(sa) = length(b0) = 1"))
   }
   if (!is.matrix(logodds)) {
     prior.same <- TRUE
@@ -122,15 +130,19 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
   # Here is where I ensure that the numbers of candidate hyperparameter
   # settings are consistent.
-  ns <- max(length(sigma),length(sa),ncol(logodds))
+  ns <- max(length(sigma),length(sa),length(b0),ncol(logodds))
   if (length(sigma) == 1)
     sigma <- rep(sigma,ns)
   if (length(sa) == 1)
     sa <- rep(sa,ns)
+  if (length(b0) == 1)
+    b0 <- rep(b0,ns)
   if (ncol(logodds) == 1)
     logodds <- rep.col(logodds,ns)
-  if (length(sigma) != ns | length(sa) != ns | ncol(logodds) != ns)
-    stop("options.sigma, options.sa and options.logodds are inconsistent")
+  if (!(length(sigma) == ns & length(sa) == ns & length(b0) == ns &
+        ncol(logodds) == ns))
+    stop(paste("Inputs \"sigma\", \"sa\", \"b0\" and \"logodds\" have",
+               "inconsistent dimensions"))
 
   # Determine whether to update the residual variance parameter. Note
   # that this option is only relevant for a binary trait.
@@ -247,6 +259,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     cat(sprintf("covariates: %-6d",max(0,ncol(Z) - 1)))
     cat("     fit prior var. of coefs (sa):",tf2yn(update.sa),"\n")
     cat("intercept:  yes        ")
+    cat("********************** ")
+    cat("     fit prior mean of coefs (b0):",tf2yn(update.b0),"\n")
     if (family == "gaussian")
       cat("fit residual var. (sigma):   ",tf2yn(update.sigma),"\n")
     else if (family == "binomial")
@@ -272,16 +286,17 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     # divergence between the approximating distribution and the exact
     # posterior.
     if (verbose) {
-      cat("        variational    max.   incl variance params\n")
-      cat(" iter   lower bound  change   vars   sigma      sa\n")
+      cat("        variational    max.   incl hyperparameters     \n")
+      cat(" iter   lower bound  change   vars   sigma      sa   b0\n")
     }
-    out      <- outerloop(X,Z,y,family,SZy,SZX,c(sigma),c(sa),c(logodds),
+    out      <- outerloop(X,Z,y,family,SZy,SZX,sigma,sa,b0,c(logodds),
                           c(alpha),c(mu),c(eta),update.order,tol,maxiter,
-                          verbose,NULL,update.sigma,update.sa,optimize.eta,
-                          n0,sa0)
+                          verbose,NULL,update.sigma,update.sa,update.b0,
+                          optimize.eta,n0,sa0,nb0,mub0)
     logw     <- out$logw
     sigma    <- out$sigma
     sa       <- out$sa
+    b0       <- out$b0
     mu.cov[] <- out$mu.cov
     alpha[]  <- out$alpha
     mu[]     <- out$mu
@@ -304,12 +319,14 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
       # Repeat for each setting of the hyperparameters.
       for (i in 1:ns) {
-        out <- outerloop(X,Z,y,family,SZy,SZX,sigma[i],sa[i],logodds[,i],
+        out <- outerloop(X,Z,y,family,SZy,SZX,sigma[i],sa[i],b0[i],logodds[,i],
                          alpha[,i],mu[,i],eta[,i],update.order,tol,maxiter,
-                         verbose,i,update.sigma,update.sa,optimize.eta,n0,sa0)
+                         verbose,i,update.sigma,update.sa,update.b0,
+                         optimize.eta,n0,sa0,nb0,mub0)
         logw[i]    <- out$logw
         sigma[i]   <- out$sigma
         sa[i]      <- out$sa
+        b0[i]      <- out$b0
         mu.cov[,i] <- out$mu.cov
         alpha[,i]  <- out$alpha
         mu[,i]     <- out$mu
@@ -332,6 +349,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
         sigma <- rep(sigma[i],ns)
       if (update.sa)
         sa <- rep(sa[i],ns)
+      if (update.b0)
+        b0 <- rep(b0[i],ns)
     }
 
     # Compute a variational approximation to the posterior distribution
@@ -339,20 +358,22 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     if (verbose) {
       cat("Computing marginal likelihood for",ns,"combinations of",
           "hyperparameters.\n")
-      cat("-iteration-   variational    max.   incl variance params\n")
-      cat("outer inner   lower bound  change   vars   sigma      sa\n")
+      cat("-iteration-   variational    max.   incl  hyperparameters\n")
+      cat("outer inner   lower bound  change   vars   sigma      sa  b0\n")
     }
     
     # For each setting of the hyperparameters, find a set of
     # parameters that locally minimize the K-L divergence between the
     # approximating distribution and the exact posterior.
     for (i in 1:ns) {
-      out <- outerloop(X,Z,y,family,SZy,SZX,sigma[i],sa[i],logodds[,i],
+      out <- outerloop(X,Z,y,family,SZy,SZX,sigma[i],sa[i],b0[i],logodds[,i],
                        alpha[,i],mu[,i],eta[,i],update.order,tol,maxiter,
-                       verbose,i,update.sigma,update.sa,optimize.eta,n0,sa0)
+                       verbose,i,update.sigma,update.sa,update.b0,
+                       optimize.eta,n0,sa0,nb0,mub0)
       logw[i]    <- out$logw
       sigma[i]   <- out$sigma
       sa[i]      <- out$sa
+      b0[i]      <- out$b0
       mu.cov[,i] <- out$mu.cov
       alpha[,i]  <- out$alpha
       mu[,i]     <- out$mu
@@ -381,11 +402,12 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   }
 
   if (family == "gaussian") {
-    fit <- list(family = family,n0 = n0,sa0 = sa0,mu.cov = mu.cov,
-                update.sigma = update.sigma,update.sa = update.sa,
+    fit <- list(family = family,n0 = n0,sa0 = sa0,nb0 = nb0,mub0 = mub0,
+                mu.cov = mu.cov,update.sigma = update.sigma,
+                update.sa = update.sa,update.b0 = update.b0,
                 prior.same = prior.same,optimize.eta = FALSE,logw = logw,
-                w = w,sigma = sigma,sa = sa,logodds = logodds,alpha = alpha,
-                mu = mu,s = s,eta = NULL,pip = pip,beta = beta,
+                w = w,sigma = sigma,sa = sa,b0 = b0,logodds = logodds,
+                alpha = alpha,mu = mu,s = s,eta = NULL,pip = pip,beta = beta,
                 beta.cov = beta.cov,y = y)
     class(fit) <- c("varbvs","list")
 
@@ -414,12 +436,13 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     fit$residuals <- y - fit$fitted.values
     fit$residuals.response
   } else if (family == "binomial") {
-    fit <- list(family = family,n0 = n0,mu.cov = mu.cov,sa0 = sa0,
-                update.sigma = FALSE,update.sa = update.sa,
-                optimize.eta = optimize.eta,prior.same = prior.same,
-                logw = logw,w = w,sigma = NULL,sa = sa,logodds = logodds,
-                alpha = alpha,mu = mu,s = s,eta = eta,pip = pip,beta = beta,
-                beta.cov = beta.cov,model.pve = NA)
+    fit <- list(family = family,mu.cov = mu.cov,n0 = n0,sa0 = sa0,nb0 = nb0,
+                mub0 = mub0,update.sigma = FALSE,update.sa = update.sa,
+                update.b0 = update.b0,optimize.eta = optimize.eta,
+                prior.same = prior.same,logw = logw,w = w,sigma = NULL,
+                sa = sa,b0 = b0,logodds = logodds,alpha = alpha,mu = mu,s = s,
+                eta = eta,pip = pip,beta = beta,beta.cov = beta.cov,
+                model.pve = NA)
     class(fit) <- c("varbvs","list")
 
     # Compute the fitted values for each hyperparameter setting.
@@ -469,10 +492,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
 # ----------------------------------------------------------------------
 # This function implements one iteration of the "outer loop".
-outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, logodds,
+outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, b0, logodds,
                        alpha, mu, eta, update.order, tol, maxiter, verbose,
-                       outer.iter, update.sigma, update.sa, optimize.eta,
-                       n0, sa0) {
+                       outer.iter, update.sigma, update.sa, update.b0,
+                       optimize.eta, n0, sa0, nb0, mub0) {
   p <- ncol(X)
   if (length(logodds) == 1)
     logodds <- rep(logodds,p)
@@ -484,9 +507,9 @@ outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, logodds,
 
     # Optimize the variational lower bound for the Bayesian variable
     # selection model.
-    out <- varbvsnorm(X,y,sigma,sa,log(10)*logodds,alpha,mu,update.order,
+    out <- varbvsnorm(X,y,sigma,sa,b0,log(10)*logodds,alpha,mu,update.order,
                       tol,maxiter,verbose,outer.iter,update.sigma,update.sa,
-                      n0,sa0)
+                      update.b0,n0,sa0,nb0,mub0)
     out$eta <- eta
 
     # Adjust the variational lower bound to account for integral over
@@ -502,13 +525,13 @@ outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, logodds,
     # Optimize the variational lower bound for the Bayesian variable
     # selection model.
     if (ncol(Z) == 1)
-      out <- varbvsbin(X,y,sa,log(10)*logodds,alpha,mu,eta,update.order,tol,
-                       maxiter,verbose,outer.iter,update.sa,optimize.eta,
-                       n0,sa0)
+      out <- varbvsbin(X,y,sa,b0,log(10)*logodds,alpha,mu,eta,update.order,tol,
+                       maxiter,verbose,outer.iter,update.sa,update.b0,
+                       optimize.eta,n0,sa0,nb0,mub0)
     else
-      out <- varbvsbinz(X,Z,y,sa,log(10)*logodds,alpha,mu,eta,update.order,
-                        tol,maxiter,verbose,outer.iter,update.sa,optimize.eta,
-                        n0,sa0)
+      out <- varbvsbinz(X,Z,y,sa,b0,log(10)*logodds,alpha,mu,eta,update.order,
+                        tol,maxiter,verbose,outer.iter,update.sa,update.b0,
+                        optimize.eta,n0,sa0,nb0,mub0)
     out$sigma <- sigma
 
     # Compute the posterior mean estimate of the regression

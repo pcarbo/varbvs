@@ -11,10 +11,11 @@
   and the exact posterior.
 }
 \usage{
-  varbvs(X, Z, y, family = c("gaussian","binomial"), sigma, sa,
+  varbvs(X, Z, y, family = c("gaussian","binomial"), sigma, sa, b0,
          logodds, alpha, mu, eta, update.sigma, update.sa,
          optimize.eta, initialize.params, update.order, nr = 100,
-         sa0 = 1, n0 = 10, tol = 1e-4, maxiter = 1e4, verbose = TRUE)
+         sa0 = 1, n0 = 10, mub0 = 0, nb0 = 10, tol = 1e-4,
+         maxiter = 1e4, verbose = TRUE)
 }
 \arguments{
   \item{X}{n x p input matrix, where n is the number of samples,
@@ -60,6 +61,14 @@
     maximum a posteriori estimates when \code{n0 > 0} and \code{sa0 >
     0}.}
 
+  \item{b0}{Hyperparameter b0 is the prior mean of the regression
+    coefficients for variables that are included in the model. This
+    prior mean is always scaled by sigma, like parameter code{sa}. If
+    missing, a zero-centered prior is assumed; that is, \code{b0 =
+    0}. There is also the option of fitting this parameter to the data
+    (see argument \code{update.b0} below), in which case input \code{b0}
+    acts as the initial estimate.}
+
   \item{logodds}{Hyperparameter logodds is the prior log-odds that a
     variable is included in the regression model; it is defined as
     \eqn{logodds = log10(q/(1-q)),} where q is the prior probability
@@ -96,9 +105,13 @@
     initial estimates.}
 
   \item{update.sa}{Setting this to TRUE ensures that sa is always fitted
-    to data, in which case input vector sa is used to provide initial
-    estimates.}
+    to data, in which case input vector \code{sa} is used to provide
+    initial estimates.}
 
+  \item{update.b0}{When \code{update.b0 = TRUE}, hyperparameter b0 is
+    fitted to the data, in which case input vector \code{b0} provides
+    initial estimates.}
+  
   \item{optimize.eta}{When \code{optimize.eta = TRUE}, eta is fitted to
     the data during the inner loop coordinate ascent updates, even when
     good estimates of eta are provided as input.}
@@ -123,6 +136,12 @@
     cases when the model is "sparse"; that is, when few variables are
     included in the model.}
 
+  \item{mub0}{Mean for normal prior on hyperparameter b0.}
+
+  \item{nb0}{Inverse standard deviation (or "equivalent sample size")
+    for normal prior on hyperparameter b0. (Note that the prior is
+    scaled by sa.)}
+  
   \item{tol}{Convergence tolerance for inner loop.}
 
   \item{maxiter}{Maximum number of inner loop iterations.}
@@ -218,10 +237,10 @@
     the hyperparameters when reporting final posterior quantities. For
     example, hyperparameter sa is often estimated with a high degree of
     uncertainty when only a few variables are included in the model.
-    Provided that (1) the hyperparameter settings sigma, sa and logodds
-    adequately represent the space of possible hyperparameter settings
-    with high posterior mass, (2) the hyperparameter settings are drawn
-    from the same distribution as the prior, and (3) the
+    Provided that (1) the hyperparameter settings sigma, sa, b0 and
+    logodds adequately represent the space of possible hyperparameter
+    settings with high posterior mass, (2) the hyperparameter settings
+    are drawn from the same distribution as the prior, and (3) the
     fully-factorized variational approximation closely approximates the
     true posterior distribution, then final posterior quantities can be
     calculated by using logw as (unnormalized) log-marginal
@@ -233,13 +252,13 @@
     posterior quantities are reported by function
     \code{\link{summary.varbvs}} (see \code{help(summary.varbvs)} for
     more details). To account for discrepancies between the prior on
-    (sigma,sa,logodds) and the sampling density used to draw candidate
-    settings of the hyperparameters, adjust the log-probabilities by
-    setting \code{fit$logw <- fit$logw + logp/logq}, where logp is the
-    log-density of the prior distribution, and logq is the log-density
-    of the sampling distribution. (This is importance sampling; see, for
-    example, R. M. Neal, Annealed importance sampling, \emph{Statistics
-      and Computing}, 2001.)
+    (sigma, sa, b0, logodds) and the sampling density used to draw
+    candidate settings of the hyperparameters, adjust the
+    log-probabilities by setting \code{fit$logw <- fit$logw +
+    logp/logq}, where logp is the log-density of the prior distribution,
+    and logq is the log-density of the sampling distribution. (This is
+    importance sampling; see, for example, R. M. Neal, Annealed
+    importance sampling, \emph{Statistics and Computing}, 2001.)
 }
 \section{Prior on proportion of variance explained}{
   Specifying the prior variance of the regression coefficients (sa) can
@@ -276,6 +295,9 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
   file varbvs.R, under "preprocessing steps". Alternatively, one could
   include the matrix Z in the calculation above, taking care to ensure
   that the covariates are included in the model with probability 1.
+
+  Finally, note that this strategy as it is described here is only
+  appropriate when \code{b0 = 0}.
 }
 \section{Memory requirements}{
     Finally, we point out that the optimization procedures were
@@ -298,6 +320,8 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
 
   \item{sa}{Settings for prior variance parameter.}
 
+  \item{b0}{Settings for prior mean parameter.}
+  
   \item{logodds}{Prior log-odds settings.}
 
   \item{prior.same}{TRUE if prior is identical for all variables. When
@@ -307,12 +331,19 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
 
   \item{n0}{Degrees of freedom for prior on hyperparameter sa.}
 
+  \item{mub0}{Mean parameter for prior on hyperparameter b0.}
+  
+  \item{nb0}{Standard deviation parameter for prior on hyperparameter b0.}
+  
   \item{update.sigma}{If TRUE, sigma was fit to data for each setting of
-    prior logodds (\code{family = "gaussian"} only).}
+    other hyperparameters (\code{family = "gaussian"} only).}
 
-  \item{update.sa}{If TRUE, sa was fit to data for each setting of prior
-    logodds.}
+  \item{update.sa}{If TRUE, sa was fit to data for each setting of other
+    hyperparameters.}
 
+  \item{update.b0}{If TRUE, b0 was fit to data for each setting of other
+     hyperparameters.}
+  
   \item{logw}{An array with ns elements, in which \code{logw[i]} is the
     variational lower bound on the marginal log-likelihood for setting i
     of the hyperparameters. These provide approximate values of the

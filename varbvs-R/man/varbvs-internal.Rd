@@ -12,15 +12,18 @@
 var1(x)
 var1.cols(X)
 varbvspve(X,fit,nr = 1000)
-varbvsnorm(X,y,sigma,sa,logodds,alpha,mu,update.order,tol = 1e-4,
+varbvsnorm(X,y,sigma,sa,b0,logodds,alpha,mu,update.order,tol = 1e-4,
            maxiter = 1e4,verbose = TRUE,outer.iter = NULL,
-           update.sigma = TRUE,update.sa = TRUE,n0 = 10,sa0 = 1)
-varbvsbin(X,y,sa,logodds,alpha,mu,eta,update.order,tol = 1e-4,
+           update.sigma = TRUE,update.sa = TRUE,update.b0 = FALSE,
+           n0 = 10,sa0 = 1,nb0 = 10,mub0 = 0)
+varbvsbin(X,y,sa,b0,logodds,alpha,mu,eta,update.order,tol = 1e-4,
           maxiter = 1e4,verbose = TRUE,outer.iter = NULL,
-          update.sa = TRUE,optimize.eta = TRUE,n0 = 10,sa0 = 1)
-varbvsbinz(X,Z,y,sa,logodds,alpha,mu,eta,update.order,tol = 1e-4,
+          update.sa = TRUE,update.b0 = FALSE,optimize.eta = TRUE,
+          n0 = 10,sa0 = 1,nb0 = 10,mub0 = 0)
+varbvsbinz(X,Z,y,sa,b0,logodds,alpha,mu,eta,update.order,tol = 1e-4,
            maxiter = 1e4,verbose = TRUE,outer.iter = NULL,
-           update.sa = TRUE,optimize.eta = TRUE,n0 = 10,sa0 = 1)
+           update.sa = TRUE,update.b0 = FALSE,optimize.eta = TRUE,
+           n0 = 10,sa0 = 1,nb0 = 10,mub0 = 0)
 }
 \author{Peter Carbonetto <peter.carbonetto@gmail.com>}
 \details{
