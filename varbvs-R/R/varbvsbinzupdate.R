@@ -15,7 +15,7 @@
 # maximize the variational lower bound for Bayesian variable selection
 # in logistic regression, allowing for additional covariates. See
 # varbvsbinupdate for more details.
-varbvsbinzupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0,
+varbvsbinzupdate <- function (X, sa, b0, logodds, stats, alpha0, mu0, Xr0,
                               updates) {
 
   # Get the number of samples (n) and variables (p).
@@ -26,9 +26,9 @@ varbvsbinzupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0,
   if (!is.double(X) || !is.matrix(X))
     stop("Input argument 'X' must be a double-precision matrix")
 
-  # Check input sa.
-  if (length(sa) != 1)
-    stop("Input sa must be a scalar")
+  # Check inputs sa and b0.
+  if (!(length(sa) == 1 & length(b0) == 1))
+    stop("Inputs sa and b0 must be scalars")
 
   # Check input logodds, alpha0 and mu0.
   if (!(length(logodds) == p & length(alpha0) == p & length(mu0) == p))
@@ -55,9 +55,9 @@ varbvsbinzupdate <- function (X, sa, logodds, stats, alpha0, mu0, Xr0,
   # subtract 1 from the indices because R vectors start at 1, and C
   # arrays start at 0.
   out <- .Call(C_varbvsbinzupdate_Call,X = X,sa = as.double(sa),
-               logodds = as.double(logodds),d = as.double(stats$d),
-               xdx = as.double(stats$xdx),xy = as.double(stats$xy),
-               dzr = stats$dzr,alpha = alpha,mu = mu,Xr = Xr,
-               i = as.integer(updates - 1))
+               b0 = as.double(b0),logodds = as.double(logodds),
+               d = as.double(stats$d),xdx = as.double(stats$xdx),
+               xy = as.double(stats$xy),dzr = stats$dzr,alpha = alpha,
+               mu = mu,Xr = Xr,i = as.integer(updates - 1))
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }

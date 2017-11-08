@@ -70,7 +70,7 @@ varbvsnormupdate <-
     stop("Input X must be a double-precision matrix")
 
   # Check inputs sigma, sa and b0.
-  if (length(sigma) != 1 | length(sa) != 1 | length(b0) != 1)
+  if (!(length(sigma) == 1 & length(sa) == 1 & length(b0) == 1))
     stop("Inputs sigma, sa and b0 must be scalars")
 
   # Check input logodds, xy, d, alpha0 and mu0.
@@ -101,9 +101,10 @@ varbvsnormupdate <-
     # subtract 1 from the indices because R vectors start at 1, and C
     # arrays start at 0.
     out <- .Call(C_varbvsnormupdate_Call,X = X,sigma = as.double(sigma),
-                 sa = as.double(sa),logodds = as.double(logodds),
-                 xy = as.double(xy),d = as.double(d),alpha = alpha,mu = mu,
-                 Xr = Xr,i = as.integer(updates - 1))
+                 sa = as.double(sa),b0 = as.double(b0),
+                 logodds = as.double(logodds),xy = as.double(xy),
+                 d = as.double(d),alpha = alpha,mu = mu, Xr = Xr,
+                 i = as.integer(updates - 1))
   } else if (algorithm.version == "Rcpp") {
 
     # Execute the C routine using the Rcpp interface.
