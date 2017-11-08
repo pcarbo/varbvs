@@ -66,7 +66,7 @@ void mexFunction (int nlhs, mxArray* plhs[],
     copyColumn(X.elems,x,k,n);
 
     // Perform the update.
-    varbvsbinupdate(x,xy.elems[k],xd.elems[k],xdx.elems[k],d.elems,sa,
+    varbvsbinupdate(x,xy.elems[k],xd.elems[k],xdx.elems[k],d.elems,sa,0,
 		    logodds.elems[k],alpha.elems+k,mu.elems+k,Xr.elems,n);
   }
 
