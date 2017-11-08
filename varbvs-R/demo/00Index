@@ -1,11 +1,14 @@
-varbvs.qtl	Using varbvs to map a quantitative trait in a simulated
-                genetic data set.
-varbvs.cc	Using varbvs to map a binary (case-control) trait in a
-                simulated genetic data set.
-varbvsmix	Using the varbvsmix function on a simulated data set.
-varbvsmix.dense Illustrates the "drop.threshold" option in varbvsmix
-                to speed up computation when a lot of the mixture
-                components have near-zero weight.
-varbvsmix.test  Verifies that varbvs and varbvsmix produce the same
-                result when there are exactly 2 mixture components.
+varbvs.qtl	    Using varbvs to map a quantitative trait in a simulated
+                    genetic data set.
+varbvs.cc	    Using varbvs to map a binary (case-control) trait in a
+                    simulated genetic data set.
+varbvs.noncentered  Demonstrates fitting of the non-zero-centered prior.
+varbvs.noncenter.cc Demonstrates fitting of the non-zero-centered prior
+                    for a data set with a binary (case-control) outcome.
+varbvsmix	    Using the varbvsmix function on a simulated data set.
+varbvsmix.dense     Illustrates the "drop.threshold" option in varbvsmix
+                    to speed up computation when a lot of the mixture
+                    components have near-zero weight.
+varbvsmix.test      Verifies that varbvs and varbvsmix produce the same
+                    result when there are exactly 2 mixture components.
 

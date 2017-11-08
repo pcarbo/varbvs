@@ -108,7 +108,7 @@ varbvsnorm <- function (X, y, sigma, sa, b0, logodds, alpha, mu,
       i <- update.order
     else
       i <- rev(update.order)
-    out   <- varbvsnormupdate(X,sigma,sa,logodds,xy,d,alpha,mu,Xr,i)
+    out   <- varbvsnormupdate(X,sigma,sa,b0,logodds,xy,d,alpha,mu,Xr,i)
     alpha <- out$alpha
     mu    <- out$mu
     Xr    <- out$Xr
@@ -177,7 +177,7 @@ varbvsnorm <- function (X, y, sigma, sa, b0, logodds, alpha, mu,
   }
   
   return(list(logw = logw[1:iter],err = err[1:iter],sigma = sigma,sa = sa,
-              alpha = alpha,mu = mu,s = s))
+              b0 = b0,alpha = alpha,mu = mu,s = s))
 }
 
 # ----------------------------------------------------------------------

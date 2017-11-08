@@ -134,7 +134,7 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
   }
     
   # Return the variational estimates.
-  return(list(logw = logw[1:iter],err = err[1:iter],sa = sa,
+  return(list(logw = logw[1:iter],err = err[1:iter],sa = sa,b0 = b0,
               alpha = alpha,mu = mu,s = s,eta = eta))
 }
 

@@ -259,12 +259,12 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     cat(sprintf("covariates: %-6d",max(0,ncol(Z) - 1)))
     cat("     fit prior var. of coefs (sa):",tf2yn(update.sa),"\n")
     cat("intercept:  yes        ")
-    cat("********************** ")
-    cat("     fit prior mean of coefs (b0):",tf2yn(update.b0),"\n")
     if (family == "gaussian")
       cat("fit residual var. (sigma):   ",tf2yn(update.sigma),"\n")
     else if (family == "binomial")
       cat("fit approx. factors (eta):   ",tf2yn(optimize.eta),"\n")
+    cat("********************** ")
+    cat("fit prior mean of coefs (b0):",tf2yn(update.b0),"\n")
   }
 
   # (4) INITIALIZE STORAGE FOR THE OUTPUTS
@@ -313,8 +313,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
       if (verbose) {
         cat("Finding best initialization for",ns,"combinations of",
             "hyperparameters.\n");
-        cat("-iteration-   variational    max.   incl variance params\n");
-        cat("outer inner   lower bound  change   vars   sigma      sa\n");
+        cat("-iteration-   variational    max.   incl ----hyperparameters",
+            "----\n",sep="");
+        cat("outer inner   lower bound  change   vars   sigma      sa",
+            "      b0\n",sep="");
       }
 
       # Repeat for each setting of the hyperparameters.
@@ -358,8 +360,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     if (verbose) {
       cat("Computing marginal likelihood for",ns,"combinations of",
           "hyperparameters.\n")
-      cat("-iteration-   variational    max.   incl  hyperparameters\n")
-      cat("outer inner   lower bound  change   vars   sigma      sa  b0\n")
+        cat("-iteration-   variational    max.   incl ----hyperparameters",
+            "----\n",sep="");
+        cat("outer inner   lower bound  change   vars   sigma      sa",
+            "      b0\n",sep="");
     }
     
     # For each setting of the hyperparameters, find a set of

@@ -133,7 +133,7 @@ varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
     # -------------------------------------------------
     # Compute the maximum a posterior estimate of b0, if requested.
     if (update.b0)
-      b0 <- (nb0*mub0 + dot(alpha,mu))/(sqrt(sigma)*(nb0 + sum(alpha)))
+      b0 <- (nb0*mub0 + dot(alpha,mu))/(nb0 + sum(alpha))
     
     # (2f) CHECK CONVERGENCE
     # ----------------------
@@ -150,8 +150,9 @@ varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
       else
         status <- sprintf("%05d ",outer.iter)
       progress.str <-
-          paste(status,sprintf("%05d %+13.6e %0.1e %06.1f      NA %0.1e",iter,
-                               logw[iter],err[iter],sum(alpha),sa,b0),sep="")
+          paste(status,
+                sprintf("%05d %+13.6e %0.1e %06.1f      NA %0.1e %0.1e",
+                        iter,logw[iter],err[iter],sum(alpha),sa,b0),sep="")
       cat(progress.str)
       cat(rep("\r",nchar(progress.str)))
     }
@@ -170,7 +171,7 @@ varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
   }
 
   # Return the variational estimates.
-  return(list(logw = logw[1:iter],err = err[1:iter],sa = sa,
+  return(list(logw = logw[1:iter],err = err[1:iter],sa = sa,b0 = b0,
               alpha = alpha,mu = mu,s = s,eta = eta))
 }
 
