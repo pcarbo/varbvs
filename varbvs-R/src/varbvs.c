@@ -20,15 +20,16 @@
 // Execute a single coordinate ascent update to maximize the variational 
 // lower bound for Bayesian variable selection in linear regression.
 void varbvsnormupdate (const double* x, double xy, double d, double sigma, 
-		       double sa, double logodds, double* alpha, double* mu, 
-		       double* Xr, Size n) {
+		       double sa, double b0, double logodds, double* alpha, 
+		       double* mu,  double* Xr, Size n) {
 
   // Compute the variational estimate of the posterior variance.
   double s = sigma*sa/(sa*d + 1);
   
   // Update the variational estimate of the posterior mean.
-  double r = (*alpha) * (*mu);
-  *mu = s/sigma * (xy + d*r - dot(x,Xr,n));
+  double mu0 = sqrt(sigma)*b0/sa;
+  double r   = (*alpha) * (*mu);
+  *mu = s/sigma * (mu0 + xy + d*r - dot(x,Xr,n));
   
   // Update the variational estimate of the posterior inclusion
   // probability.
@@ -44,15 +45,16 @@ void varbvsnormupdate (const double* x, double xy, double d, double sigma,
 // Execute a single coordinate ascent update to maximize the variational 
 // lower bound for Bayesian variable selection in logistic regression.
 void varbvsbinupdate (const double* x, double xy, double xd, double xdx, 
-		      const double* d, double sa, double logodds, 
+		      const double* d, double sa, double b0, double logodds, 
 		      double* alpha, double* mu, double* Xr, Size n) {
 
   // Compute the variational estimate of the posterior variance.
   double s = sa/(sa*xdx + 1);      
   
   // Update the variational estimate of the posterior mean.
-  double r = (*alpha) * (*mu);
-  *mu = s*(xy + xdx*r + xd*dot(d,Xr,n)/sum(d,n) - dotscaled(x,Xr,d,n));
+  double mu0 = b0/sa;
+  double r   = (*alpha) * (*mu);
+  *mu = s*(mu0 + xy + xdx*r + xd*dot(d,Xr,n)/sum(d,n) - dotscaled(x,Xr,d,n));
     
   // Update the variational estimate of the posterior inclusion
   // probability.
@@ -77,10 +79,11 @@ void varbvsbinzupdate (const double* x, double xy, double xdx,
   double s = sa/(sa*xdx + 1);
 
   // Update the variational estimate of the posterior mean.
+  double mu0 = b0/sa;
   double r = (*alpha) * (*mu);
   matrixvec(dzr,x,a,n,m);
   matrixvec(dzr,Xr,b,n,m);
-  *mu = s*(xy + xdx*r + dot(a,b,m) - dotscaled(x,Xr,d,n));
+  *mu = s*(mu0 + xy + xdx*r + dot(a,b,m) - dotscaled(x,Xr,d,n));
 
   // Update the variational estimate of the posterior inclusion
   // probability.
