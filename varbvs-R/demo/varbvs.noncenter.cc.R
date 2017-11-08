@@ -1,9 +1,9 @@
-# TO DO: Revise this description.
-#
-# This script illustrates 'varbvs' for genome-wide mapping of a binary
-# (e.g., case-control) trait in a simulated data set in which all the
-# genetic markers are uncorrelated with each other (i.e., they are
-# "unlinked").
+
+# This script compares the "zero-centered" model, in which the prior
+# on the regression coefficients is centered at zero, against the
+# "non-centered" model, in which the prior mean is fitted to the
+# data. The data set is simulated genotypes at unlinked genetic
+# markers, with a binary (e.g., case-control) outcome.
 library(lattice)
 library(varbvs)
 
@@ -13,7 +13,8 @@ n  <- 1400  # Number of samples (subjects).
 p  <- 1000  # Number of variables (genetic markers).
 na <- 10    # Number of markers that affect the binary outcome.
 sa <- 0.2   # Variance of log-odds ratios.
-p1 <- 0.1   # Prop. subjects that are cases when all alleles are 0.
+p1 <- 0.1   # Proportion of subjects that will be cases when all the
+            # genotypes are zero.
 
 # Names of covariates.
 # covariates <- c("age","weight")
@@ -91,8 +92,6 @@ cat("4. SUMMARIZING NON-ZERO-CENTERED MODEL.\n")
 print(summary(fit2))
 cat("\n")
 
-stop()
-
 # COMPARE ESTIMATES AGAINST GROUND-TRUTH
 # --------------------------------------
 # Plot the estimated coefficients against the ground-truth coefficients.
@@ -101,19 +100,23 @@ cat("5. PLOTTING COEFFICIENT ESTIMATES.\n")
 trellis.par.set(par.xlab.text = list(cex = 0.75),
                 par.ylab.text = list(cex = 0.75),
                 axis.text = list(cex = 0.75))
-markers  <- labels(fit)
-beta.est <- coef(fit)
-beta.est <- beta.est[markers,ncol(beta.est)]
-print(xyplot(beta.est ~ beta.true,
-             data.frame(beta.true = beta,beta.est = beta.est),
-             pch = 4,col = "black",cex = 0.6,
-             panel = function(x, y, ...) {
-               panel.xyplot(x,y,...)
-               panel.abline(a = 0,b = 1,col = "magenta",lty = "dotted")
-             },
-             scales = list(limits = c(-1.1,1.1)),
-             xlab = "ground-truth regression coefficient",
-             ylab = "estimated regression coefficient"))
+coef.scatterplot <- function (fit, beta.true) {
+  markers  <- labels(fit)
+  beta.est <- coef(fit)
+  beta.est <- beta.est[markers,ncol(beta.est)]
+  return(xyplot(beta.est ~ beta.true,
+                data.frame(beta.true = beta,beta.est = beta.est),
+                pch = 4,col = "black",cex = 0.6,
+                panel = function(x, y, ...) {
+                  panel.xyplot(x,y,...)
+                  panel.abline(a = 0,b = 1,col = "magenta",lty = "dotted")
+                },
+                scales = list(limits = c(-0.1,1.1)),
+                xlab = "ground-truth regression coefficient",
+                ylab = "estimated regression coefficient"))
+}
+print(coef.scatterplot(fit1,coef(fit2)),split = c(1,1,2,1),more = TRUE)
+print(coef.scatterplot(fit2),split = c(2,1,2,1),more = FALSE)
 
 # EVALUATE MODEL PREDICTIONS
 # --------------------------
@@ -121,7 +124,7 @@ print(xyplot(beta.est ~ beta.true,
 cat("6. EVALUATING FITTED MODELS.\n")
 y1 <- predict(fit1,X,Z,type = "class")
 y2 <- predict(fit2,X,Z,type = "class")
-cat("r^2 between predicted Y and observed Y...\n")
+cat("r^2 between predicted Y and observed Y\n")
 cat(sprintf("zero-centered model: %0.3f\n",cor(y,y1)^2))
 cat(sprintf("non-centered model:  %0.3f\n",cor(y,y2)^2))
 
