@@ -79,6 +79,7 @@ varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
     s0     <- s
     eta0   <- eta
     sa.old <- sa
+    b0.old <- b0
 
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
@@ -94,7 +95,7 @@ varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
       i <- update.order
     else
       i <- rev(update.order)
-    out   <- varbvsbinupdate(X,sa,logodds,stats,alpha,mu,Xr,i)
+    out   <- varbvsbinupdate(X,sa,b0,logodds,stats,alpha,mu,Xr,i)
     alpha <- out$alpha
     mu    <- out$mu
     Xr    <- out$Xr
@@ -127,6 +128,12 @@ varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
       s  <- sa/(sa*stats$xdx + 1)
     }
 
+    # (2f) UPDATE PRIOR MEAN OF REGRESSION COEFFICIENTS
+    # -------------------------------------------------
+    # Compute the maximum a posterior estimate of b0, if requested.
+    if (update.b0)
+      b0 <- (nb0*mub0 + dot(alpha,mu))/(sqrt(sigma)*(nb0 + sum(alpha)))
+    
     # (2f) CHECK CONVERGENCE
     # ----------------------
     # Print the status of the algorithm and check the convergence
@@ -142,8 +149,8 @@ varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
       else
         status <- sprintf("%05d ",outer.iter)
       progress.str <-
-          paste(status,sprintf("%05d %+13.6e %0.1e %06.1f      NA %0.1e",
-                               iter,logw[iter],err[iter],sum(alpha),sa),sep="")
+          paste(status,sprintf("%05d %+13.6e %0.1e %06.1f      NA %0.1e",iter,
+                               logw[iter],err[iter],sum(alpha),sa,b0),sep="")
       cat(progress.str)
       cat(rep("\r",nchar(progress.str)))
     }
@@ -151,6 +158,7 @@ varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
       logw[iter]  <- logw0
       err[iter]   <- 0
       sa          <- sa.old
+      b0          <- b0.old
       alpha       <- alpha0
       mu          <- mu0
       s           <- s0
