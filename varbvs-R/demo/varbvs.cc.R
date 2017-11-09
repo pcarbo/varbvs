@@ -99,9 +99,13 @@ trellis.par.set(par.xlab.text = list(cex = 0.75),
                 par.ylab.text = list(cex = 0.75),
                 axis.text = list(cex = 0.75))
 markers <- labels(fit)
+if (length(logodds) > 1) {
+  beta.est <- coef(fit)[markers,"averaged"]
+} else {
+  beta.est <- coef(fit)[markers,]
+}
 print(xyplot(beta.est ~ beta.true,
-             data.frame(beta.true = beta,
-                        beta.est = coef(fit)[markers,"averaged"]),
+             data.frame(beta.true = beta,beta.est = beta.est),
              pch = 4,col = "black",cex = 0.6,
              panel = function(x, y, ...) {
                panel.xyplot(x,y,...)
