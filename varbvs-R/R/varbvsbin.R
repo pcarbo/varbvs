@@ -125,15 +125,15 @@ varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
     # Note that we must also recalculate the variance of the
     # regression coefficients when this parameter is updated.
     if (update.sa) {
-      sa <- (sa0*n0 + dot(alpha,s + mu^2))/(n0 + sum(alpha))
+      sa <- (sa0*n0 + dot(alpha,s + (mu - b0)^2))/(n0 + sum(alpha))
       s  <- sa/(sa*stats$xdx + 1)
     }
 
     # (2f) UPDATE PRIOR MEAN OF REGRESSION COEFFICIENTS
     # -------------------------------------------------
     # Compute the maximum a posterior estimate of b0, if requested.
-    # if (update.b0)
-    #   b0 <- (nb0*mub0 + dot(alpha,mu))/(nb0 + sum(alpha))
+    if (update.b0)
+      b0 <- (nb0*mub0 + dot(alpha,mu))/(nb0 + sum(alpha))
     
     # (2f) CHECK CONVERGENCE
     # ----------------------

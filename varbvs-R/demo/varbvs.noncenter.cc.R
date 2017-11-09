@@ -82,8 +82,8 @@ fit1 <- varbvs(X,Z,y,"binomial",b0 = 0,logodds = logodds,n0 = 0,
 
 # Fit the non-zero-centered model.
 cat("3. FITTING NON-ZERO-CENTERED MODEL.\n")
-fit2 <- varbvs(X,Z,y,"binomial",logodds = logodds,update.b0 = TRUE,
-               n0 = 0,nb0 = 0,verbose = FALSE)
+fit2 <- varbvs(X,Z,y,"binomial",logodds = logodds,update.sa = FALSE,b0 = 0.66,
+               sa = 0.2,update.b0 = FALSE,n0 = 0,nb0 = 0,verbose = FALSE)
 
 # SUMMARIZE POSTERIOR DISTRIBUTION
 # --------------------------------

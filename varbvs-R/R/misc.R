@@ -269,8 +269,8 @@ int.gamma <- function (logodds, alpha)
 # as an input to varbvsnorm; the sa parameter is already assumed to be
 # scaled by sigma.
 int.klbeta <- function (alpha, mu, s, sigma, sa, b0)
-  (sum(alpha) + dot(alpha,log(s/sa)) - dot(alpha,s)/sa 
-    - dot(alpha,(mu - sqrt(sigma)*b0)^2/sa)/2
+  ((sum(alpha) + dot(alpha,log(s/sa)) - dot(alpha,s)/sa 
+    - dot(alpha,(mu - sqrt(sigma)*b0)^2)/sa)/2
     - dot(alpha,log(alpha + eps)) - dot(1 - alpha,log(1 - alpha + eps)))
 
 # ----------------------------------------------------------------------

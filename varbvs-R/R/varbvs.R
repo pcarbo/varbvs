@@ -538,8 +538,6 @@ outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, b0, logodds,
                         optimize.eta,n0,sa0,nb0,mub0)
     out$sigma <- sigma
 
-    browser()
-    
     # Compute the posterior mean estimate of the regression
     # coefficients for the covariates under the current variational
     # approximation.
