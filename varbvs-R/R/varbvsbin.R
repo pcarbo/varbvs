@@ -125,7 +125,7 @@ varbvsbin <- function (X, y, sa, b0, logodds, alpha, mu, eta, update.order,
     # Note that we must also recalculate the variance of the
     # regression coefficients when this parameter is updated.
     if (update.sa) {
-      sa <- (sa0*n0 + dot(alpha,s + mu^2))/(n0 + sum(alpha))
+      sa <- (sa0*n0 + dot(alpha,s + (mu - b0)^2))/(n0 + sum(alpha))
       s  <- sa/(sa*stats$xdx + 1)
     }
 

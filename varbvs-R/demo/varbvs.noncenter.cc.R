@@ -106,3 +106,10 @@ cat(sprintf("non-centered model:  %0.3f\n",cor(y,y2)^2))
 # Compare the performance of the zero-centered and non-zero-centered
 # models for recovering the variables that have an effect on the
 # binary trait.
+cat("6. ASSESSING POWER TO DETECT EFFECTS.\n")
+markers <- which(beta != 0)
+out     <- rbind(quantile(fit1$pip[markers],seq(0.1,0.9,0.1)),
+                (quantile(fit2$pip[markers],seq(0.1,0.9,0.1))))
+rownames(out) <- c("zero-centered","non-centered")
+print(out,digits = 3)
+
