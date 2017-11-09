@@ -516,8 +516,6 @@ outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, b0, logodds,
                       update.b0,n0,sa0,nb0,mub0)
     out$eta <- eta
 
-    browser()
-    
     # Adjust the variational lower bound to account for integral over
     # the regression coefficients corresponding to the covariates.
     out$logw <- out$logw - determinant(crossprod(Z),logarithm = TRUE)$modulus/2
