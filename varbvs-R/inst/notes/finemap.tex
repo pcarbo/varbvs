@@ -72,8 +72,7 @@ $s_{jk}^2$. This yields coordinate updates
 s_{jk}^2 &= \frac{\sigma^2}{({\bf X}^T{\bf X})_{jj} + 1/\sigma_a^2)} \\
 \mu_{jk} &= \frac{s_{jk}^2}{\sigma^2}
 \bigg(({\bf X}^Ty)_j 
-- ({\bf X}^T{\bf X})_{jj} \sum_{k' \neq k} \alpha_{jk'} \mu_{jk'}
-- \sum_{j' \neq j} ({\bf X}^T{\bf X})_{jj'} 
+- \sum_{j'=1}^p ({\bf X}^T{\bf X})_{jj'} 
   \sum_{k' \neq k} \alpha_{j'k'} \mu_{j'k'} \bigg) \\
 \alpha_{jk} &=
 \end{align*}
