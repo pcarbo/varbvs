@@ -195,8 +195,7 @@ remove.covariate.effects <- function (X, Z, y) {
   SZy <- as.vector(solve(A,c(y %*% Z)))
   SZX <- as.matrix(solve(A,t(Z) %*% X))
   if (ncol(Z) == 1) {
-    n <- nrow(X)
-    X <- X - rep.row(colMeans(X),n)
+    X <- scale(X,center = TRUE,scale = FALSE)
     y <- y - mean(y)
   } else {
 

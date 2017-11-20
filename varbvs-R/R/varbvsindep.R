@@ -64,7 +64,7 @@ varbvsindep <- function (fit, X, Z, y) {
   # Selection," 2001.
   if (fit$family == "gaussian") {
     if (ncol(Z) == 1) {
-      X <- X - rep.row(colMeans(X),n)
+      X <- scale(X,center = TRUE,scale = FALSE)
       y <- y - mean(y)
     } else {
 
