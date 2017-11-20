@@ -1,11 +1,12 @@
 library(varbvs)
-source("varbvsfinemap.R")
+source("varbvssparse.R")
 
 # SCRIPT PARAMETERS
 # -----------------
-sigma   <- 1            # Variance of residual.
-sa      <- 1            # Prior variance of nonzero effects.
-logodds <- log(3/1000)  # Prior inclusion probability.
+k       <- 3           # Number of nonzero effects in sparse approx.
+sigma   <- 9           # Variance of residual.
+sa      <- 2           # Prior variance of nonzero effects.
+logodds <- log(3/1000) # Prior inclusion probability.
 
 # These are the additive effects used to simulate the
 # phenotype data.
@@ -35,9 +36,18 @@ y <- y - mean(y)
 # FIT FULLY-FACTORIZED VARIATIONAL APPROXIMATION
 # ----------------------------------------------
 cat("Fitting fully-factorized variational approximation.\n")
-alpha0 <- runif(p)
-alpha0 <- alpha0/sum(alpha0)
-mu0    <- rnorm(p)
-fit1   <- varbvsnorm(X,y,sigma,sa,logodds,alpha0,mu0,
-                     update.sigma = FALSE,update.sa = FALSE)
+cat("        variational    max.   incl variance params\n")
+cat(" iter   lower bound  change   vars   sigma      sa\n")
+alpha0  <- runif(p)
+alpha0  <- alpha0/sum(alpha0)
+mu0     <- rnorm(p)
+logodds <- rep(logodds,1,p)
+fit1    <- varbvsnorm(X,y,sigma,sa,logodds,alpha0,mu0,update.order = 1:p,
+                      update.sigma = FALSE,update.sa = FALSE,tol = 1e-6)
+cat("\n")
+
+# FIT "SPARSE" VARIATIONAL APPROXIMATION
+# --------------------------------------
+cat("Fitting sparse variational approximation.\n")
+fit2 <- varbvssparse(X,y,k,sigma,sa,logodds,tol = 1e-6)
 
