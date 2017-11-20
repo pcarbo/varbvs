@@ -53,7 +53,7 @@ varbvssparse <- function (X, y, k, sigma, sa, logodds, alpha, mu, tol = 1e-4,
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood (the
     # "ELBO").
-    logw0 <- varbvssparse.elbo(y,sigma,sa,alpha,mu,Xr)
+    logw0 <- varbvssparse.elbo(y,d,sigma,sigma*sa,alpha,mu,s,Xr)
 
     # (2b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
@@ -72,7 +72,7 @@ varbvssparse <- function (X, y, k, sigma, sa, logodds, alpha, mu, tol = 1e-4,
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood (the
     # "ELBO").
-    logw[iter] <- varbvssparse.elbo(y,sigma,sa,alpha,mu,Xr)
+    logw[iter] <- varbvssparse.elbo(y,d,sigma,sigma*sa,alpha,mu,s,Xr)
 
     # (2d) CHECK CONVERGENCE
     # ----------------------
@@ -132,13 +132,14 @@ varbvssparseupdate <- function (X, sigma, sa, logodds, xy, s,
 }
 
 # TO DO: Explain here what this function does, and how to use it.
-varbvssparse.elbo <- function (y, sigma, sa, alpha, mu, Xr) {
-  return(- length(y)/2*log(2*pi*sigma)
+varbvssparse.elbo <- function (y, d, sigma, sa, alpha, mu, s, Xr) {
+  k <- ncol(Xr)
+  r <- rep.col(sigmoid(logodds),k)
+  return(-length(y)/2*log(2*pi*sigma)
          - norm2(y - rowSums(Xr))^2/(2*sigma)
          + sum(apply(Xr,2,norm2)^2)/(2*sigma)
-         - sum(d %*% betavar(alpha,mu,s))/(2*sigma)
-         + sum(alpha*logsigmoid(logodds))
-         - sum(alpha*log(alpha + eps))
+         - sum(d %*% (alpha*(mu^2 + s)))/(2*sigma)
+         + sum(alpha*log(r + eps)) - sum(alpha*log(alpha + eps))
          + sum(alpha*(1 + log(s/sa) - (mu^2 + s)/sa)/2))
 }
 
@@ -147,10 +148,13 @@ rep.row <- function (x, n)
   matrix(x,n,length(x),byrow = TRUE)
 
 # Retrieve a couple hidden functions from the varbvs package.
+rep.row    <- varbvs:::rep.row
+rep.col    <- varbvs:::rep.col
 sigmoid    <- varbvs:::sigmoid
 logsigmoid <- varbvs:::logsigmoid
 diagsq     <- varbvs:::diagsq
 norm2      <- varbvs:::norm2
-  
+betavar    <- varbvs:::betavar
+
 # Shorthand for machine precision.
 eps <- .Machine$double.eps
