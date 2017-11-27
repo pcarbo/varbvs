@@ -1,4 +1,21 @@
-# TO DO: Explain what this function does, and how to use it.
+# Shorthand for machine precision.
+eps <- .Machine$double.eps
+
+# Retrieve a couple hidden functions from the varbvs package.
+rep.row    <- varbvs:::rep.row
+rep.col    <- varbvs:::rep.col
+sigmoid    <- varbvs:::sigmoid
+logsigmoid <- varbvs:::logsigmoid
+diagsq     <- varbvs:::diagsq
+norm2      <- varbvs:::norm2
+betavar    <- varbvs:::betavar
+
+# Implements the Sum of Single Effects (SuSiE) model and variational
+# approximation. Input X is an n x p matrix of observations of the
+# variables (or features), where n is the number of samples, and p is
+# the number of variables. Input y contains samples of the continuous
+# outcome; it is a vector of length n. Input k > 1 specifies the
+# number of (nonzero) effects.
 varbvssparse <- function (X, y, k, sigma, sa, logodds, alpha, mu, tol = 1e-4,
                           maxiter = 1e4, verbose = TRUE) {
 
@@ -87,14 +104,14 @@ varbvssparse <- function (X, y, k, sigma, sa, logodds, alpha, mu, tol = 1e-4,
       cat(progress.str)
       cat(rep("\r",nchar(progress.str)))
     }
-    if (logw[iter] < logw0) {
-      err[iter]  <- 0
-      logw[iter] <- logw0
-      alpha      <- alpha0
-      mu         <- mu0
-      break
-    } else if (err[iter] < tol)
-      break
+    # if (logw[iter] < logw0) {
+    #   err[iter]  <- 0
+    #   logw[iter] <- logw0
+    #   alpha      <- alpha0
+    #   mu         <- mu0
+    #   break
+    # } else if (err[iter] < tol)
+    #   break
   }
   if (verbose)
     cat("\n")
@@ -102,6 +119,8 @@ varbvssparse <- function (X, y, k, sigma, sa, logodds, alpha, mu, tol = 1e-4,
               alpha = alpha,mu = mu,s = s))
 }
 
+
+# ----------------------------------------------------------------------
 # Execute a single round of the coordinate ascent updates to maximize
 # the variational lower bound for the "sparse" Bayesian variable
 # selection model.
@@ -131,7 +150,9 @@ varbvssparseupdate <- function (X, sigma, sa, logodds, xy, s,
   return(list(alpha = alpha,mu = mu,Xr = Xr))
 }
 
-# TO DO: Explain here what this function does, and how to use it.
+# ----------------------------------------------------------------------
+# Compute the variational lower bound to the marginal log-likelihood
+# ("ELBO").
 varbvssparse.elbo <- function (y, d, sigma, sa, alpha, mu, s, Xr) {
   k <- ncol(Xr)
   r <- rep.col(sigmoid(logodds),k)
@@ -142,19 +163,3 @@ varbvssparse.elbo <- function (y, d, sigma, sa, alpha, mu, s, Xr) {
          + sum(alpha*log(r + eps)) - sum(alpha*log(alpha + eps))
          + sum(alpha*(1 + log(s/sa) - (mu^2 + s)/sa)/2))
 }
-
-# Replicate vector x to create an n x m matrix, where m = length(x).
-rep.row <- function (x, n)
-  matrix(x,n,length(x),byrow = TRUE)
-
-# Retrieve a couple hidden functions from the varbvs package.
-rep.row    <- varbvs:::rep.row
-rep.col    <- varbvs:::rep.col
-sigmoid    <- varbvs:::sigmoid
-logsigmoid <- varbvs:::logsigmoid
-diagsq     <- varbvs:::diagsq
-norm2      <- varbvs:::norm2
-betavar    <- varbvs:::betavar
-
-# Shorthand for machine precision.
-eps <- .Machine$double.eps
