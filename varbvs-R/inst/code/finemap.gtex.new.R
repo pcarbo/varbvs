@@ -9,10 +9,10 @@ source("varbvssparse.R")
 
 # SCRIPT PARAMETERS
 # -----------------
-k       <- 3           # Number of nonzero effects in sparse approx.
-sigma   <- 9           # Variance of residual.
-sa      <- 2           # Prior variance of nonzero effects.
-logodds <- log(3/1000) # Prior inclusion probability.
+k     <- 3       # Number of nonzero effects in sparse approx.
+sigma <- 9       # Variance of residual.
+sa    <- 2       # Prior variance of nonzero effects.
+pp    <- 3/1000  # Prior inclusion probability.
 
 # These are the additive effects used to simulate the
 # phenotype data.
@@ -49,7 +49,8 @@ cat(" iter   lower bound  change   vars   sigma      sa\n")
 alpha0  <- runif(p)
 alpha0  <- alpha0/sum(alpha0)
 mu0     <- rnorm(p)
-logodds <- rep(logodds,1,p)
+pp      <- rep(pp,1,p)
+logodds <- varbvs:::logit(pp)
 fit1    <- varbvsnorm(X,y,sigma,sa,logodds,alpha0,mu0,update.order = 1:p,
                       update.sigma = FALSE,update.sa = FALSE,tol = 1e-6)
 cat("\n")
@@ -57,7 +58,7 @@ cat("\n")
 # FIT "SPARSE" VARIATIONAL APPROXIMATION
 # --------------------------------------
 cat("Fitting sparse variational approximation.\n")
-fit2 <- varbvssparse(X,y,k,sigma,sa,logodds,tol = 1e-6,maxiter = 100)
+fit2 <- varbvssparse(X,y,k,sigma,sa,pp,tol = 1e-6,maxiter = 100)
 
 # COMPARE RESULTS
 # ---------------
@@ -66,9 +67,9 @@ fit2 <- varbvssparse(X,y,k,sigma,sa,logodds,tol = 1e-6,maxiter = 100)
 # their variational lower bounds (approximate marginal likelihoods).
 cat("Approximate marginal log-likelihoods:\n")
 last <- function (x) x[length(x)]
-cat(sprintf("varbvsnorm   = %0.6f.\n",last(fit1$logw)))
-cat(sprintf("varbvssparse = %0.6f.\n",last(fit2$logw)))
-cat(sprintf("Approximate improvement in likelihood using SuSie model: %0.2f\n",
+cat(sprintf("varbvsnorm   = %0.6f\n",last(fit1$logw)))
+cat(sprintf("varbvssparse = %0.6f\n",last(fit2$logw)))
+cat(sprintf("Approximate improvement in likelihood using SuSie model: %0.2e\n",
             exp(last(fit2$logw) - last(fit1$logw))))
 
 # Show convergence of the co-ordinate ascent updates for the two methods.

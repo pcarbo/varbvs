@@ -90,7 +90,7 @@ varbvssparse <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood ("ELBO").
-    logw0 <- varbvssparse.elbo(y,d,sigma,sigma*sa,alpha,mu,s,Xr)
+    logw0 <- varbvssparse.elbo(y,d,sigma,sigma*sa,pp,alpha,mu,s,Xr)
 
     # (2b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
@@ -99,7 +99,7 @@ varbvssparse <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
       i <- 1:k
     else
       i <- k:1
-    out   <- varbvssparseupdate(X,sigma,sa,logodds,xy,s,alpha,mu,Xr,i)
+    out   <- varbvssparseupdate(X,sigma,sa,pp,xy,s,alpha,mu,Xr,i)
     alpha <- out$alpha
     mu    <- out$mu
     Xr    <- out$Xr
@@ -108,7 +108,7 @@ varbvssparse <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
     # (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood ("ELBO").
-    logw[iter] <- varbvssparse.elbo(y,d,sigma,sigma*sa,alpha,mu,s,Xr)
+    logw[iter] <- varbvssparse.elbo(y,d,sigma,sigma*sa,pp,alpha,mu,s,Xr)
 
     # (2d) CHECK CONVERGENCE
     # ----------------------
@@ -142,7 +142,7 @@ varbvssparse <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
 # Execute a single round of the coordinate ascent updates to maximize
 # the variational lower bound for the "sparse" Bayesian variable
 # selection model.
-varbvssparseupdate <- function (X, sigma, sa, logodds, xy, s,
+varbvssparseupdate <- function (X, sigma, sa, pp, xy, s,
                                 alpha0, mu0, Xr0, i) {
 
   # Initialize storage for the results.
@@ -150,10 +150,7 @@ varbvssparseupdate <- function (X, sigma, sa, logodds, xy, s,
   mu    <- mu0
   Xr    <- Xr0
 
-  # This is the prior inclusion probability for each variable.
-  logp <- logsigmoid(logodds)
-  
-  # Repeat for each effect to update
+  # Repeat for each effect to update.
   for (j in i) {
     
     # Update the variational estimate of the posterior means.
@@ -161,10 +158,10 @@ varbvssparseupdate <- function (X, sigma, sa, logodds, xy, s,
     
     # Update the variational estimate of the posterior inclusion
     # probabilities.
-    alpha[,j] <-
-      normalizelogweights(logp + (log(s[,j]/(sa*sigma)) + mu[,j]^2/s[,j])/2)
+    alpha[,j] <- log(pp + eps) + (log(s[,j]/(sa*sigma)) + mu[,j]^2/s[,j])/2
+    alpha[,j] <- normalizelogweights(alpha[,j])
     
-    # Update the ith effect.
+    # Update the jth set of effects.
     Xr[,j] <- X %*% (alpha[,j]*mu[,j])
   }
   
@@ -174,12 +171,10 @@ varbvssparseupdate <- function (X, sigma, sa, logodds, xy, s,
 # ----------------------------------------------------------------------
 # Compute the variational lower bound to the marginal log-likelihood
 # ("ELBO").
-varbvssparse.elbo <- function (y, d, sigma, sa, alpha, mu, s, Xr) {
-  k    <- ncol(Xr)
-  logp <- logsigmoid(logodds)
-  return(-length(y)/2*log(2*pi*sigma)
-         - norm2(y - rowSums(Xr))^2/(2*sigma) + sum(Xr^2)/(2*sigma)
-         - sum(d %*% (alpha*(mu^2 + s)))/(2*sigma)
-         + sum(logp %*% alpha) - sum(alpha*log(alpha + eps))
-         + sum(alpha*(1 + log(s/sa) - (mu^2 + s)/sa)/2))
-}
+varbvssparse.elbo <- function (y, d, sigma, sa, pp, alpha, mu, s, Xr)
+  (-length(y)/2*log(2*pi*sigma)
+   - norm2(y - rowSums(Xr))^2/(2*sigma) + sum(Xr^2)/(2*sigma)
+   - sum(d %*% (alpha*(mu^2 + s)))/(2*sigma)
+   + sum(log(pp + eps) %*% alpha) - sum(alpha*log(alpha + eps))
+   + sum(alpha*(1 + log(s/sa) - (mu^2 + s)/sa)/2))
+
