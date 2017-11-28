@@ -43,7 +43,7 @@ varbvssparse <- function (X, y, k, sigma, sa, logodds, alpha, mu, tol = 1e-4,
   xy <- c(y %*% X)
   d  <- diagsq(X)
   Xr <- X %*% (alpha*mu)
-  
+
   # Calculate the variance of the coefficients.
   s <- sa*sigma/(sa*d + 1)
   s <- matrix(s,p,k)
@@ -84,7 +84,7 @@ varbvssparse <- function (X, y, k, sigma, sa, logodds, alpha, mu, tol = 1e-4,
     mu    <- out$mu
     Xr    <- out$Xr
     rm(out)
-
+    
     # (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood (the
@@ -132,6 +132,9 @@ varbvssparseupdate <- function (X, sigma, sa, logodds, xy, s,
   mu    <- mu0
   Xr    <- Xr0
 
+  # This is the prior inclusion probability for each variable.
+  logp <- logsigmoid(logodds)
+  
   # Repeat for each effect to update
   for (j in i) {
     
@@ -140,8 +143,8 @@ varbvssparseupdate <- function (X, sigma, sa, logodds, xy, s,
     
     # Update the variational estimate of the posterior inclusion
     # probabilities.
-    alpha[,j] <- sigmoid(logodds + (log(s[,j]/(sa*sigma)) + mu[,j]^2/s[,j])/2)
-    alpha[,j] <- alpha[,j]/sum(alpha[,j])
+    alpha[,j] <-
+      normalizelogweights(logp + (log(s[,j]/(sa*sigma)) + mu[,j]^2/s[,j])/2)
     
     # Update the ith effect.
     Xr[,j] <- X %*% (alpha[,j]*mu[,j])
@@ -154,12 +157,11 @@ varbvssparseupdate <- function (X, sigma, sa, logodds, xy, s,
 # Compute the variational lower bound to the marginal log-likelihood
 # ("ELBO").
 varbvssparse.elbo <- function (y, d, sigma, sa, alpha, mu, s, Xr) {
-  k <- ncol(Xr)
-  r <- rep.col(sigmoid(logodds),k)
+  k    <- ncol(Xr)
+  logp <- logsigmoid(logodds)
   return(-length(y)/2*log(2*pi*sigma)
-         - norm2(y - rowSums(Xr))^2/(2*sigma)
-         + sum(apply(Xr,2,norm2)^2)/(2*sigma)
+         - norm2(y - rowSums(Xr))^2/(2*sigma) + sum(Xr^2)/(2*sigma)
          - sum(d %*% (alpha*(mu^2 + s)))/(2*sigma)
-         + sum(alpha*log(r + eps)) - sum(alpha*log(alpha + eps))
+         + sum(logp %*% alpha) - sum(alpha*log(alpha + eps))
          + sum(alpha*(1 + log(s/sa) - (mu^2 + s)/sa)/2))
 }

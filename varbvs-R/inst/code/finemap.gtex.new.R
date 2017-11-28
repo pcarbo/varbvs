@@ -17,7 +17,7 @@ logodds <- log(3/1000) # Prior inclusion probability.
 # These are the additive effects used to simulate the
 # phenotype data.
 beta                 <- rep(0,1000)
-beta[c(201,562,952)] <- c(2,-3,4)
+beta[c(201,562,952)] <- c(3,-3,5)
 
 set.seed(1)
 
@@ -57,7 +57,7 @@ cat("\n")
 # FIT "SPARSE" VARIATIONAL APPROXIMATION
 # --------------------------------------
 cat("Fitting sparse variational approximation.\n")
-fit2 <- varbvssparse(X,y,k,sigma,sa,logodds,tol = 1e-6,maxiter = 50)
+fit2 <- varbvssparse(X,y,k,sigma,sa,logodds,tol = 1e-6,maxiter = 100)
 
 # COMPARE RESULTS
 # ---------------
@@ -105,6 +105,8 @@ pip <- 1 - apply(1 - fit2$alpha,1,prod)
 p4 <- ggplot(data.frame(x = 1:p,y = pip,r2 = r2),
              aes(x = x,y = y,color = r2)) +
     geom_point(shape = 20,size = 2) +
+    geom_point(data = data.frame(x = markers,y = pip[markers]),
+               aes(x = x,y = y),color = "black",shape = 4,size = 0.5) +
     scale_x_continuous(breaks = NULL) +
     scale_color_gradientn(colors = clrs) +
     labs(x = "",y = "PIP",title = "sum of single effects")
@@ -112,4 +114,3 @@ p4 <- ggplot(data.frame(x = 1:p,y = pip,r2 = r2),
 print(plot_grid(p3,p4,nrow = 2))
 
 sessionInfo()
-
