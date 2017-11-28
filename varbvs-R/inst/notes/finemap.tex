@@ -74,8 +74,10 @@ s_{jk}^2 &= \frac{\sigma^2}{({\bf X}^T{\bf X})_{jj} + 1/\sigma_a^2)} \\
 \bigg(({\bf X}^Ty)_j 
 - \sum_{j'=1}^p ({\bf X}^T{\bf X})_{jj'} 
   \sum_{k' \neq k} \alpha_{j'k'} \mu_{j'k'} \bigg) \\
-\alpha_{jk} &=
+\alpha_{jk} &\propto \pi_j \times \frac{s_{jk}}{\sigma\sigma_a}
+\times e^{\mathrm{SSR}_{jk}/2},
 \end{align*}
+where $\mathrm{SSR}_{jk} = \mu_{jk}^2/s_{jk}^2$.
 
 \end{document}
 
