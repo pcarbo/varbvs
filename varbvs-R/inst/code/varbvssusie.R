@@ -37,8 +37,8 @@ betavar    <- varbvs:::betavar
 #   mu is an optional argument giving initial estimates of the
 #   variational parameter "mu"; it should be a p x k matrix
 #
-varbvssparse <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
-                          maxiter = 1e4, verbose = TRUE) {
+varbvssusie <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
+                         maxiter = 1e4, verbose = TRUE) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -90,7 +90,7 @@ varbvssparse <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood ("ELBO").
-    logw0 <- varbvssparse.elbo(y,d,sigma,sigma*sa,pp,alpha,mu,s,Xr)
+    logw0 <- varbvs.susie.elbo(y,d,sigma,sigma*sa,pp,alpha,mu,s,Xr)
 
     # (2b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
@@ -99,7 +99,7 @@ varbvssparse <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
       i <- 1:k
     else
       i <- k:1
-    out   <- varbvssparseupdate(X,sigma,sa,pp,xy,s,alpha,mu,Xr,i)
+    out   <- varbvs.susie.update(X,sigma,sa,pp,xy,s,alpha,mu,Xr,i)
     alpha <- out$alpha
     mu    <- out$mu
     Xr    <- out$Xr
@@ -108,7 +108,7 @@ varbvssparse <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
     # (2c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood ("ELBO").
-    logw[iter] <- varbvssparse.elbo(y,d,sigma,sigma*sa,pp,alpha,mu,s,Xr)
+    logw[iter] <- varbvs.susie.elbo(y,d,sigma,sigma*sa,pp,alpha,mu,s,Xr)
 
     # (2d) CHECK CONVERGENCE
     # ----------------------
@@ -132,18 +132,15 @@ varbvssparse <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
     } else if (err[iter] < tol)
       break
   }
-  if (verbose)
-    cat("\n")
   return(list(logw = logw[1:iter],err = err[1:iter],sigma = sigma,sa = sa,
               alpha = alpha,mu = mu,s = s))
 }
 
 # ----------------------------------------------------------------------
 # Execute a single round of the coordinate ascent updates to maximize
-# the variational lower bound for the "sparse" Bayesian variable
-# selection model.
-varbvssparseupdate <- function (X, sigma, sa, pp, xy, s,
-                                alpha0, mu0, Xr0, i) {
+# the variational lower bound for the "Sum of Single Effects" model.
+varbvs.susie.update <- function (X, sigma, sa, pp, xy, s,
+                               alpha0, mu0, Xr0, i) {
 
   # Initialize storage for the results.
   alpha <- alpha0
@@ -171,7 +168,7 @@ varbvssparseupdate <- function (X, sigma, sa, pp, xy, s,
 # ----------------------------------------------------------------------
 # Compute the variational lower bound to the marginal log-likelihood
 # ("ELBO").
-varbvssparse.elbo <- function (y, d, sigma, sa, pp, alpha, mu, s, Xr)
+varbvs.susie.elbo <- function (y, d, sigma, sa, pp, alpha, mu, s, Xr)
   (-length(y)/2*log(2*pi*sigma)
    - norm2(y - rowSums(Xr))^2/(2*sigma) + sum(Xr^2)/(2*sigma)
    - sum(d %*% (alpha*(mu^2 + s)))/(2*sigma)
