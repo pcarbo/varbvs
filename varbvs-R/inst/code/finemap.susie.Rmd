@@ -130,55 +130,59 @@ Show convergence of the co-ordinate ascent updates for the two
 methods.
 
 ```{r plot-progress, fig.height=3.5, fig.width=7}
-plot.progress <- function (fit, clr, plot.title)
-  ggplot(data.frame(x = 1:length(fit$logw),
-                    y = log10(max(fit$logw) - fit$logw)),
+plot.progress <- function (logw, clr, plot.title)
+  ggplot(data.frame(x = 1:length(logw),
+                    y = log10(max(logw) - logw)),
 		 aes(x = x,y = y)) +
   geom_line(color = clr,size = 1) +
   labs(x = "iteration",y = "log10-distance from max",title = plot.title)
-p1 <- plot.progress(fit1,"dodgerblue","fully-factorized")
-p2 <- plot.progress(fit2,"darkorange","sum of single effects")
+p1 <- plot.progress(fit1$logw,"dodgerblue","fully-factorized")
+p2 <- plot.progress(fit2$logw,"darkorange","sum of single effects")
 plot_grid(p1,p2)
 ```
 
 We observe that both algorithms progress rapidly to a fixed point, at
 least in this example.
 
-```{r}
-# Plot the posterior inclusion probabilities (PIPs) under the
-# fully-factorized variational approximation.
-clrs    <-   c("#0D0887FF","#5402A3FF","#8B0AA5FF","#B93289FF",
-               "#DB5C68FF","#F48849FF","#FEBC2AFF","#F0F921FF")
+Next, I plot the posterior inclusion probabilities (PIPs) under the
+fully-factorized variational approximation, and under the SuSiE
+model. For the SuSiE model, I show, for each SNP, the posterior
+probability that one or more of the coefficients is nonzero, which is
+easily calculated under the variational approximation.
+
+```{r plot-pips, fig.width=8, fig.height=6}
+plot.pips <- function (pip, r2, plot.title) {
+  n    <- length(pip)
+  clrs <- c("#0D0887FF","#5402A3FF","#8B0AA5FF","#B93289FF",
+            "#DB5C68FF","#F48849FF","#FEBC2AFF","#F0F921FF")
+  return(ggplot(data.frame(x = 1:p,y = pip,r2 = r2),
+             aes(x = x,y = y,color = r2)) +
+    geom_point(shape = 20,size = 2) +
+    scale_x_continuous(breaks = NULL) +
+    scale_color_gradientn(colors = clrs) +
+    labs(x = "",y = "PIP",title = plot.title))
+}
 markers <- which(beta != 0)
-r2 <- apply((cor(X)^2)[,markers],1,max)
-p3 <- ggplot(data.frame(x = 1:p,y = fit1$alpha,r2 = r2),
-             aes(x = x,y = y,color = r2)) +
-    geom_point(shape = 20,size = 2) +
-    scale_x_continuous(breaks = NULL) +
-    scale_color_gradientn(colors = clrs) +
-    labs(x = "",y = "PIP",title = "fully-factorized")
-
-# Plot the posterior inclusion probabilities (PIPs) under the SuSie
-# model. We report the PIPs as the probability that at least one of
-# the coefficients is nonzero.
+r2  <- apply((cor(X)^2)[,markers],1,max)
 pip <- 1 - apply(1 - fit2$alpha,1,prod)
-p4 <- ggplot(data.frame(x = 1:p,y = pip,r2 = r2),
-             aes(x = x,y = y,color = r2)) +
-    geom_point(shape = 20,size = 2) +
-    geom_point(data = data.frame(x = markers,y = pip[markers]),
-               aes(x = x,y = y),color = "black",shape = 4,size = 0.5) +
-    scale_x_continuous(breaks = NULL) +
-    scale_color_gradientn(colors = clrs) +
-    labs(x = "",y = "PIP",title = "sum of single effects")
-
+p3  <- plot.pips(fit1$alpha,r2,"fully-factorized")
+p4  <- plot.pips(pip,r2,"sum of single effects") +
+         geom_point(data = data.frame(x = markers,y = pip[markers]),
+                    aes(x = x,y = y),color = "black",shape = 4,
+					size = 0.75)
 print(plot_grid(p3,p4,nrow = 2))
 ```
+
+Additionally, to understand how the the SuSiE model captures
+uncertainty in the location of the SNP effect, I used colour to show
+correlation strength (LD) with the true effects. In the lower panel,
+the SNPs with (true) effects on the phenotype are marked with x's.
 
 ## Session information
 
 Here are details about the computing environment that I used to
-generate these results, including the version of R and the packages that
-were loaded into the R session.
+generate these results, including the version of R that was used, and
+the versions of the packages that were loaded into the R session.
 
 ```{r session-info}
 sessionInfo()
