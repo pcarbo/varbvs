@@ -55,7 +55,7 @@ Set the sequence of pseudorandom numbers (useful for making sure
 that the results are reproducible).
 
 ```{r set-seed}
-set.seed(1)
+# set.seed(1)
 ```
 
 ## Load genotype data

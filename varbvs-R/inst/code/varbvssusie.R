@@ -48,13 +48,18 @@ varbvssusie <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
   if (k < 2)
     stop("Argument \"k\" should be at least 2.")
   
-  # Set initial estimates of variational parameter alpha.
+  # If not already provided, set initial estimates of variational
+  # parameter alpha. For each row (variable), at most one probability
+  # is nonzero.
   if (missing(alpha)) {
-    alpha <- rand(p,k)
-    alpha <- alpha / rep.row(colSums(alpha),p)
+    alpha   <- matrix(0,p,k)
+    r       <- runif(p)
+    r       <- r / sum(r)
+    alpha[cbind(1:p,sample(k,p,replace = TRUE))] <- r
   }
 
-  # Set initial estimates of variational parameter mu.
+  # If not already provided, set initial estimates of variational
+  # parameter mu.
   if (missing(mu))
     mu <- randn(p,k)
   
@@ -78,8 +83,8 @@ varbvssusie <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
   # Repeat until convergence criterion is met, or until the maximum
   # number of iterations is reached.
   if (verbose) {
-    cat("             variational    max.\n")
-    cat("iter         lower bound  change\n")
+    cat("             variational    max.  second\n")
+    cat("iter         lower bound  change  effect\n")
   }
   for (iter in 1:maxiter) {
 
@@ -118,8 +123,10 @@ varbvssusie <- function (X, y, k, sigma, sa, pp, alpha, mu, tol = 1e-4,
     # is less than the specified tolerance, or when the variational
     # lower bound has decreased.
     err[iter] <- max(abs(alpha - alpha0))
+    r <- apply(alpha,1,function (x) sort(x,decreasing = TRUE)[2])
     if (verbose) {
-      progress.str <- sprintf("%04d %+13.12e %0.1e",iter,logw[iter],err[iter])
+        progress.str <- sprintf("%04d %+13.12e %0.1e %0.1e",iter,logw[iter],
+                                err[iter],max(r))
       cat(progress.str)
       cat("\n")
     }
