@@ -128,21 +128,28 @@ varbvsnorm <- function (X, y, sigma, sa, b0, logodds, alpha, mu,
     # coefficients when this parameter is updated.
     if (update.sigma) {
       sigma <- (norm2(y - Xr)^2 + dot(d,betavar(alpha,mu,s)) +
-                dot(alpha,(s + mu^2)/sa))/(n + sum(alpha))
+                dot(alpha,(s + (mu - sqrt(sigma)*b0)^2)/sa))/
+               (n + sum(alpha))
       s     <- sa*sigma/(sa*d + 1)
     }
+
+    # (2e) UPDATE PRIOR MEAN OF REGRESSION COEFFICIENTS
+    # -------------------------------------------------
+    if (update.b0)
+      b0 <- (nb0*mub0 + dot(alpha,mu))/(sqrt(sigma)*(nb0 + sum(alpha)))
     
-    # (2e) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
+    # (2f) UPDATE PRIOR VARIANCE OF REGRESSION COEFFICIENTS
     # -----------------------------------------------------
     # Compute the maximum a posteriori estimate of sa, if requested.
     # Note that we must also recalculate the variance of the
     # regression coefficients when this parameter is updated.
     if (update.sa) {
-      sa <- (sa0*n0 + dot(alpha,s + mu^2))/(n0 + sigma*sum(alpha))
+      sa <- (sa0*n0 + dot(alpha,s + (mu - sqrt(sigma)*b0)^2))/
+            (n0 + sigma*sum(alpha))
       s  <- sa*sigma/(sa*d + 1)
     }
 
-    # (2f) CHECK CONVERGENCE
+    # (2g) CHECK CONVERGENCE
     # ----------------------
     # Print the status of the algorithm and check the convergence
     # criterion. Convergence is reached when the maximum difference
@@ -156,9 +163,9 @@ varbvsnorm <- function (X, y, sigma, sa, b0, logodds, alpha, mu,
       else
         status <- sprintf("%05d ",outer.iter)
       progress.str <-
-          paste(status,sprintf("%05d %+13.6e %0.1e %06.1f %0.1e %0.1e",
-                               iter,logw[iter],err[iter],sum(alpha),
-                               sigma,sa),sep="")
+        paste(status,sprintf("%05d %+13.6e %0.1e %06.1f %0.1e %0.1e %0.1e",
+                             iter,logw[iter],err[iter],sum(alpha),sigma,
+                             sa,b0),sep="")
       cat(progress.str)
       cat(rep("\r",nchar(progress.str)))
     }

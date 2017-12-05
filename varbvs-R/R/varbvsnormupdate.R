@@ -128,7 +128,8 @@ varbvsnormupdate <-
 
       # Update the variational estimate of the posterior inclusion
       # probability.
-      alpha[j] <- sigmoid(logodds[j] + (log(s/(sa*sigma)) + mu[j]^2/s)/2)
+      alpha[j] <- sigmoid(logodds[j] + log(s/(sa*sigma))/2 +
+                          (mu[j]^2/s - b0^2/sa)/2)
 
       # Update Xr = X*r.
       Xr <- Xr + (alpha[j]*mu[j] - r) * X[,j]

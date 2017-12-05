@@ -76,21 +76,26 @@ names(y)    <- sprintf("A%05d",sample(99999,n))
 rownames(X) <- names(y)
 if (!is.null(Z))
   rownames(Z) <- names(y)
-    
-# FIT VARIATIONAL APPROXIMATION TO POSTERIOR
-# ------------------------------------------
-# Fit the zero-centered model.
-cat("2. FITTING ZERO-CENTERED MODEL TO DATA.\n")
-fit <- varbvs(X,Z,y,"gaussian",logodds = logodds,n0 = 0,nb0 = 0)
+
+# FIT ZERO-CENTERED MODEL
+# -----------------------
+cat("2. FITTING ZERO-CENTERED MODEL.\n")
+fit1 <- varbvs(X,Z,y,"gaussian",logodds = logodds,n0 = 0)
 cat("\n")
+
+# FIT NON-CENTERED MODEL
+# ----------------------
+cat("3. FITTING NON-CENTERED MODEL.\n")
+fit2 <- varbvs(X,Z,y,"gaussian",logodds = logodds,
+               update.b0 = TRUE,n0 = 0,nb0 = 0)
+cat("\n")
+
+# COMPARE MODEL FIT
+# -----------------
+cat("Improvement in fit for non-centered model:\n")
+cat("BF =",varbvsbf(fit1,fit2),"\n")
 
 stop()
-
-# SUMMARIZE RESULTS
-# -----------------
-cat("3. SUMMARIZING RESULTS.\n")
-print(summary(fit))
-cat("\n")
 
 # COMPARE ESTIMATES AGAINST GROUND-TRUTH
 # --------------------------------------
@@ -98,13 +103,15 @@ cat("\n")
 # It is expected that oefficients near zero will be "shrunk" to zero.
 cat("4. PLOTTING COEFFICIENT ESTIMATES.\n")
 trellis.par.set(par.xlab.text = list(cex = 0.75),
-                par.ylab.text = list(cex = 0.75),
+                par.yab.text = list(cex = 0.75),
                 axis.text = list(cex = 0.75))
-markers  <- labels(fit)
-beta.est <- coef(fit)
-beta.est <- beta.est[markers,ncol(beta.est)]
-print(xyplot(beta.est ~ beta.true,
-             data.frame(beta.true = beta,beta.est = beta.est),
+markers   <- labels(fit2)
+beta.est1 <- coef(fit1)
+beta.est1 <- beta.est1[markers,ncol(beta.est1)]
+beta.est2 <- coef(fit2)
+beta.est2 <- beta.est2[markers,ncol(beta.est2)]
+print(xyplot(beta.est2 ~ beta.est1,
+             data.frame(beta.est1 = beta.est1,beta.est2 = beta.est2),
              pch = 4,col = "black",cex = 0.6,
              panel = function(x, y, ...) {
                panel.xyplot(x,y,...)

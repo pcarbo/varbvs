@@ -57,6 +57,16 @@ s_j^2 &= \frac{\sigma^2}{({\bf X}^T{\bf X})_{jj} + 1/\sigma_a^2} \\
            - \frac{\beta_0^2}{\sigma_a^2}\bigg)\bigg\}.
 \end{align}
 
+Taking partial derivatives of the hyperparameters $\sigma^2$,
+$\sigma_a^2$ and $\beta_0$ yields the following approximate M-step
+updates:
+\begin{align}
+\sigma^2   &= \\
+\sigma_a^2 &= \\
+\beta_0    &= \frac{n_{\beta_0}\mu_{\beta_0} + \sum_{j=1}^p \alpha_j\mu_j}
+                   {\sigma(n_{\beta_0} + \sum_{j=1}^p \mu_j)}.
+\end{align}
+
 \end{document}
 
  

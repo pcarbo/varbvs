@@ -21,7 +21,7 @@
 // lower bound for Bayesian variable selection in linear regression.
 void varbvsnormupdate (const double* x, double xy, double d, double sigma, 
 		       double sa, double b0, double logodds, double* alpha, 
-		       double* mu,  double* Xr, Size n) {
+		       double* mu, double* Xr, Size n) {
 
   // Compute the variational estimate of the posterior variance.
   double s = sigma*sa/(sa*d + 1);
@@ -33,8 +33,8 @@ void varbvsnormupdate (const double* x, double xy, double d, double sigma,
   
   // Update the variational estimate of the posterior inclusion
   // probability.
-  double SSR = (*mu) * (*mu) / s;
-  *alpha = sigmoid(logodds + (log(s/(sigma*sa)) + SSR)/2);
+  double SSR = (*mu)*(*mu)/s;
+  *alpha = sigmoid(logodds + log(s/(sigma*sa))/2 + (SSR - b0*b0/sa)/2);
   
   // Update Xr = X*r.
   double rnew = (*alpha) * (*mu);

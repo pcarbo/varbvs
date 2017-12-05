@@ -19,4 +19,3 @@ varbvsnormupdate_rcpp <- function (X, sigma, sa, b0, logodds, xy, d,
                                    alpha, mu, Xr, i)
   invisible(.Call(`C_varbvs_varbvsnormupdate_rcpp`,X,sigma,sa,b0,logodds,xy,d,
                   alpha,mu,Xr,i))
-
