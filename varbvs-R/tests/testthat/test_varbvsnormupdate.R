@@ -20,6 +20,7 @@ test_that("all versions of varbvsnormupdate produce the same result",{
   p       <- 5000  # Number of variables (genetic markers).
   na      <- 50    # Number of quantitative trait loci (QTLs).
   se      <- 4     # Variance of residual.
+  b0      <- 0.01  # Prior mean of coefficients (scaled by se).
   r       <- 0.5   # Proportion of variance in trait explained by QTLs.
   logodds <- -2    # Prior log-odds of inclusion.
 
@@ -76,19 +77,20 @@ test_that("all versions of varbvsnormupdate produce the same result",{
   logodds <- rep(log(10)*logodds,p)
 
   r <- cbind(system.time(out1 <-
-               varbvs:::varbvsnormupdate(X,se,sb,logodds,xy,d,
+               varbvs:::varbvsnormupdate(X,se,sb,b0,logodds,xy,d,
                                         alpha0,mu0,Xr0,1:p,"R")),
              system.time(out2 <-
-               varbvs:::varbvsnormupdate(X,se,sb,logodds,xy,d,
+               varbvs:::varbvsnormupdate(X,se,sb,b0,logodds,xy,d,
                                          alpha0,mu0,Xr0,1:p,".Call")),
              system.time(out3 <-
-               varbvs:::varbvsnormupdate(X,se,sb,logodds,xy,d,
+               varbvs:::varbvsnormupdate(X,se,sb,b0,logodds,xy,d,
                                          alpha0,mu0,Xr0,1:p,"Rcpp")))
   r        <- as.data.frame(r)
   names(r) <- c("R",".Call","Rcpp")
   print(r["elapsed",])
 
   # Check the outputs from all three versions of varbvsnormupdate.
+  print(cbind(out1$alpha,out2$alpha,out3$alpha))
   expect_equal(out1$alpha,out2$alpha,tolerance = 1e-8)
   expect_equal(out1$alpha,out3$alpha,tolerance = 1e-8)
   expect_equal(out1$mu,out2$mu,tolerance = 1e-8)
