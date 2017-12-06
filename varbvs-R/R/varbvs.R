@@ -313,10 +313,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
       if (verbose) {
         cat("Finding best initialization for",ns,"combinations of",
             "hyperparameters.\n");
-        cat("-iteration-   variational    max.   incl ----hyperparameters",
-            "----\n",sep="");
-        cat("outer inner   lower bound  change   vars   sigma      sa",
-            "      b0\n",sep="");
+        cat("-iteration-     variational    max.   incl ---hyperparameters",
+            "---\n",sep="");
+        cat("outer inner     lower bound  change   vars   sigma      sa",
+            "    b0\n",sep="");
       }
 
       # Repeat for each setting of the hyperparameters.
@@ -360,10 +360,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     if (verbose) {
       cat("Computing marginal likelihood for",ns,"combinations of",
           "hyperparameters.\n")
-        cat("-iteration-   variational    max.   incl ----hyperparameters",
-            "----\n",sep="");
-        cat("outer inner   lower bound  change   vars   sigma      sa",
-            "      b0\n",sep="");
+        cat("-iteration-     variational    max.   incl ---hyperparameters",
+            "---\n",sep="");
+        cat("outer inner     lower bound  change   vars   sigma      sa",
+            "    b0\n",sep="");
     }
     
     # For each setting of the hyperparameters, find a set of
