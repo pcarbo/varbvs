@@ -73,23 +73,21 @@ rownames(X) <- names(y)
 if (!is.null(Z))
   rownames(Z) <- names(y)
 
-# FIT VARIATIONAL APPROXIMATION TO POSTERIOR
-# ------------------------------------------
-# Fit the zero-centered model.
+# FIT ZERO-CENTERED MODEL
+# -----------------------
 cat("2. FITTING ZERO-CENTERED MODEL.\n")
-fit1 <- varbvs(X,Z,y,"binomial",b0 = 0,logodds = logodds,n0 = 0,
-               verbose = FALSE)
+fit1 <- varbvs(X,Z,y,"binomial",logodds = logodds,n0 = 0,verbose = TRUE)
 
-# Fit the non-zero-centered model.
-cat("3. FITTING NON-ZERO-CENTERED MODEL.\n")
-fit2 <- varbvs(X,Z,y,"binomial",logodds = logodds,update.sa = FALSE,b0 = 0.66,
-               sa = 0.2,update.b0 = FALSE,n0 = 0,nb0 = 0,verbose = FALSE)
+# FIT NON-CENTERED MODEL
+# ----------------------
+cat("3. FITTING NON-CENTERED MODEL.\n")
+fit2 <- varbvs(X,Z,y,"binomial",logodds = logodds,update.sa = FALSE,
+               update.b0 = TRUE,n0 = 0,nb0 = 0,verbose = TRUE)
 
-# SUMMARIZE POSTERIOR DISTRIBUTION
-# --------------------------------
-cat("4. SUMMARIZING NON-ZERO-CENTERED MODEL.\n")
-print(summary(fit2))
-cat("\n")
+# COMPARE MODEL FIT
+# -----------------
+cat("Improvement in fit with non-centered model:\n")
+cat(sprintf("Bayes factor = %0.2e\n",varbvsbf(fit1,fit2)))
 
 # EVALUATE MODEL PREDICTIONS
 # --------------------------
@@ -101,15 +99,26 @@ cat("r^2 between predicted Y and observed Y\n")
 cat(sprintf("zero-centered model: %0.3f\n",cor(y,y1)^2))
 cat(sprintf("non-centered model:  %0.3f\n",cor(y,y2)^2))
 
-# COMPARE POWER
-# -------------
-# Compare the performance of the zero-centered and non-zero-centered
-# models for recovering the variables that have an effect on the
-# binary trait.
-cat("6. ASSESSING POWER TO DETECT EFFECTS.\n")
-markers <- which(beta != 0)
-out     <- rbind(quantile(fit1$pip[markers],seq(0.1,0.9,0.1)),
-                (quantile(fit2$pip[markers],seq(0.1,0.9,0.1))))
-rownames(out) <- c("zero-centered","non-centered")
-print(out,digits = 3)
-
+# COMPARE ESTIMATES
+# -----------------
+# Plot the coefficients estimated using the centered and non-centered
+# models. It is expected that the centered model will "shrink" the
+# larger coefficients slightly more toward zero.
+cat("4. PLOTTING COEFFICIENT ESTIMATES.\n")
+trellis.par.set(par.xlab.text = list(cex = 0.75),
+                par.ylab.text = list(cex = 0.75),
+                axis.text = list(cex = 0.75))
+markers <- labels(fit1)
+b1      <- coef(fit1)
+b1      <- b1[markers,ncol(b1)]
+b2      <- coef(fit2)
+b2      <- b2[markers,ncol(b2)]
+print(xyplot(b2 ~ b1,data.frame(b1 = b1,b2 = b2),pch = 4,col = "black",
+             cex = 0.6,
+             panel = function(x, y, ...) {
+               panel.xyplot(x,y,...)
+               panel.abline(a = 0,b = 1,col = "magenta",lty = "dotted")
+             },
+             scales = list(limits = c(-1.1,1.1)),
+             xlab = "coef (centered model)",
+             ylab = "coef (non-centered model)"))
