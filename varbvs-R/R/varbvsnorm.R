@@ -87,12 +87,12 @@ varbvsnorm <- function (X, y, sigma, sa, b0, logodds, alpha, mu,
   for (iter in 1:maxiter) {
 
     # Save the current variational and model parameters.
-    alpha0 <- alpha
-    mu0    <- mu
-    s0     <- s
-    sa.old <- sa
-    b0.old <- b0
-    sigma0 <- sigma
+    alpha.old <- alpha
+    mu.old    <- mu
+    s.old     <- s
+    sa.old    <- sa
+    b0.old    <- b0
+    sigma.old <- sigma
     
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
@@ -135,6 +135,7 @@ varbvsnorm <- function (X, y, sigma, sa, b0, logodds, alpha, mu,
 
     # (2e) UPDATE PRIOR MEAN OF REGRESSION COEFFICIENTS
     # -------------------------------------------------
+    # Compute the maximum posteriori estimate of sa, if requested.
     if (update.b0)
       b0 <- (nb0*mub0 + dot(alpha,mu))/(sqrt(sigma)*(nb0 + sum(alpha)))
     
@@ -156,14 +157,14 @@ varbvsnorm <- function (X, y, sigma, sa, b0, logodds, alpha, mu,
     # between the posterior probabilities at two successive iterations
     # is less than the specified tolerance, or when the variational
     # lower bound has decreased.
-    err[iter] <- max(abs(alpha - alpha0))
+    err[iter] <- max(abs(alpha - alpha.old))
     if (verbose) {
       if (is.null(outer.iter))
         status <- NULL
       else
         status <- sprintf("%05d ",outer.iter)
       progress.str <-
-        paste(status,sprintf("%05d %+13.6e %0.1e %06.1f %0.1e %0.1e %0.1e",
+        paste(status,sprintf("%05d %+15.8e %0.1e %06.1f %0.1e %0.1e %0.3f",
                              iter,logw[iter],err[iter],sum(alpha),sigma,
                              sa,b0),sep="")
       cat(progress.str)
@@ -172,12 +173,12 @@ varbvsnorm <- function (X, y, sigma, sa, b0, logodds, alpha, mu,
     if (logw[iter] < logw0) {
       logw[iter] <- logw0
       err[iter]  <- 0
-      sigma      <- sigma0
+      sigma      <- sigma.old
       sa         <- sa.old
       b0         <- b0.old
-      alpha      <- alpha0
-      mu         <- mu0
-      s          <- s0
+      alpha      <- alpha.old
+      mu         <- mu.old
+      s          <- s.old
       break
     } else if (err[iter] < tol)
       break

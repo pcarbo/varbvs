@@ -115,7 +115,7 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
       else
         status <- sprintf("%05d ",outer.iter)
       progress.str <- 
-        paste(status,sprintf("%05d %+13.6e %0.1e %06.1f      NA %0.1e",
+        paste(status,sprintf("%05d %+15.8e %0.1e %06.1f      NA %0.1e",
                              iter,logw[iter],err[iter],sum(alpha),sa),sep="")
       cat(progress.str)
       cat(rep("\r",nchar(progress.str)))
