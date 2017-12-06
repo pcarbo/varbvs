@@ -1,6 +1,8 @@
-# This is the same as the varbvs.qtl demo, except that it illustrates
-# fitting the varbvs model with a prior that is not centered at zero
-# (the "non-centered model").
+# This script compares the "zero-centered" model, in which the prior
+# on the regression coefficients is centered at zero, against the
+# "non-centered" model, in which the prior mean is fitted to the data.
+# The data set is simulated genotypes at unlinked genetic markers,
+# with a continuous (i.e., quantitative) outcome.
 library(lattice)
 library(varbvs)  
 
