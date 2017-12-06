@@ -20,7 +20,7 @@
 # where n is the number of samples, and m is the number of
 # covariates. This function is equivalent to varbvsbin when only one
 # covariate is specified, the intercept, and Z = ones(n,1).
-varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
+varbvsbinz <- function (X, Z, y, sa, b0, logodds, alpha, mu, eta, update.order,
                         tol = 1e-4, maxiter = 1e4, verbose = TRUE,
                         outer.iter = NULL, update.sa = TRUE, update.b0 = FALSE,
                         optimize.eta = TRUE,n0 = 10, sa0 = 1, nb0 = 10,
@@ -68,7 +68,7 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
       i <- update.order
     else
       i <- rev(update.order)
-    out   <- varbvsbinzupdate(X,sa,logodds,stats,alpha,mu,Xr,i)
+    out   <- varbvsbinzupdate(X,sa,b0,logodds,stats,alpha,mu,Xr,i)
     alpha <- out$alpha
     mu    <- out$mu
     Xr    <- out$Xr
@@ -122,8 +122,9 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
       else
         status <- sprintf("%05d ",outer.iter)
       progress.str <- 
-        paste(status,sprintf("%05d %+15.8e %0.1e %06.1f      NA %0.1e",
-                             iter,logw[iter],err[iter],sum(alpha),sa),sep="")
+        paste(status,
+              sprintf("%05d %+15.8e %0.1e %06.1f      NA %0.1e %0.3f",
+                      iter,logw[iter],err[iter],sum(alpha),sa,b0),sep="")
       cat(progress.str)
       cat(rep("\r",nchar(progress.str)))
     }

@@ -13,9 +13,9 @@
 \usage{
   varbvs(X, Z, y, family = c("gaussian","binomial"), sigma, sa, b0,
          logodds, alpha, mu, eta, update.sigma, update.sa,
-         optimize.eta, initialize.params, update.order, nr = 100,
-         sa0 = 1, n0 = 10, mub0 = 0, nb0 = 10, tol = 1e-4,
-         maxiter = 1e4, verbose = TRUE)
+         optimize.eta, initialize.params, update.order,
+         update.b0 = FALSE, nr = 100, sa0 = 1, n0 = 10, mub0 = 0,
+         nb0 = 10, tol = 1e-4, maxiter = 1e4, verbose = TRUE)
 }
 \arguments{
   \item{X}{n x p input matrix, where n is the number of samples,
@@ -108,10 +108,6 @@
     to data, in which case input vector \code{sa} is used to provide
     initial estimates.}
 
-  \item{update.b0}{When \code{update.b0 = TRUE}, hyperparameter b0 is
-    fitted to the data, in which case input vector \code{b0} provides
-    initial estimates.}
-  
   \item{optimize.eta}{When \code{optimize.eta = TRUE}, eta is fitted to
     the data during the inner loop coordinate ascent updates, even when
     good estimates of eta are provided as input.}
@@ -124,6 +120,10 @@
     fitting the variational approximation. The default is
     \code{update.order = 1:p}, where \code{p} is the number of variables
     (the number of columns of \code{X}).}
+
+  \item{update.b0}{When \code{update.b0 = TRUE}, hyperparameter b0 is
+    fitted to the data, in which case input vector \code{b0} provides
+    initial estimates.}
   
   \item{nr}{Number of samples of "model PVE" to draw from posterior.}
 

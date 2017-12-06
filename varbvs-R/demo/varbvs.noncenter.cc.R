@@ -16,8 +16,7 @@ p1 <- 0.01  # Proportion of subjects that will be cases when all the
             # genotypes are zero.
 
 # Names of covariates.
-# covariates <- c("age","weight")
-covariates <- NULL
+covariates <- c("age","weight")
 
 # Candidate values for the prior log-odds of inclusion.
 logodds <- seq(-3,-1.5,0.5)
@@ -92,7 +91,7 @@ cat(sprintf("Bayes factor = %0.2e\n",varbvsbf(fit1,fit2)))
 # EVALUATE MODEL PREDICTIONS
 # --------------------------
 # Evaluate accuracy of the two fitted models.
-cat("5. EVALUATING FITTED MODELS.\n")
+cat("4. EVALUATING FITTED MODELS.\n")
 y1 <- predict(fit1,X,Z,type = "class")
 y2 <- predict(fit2,X,Z,type = "class")
 cat("r^2 between predicted Y and observed Y\n")
@@ -104,7 +103,7 @@ cat(sprintf("non-centered model:  %0.3f\n",cor(y,y2)^2))
 # Plot the coefficients estimated using the centered and non-centered
 # models. It is expected that the centered model will "shrink" the
 # larger coefficients slightly more toward zero.
-cat("4. PLOTTING COEFFICIENT ESTIMATES.\n")
+cat("5. PLOTTING COEFFICIENT ESTIMATES.\n")
 trellis.par.set(par.xlab.text = list(cex = 0.75),
                 par.ylab.text = list(cex = 0.75),
                 axis.text = list(cex = 0.75))
