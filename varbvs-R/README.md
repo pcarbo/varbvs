@@ -49,7 +49,7 @@ version. The easiest way to accomplish this is using the
 ```R
 install.packages("devtools")
 library(devtools)
-install_github("pcarbo/varbvs",subdir = "varbvs-R")
+install_github("pcarbo/varbvs",subdir = "varbvs-R",ref = "non-zero-centered")
 ```
 
 Without devtools, it is a little more complicated, but not
