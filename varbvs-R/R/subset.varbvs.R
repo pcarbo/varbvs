@@ -31,6 +31,7 @@ subset.varbvs <- function (x, subset, ...) {
   # only.
   out         <- x
   out$sa      <- out$sa[i]
+  out$b0      <- out$b0[i]
   out$logodds <- out$logodds[i]
   out$logw    <- out$logw[i]
   out$w       <- normalizelogweights(out$logw)

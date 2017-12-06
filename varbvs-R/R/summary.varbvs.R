@@ -117,6 +117,13 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, ...) {
   }
   colnames(out$top.vars)[6] <- sprintf("Pr(coef.>%0.2f)",cred.int)
   rownames(out$top.vars)    <- NULL
+
+  # Give warning that hyperparameter b0 is not currently included in
+  # the summary.
+  if (!all(object$b0 == 0))
+    warning(paste("Summary does not currently provide statistics on b0",
+                  "hyperparameter; this will be included in a future",
+                  "release"))
   
   class(out) <- c("summary.varbvs","list")
   return(out)
@@ -201,7 +208,7 @@ print.summary.varbvs <- function (x, digits = 3, ...) {
       cat("*See help(varbvs) about interpreting coefficients in logistic",
           "regression.\n")
   })
-  
+
   return(invisible(x))
 }
 

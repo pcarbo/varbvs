@@ -80,43 +80,39 @@ if (!is.null(Z))
 # FIT ZERO-CENTERED MODEL
 # -----------------------
 cat("2. FITTING ZERO-CENTERED MODEL.\n")
-fit1 <- varbvs(X,Z,y,"gaussian",logodds = logodds,n0 = 0)
-cat("\n")
+fit1 <- varbvs(X,Z,y,"gaussian",logodds = logodds,n0 = 0,verbose = FALSE)
 
 # FIT NON-CENTERED MODEL
 # ----------------------
 cat("3. FITTING NON-CENTERED MODEL.\n")
-fit2 <- varbvs(X,Z,y,"gaussian",logodds = logodds,
-               update.b0 = TRUE,n0 = 0,nb0 = 0)
-cat("\n")
+fit2 <- varbvs(X,Z,y,"gaussian",logodds = logodds,update.b0 = TRUE,
+               n0 = 0,nb0 = 0,verbose = FALSE)
 
 # COMPARE MODEL FIT
 # -----------------
-cat("Improvement in fit for non-centered model:\n")
-cat("BF =",varbvsbf(fit1,fit2),"\n")
+cat("Improvement in fit with non-centered model:\n")
+cat(sprintf("Bayes factor = %0.2e\n",varbvsbf(fit1,fit2)))
 
-stop()
-
-# COMPARE ESTIMATES AGAINST GROUND-TRUTH
-# --------------------------------------
-# Plot the estimated coefficients against the ground-truth coefficients.
-# It is expected that oefficients near zero will be "shrunk" to zero.
+# COMPARE ESTIMATES
+# -----------------
+# Plot the coefficients estimated using the centered and non-centered
+# models. It is expected that the centered model will "shrink" the
+# larger coefficients slightly more toward zero.
 cat("4. PLOTTING COEFFICIENT ESTIMATES.\n")
 trellis.par.set(par.xlab.text = list(cex = 0.75),
-                par.yab.text = list(cex = 0.75),
+                par.ylab.text = list(cex = 0.75),
                 axis.text = list(cex = 0.75))
-markers   <- labels(fit2)
-beta.est1 <- coef(fit1)
-beta.est1 <- beta.est1[markers,ncol(beta.est1)]
-beta.est2 <- coef(fit2)
-beta.est2 <- beta.est2[markers,ncol(beta.est2)]
-print(xyplot(beta.est2 ~ beta.est1,
-             data.frame(beta.est1 = beta.est1,beta.est2 = beta.est2),
-             pch = 4,col = "black",cex = 0.6,
+markers <- labels(fit1)
+b1      <- coef(fit1)
+b1      <- b1[markers,ncol(b1)]
+b2      <- coef(fit2)
+b2      <- b2[markers,ncol(b2)]
+print(xyplot(b2 ~ b1,data.frame(b1 = b1,b2 = b2),pch = 4,col = "black",
+             cex = 0.6,
              panel = function(x, y, ...) {
                panel.xyplot(x,y,...)
                panel.abline(a = 0,b = 1,col = "magenta",lty = "dotted")
              },
              scales = list(limits = c(-1.1,1.1)),
-             xlab = "ground-truth regression coefficient",
-             ylab = "estimated regression coefficient"))
+             xlab = "coef (centered model)",
+             ylab = "coef (non-centered model)"))

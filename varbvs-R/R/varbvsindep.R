@@ -17,6 +17,10 @@ varbvsindep <- function (fit, X, Z, y) {
   # Check that the first input is an instance of class "varbvs".
   if (!is(fit,"varbvs"))
     stop("Input fit must be an instance of class \"varbvs\".")
+
+  # Report error if using non-centered model.
+  if (!all(fit$b0 == 0))
+    stop("varbvsindep is not implemented for non-centered model (b0 != 0)")
   
   # Get the number of samples (n), variables (p) and hyperparameter
   # settings (ns).
