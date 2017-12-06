@@ -11,11 +11,10 @@
 # MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Public License for more details.
 #
-
-sigmoid_rcpp <- function(x)
-  .Call(`varbvs_sigmoid_rcpp`,x)
+sigmoid_rcpp <- function (x)
+  .Call("varbvs_sigmoid_rcpp",x)
 
 varbvsnormupdate_rcpp <- function (X, sigma, sa, b0, logodds, xy, d,
                                    alpha, mu, Xr, i)
-  invisible(.Call(`C_varbvs_varbvsnormupdate_rcpp`,X,sigma,sa,b0,logodds,xy,d,
+  invisible(.Call(C_varbvs_varbvsnormupdate_rcpp,X,sigma,sa,b0,logodds,xy,d,
                   alpha,mu,Xr,i))

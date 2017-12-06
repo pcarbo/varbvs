@@ -4,7 +4,7 @@ using namespace Rcpp;
 
 // sigmoid_rcpp
 double sigmoid_rcpp(double x);
-RcppExport SEXP _varbvs_sigmoid_rcpp(SEXP xSEXP) {
+RcppExport SEXP varbvs_sigmoid_rcpp(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
