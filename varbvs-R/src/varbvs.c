@@ -59,7 +59,7 @@ void varbvsbinupdate (const double* x, double xy, double xd, double xdx,
   // Update the variational estimate of the posterior inclusion
   // probability.
   double SSR = (*mu) * (*mu) / s;
-  *alpha = sigmoid(logodds + (log(s/sa) + SSR)/2);
+  *alpha = sigmoid(logodds + log(s/sa)/2 + (SSR - b0*b0/sa)/2);
   
   // Update Xr = X*r.
   double rnew = (*alpha) * (*mu);
@@ -88,8 +88,8 @@ void varbvsbinzupdate (const double* x, double xy, double xdx,
   // Update the variational estimate of the posterior inclusion
   // probability.
   double SSR = (*mu) * (*mu) / s;
-  *alpha = sigmoid(logodds + (log(s/sa) + SSR)/2);
-
+  *alpha = sigmoid(logodds + log(s/sa)/2 + (SSR - b0*b0/sa)/2);
+  
   // Update Xr = X*r.
   double rnew = (*alpha) * (*mu);
   add(Xr,rnew - r,x,n);

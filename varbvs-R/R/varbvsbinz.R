@@ -48,11 +48,12 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
   for (iter in 1:maxiter) {
     
     # Save the current variational parameters and model parameters.
-    alpha0 <- alpha
-    mu0    <- mu
-    s0     <- s
-    eta0   <- eta
-    sa.old <- sa
+    alpha.old <- alpha
+    mu.old    <- mu
+    s.old     <- s
+    eta.old   <- eta
+    sa.old    <- sa
+    b0.old    <- b0
 
     # (2a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
@@ -96,11 +97,17 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
     # Note that we must also recalculate the variance of the
     # regression coefficients when this parameter is updated.
     if (update.sa) {
-      sa <- (sa0*n0 + dot(alpha,s + mu^2))/(n0 + sum(alpha))
+      sa <- (sa0*n0 + dot(alpha,s + (mu - b0)^2))/(n0 + sum(alpha))
       s  <- sa/(sa*stats$xdx + 1)
     }
 
-    # (2f) CHECK CONVERGENCE
+    # (2f) UPDATE PRIOR MEAN OF REGRESSION COEFFICIENTS
+    # -------------------------------------------------
+    # Compute the maximum a posterior estimate of b0, if requested.
+    if (update.b0)
+      b0 <- (nb0*mub0 + dot(alpha,mu))/(nb0 + sum(alpha))
+    
+    # (2g) CHECK CONVERGENCE
     # ----------------------
     # Print the status of the algorithm and check the convergence
     # criterion. Convergence is reached when the maximum relative
@@ -108,7 +115,7 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
     # is less than the specified tolerance, or when the variational
     # lower bound has decreased. I ignore parameters that are very
     # small. If the variational bound decreases, stop.
-    err[iter] <- max(abs(alpha - alpha0))
+    err[iter] <- max(abs(alpha - alpha.old))
     if (verbose) {
       if (is.null(outer.iter))
         status <- NULL
@@ -124,10 +131,11 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
       logw[iter]  <- logw0
       err[iter]   <- 0
       sa          <- sa.old
-      alpha       <- alpha0
-      mu          <- mu0
-      s           <- s0
-      eta         <- eta0
+      b0          <- b0.old
+      alpha       <- alpha.old
+      mu          <- mu.old
+      s           <- s.old
+      eta         <- eta.old
       break
     } else if (err[iter] < tol)
       break
