@@ -1,9 +1,6 @@
-# TO DO: Update description.
-#
-# This script illustrates usage of the function varbvs for genome-wide
-# mapping of a quantitative trait. The data set is simulated assuming
-# that all the genetic markers are uncorrelated with each other (i.e.,
-# they are "unlinked").
+# This is the same as the varbvs.qtl demo, except that it illustrates
+# fitting the varbvs model with a prior that is not centered at zero
+# (the "non-centered model").
 library(lattice)
 library(varbvs)  
 
