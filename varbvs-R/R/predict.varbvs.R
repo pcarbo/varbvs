@@ -78,6 +78,7 @@ predict.varbvs <-
     else
       out <- c(round(out %*% w))
   }
+  names(out) <- rownames(X)
   return(out)
 }
 
