@@ -1,6 +1,6 @@
 # Part of the varbvs package, https://github.com/pcarbo/varbvs
 #
-# Copyright (C) 2012-2017, Peter Carbonetto
+# Copyright (C) 2012-2018, Peter Carbonetto
 #
 # This program is free software: you can redistribute it under the
 # terms of the GNU General Public License; either version 3 of the
