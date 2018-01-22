@@ -76,6 +76,10 @@
     default value when sa and sigma are missing, and otherwise an error
     is generated.}
 
+  \item{weights}{Details about this argument go here.}
+
+  \item{resid.vcov}{Details about this argument go here.}
+  
   \item{alpha}{Good initial estimate for the variational parameter alpha
     for each hyperparameter setting. Either missing, or a p x ns matrix,
     where p is the number of variables, and ns is the number of

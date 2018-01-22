@@ -15,10 +15,10 @@
 # variable selection in linear (family = "gaussian") or logistic
 # regression (family = "binomial"). See varbvs.Rd for details.
 varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
-                    logodds, alpha, mu, eta, update.sigma, update.sa,
-                    optimize.eta, initialize.params, update.order, nr = 100,
-                    sa0 = 1, n0 = 10, tol = 1e-4, maxiter = 1e4,
-                    verbose = TRUE) {
+                    logodds, weights, resid.vcov, alpha, mu, eta, 
+                    update.sigma, update.sa, optimize.eta, initialize.params,
+                    update.order, nr = 100, sa0 = 1, n0 = 10, tol = 1e-4,
+                    maxiter = 1e4, verbose = TRUE) {
 
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -141,6 +141,24 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # coefficients.
   if (missing(update.sa))
     update.sa <- update.sa.default
+
+  # Set the weights---used to indicate that different observations
+  # have different variances---or the covariance matrix of the
+  # residual (resid.vcov). Note that only one of the weights and
+  # residual covariance matrix can be non-NULL.
+  if (missing(weights))
+    weights <- NULL
+  if (missing(resid.vcov))
+    resid.vcov <- NULL
+  if (!is.null(weights) & !is.null(resid.vcov))
+    stop("Only one of weights and resid.vcov may be specified")
+  if (!is.null(weights))
+    if (!(is.vector(weights) & length(weights) == n))
+      stop("Input weights must be a vector with the same length as y")
+  if (!is.null(resid.vcov))
+    if (is.matrix(resid.vcov))
+    else
+      stop("Input resid.vcov must be a matrix")
   
   # Set initial estimates of variational parameter alpha.
   initialize.params.default <- TRUE
