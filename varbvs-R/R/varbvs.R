@@ -231,11 +231,21 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   # (3) PREPROCESSING STEPS
   # -----------------------
   if (family == "gaussian") {
+    if (!is.null(weights)) {
 
-    # Adjust the genotypes and phenotypes so that the linear effects of
-    # the covariates are removed. This is equivalent to integrating out
-    # the regression coefficients corresponding to the covariates with
-    # respect to an improper, uniform prior.
+      # Adjust the inputs X and y to account for the weights.
+      # TO DO.
+    } else if (!is.null(resid.vcov)) {
+
+      # Adjust the inputs X and y to account for the
+      # variance-covariance matrix of the residuals.
+      # TO DO.
+    }
+      
+    # Adjust the inputs X and y so that the linear effects of the
+    # covariates (Z) are removed. This is equivalent to integrating
+    # out the regression coefficients corresponding to the covariates
+    # with respect to an improper, uniform prior.
     out <- remove.covariate.effects(X,Z,y)
     X   <- out$X
     y   <- out$y
@@ -251,7 +261,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.4-17")
+    cat("VARBVS version 2.5-0 ")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")
