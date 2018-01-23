@@ -76,9 +76,22 @@
     default value when sa and sigma are missing, and otherwise an error
     is generated.}
 
-  \item{weights}{Details about this argument go here.}
+  \item{weights}{Optional vector of weights for weighted linear
+    regression; larger weights correspond to smaller variances. It
+    should be \code{NULL}, or a numeric vector of the same length as
+    \code{y}. This is equivalent to the \code{weights} argument in
+    \code{\link[stats]{lm}}. This option is only available for linear
+    regression (\code{family = "gaussian"}), and cannot be combined with
+    \code{resid.vcov}.}
 
-  \item{resid.vcov}{Details about this argument go here.}
+  \item{resid.vcov}{Optional matrix specifying the covariance of the
+    residual, scaled by sigma. This is useful to allow for observations
+    with different variances (similar to \code{weights}), or for
+    observations that are not independent. It should either be
+    \code{NULL}, or a symmetric positive definite matrix in which the
+    number of rows and columns is equal to the length of \code{y}. This
+    option is only available for linear regression (\code{family =
+    "gaussian"}), and cannot be combined with \code{weights}.}
   
   \item{alpha}{Good initial estimate for the variational parameter alpha
     for each hyperparameter setting. Either missing, or a p x ns matrix,
