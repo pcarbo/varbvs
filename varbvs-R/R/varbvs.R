@@ -150,15 +150,22 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     weights <- NULL
   if (missing(resid.vcov))
     resid.vcov <- NULL
+  if (!(is.null(weights) & is.null(resid.vcov)) & family != "gaussian")
+    stop(paste("Specifying weights or resid.vcov is only allowed for",
+               "family == \"gaussian\""))
   if (!is.null(weights) & !is.null(resid.vcov))
     stop("Only one of weights and resid.vcov may be specified")
   if (!is.null(weights))
     if (!(is.vector(weights) & length(weights) == n))
       stop("Input weights must be a vector with the same length as y")
   if (!is.null(resid.vcov))
-    if (is.matrix(resid.vcov))
+    if (is.matrix(resid.vcov) | inherits(resid.vcov,"Matrix"))
+      if (!(nrow(resid.vcov) == n & ncol(resid.vcov) == n &
+            all(resid.vcov == t(resid.vcov))))
+        stop(paste("Input resid.vcov must be an n x n",
+                   "symmetric matrix where n = length(y)"))
     else
-      stop("Input resid.vcov must be a matrix")
+      stop("Input resid.vcov must be a matrix (or Matrix)")
   
   # Set initial estimates of variational parameter alpha.
   initialize.params.default <- TRUE
