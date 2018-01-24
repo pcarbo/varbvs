@@ -228,35 +228,6 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     stop(paste("Argument \"update.order\" should be a vector in which each",
                "variable index (column of X) is included at least once"))
   
-  # (3) PREPROCESSING STEPS
-  # -----------------------
-  if (family == "gaussian") {
-    if (!is.null(weights)) {
-
-      # Adjust the inputs X and y to account for the weights.
-      # TO DO.
-    } else if (!is.null(resid.vcov)) {
-
-      # Adjust the inputs X and y to account for the
-      # variance-covariance matrix of the residuals.
-      # TO DO.
-    }
-      
-    # Adjust the inputs X and y so that the linear effects of the
-    # covariates (Z) are removed. This is equivalent to integrating
-    # out the regression coefficients corresponding to the covariates
-    # with respect to an improper, uniform prior.
-    out <- remove.covariate.effects(X,Z,y)
-    X   <- out$X
-    y   <- out$y
-    SZy <- out$SZy
-    SZX <- out$SZX
-    rm(out)
-  } else {
-    SZy <- NULL
-    SZX <- NULL
-  }
-
   # Provide a brief summary of the analysis.
   if (verbose) {
     cat("Welcome to           ")
@@ -288,6 +259,52 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
       cat("fit approx. factors (eta):   ",tf2yn(optimize.eta),"\n")
   }
 
+  # (3) PREPROCESSING STEPS
+  # -----------------------
+  if (family == "gaussian") {
+    if (!is.null(weights)) {
+
+      # Adjust the inputs X and y to account for the weights.
+      #
+      # Note that this is equivalent to setting to the residual
+      # variance-covariance matrix to
+      #
+      #   resid.vcov <- diag(1/weights)
+      #
+      X <- sqrt(weights) * X
+      Z <- sqrt(weights) * Z
+      y <- sqrt(weights) * y
+    } else if (!is.null(resid.vcov)) {
+
+      # Adjust the inputs X and y to account for the variance-covariance
+      # matrix of the residuals.
+      if (verbose)
+        cat("Adjusting inputs for residual variance-covariance matrix.\n")
+      L <- tryCatch(chol(resid.vcov),error = function(e) NULL)
+      if (is.null(L))
+        stop("Input resid.vcov is not a positive definite matrix")
+      else {
+        X <- forwardsolve(L,X)
+        Z <- forwardsolve(L,Z)
+        y <- forwardsolve(L,y)
+      }
+    }
+      
+    # Adjust the inputs X and y so that the linear effects of the
+    # covariates (Z) are removed. This is equivalent to integrating
+    # out the regression coefficients corresponding to the covariates
+    # with respect to an improper, uniform prior.
+    out <- remove.covariate.effects(X,Z,y)
+    X   <- out$X
+    y   <- out$y
+    SZy <- out$SZy
+    SZX <- out$SZX
+    rm(out)
+  } else {
+    SZy <- NULL
+    SZX <- NULL
+  }
+
   # (4) INITIALIZE STORAGE FOR THE OUTPUTS
   # --------------------------------------
   # Initialize storage for the variational estimate of the marginal
@@ -310,10 +327,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
       cat("        variational    max.   incl variance params\n")
       cat(" iter   lower bound  change   vars   sigma      sa\n")
     }
-    out      <- outerloop(X,Z,y,family,SZy,SZX,c(sigma),c(sa),c(logodds),
-                          c(alpha),c(mu),c(eta),update.order,tol,maxiter,
-                          verbose,NULL,update.sigma,update.sa,optimize.eta,
-                          n0,sa0)
+    out      <- outerloop(X,Z,y,family,weights,resid.vcov,SZy,SZX,c(sigma),
+                          c(sa),c(logodds),c(alpha),c(mu),c(eta),update.order,
+                          tol,maxiter,verbose,NULL,update.sigma,update.sa,
+                          optimize.eta,n0,sa0)
     logw     <- out$logw
     sigma    <- out$sigma
     sa       <- out$sa
@@ -339,9 +356,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
       # Repeat for each setting of the hyperparameters.
       for (i in 1:ns) {
-        out <- outerloop(X,Z,y,family,SZy,SZX,sigma[i],sa[i],logodds[,i],
-                         alpha[,i],mu[,i],eta[,i],update.order,tol,maxiter,
-                         verbose,i,update.sigma,update.sa,optimize.eta,n0,sa0)
+        out <- outerloop(X,Z,y,family,SZy,SZX,weights,resid.vcov,sigma[i],
+                         sa[i],logodds[,i],alpha[,i],mu[,i],eta[,i],
+                         update.order,tol,maxiter,verbose,i,update.sigma,
+                         update.sa,optimize.eta,n0,sa0)
         logw[i]    <- out$logw
         sigma[i]   <- out$sigma
         sa[i]      <- out$sa
@@ -382,9 +400,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     # parameters that locally minimize the K-L divergence between the
     # approximating distribution and the exact posterior.
     for (i in 1:ns) {
-      out <- outerloop(X,Z,y,family,SZy,SZX,sigma[i],sa[i],logodds[,i],
-                       alpha[,i],mu[,i],eta[,i],update.order,tol,maxiter,
-                       verbose,i,update.sigma,update.sa,optimize.eta,n0,sa0)
+      out <- outerloop(X,Z,y,family,weights,resid.vcov,SZy,SZX,sigma[i],sa[i],
+                       logodds[,i],alpha[,i],mu[,i],eta[,i],update.order,tol,
+                       maxiter,verbose,i,update.sigma,update.sa,optimize.eta,
+                       n0,sa0)
       logw[i]    <- out$logw
       sigma[i]   <- out$sigma
       sa[i]      <- out$sa
@@ -504,10 +523,10 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
 # ----------------------------------------------------------------------
 # This function implements one iteration of the "outer loop".
-outerloop <- function (X, Z, y, family, SZy, SZX, sigma, sa, logodds,
-                       alpha, mu, eta, update.order, tol, maxiter, verbose,
-                       outer.iter, update.sigma, update.sa, optimize.eta,
-                       n0, sa0) {
+outerloop <- function (X, Z, y, family, weights, resid.vcov, SZy, SZX, sigma,
+                       sa, logodds, alpha, mu, eta, update.order, tol, maxiter,
+                       verbose, outer.iter, update.sigma, update.sa,
+                       optimize.eta, n0, sa0) {
   p <- ncol(X)
   if (length(logodds) == 1)
     logodds <- rep(logodds,p)
