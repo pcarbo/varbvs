@@ -12,9 +12,10 @@
 }
 \usage{
   varbvs(X, Z, y, family = c("gaussian","binomial"), sigma, sa,
-         logodds, alpha, mu, eta, update.sigma, update.sa,
-         optimize.eta, initialize.params, update.order, nr = 100,
-         sa0 = 1, n0 = 10, tol = 1e-4, maxiter = 1e4, verbose = TRUE)
+         logodds, weights, resid.vcov, alpha, mu, eta, update.sigma,
+         update.sa, optimize.eta, initialize.params, update.order,
+         nr = 100, sa0 = 1, n0 = 10, tol = 1e-4, maxiter = 1e4,
+         verbose = TRUE)
 }
 \arguments{
   \item{X}{n x p input matrix, where n is the number of samples,

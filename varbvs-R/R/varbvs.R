@@ -289,7 +289,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
         y <- forwardsolve(L,y)
       }
     }
-      
+
     # Adjust the inputs X and y so that the linear effects of the
     # covariates (Z) are removed. This is equivalent to integrating
     # out the regression coefficients corresponding to the covariates
@@ -356,7 +356,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
       # Repeat for each setting of the hyperparameters.
       for (i in 1:ns) {
-        out <- outerloop(X,Z,y,family,SZy,SZX,weights,resid.vcov,sigma[i],
+        out <- outerloop(X,Z,y,family,weights,resid.vcov,SZy,SZX,sigma[i],
                          sa[i],logodds[,i],alpha[,i],mu[,i],eta[,i],
                          update.order,tol,maxiter,verbose,i,update.sigma,
                          update.sa,optimize.eta,n0,sa0)
