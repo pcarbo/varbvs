@@ -55,6 +55,19 @@ test_that(paste("model fitting works for simulated data with a continuous",
   expect_equal(cor(y,y.fit)^2,0.626,tolerance = 0.01)
 })
 
+test_that(paste"increasing the weights in varbvs results in a",
+          "smaller value for sigma"),{
+
+  # Run the varbvs demo for mapping a quantitative trait in a
+  # simulated data set.
+  demo("varbvs.qtl",package = "varbvs",ask = FALSE)
+
+  # Half the variance of all the observations. This should result in
+  # twice as large estimates of sigma.
+  fit2 <- varbvs(X,Z,y,"gaussian",logodds = logodds,weights = rep(2,n),n0 = 0)
+  expect_equal(range(fit2$sigma/fit$sigma),c(2,2),tolerance = 1e-8)
+})
+
 test_that(paste("model fitting works for simulated data with a binary",
                 "outcome, and no covariates"),{
 

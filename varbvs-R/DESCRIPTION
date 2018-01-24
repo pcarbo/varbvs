@@ -1,8 +1,8 @@
 Package: varbvs
 Encoding: UTF-8
 Type: Package
-Version: 2.5-0
-Date: 2018-01-22
+Version: 2.5-1
+Date: 2018-01-24
 Title: Large-Scale Bayesian Variable Selection Using Variational Methods
 Authors@R: c(person("Peter","Carbonetto",role=c("aut","cre"),
                     email="peter.carbonetto@gmail.com"),
