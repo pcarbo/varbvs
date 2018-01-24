@@ -543,6 +543,17 @@ outerloop <- function (X, Z, y, family, weights, resid.vcov, SZy, SZX, sigma,
                       n0,sa0)
     out$eta <- eta
 
+    # If weights are provided, adjust the variational lower bound to
+    # account for the differences in variance of the samples.
+    if (!is.null(weights))
+      out$logw <- out$logw + sum(log(weights))/2
+    
+    # If a covariance matrix is provided for the residuals, adjust the
+    # variational lower bound to account for a non-identity covariance
+    # matrix.
+    else if (!is.null(resid.vcov))
+      out$logw <- out$logw - determinant(resid.vcov,logarithm = TRUE)$modulus/2
+        
     # Adjust the variational lower bound to account for integral over
     # the regression coefficients corresponding to the covariates.
     out$logw <- out$logw - determinant(crossprod(Z),logarithm = TRUE)$modulus/2
