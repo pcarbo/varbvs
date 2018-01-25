@@ -5,13 +5,9 @@ library(varbvs)
 # -----------------
 n  <- 800   # Number of samples.
 p  <- 2000  # Number of variables (genetic markers).
-na <- 20    # Number of quantitative trait loci (QTLs).
-se <- 4     # Variance of residual.
+na <- 2     # Number of quantitative trait loci (QTLs).
 r  <- 0.5   # Proportion of variance in trait explained by markers.
 d  <- 0.6   # Proportion of additive genetic variance due to QTLs.
-
-# Names of covariates.
-covariates <- c("age","weight")
 
 # Candidate values for the prior log-odds of inclusion.
 logodds <- seq(-3,-1,0.1)
@@ -29,14 +25,15 @@ maf <- 0.05 + 0.45*runif(p)
 X   <- (runif(n*p) < maf) +
        (runif(n*p) < maf)
 X   <- matrix(as.double(X),n,p,byrow = TRUE)
+X   <- scale(X,center = TRUE,scale = FALSE)
 
 # Generate (small) polygenic additive effects for the markers.
 u <- rnorm(p)
 
 # Generate (large) QTL effects for the markers.
-i     <- sample(p,na)
-bx    <- rep(0,p)
-bx[i] <- rnorm(na)
+i       <- sample(p,na)
+beta    <- rep(0,p)
+beta[i] <- rnorm(na)
 
 # Generate labels for the markers.
 colnames(X) <- paste0("rs",sample(1e6,p))
@@ -55,35 +52,39 @@ colnames(X) <- paste0("rs",sample(1e6,p))
 #   b = beta'*cov(X)*beta.
 #
 # Note: this code only works if d or r are not exactly 0 or exactly 1.
-st <- c(r/(1-r) * d/var(X %*% bx))
-bx <- sqrt(st) * bx
-sa <- max(Re(polyroot(c(c(var(X %*% bx) - r/(1-r)),
-                        2*sum((X %*% bx) * (X %*% u))/n,
-                        c(var(X %*% u))))))^2
+st   <- c(r/(1-r) * d/var(X %*% beta))
+beta <- sqrt(st) * beta
+sa   <- max(Re(polyroot(c(c(var(X %*% beta) - r/(1-r)),
+                          2*sum((X %*% beta) * (X %*% u))/n,
+                          c(var(X %*% u))))))^2
 u    <- sqrt(sa) * u
 
-# Generate a random intercept.
-mu <- rnorm(1)
-
-# Generate the covariate data (Z), and the linear effects of the
-# covariates (u).
-m <- length(covariates)
-if (m > 0) {
-  Z  <- randn(n,m)
-  bz <- rnorm(m)
-  colnames(Z) <- covariates
-} else {
-  Z <- NULL
-}
-
 # Generate the quantitative trait measurements.
-y <- mu + X %*% (u + bx) + sqrt(se)*rnorm(n)
-if (m > 0)
-  y <- y + Z %*% u
+y <- X %*% (u + beta) + rnorm(n)
 y <- c(y)
+
+stop()
 
 # Generate labels for the samples.
 names(y)    <- sprintf("A%05d",sample(99999,n))
 rownames(X) <- names(y)
 if (!is.null(Z))
   rownames(Z) <- names(y)
+
+# FIT VARIATIONAL APPROXIMATION TO POSTERIOR
+# ------------------------------------------
+
+# TO DO: Explain what this is doing.
+cat("2. FITTING MODEL TO DATA.\n")
+K   <- tcrossprod(X)
+H   <- diag(n) + sa*K
+fit2 <- varbvs(X,NULL,y,"gaussian",logodds = logodds,resid.vcov = H,n0 = 0)
+cat("\n")
+
+fit1 <- varbvs(X,NULL,y,"gaussian",logodds = logodds,n0 = 0)
+
+# SUMMARIZE RESULTS
+# -----------------
+cat("3. SUMMARIZING RESULTS.\n")
+print(summary(fit1))
+cat("\n")

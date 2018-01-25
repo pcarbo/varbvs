@@ -31,12 +31,6 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     stop("Input X must be a numeric matrix with no missing values.")
   storage.mode(X) <- "double"
 
-  # Add row and column names to X if they are not provided.
-  if (is.null(rownames(X)))
-    rownames(X) <- 1:n
-  if (is.null(colnames(X)))
-    colnames(X) <- paste0("X",1:p)
-  
   # Check input Z.
   if (!is.null(Z)) {
     Z <- as.matrix(Z)
@@ -53,12 +47,6 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   else
     Z <- cbind(1,Z)
 
-  # Add column names to Z if they are not already provided.
-  if (is.null(colnames(Z)) & ncol(Z) > 1)
-    colnames(Z) <- c("(Intercept)",paste0("Z",1:(ncol(Z) - 1)))
-  else
-    colnames(Z)[1] <- "(Intercept)"
-  
   # Check input y.
   if (!is.numeric(y) | sum(is.na(y)) > 0)
     stop("Input y must be a numeric vector with no missing values.")
@@ -157,15 +145,15 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     stop("Only one of weights and resid.vcov may be specified")
   if (!is.null(weights))
     if (!(is.vector(weights) & length(weights) == n))
-      stop("Input weights must be a vector with the same length as y")
-  if (!is.null(resid.vcov))
-    if (is.matrix(resid.vcov) | inherits(resid.vcov,"Matrix"))
+      stop("Input weights should be a vector with the same length as y")
+  if (!is.null(resid.vcov)) 
+    if (is.matrix(resid.vcov) | inherits(resid.vcov,"Matrix")) {
       if (!(nrow(resid.vcov) == n & ncol(resid.vcov) == n &
             all(resid.vcov == t(resid.vcov))))
-        stop(paste("Input resid.vcov must be an n x n",
-                   "symmetric matrix where n = length(y)"))
-    else
-      stop("Input resid.vcov must be a matrix (or Matrix)")
+        stop(paste("Input resid.vcov should be an n x n symmetric",
+                   "matrix where n = length(y)"))
+    } else
+      stop("Input resid.vcov should be class \"matrix\" or \"Matrix\"")
   
   # Set initial estimates of variational parameter alpha.
   initialize.params.default <- TRUE
@@ -280,7 +268,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
       # matrix of the residuals.
       if (verbose)
         cat("Adjusting inputs for residual variance-covariance matrix.\n")
-      L <- tryCatch(chol(resid.vcov),error = function(e) NULL)
+      L <- tryCatch(t(chol(resid.vcov)),error = function(e) NULL)
       if (is.null(L))
         stop("Input resid.vcov is not a positive definite matrix")
       else {
@@ -289,7 +277,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
         y <- forwardsolve(L,y)
       }
     }
-
+    
     # Adjust the inputs X and y so that the linear effects of the
     # covariates (Z) are removed. This is equivalent to integrating
     # out the regression coefficients corresponding to the covariates
@@ -305,6 +293,18 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     SZX <- NULL
   }
 
+  # Add row and column names to X if they are not provided.
+  if (is.null(rownames(X)))
+    rownames(X) <- 1:n
+  if (is.null(colnames(X)))
+    colnames(X) <- paste0("X",1:p)
+
+  # Add column names to Z if they are not already provided.
+  if (is.null(colnames(Z)) & ncol(Z) > 1)
+    colnames(Z) <- c("(Intercept)",paste0("Z",1:(ncol(Z) - 1)))
+  else
+    colnames(Z)[1] <- "(Intercept)"
+  
   # (4) INITIALIZE STORAGE FOR THE OUTPUTS
   # --------------------------------------
   # Initialize storage for the variational estimate of the marginal
@@ -443,12 +443,15 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                 beta.cov = beta.cov,y = y)
     class(fit) <- c("varbvs","list")
 
-    # Compute the proportion of variance in Y, after removing linear
-    # effects of covariates, explained by the regression model.
+    # Compute the proportion of variance in Y only when there are no
+    # additional covariates included in the model.
     if (verbose)
       cat("Estimating proportion of variance in Y explained by model.\n");
-    fit$model.pve <- varbvspve(X,fit,nr)
-
+    if (ncol(Z) == 1)
+      fit$model.pve <- varbvspve(fit,X,nr)
+    else
+      fit$model.pve <- NA
+    
     # Compute the proportion of variance in Y, after removing linear
     # effects of covariates, explained by each variable.
     fit$pve           <- matrix(0,p,ns)
@@ -551,7 +554,7 @@ outerloop <- function (X, Z, y, family, weights, resid.vcov, SZy, SZX, sigma,
     # If a covariance matrix is provided for the residuals, adjust the
     # variational lower bound to account for a non-identity covariance
     # matrix.
-    else if (!is.null(resid.vcov))
+    if (!is.null(resid.vcov))
       out$logw <- out$logw - determinant(resid.vcov,logarithm = TRUE)$modulus/2
         
     # Adjust the variational lower bound to account for integral over

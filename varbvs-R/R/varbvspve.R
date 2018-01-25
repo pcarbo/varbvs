@@ -15,7 +15,7 @@
 # explained by the Bayesian variable selection model fitted using a
 # variational approximation. This function is only valid for the
 # linear regression model (family = "gaussian") with an intercept.
-varbvspve <- function (X, fit, nr = 1000) {
+varbvspve <- function (fit, X, nr = 1000) {
 
   # Get the number of variables (p) and the number of hyperparameter
   # settings (ns).
