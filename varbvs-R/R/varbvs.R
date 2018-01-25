@@ -443,11 +443,12 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                 beta.cov = beta.cov,y = y)
     class(fit) <- c("varbvs","list")
 
-    # Compute the proportion of variance in Y only when there are no
-    # additional covariates included in the model.
+    # Compute the proportion of variance in Y---only in the
+    # unweighted, i.i.d. case when there are no additional covariates
+    # included in the model.
     if (verbose)
       cat("Estimating proportion of variance in Y explained by model.\n");
-    if (ncol(Z) == 1)
+    if (is.null(weights) & is.null(resid.vcov) & ncol(Z) == 1)
       fit$model.pve <- varbvspve(fit,X,nr)
     else
       fit$model.pve <- NA

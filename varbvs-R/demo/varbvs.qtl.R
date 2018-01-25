@@ -14,7 +14,9 @@ se <- 4     # Variance of residual.
 r  <- 0.5   # Proportion of variance in trait explained by QTLs.
 
 # Names of covariates.
-covariates <- NULL # <- c("age","weight","glucose")
+if (!exists("covariates")) {
+  covariates <- c("age","weight","glucose")
+}
 
 # Candidate values for the prior log-odds of inclusion.
 if (!exists("logodds")) {
@@ -76,8 +78,6 @@ names(y)    <- sprintf("A%05d",sample(99999,n))
 rownames(X) <- names(y)
 if (!is.null(Z))
   rownames(Z) <- names(y)
-
-stop()
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------

@@ -55,6 +55,21 @@ test_that(paste("model fitting works for simulated data with a continuous",
   expect_equal(cor(y,y.fit)^2,0.626,tolerance = 0.01)
 })
 
+test_that(paste("varbvs model fitting yields accurate estimate of PVE"),{
+
+  # Do not include any additional covariates (Z).
+  covariates <- NULL
+                    
+  # Run the varbvs demo for mapping a quantitative trait in a
+  # simulated data set.
+  source(system.file("demo","varbvs.qtl.R",package = "varbvs"),local = TRUE)
+
+  # Check that the PVE value used to simulate the data is within the
+  # estimated credible interval.
+  expect_lte(summary(fit)$model.pve$a,r)
+  expect_gte(summary(fit)$model.pve$b,r)
+})
+
 test_that(paste"increasing the weights in varbvs results in a",
           "smaller value for sigma"),{
 
