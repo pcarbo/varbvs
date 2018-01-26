@@ -28,11 +28,10 @@
   hyperparameter setting that yields the largest marginal
   likelihood---more precisely, the approximate marginal likelihood
   computed using the variational method. For the linear regression only
-  (\code{family = "gaussian"}), it reports the estimated proportion of
-  variance in the outcome explained by the model (PVE), and the credible
-  interval of the PVE estimate brackets. Note that this is the PVE in
-  the outcome after removing variance in the outcome due to linear
-  effects of the covariates.
+  (\code{family = "gaussian"}) when no additional covariates (\code{Z})
+  are included, it reports the estimated proportion of variance in the
+  outcome explained by the model (PVE), and the credible interval of the
+  PVE estimate brackets.
 
   The second part summarizes the approximate posterior distribution of
   the hyperparameters (sigma, sa, logodds). The "estimate" column is the
@@ -48,9 +47,7 @@
   summary of the variables included in the model with highest posterior
   probability. For \code{family = "gaussian"}, the "PVE" column gives
   the estimated proportion of variance in the outcome explained by the
-  variable (conditioned on being included in the model). Again, this is
-  the PVE after removing variance in the outcome due to linear effects
-  of the covariates.
+  variable (conditioned on being included in the model).
 }  
 \value{
   An object of class \code{summary.varbvs}, to be printed by

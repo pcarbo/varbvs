@@ -70,7 +70,7 @@ test_that(paste("varbvs model fitting yields accurate estimate of PVE"),{
   expect_gte(summary(fit)$model.pve$b,r)
 })
 
-test_that(paste"increasing the weights in varbvs results in a",
+test_that(paste("increasing the weights in varbvs results in a",
           "smaller value for sigma"),{
 
   # Run the varbvs demo for mapping a quantitative trait in a

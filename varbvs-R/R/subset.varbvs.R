@@ -40,10 +40,11 @@ subset.varbvs <- function (x, subset, ...) {
   out$s       <- as.matrix(out$s[,i])
   out$fitted.values <- as.matrix(out$fitted.values)
   out$residuals     <- as.matrix(out$residuals)
-  if (out$family == "gaussian") {
+  if (!is.null(out$pve))
+    out$pve <- as.matrix(out$pve[,i])
+  if (out$family == "gaussian")
     out$sigma <- out$sigma[i]
-    out$pve   <- as.matrix(out$pve[,i])
-  } else if (out$family == "binomial")
-    out$eta <- out$eva[,i]
+  else if (out$family == "binomial")
+    out$eta <- out$eta[,i]
   return(out)
 }

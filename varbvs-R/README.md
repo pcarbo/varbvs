@@ -7,7 +7,7 @@
 
 See also the
 [varbvs R package website](https://pcarbo.github.io/varbvs/varbvs-R/docs)
-generated using [pkgdown](http://hadley.github.io/pkgdown).
+generated using [pkgdown](http://pkgdown.r-lib.org).
 
 ### Citing varbvs
 
@@ -70,7 +70,7 @@ package:
 ```sh
 mv varbvs-R varbvs
 R CMD build varbvs
-R CMD INSTALL varbvs_2.5-1.tar.gz
+R CMD INSTALL varbvs_2.5-2.tar.gz
 ```
 
 ### Using the package

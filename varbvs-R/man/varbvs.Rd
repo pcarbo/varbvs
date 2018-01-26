@@ -272,7 +272,7 @@
   PVE), since it is often more natural to specify the PVE rather than
   the prior variance (see references below). This is technically only
   suitable or the linear regression model (\code{family = "gaussian"}),
-  but could potentially be used for the linear regression model in an
+  but could potentially be used for the logistic regression model in an
   approximate way.
 
   For example, one could approximate a uniform prior on the PVE by
@@ -287,13 +287,12 @@ sa <- PVE/(1-PVE)/(sigmoid(log(10)*logodds)*sx)}
   Also, bear in mind that if there are additional covariates (Z)
   included in the linear regression model that explain variance in Y,
   then it will usually make more sense to first remove the linear
-  effects of these covariates before performing this calculation. The
+  effects of these covariates before performing these calculations. The
   PVE would then represent the prior proportion of variance in the
-  residuals of Y that are explained by the candidate variables. For an
-  example of how to do this, see the code for function \code{varbvs}, in
-  file varbvs.R, under "preprocessing steps". Alternatively, one could
-  include the matrix Z in the calculation above, taking care to ensure
-  that the covariates are included in the model with probability 1.
+  residuals of Y that are explained by the candidate variables.
+  Alternatively, one could include the matrix Z in the calculations
+  above, taking care to ensure that the covariates are included in the
+  model with probability 1.
 }
 \section{Memory requirements}{
     Finally, we point out that the optimization procedures were

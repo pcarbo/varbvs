@@ -47,9 +47,15 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, ...) {
          sigma        = list(x = NA,x0 = NA,a = NA,b = NA),
          sa           = list(x = NA,x0 = NA,a = NA,b = NA),
          logodds      = list(x = NA,x0 = NA,a = NA,b = NA),
-         model.pve    = list(x0 = mean(object$model.pve),
-           a = quantile(object$model.pve,0.5 - cred.int/2,na.rm = TRUE),
-           b = quantile(object$model.pve,0.5 + cred.int/2,na.rm = TRUE)))
+         model.pve    = NULL)
+
+  # Summarize the proportion of variance explained (PVE) by the fitted
+  # model.
+  if (!is.null(object$model.pve))
+    out$model.pve =
+      list(x0 = mean(object$model.pve),
+           a  = quantile(object$model.pve,0.5 - cred.int/2,na.rm = TRUE),
+           b  = quantile(object$model.pve,0.5 + cred.int/2,na.rm = TRUE))
 
   # Summarize the candidate hyperparameter settings, when provided.
   if (!object$update.sigma)
@@ -111,7 +117,7 @@ summary.varbvs <- function (object, cred.int = 0.95, nv = 5, ...) {
                prob = object$pip[vars],PVE = NA,coef = object$beta[vars],
                cred = NA,stringsAsFactors = FALSE)
   for (i in 1:length(vars)) {
-    if (object$family == "gaussian")
+    if (!is.null(object$pve))
       out$top.vars[i,"PVE"] <- dot(w,object$pve[vars[i],])
     out$top.vars[i,"cred"] <- sprintf("[%+0.3f,%+0.3f]",CIs[i,1],CIs[i,2])
   }
@@ -146,7 +152,7 @@ print.summary.varbvs <- function (x, digits = 3, ...) {
     else if (family == "binomial")
       cat(sprintf("fit approx. factors (eta):    %s\n",tf2yn(optimize.eta)))
     cat(sprintf("maximum log-likelihood lower bound: %0.4f\n",max(logw)))
-    if (family == "gaussian") {
+    if (!is.null(model.pve)) {
       with(model.pve,{
         cat("proportion of variance explained: ")
         cat(sprintf("%0.3f [%0.3f,%0.3f]\n",x0,a,b))

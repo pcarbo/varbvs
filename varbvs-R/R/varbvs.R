@@ -220,7 +220,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.5-1 ")
+    cat("VARBVS version 2.5-2 ")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")
@@ -443,23 +443,27 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                 beta.cov = beta.cov,y = y)
     class(fit) <- c("varbvs","list")
 
-    # Compute the proportion of variance in Y---only in the
-    # unweighted, i.i.d. case when there are no additional covariates
-    # included in the model.
-    if (verbose)
-      cat("Estimating proportion of variance in Y explained by model.\n");
-    if (is.null(weights) & is.null(resid.vcov) & ncol(Z) == 1)
+    if (is.null(weights) & is.null(resid.vcov) & ncol(Z) == 1) {
+        
+      # Compute the proportion of variance in Y---only in the
+      # unweighted, i.i.d. case when there are no additional covariates
+      # included in the model.
+      if (verbose)
+        cat("Estimating proportion of variance in Y explained by model.\n");
       fit$model.pve <- varbvspve(fit,X,nr)
-    else
-      fit$model.pve <- NA
-    
-    # Compute the proportion of variance in Y, after removing linear
-    # effects of covariates, explained by each variable.
-    fit$pve           <- matrix(0,p,ns)
-    rownames(fit$pve) <- colnames(X)
-    sx                <- var1.cols(X)
-    for (i in 1:ns) 
-      fit$pve[,i] <- sx*(mu[,i]^2 + s[,i])/var1(y)
+
+      # Compute the proportion of variance in Y explained by each
+      # variable. This can only be estimated in the i.i.d. case when
+      # there are no additional covariates included in the model.
+      fit$pve           <- matrix(0,p,ns)
+      rownames(fit$pve) <- colnames(X)
+      sx                <- var1.cols(X)
+      for (i in 1:ns) 
+        fit$pve[,i] <- sx*(mu[,i]^2 + s[,i])/var1(y)
+    } else {
+      fit$model.pve <- NULL
+      fit$pve       <- NULL
+    }
 
     # Restore the inputted X and y.
     X <- X + Z %*% SZX
@@ -477,7 +481,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
                 optimize.eta = optimize.eta,prior.same = prior.same,
                 logw = logw,w = w,sigma = NULL,sa = sa,logodds = logodds,
                 alpha = alpha,mu = mu,s = s,eta = eta,pip = pip,beta = beta,
-                beta.cov = beta.cov,model.pve = NA)
+                beta.cov = beta.cov,pve = NULL,model.pve = NULL)
     class(fit) <- c("varbvs","list")
 
     # Compute the fitted values for each hyperparameter setting.
@@ -509,7 +513,6 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (family == "gaussian") {
     rownames(fit$residuals) <- rownames(X)
     colnames(fit$residuals) <- hyper.labels
-    colnames(fit$pve)       <- hyper.labels
   } else {
     rownames(fit$eta)                <- rownames(X)
     colnames(fit$eta)                <- hyper.labels
@@ -522,6 +525,8 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     fit$logodds <- c(fit$logodds)
   else
     rownames(fit$logodds) <- colnames(X)
+  if (!is.null(fit$pve))
+    colnames(fit$pve) <- hyper.labels
   return(fit)
 }
 

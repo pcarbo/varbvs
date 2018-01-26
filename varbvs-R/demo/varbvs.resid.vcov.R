@@ -63,25 +63,20 @@ u    <- sqrt(sa) * u
 y <- X %*% (u + beta) + rnorm(n)
 y <- c(y)
 
-stop()
-
 # Generate labels for the samples.
 names(y)    <- sprintf("A%05d",sample(99999,n))
 rownames(X) <- names(y)
-if (!is.null(Z))
-  rownames(Z) <- names(y)
 
 # FIT VARIATIONAL APPROXIMATION TO POSTERIOR
 # ------------------------------------------
 
 # TO DO: Explain what this is doing.
 cat("2. FITTING MODEL TO DATA.\n")
-K   <- tcrossprod(X)
-H   <- diag(n) + sa*K
-fit2 <- varbvs(X,NULL,y,"gaussian",logodds = logodds,resid.vcov = H,n0 = 0)
+fit1 <- varbvs(X,NULL,y,"gaussian",logodds = logodds,n0 = 0)
+fit2 <- varbvs(X,NULL,y,"gaussian",logodds = logodds,n0 = 0,
+               resid.vcov = diag(n) + sa*tcrossprod(X))
 cat("\n")
 
-fit1 <- varbvs(X,NULL,y,"gaussian",logodds = logodds,n0 = 0)
 
 # SUMMARIZE RESULTS
 # -----------------
