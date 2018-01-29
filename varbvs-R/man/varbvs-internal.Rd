@@ -11,7 +11,7 @@
 \usage{
 var1(x)
 var1.cols(X)
-varbvspve(X,fit,nr = 1000)
+varbvspve(fit,X,nr = 1000)
 varbvsnorm(X,y,sigma,sa,logodds,alpha,mu,update.order,tol = 1e-4,
            maxiter = 1e4,verbose = TRUE,outer.iter = NULL,
            update.sigma = TRUE,update.sa = TRUE,n0 = 10,sa0 = 1)
