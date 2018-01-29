@@ -1,4 +1,18 @@
-# TO DO: Explain here what this script does.
+# Here we illustrate two varbvs features: (1) specifying the
+# covariance structure of the samples by setting input argument
+# resid.vcov; (2) comparison of Bayesian variable selection models by
+# computing Bayes factors.
+#
+# In the application to genetic data, the model with dependent
+# residuals is equivalent to the Bayesian sparse linear mixed model
+# (BSLMM) described in Zhou, Carbonetto & Stephens, PLoS Genetics, 2013.
+#
+# The data for this demo are simulated in a similar way to the
+# varbvs.qtl demo, the main difference being that all genetic markers
+# contribute to variation in the phenotype, with a small proportion of
+# genetic markers contributing much more variation than the others
+# (these markers are considered the QTLs, or "quantitative trait
+# loci").
 library(varbvs)
 
 # SCRIPT PARAMETERS
@@ -67,19 +81,37 @@ y <- c(y)
 names(y)    <- sprintf("A%05d",sample(99999,n))
 rownames(X) <- names(y)
 
-# FIT VARIATIONAL APPROXIMATION TO POSTERIOR
-# ------------------------------------------
-
-# TO DO: Explain what this is doing.
-cat("2. FITTING MODEL TO DATA.\n")
+# FIT BASIC VARBVS MODEL
+# ----------------------
+cat("2. FITTING BASIC VARBVS MODEL TO DATA.\n")
 fit1 <- varbvs(X,NULL,y,"gaussian",logodds = logodds,n0 = 0)
+cat("\n")
+cat("3. SUMMARIZING FITTED MODEL.\n")
+print(summary(fit1))
+cat("\n")
+
+# FIT VARBVS MODEL WITH DEPENDENT RESIDUALS
+# -----------------------------------------
+# This is equivalent to the Bayesian sparse linear mixed model (BSLMM)
+# when the covariance of the residuals is given by
+#
+#   resid.cov = I + a*K
+#
+# where K is the kinship matrix K = crossprod(X)/p, and a is a
+# parameter to be estimated.
+cat("4. FITTING VARBVS MODEL WITH DEPENDENT RESIDUALS (BSLMM).\n")
 fit2 <- varbvs(X,NULL,y,"gaussian",logodds = logodds,n0 = 0,
                resid.vcov = diag(n) + sa*tcrossprod(X))
 cat("\n")
-
-
-# SUMMARIZE RESULTS
-# -----------------
-cat("3. SUMMARIZING RESULTS.\n")
-print(summary(fit1))
+cat("5. SUMMARIZING FITTED MODEL.\n")
+print(summary(fit2))
 cat("\n")
+
+# COMPUTE BAYES FACTOR
+# --------------------
+cat("6. COMPUTING BAYES FACTOR.\n")
+bf <- varbvsbf(fit1,fit2)
+cat("Bayes factor quantifying support for model with dependent residuals",
+    "(BSLMM):\n")
+cat("BF =",bf,"\n")
+

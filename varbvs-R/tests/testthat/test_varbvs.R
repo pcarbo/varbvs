@@ -83,6 +83,16 @@ test_that(paste("increasing the weights in varbvs results in a",
   expect_equal(range(fit2$sigma/fit$sigma),c(2,2),tolerance = 1e-8)
 })
 
+test_that(paste("Bayes factor should support BSLMM in model comparison",
+                "demo (varbvs.resid.vcov)"),{
+
+  # Run the model comparison demo.
+  demo("varbvs.resid.vcov",package = "varbvs",ask = FALSE)
+
+  # The Bayes factor should provide strong support for the BSLMM model.
+  expect_gt(bf,100)
+})
+
 test_that(paste("model fitting works for simulated data with a binary",
                 "outcome, and no covariates"),{
 
