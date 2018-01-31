@@ -7,7 +7,8 @@ Title: Large-Scale Bayesian Variable Selection Using Variational Methods
 Authors@R: c(person("Peter","Carbonetto",role=c("aut","cre"),
                     email="peter.carbonetto@gmail.com"),
              person("Matthew","Stephens",role="aut"),
-             person("David","Gerard",role="aut"))
+             person("David","Gerard",role="ctb"))
+Maintainer: Peter Carbonetto <peter.carbonetto@gmail.com>
 Description: Fast algorithms for fitting Bayesian variable selection
     models and computing Bayes factors, in which the outcome (or
     response variable) is modeled using a linear regression or a
