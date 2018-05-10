@@ -1,6 +1,6 @@
 citHeader("To cite the varbvs package in publications use:")
 
-citEntry(entry="Article",
+citEntry(entry   = "Article",
          title   = 
 	 paste("Scalable variational inference for Bayesian variable",
 	       "selection in regression, and its accuracy in genetic",

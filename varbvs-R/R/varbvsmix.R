@@ -404,7 +404,7 @@ computelfsrmix <- function (alpha, mu, s) {
   k <- ncol(alpha)
 
   # For each variable, get the posterior probability that the
-  # regression coeffiicient is exactly zero.
+  # regression coefficient is exactly zero.
   p0 <- alpha[,1]
 
   # For each variable, get the posterior probability that the
