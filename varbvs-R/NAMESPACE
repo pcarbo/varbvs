@@ -22,7 +22,7 @@ importFrom(lattice,xyplot)
 importFrom(lattice,panel.xyplot)
 importFrom(lattice,panel.abline)
 importFrom(latticeExtra,as.layer)
-importFrom(Rcpp,sourceCpp)
+importFrom(Rcpp,evalCpp)
 importFrom(nor1mix,norMix)
 importFrom(nor1mix,qnorMix)
            
