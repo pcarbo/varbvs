@@ -44,15 +44,14 @@ confint.varbvs <- function (object, parm, level = 0.95, ...) {
     out[[i]] <- get.confint.matrix(object,i,level)
 
   # No need to return a list if only one parameter (i.e., variable)
-  # was requested. And in the special case when there is only 1
+  # was requested. And in the special case when there is only one
   # hyperparameter setting, return the confidence intervals in a
   # matrix.
-  if (n == 1)
-    out <- unlist(out,recursive = FALSE)
-  else if (ns == 1) {
+  if (ns == 1) {
     out           <- do.call(rbind,out)
     rownames(out) <- parm
-  }
+  } else if (n == 1)
+    out <- out[[1]]
   return(out)
 }
 
