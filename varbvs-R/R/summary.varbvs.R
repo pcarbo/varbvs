@@ -13,12 +13,24 @@
 #
 # Generate a four-part summary of the fitted Bayesian variable
 # selection model.
-summary.varbvs <- function (object, cred.int = 0.95, nv = 5, ...) {
+summary.varbvs <- function (object, cred.int = 0.95, nv, pip.cutoff, ...) {
 
   # Check that the first input is an instance of class "varbvs".
   if (!is(object,"varbvs"))
     stop("Input argument object must be an instance of class \"varbvs\".")
 
+  # Determine the number of variables for which to show detailed
+  # summaries.
+  if (missing(nv) & missing(pip.cutoff))
+    nv <- 5
+  else if (!missing(nv) & !missing(pip.cutoff))
+    stop("Input arguments \"nv\" and \"pip.cutoff\" cannot both be specified")
+  else if (!missing(pip.cutoff)) {
+    if (pip.cutoff < 0 | pip.cutoff > 1)
+      stop("Argument \"pip.cutoff\" should be a number between 0 and 1")
+    nv <- sum(object$pip >= pip.cutoff)
+  }
+  
   # Get the normalized importance weights.
   w <- object$w
   

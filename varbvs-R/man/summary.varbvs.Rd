@@ -16,7 +16,13 @@
   \item{cred.int}{Size of credible interval, a number
     between 0 and 1.}
   \item{nv}{Show detailed statistics for top nv variables, ranked
-  according to their posterior inclusion probabilities.}
+    according to their posterior inclusion probabilities. Only one of
+    \code{nv} and \code{pip.cutoff} may be specified. If neither are
+    specified, the default is \code{nv = 5}.}
+  \item{pip.cutoff}{Show detailed statistics for all variables in which
+    the posterior inclusion probability (PIP) is at least
+    \code{pip.cutoff}. Only one of \code{nv} and \code{pip.cutoff} may
+    be specified.}
   \item{x}{Output of function \code{summary.varbvs}.}
   \item{digits}{Number of digits shown when printing posterior
     probabilities of top nv variables.}
