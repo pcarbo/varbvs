@@ -7,7 +7,7 @@
   fitted using variational approximation methods.
 }
 \usage{
-  \method{summary}{varbvs}(object, cred.int = 0.95, nv = 5, \dots)
+  \method{summary}{varbvs}(object, cred.int = 0.95, nv, pip.cutoff, \dots)
   \method{print}{summary.varbvs}(x, digits = 3, \dots)
   \method{print}{varbvs}(x, digits = 3, \dots)
 }
