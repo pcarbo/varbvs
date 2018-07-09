@@ -39,8 +39,10 @@ summary.varbvs <- function (object, cred.int = 0.95, nv, pip.cutoff, ...) {
   p  <- nrow(object$alpha)
   ns <- length(w)
 
-  # Input nv cannot be greater than the number of variables.
-  nv <- min(nv,p) 
+  # Input nv must be at least 1, and cannot be greater than the number
+  # of variables.
+  nv <- max(1,nv)
+  nv <- min(p,nv) 
   
   # Generate the summary.
   out <-

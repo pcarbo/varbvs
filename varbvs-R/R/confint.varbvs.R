@@ -42,16 +42,6 @@ confint.varbvs <- function (object, parm, level = 0.95, ...) {
   # Compute the confidence intervals for for each requested variable.
   for (i in parm)
     out[[i]] <- get.confint.matrix(object,i,level)
-
-  # No need to return a list if only one parameter (i.e., variable)
-  # was requested. And in the special case when there is only one
-  # hyperparameter setting, return the confidence intervals in a
-  # matrix.
-  if (ns == 1) {
-    out           <- do.call(rbind,out)
-    rownames(out) <- parm
-  } else if (n == 1)
-    out <- out[[1]]
   return(out)
 }
 

@@ -13,8 +13,7 @@
 }
 \arguments{
   \item{object}{Output of function \code{\link{varbvs}}.}
-  \item{cred.int}{Size of credible interval, a number
-    between 0 and 1.}
+  \item{cred.int}{Size of credible interval, a number between 0 and 1.}
   \item{nv}{Show detailed statistics for top nv variables, ranked
     according to their posterior inclusion probabilities. Only one of
     \code{nv} and \code{pip.cutoff} may be specified. If neither are
