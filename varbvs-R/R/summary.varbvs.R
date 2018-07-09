@@ -200,10 +200,12 @@ print.summary.varbvs <- function (x, digits = 3, ...) {
       # Summarize the fitted prior log-odds of inclusion (logodds).
       if (prior.same)
         with(logodds,
-             cat(sprintf("logodds %+8.2f %-19s (%+0.2f)--(%+0.2f)\n",x0,
+             cat(sprintf("logodds*%+8.2f %-19s (%+0.2f)--(%+0.2f)\n",x0,
                          sprintf("[%+0.2f,%+0.2f]",a,b),min(x),max(x))))
     }
-
+    cat("*See help(varbvs) for details on how to convert between the\n")
+    cat("prior log-odds and the prior inclusion probability.\n")
+    
     # SUMMARIZE VARIABLE SELECTION RESULTS
     # ------------------------------------
     # Summarize the number of variables selected at different PIP thresholds.
