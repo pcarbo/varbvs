@@ -56,14 +56,13 @@ get.confint.matrix <- function (fit, i, level) {
   if (ns == 1) {
 
     # In the special case when there is only one hyperparmaeter
-    # setting, return the confidence interval in a 1 x 2 matrix.
+    # setting, return the confidence interval in a 2 x 2 matrix.
     out <- credintnorm(level,fit$mu[i,],fit$s[i,])
-    out <- matrix(out,1,2)
+    out <- matrix(out,2,2,byrow = TRUE)
   } else {
   
     # Set up the data structure for storing the output.
     out           <- matrix(0,ns + 1,2)
-    rownames(out) <- c(colnames(fit$alpha),"averaged")
         
     # Compute the credible interval for each hyperparameter setting.
     for (j in 1:ns)
@@ -74,7 +73,9 @@ get.confint.matrix <- function (fit, i, level) {
     out[ns + 1,] <- credintmix(level,fit$w,fit$mu[i,],fit$s[i,])
   }
 
-  # Add column labels indicating the lower and upper confidence limits.
+  # Add row labels, and column labels indicating the lower and upper
+  # confidence limits.
+  rownames(out) <- c(colnames(fit$alpha),"averaged")
   colnames(out) <- paste(round(100*c(0.5 - level/2,0.5 + level/2),
                                digits = 3),"%")
   return(out)

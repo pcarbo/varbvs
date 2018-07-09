@@ -67,15 +67,16 @@
     that a variable is included in the regression model. Note that we
     use the base-10 logarithm instead of the natural logarithm because
     it is usually more natural to specify prior log-odds settings in
-    this way. The prior log-odds may also be specified separately for
-    each variable, which is useful is there is prior information about
-    which variables are most relevant to the outcome. This is
-    accomplished by setting logodds to a p x ns matrix, where p is the
-    number of variables, and ns is the number of hyperparameter
-    settings. Note it is not possible to fit the logodds parameter; if
-    logodds input is not provided as input, then it is set to the
-    default value when sa and sigma are missing, and otherwise an error
-    is generated.}
+    this way. (To obtain the prior probability from the log-odds, use
+    the following formula: \eqn{q = 1/(1 + 10^(-logodds))}. The prior
+    log-odds may also be specified separately for each variable, which
+    is useful is there is prior information about which variables are
+    most relevant to the outcome. This is accomplished by setting
+    logodds to a p x ns matrix, where p is the number of variables, and
+    ns is the number of hyperparameter settings. Note it is not possible
+    to fit the logodds parameter; if logodds input is not provided as
+    input, then it is set to the default value when sa and sigma are
+    missing, and otherwise an error is generated.}
 
   \item{weights}{Optional vector of weights for weighted linear
     regression; larger weights correspond to smaller variances. It

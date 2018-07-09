@@ -124,8 +124,7 @@ summary.varbvs <- function (object, cred.int = 0.95, nv, pip.cutoff, ...) {
   # probability that they are included.
   vars <- order(object$pip,decreasing = TRUE)[1:nv]
   CIs  <- confint(object,vars,cred.int)
-  if (ns > 1)
-    CIs <- do.call(rbind,lapply(CIs,function (x) x[ns + 1,]))
+  CIs  <- do.call(rbind,lapply(CIs,function (x) x[ns + 1,]))
   out$top.vars <-
     data.frame(index = vars,variable = rownames(object$alpha)[vars],
                prob = object$pip[vars],PVE = NA,coef = object$beta[vars],
