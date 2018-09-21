@@ -812,8 +812,8 @@ function fit = varbvs (X, Z, y, labels, family, options)
   % hyperparameter settings.
   if ns == 1
     w    = 1;
-    pip  = fit.alpha;
-    beta = fit.mu;
+    pip  = alpha;
+    beta = mu;
   else
     w    = normalizelogweights(logw);
     pip  = alpha * w(:);
