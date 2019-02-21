@@ -220,7 +220,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.5-2 ")
+    cat("VARBVS version 2.5-9 ")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")
@@ -470,7 +470,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     y <- y + c(Z %*% SZy)
   
     # Compute the fitted values for each hyperparameter setting.
-    fit$fitted.values <- varbvs.linear.predictors(X,Z,family,mu.cov,alpha,mu)
+    fit$fitted.values <- varbvs.linear.predictors(X,Z,mu.cov,alpha,mu)
 
     # Compute the residuals for each hyperparameter setting.
     fit$residuals <- y - fit$fitted.values
@@ -486,7 +486,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
 
     # Compute the fitted values for each hyperparameter setting.
     fit$fitted.values <-
-      sigmoid(varbvs.linear.predictors(X,Z,family,mu.cov,alpha,mu))
+      sigmoid(varbvs.linear.predictors(X,Z,mu.cov,alpha,mu))
     
     # Compute the "deviance" and "response" residuals for
     # hyperparameter setting.

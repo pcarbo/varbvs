@@ -56,7 +56,7 @@ predict.varbvs <-
   w <- object$w
 
   # Compute the estimates for each hyperparameter setting.
-  out <- with(object,varbvs.linear.predictors(X,Z,family,mu.cov,alpha,mu))
+  out <- with(object,varbvs.linear.predictors(X,Z,mu.cov,alpha,mu))
   if (type == "response")
     out <- sigmoid(out)
   else if (type == "class")
@@ -86,7 +86,7 @@ predict.varbvs <-
 # For each hyperparameter setting, and for each sample, compute a
 # posterior mean estimate of Y. (For the logistic regression model, Y
 # contains the posterior probability that the binary outcome is 1.)
-varbvs.linear.predictors <- function (X, Z, family, mu.cov, alpha, mu) {
+varbvs.linear.predictors <- function (X, Z, mu.cov, alpha, mu) {
   ns <- ncol(alpha)
   Y  <- Z %*% mu.cov + X %*% (alpha*mu)
   return(Y)
