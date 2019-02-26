@@ -1,4 +1,5 @@
-# TO DO: Explain here what this script does, and how to use it.
+# This script illustrates how to simulate data from the BSLMM model
+# (Zhou, Carbonetto & Stephens, PLoS Genetics, 2013).
 source("roots2.R")
 
 # SCRIPT PARAMETERS
@@ -6,7 +7,9 @@ source("roots2.R")
 n  <- 800   # Number of samples.
 p  <- 2000  # Number of variables (these are SNPs).
 r  <- 0.5   # Proportion of variance in trait explained by SNPs.
+            # This should be a number between 0 and 1.
 d  <- 0.3   # Proportion of additive genetic variance due to large effects.
+            # This should be a number between 0 and 1.
 na <- 20    # Number of "large" (QTL) effects.
 
 # Initialize the sequence of pseudorandom numbers.
@@ -17,12 +20,17 @@ set.seed(1)
 # Generate the minor allele frequencies so that they are uniform over range
 # [0.05,0.5]. Then simulate genotypes assuming all markers are uncorrelated
 # (i.e., unlinked), according to the specified minor allele frequencies.
+cat("Generating genotype data.\n")
 maf <- 0.05 + 0.45*runif(p)
 X   <- (runif(n*p) < maf) +
        (runif(n*p) < maf)
 X   <- matrix(as.double(X),n,p,byrow = TRUE)
 
+# Center the columns of X.
+X <- X - matrix(colMeans(X),n,p,byrow = TRUE)
+
 # Generate the "small" (polygenic) effects for the SNPs.
+cat("Generating phenotype data.\n")
 u <- randn(p,1)
 
 # Generate the "large" (QTL) additive effects for the SNPs.
@@ -67,4 +75,8 @@ u <- sqrt(sa) * u
 y <- drop(X %*% (u + b) + rnorm(n))
 
 # Check that the data were simulated correctly.
-# TO DO.
+cat("Summarizing simulated data:\n")
+cat(sprintf(" - Proportion of variance explained by SNPs: %0.3f\n",
+            var(drop(X %*% (b + u)))/var(y)))
+cat(" - Proportion of additive genetic variance due to large effects: ")
+cat(sprintf("%0.3f\n",var(drop(X %*% b))/var(drop(X %*% (b + u)))))
