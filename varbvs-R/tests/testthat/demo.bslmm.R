@@ -1,33 +1,22 @@
 # TO DO: Explain here what this script does, and how to use it.
-library(varbvs)
+source("roots2.R")
 
 # SCRIPT PARAMETERS
 # -----------------
-n   <- 800   # Number of samples.
-p   <- 2000  # Number of variables (SNPs).
-r   <- 0.5   # Proportion of variance in trait explained by SNPs.
-rho <- 0.3   # Proportion of additive genetic variance due to large effects.
-na  <- 20    # Number of large (QTL) effects.
+n  <- 800   # Number of samples.
+p  <- 2000  # Number of variables (these are SNPs).
+r  <- 0.5   # Proportion of variance in trait explained by SNPs.
+d  <- 0.3   # Proportion of additive genetic variance due to large effects.
+na <- 20    # Number of "large" (QTL) effects.
 
-# Candidate values for the prior log-odds of inclusion.
-logodds <- seq(-3,-1,0.1)
-
-# Candidate values for the log-odds of being a QTL (logodds), the
-# proportion of variance explained (h), and the proportion of additive
-# genetic variance due to "large" QTL effects (d).
-logodds <- seq(-3,-1,0.25)
-h       <- seq(0.1,0.9,0.1)
-d       <- seq(0.1,0.9,0.1)
-
-# Set the random number generator seed.
+# Initialize the sequence of pseudorandom numbers.
 set.seed(1)
 
-# GENERATE DATA SET
-# -----------------
+# GENERATE DATA
+# -------------
 # Generate the minor allele frequencies so that they are uniform over range
 # [0.05,0.5]. Then simulate genotypes assuming all markers are uncorrelated
 # (i.e., unlinked), according to the specified minor allele frequencies.
-cat("1. GENERATING DATA SET.\n")
 maf <- 0.05 + 0.45*runif(p)
 X   <- (runif(n*p) < maf) +
        (runif(n*p) < maf)
@@ -46,7 +35,7 @@ colnames(X) <- paste0("rs",sample(1e6,p))
 
 # Adjust the additive effects so that we control for (1) the
 # proportion of additive genetic variance that is due to QTL effects
-# (rho), and (2) the proportion of variance explained (r). That is, we
+# (d), and (2) the proportion of variance explained (r). That is, we
 # adjust b and u so that
 #
 #   r = a/(a+1)
@@ -57,17 +46,25 @@ colnames(X) <- paste0("rs",sample(1e6,p))
 #   a = (u + b)'*cov(X)*(u + b),
 #   c = b'*cov(X)*b.
 #
-st   <- r/(1-r) * d/var(c(X %*% b))
-beta <- sqrt(st) * b
-if (d == 0)
-   case 0
-    sa = r/(1-r)/var(X*u,1);
-   case 1
-    sa = 0;
-   otherwise
-    sa = max(roots2(var(X*u,1),2*dot(X*beta,X*u)/n,var(X*beta,1) - r/(1-r)))^2;
-  end
-  u = sqrt(sa) * u;
+st <- r/(1-r) * d/var(drop(X %*% b))
+b  <- sqrt(st) * b
+if (d == 0) {
+
+  # All variance is explained by the "small" (polygenic) effects.  
+  sa <- r/(1-r)/var(drop(X %*% u))
+} else if (d == 1) {
+
+  # All variance is explained by the "large" (QTL) effects.
+  sa <- 0
+} else {
+  sa <- max(roots2(var(drop(X %*% u)),
+                   2*sum((X %*% b) * (X %*% u))/n,
+                   var(drop(X %*% b)) - r/(1-r)))^2
+}
+u <- sqrt(sa) * u
     
-  % Generate the quantitative trait measurements.
-  y = X*(u + beta) + randn(n,1);
+# Generate the quantitative trait measurements.
+y <- drop(X %*% (u + b) + rnorm(n))
+
+# Check that the data were simulated correctly.
+# TO DO.
