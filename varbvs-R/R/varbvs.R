@@ -220,7 +220,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.5-12")
+    cat("VARBVS version 2.5-14")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")
@@ -369,8 +369,6 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
         s[,i]      <- out$s
         eta[,i]    <- out$eta
       }
-      if (verbose)
-        cat("\n")
 
       # Choose an initialization common to all the runs of the
       # coordinate ascent algorithm. This is chosen from the
@@ -413,8 +411,6 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
       s[,i]      <- out$s
       eta[,i]    <- out$eta
     }
-    if (verbose)
-      cat("\n")
   }
 
   # (6) CREATE FINAL OUTPUT
