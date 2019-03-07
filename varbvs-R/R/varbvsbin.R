@@ -144,8 +144,7 @@ varbvsbin <- function (X, y, sa, logodds, alpha, mu, eta, update.order,
       progress.str <-
           paste(status,sprintf("%05d %+13.6e %0.1e %06.1f      NA %0.1e",
                                iter,logw[iter],err[iter],sum(alpha),sa),sep="")
-      cat(progress.str)
-      cat(rep("\r",nchar(progress.str)))
+      cat(progress.str,"\n")
     }
     if (logw[iter] < logw0) {
       logw[iter]  <- logw0

@@ -276,8 +276,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
                 iter,logZ[iter],err[iter],sigma,
                 sprintf("[%0.1g,%0.1g]",sqrt(min(sa[-1])),sqrt(max(sa))),
                 min(w),max(w),nzw[iter])
-      cat(progress.str)
-      cat(rep("\r",nchar(progress.str)))
+      cat(progress.str,"\n")
     }
     if (logZ[iter] < logZ0) {
       logZ[iter] <- logZ0
