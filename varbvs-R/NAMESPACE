@@ -25,11 +25,38 @@ importFrom(latticeExtra,as.layer)
 importFrom(Rcpp,evalCpp)
 importFrom(nor1mix,norMix)
 importFrom(nor1mix,qnorMix)
-           
-export(normalizelogweights,cred,varbvs,varbvsnorm,varbvsbin,varbvsbinz,
-       varbvsmix,varbvsindep,varbvspve,varbvs,varbvsbf,bayesfactor,rand,
-       randn,var1,var1.cols,varbvsproxybf)
-
+export(normalizelogweights,
+       cred,varbvs,
+       varbvsnorm,
+       varbvsbin,
+       varbvsbinz,
+       varbvsmix,
+       varbvsindep,
+       varbvspve,
+       varbvs,
+       varbvsbf,
+       bayesfactor,
+       rand,
+       randn,
+       var1,
+       var1.cols,
+       varbvsproxybf)
+export(nobs.varbvs,
+       labels.varbvs,
+       case.names.varbvs,
+       variable.names.varbvs,
+       coef.varbvs,
+       confint.varbvs,
+       fitted.varbvs,
+       resid.varbvs,
+       residuals.varbvs,
+       deviance.varbvs,
+       summary.varbvs,
+       predict.varbvs,
+       subset.varbvs,
+       print.varbvs,
+       plot.varbvs,
+       print.summary.varbvs)
 S3method(nobs,varbvs)
 S3method(labels,varbvs)
 S3method(case.names,varbvs)
