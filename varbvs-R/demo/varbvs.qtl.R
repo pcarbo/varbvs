@@ -24,6 +24,7 @@ if (!exists("logodds")) {
 }
 
 # Set the random number generator seed.
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1)
 
 # GENERATE DATA SET

@@ -19,6 +19,7 @@ sd <- c(0,   0.1, 0.2, 0.5)
 w  <- c(0.95,0.03,0.01,0.01)
 
 # Set the random number generator seed.
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1)
 
 # GENERATE DATA SET

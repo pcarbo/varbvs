@@ -24,6 +24,7 @@ test_that("all versions of varbvsnormupdate produce the same result",{
   logodds <- -2    # Prior log-odds of inclusion.
 
   # Set the random number generator seed.
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
 
   # GENERATE DATA SET

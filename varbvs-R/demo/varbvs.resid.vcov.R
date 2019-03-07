@@ -27,6 +27,7 @@ d  <- 0.6   # Proportion of additive genetic variance due to QTLs.
 logodds <- seq(-3,-1,0.1)
 
 # Set the random number generator seed.
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1)
 
 # GENERATE DATA SET
