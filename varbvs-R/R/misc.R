@@ -18,6 +18,7 @@
 # overview of the functions defined in this file:
 #
 #   tf2yn(x)
+#   logspace(x,y,n)
 #   var1(x)
 #   var1.cols(X)
 #   dot(x,y)
@@ -56,6 +57,12 @@ tf2yn <- function (x) {
   else
     return("no")
 }
+
+# ----------------------------------------------------------------------
+# Generates a vector of n points that are equally spaced on the
+# logarithmic scale. Note that x and y should be positive numbers.
+logspace <- function (x, y, n)
+  2^seq(log2(x),log2(y),length = n)
 
 # ----------------------------------------------------------------------
 # Return the second moment of x about its mean.

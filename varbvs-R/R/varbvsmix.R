@@ -17,11 +17,9 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
                        update.sa, update.w, w.penalty, drop.threshold = 1e-8,
                        tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
     
-  # Get the number of samples (n), variables (p) and mixture
-  # components (K).
+  # Get the number of samples (n) and variables (p).
   n <- nrow(X)
   p <- ncol(X)
-  K <- length(sa)
 
   # (1) CHECK INPUTS
   # ----------------
@@ -57,14 +55,8 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     stop("Inputs X and y do not match")
   y <- c(as.double(y))
   
-  # Check input sa. The variance of the first mixture component should
-  # be exactly zero, corresponding to the "spike".
-  sa <- c(as.double(sa))
-  if (sa[1] != 0)
-    stop("Variance of first mixture component should be 0")
-
-  # (2) PROCESS OPTIONS
-  # -------------------
+  # (2) PROCESS SOME OF THE OPTIONS
+  # -------------------------------
   if (!is.finite(maxiter))
     stop("Input maxiter must be a finite number")
   
@@ -78,20 +70,6 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     update.sigma.default <- FALSE
   }
 
-  # Get initial estimate for the mixture weights, if provided.
-  if (missing(w))
-    w <- rep(1/K,K)
-  else
-    w <- c(w)
-  if (length(w) != K)
-    stop("Length of input w should be the same as length of sa")
-  
-  # Specify the penalty term for the mixture weights.
-  if (missing(w.penalty))
-    w.penalty <- rep(1,K)
-  else
-    w.penalty <- c(w.penalty)
-  
   # Determine whether to update the residual variance parameter. Note
   # that the default seting is determined by whether sigma is
   # provided.
@@ -109,6 +87,56 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   if (missing(update.w))
     update.w <- TRUE
 
+  # (3) PROCESS X AND y
+  # -------------------
+  # Adjust the genotypes and phenotypes so that the linear effects of
+  # the covariates are removed. This is equivalent to integrating out
+  # the regression coefficients corresponding to the covariates with
+  # respect to an improper, uniform prior.
+  out <- remove.covariate.effects(X,Z,y)
+  X   <- out$X
+  y   <- out$y
+  SZy <- out$SZy
+  SZX <- out$SZX
+  rm(out)
+
+  # Compute a couple useful quantities.
+  xy <- drop(y %*% X)
+  d  <- diagsq(X)
+  
+  # (4) PROCESS REMAINING OPTIONS
+  # -----------------------------
+  # When input argument "sa" is missing, or when it is a scalar, the
+  # prior variances are automatically chosen using function
+  # "selectmixsd". The variance of the first mixture component should
+  # be exactly zero, corresponding to the "spike".
+  if (missing(sa))
+    sa <- 20
+  if (length(sa) == 1) {
+    if (!(sa > 1 & round(sa) == sa))
+      stop("When \"sa\" is a scalar, it must be an integer greater than 1")
+    sa <- selectmixsd(xy/d,sa)^2
+  }
+  else if (sa[1] != 0)
+    stop("Variance of first mixture component should be zero")
+
+  # Get the number of mixture components.
+  K <- length(sa)
+  
+  # Get initial estimate for the mixture weights, if provided.
+  if (missing(w))
+    w <- rep(1/K,K)
+  else
+    w <- c(w)
+  if (length(w) != K)
+    stop("Length of input w should be the same as length of sa")
+  
+  # Specify the penalty term for the mixture weights.
+  if (missing(w.penalty))
+    w.penalty <- rep(1,K)
+  else
+    w.penalty <- c(w.penalty)
+  
   # Set initial estimates of variational parameters alpha, ensuring
   # that the smallest value is not less than the "drop threshold" for
   # the mixture components. These parameters are stored as a p x K
@@ -136,42 +164,6 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     stop("Input mu should have one column for each mixture component")
   mu[,1] <- 0
 
-  # (3) PREPROCESSING STEPS
-  # -----------------------
-  # Adjust the genotypes and phenotypes so that the linear effects of
-  # the covariates are removed. This is equivalent to integrating out
-  # the regression coefficients corresponding to the covariates with
-  # respect to an improper, uniform prior.
-  out <- remove.covariate.effects(X,Z,y)
-  X   <- out$X
-  y   <- out$y
-  SZy <- out$SZy
-  SZX <- out$SZX
-  rm(out)
-
-  # Provide a brief summary of the analysis.
-  if (verbose) {
-    cat("Fitting variational approximation for linear regression",
-        "model with\n")
-    cat("mixture-of-normals priors.\n")
-    cat(sprintf("samples:      %-6d ",n))
-    cat(sprintf("mixture component sd's:         %0.2g..%0.2g\n",
-                min(sqrt(sa[2:K])),max(sqrt(sa[2:K]))))
-    cat(sprintf("variables:    %-6d ",p))
-    cat(sprintf("mixture component drop thresh.: %0.1e\n",drop.threshold))
-    cat(sprintf("covariates:   %-6d ",max(0,ncol(Z) - 1)))
-    cat(sprintf("fit mixture weights:            %s\n",tf2yn(update.w)))
-    cat(sprintf("mixture size: %-6d ",K))
-    cat(sprintf("fit residual var. (sigma):      %s\n",tf2yn(update.sigma)))
-    cat("intercept:    yes    ")
-    cat(sprintf("convergence tolerance      %0.1e\n",tol))
-  }
-
-  # Compute a few useful quantities.
-  xy <- c(y %*% X)
-  d  <- diagsq(X)
-  Xr <- c(X %*% rowSums(alpha*mu))
-  
   # For each variable and each mixture component, calculate s[i,k],
   # the variance of the regression coefficient conditioned on being
   # drawn from the kth mixture component. Note that first column of
@@ -195,8 +187,29 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   K0         <- K
   w0.penalty <- w.penalty
   sa0        <- sa
+
+  # Initialize the "fitted values".
+  Xr <- drop(X %*% rowSums(alpha*mu))
   
-  # (4) FIT MODEL TO DATA
+  # Provide a brief summary of the analysis.
+  if (verbose) {
+    cat("Fitting variational approximation for linear regression",
+        "model with\n")
+    cat("mixture-of-normals priors.\n")
+    cat(sprintf("samples:      %-6d ",n))
+    cat(sprintf("mixture component sd's:         %0.2g..%0.2g\n",
+                min(sqrt(sa[2:K])),max(sqrt(sa[2:K]))))
+    cat(sprintf("variables:    %-6d ",p))
+    cat(sprintf("mixture component drop thresh.: %0.1e\n",drop.threshold))
+    cat(sprintf("covariates:   %-6d ",max(0,ncol(Z) - 1)))
+    cat(sprintf("fit mixture weights:            %s\n",tf2yn(update.w)))
+    cat(sprintf("mixture size: %-6d ",K))
+    cat(sprintf("fit residual var. (sigma):      %s\n",tf2yn(update.sigma)))
+    cat("intercept:    yes    ")
+    cat(sprintf("convergence tolerance      %0.1e\n",tol))
+  }
+
+  # (5) FIT MODEL TO DATA
   # ---------------------
   # Repeat until convergence criterion is met, or until the maximum
   # number of iterations is reached.
@@ -214,12 +227,12 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     sigma0 <- sigma
     w0     <- w
 
-    # (4a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
+    # (5a) COMPUTE CURRENT VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
     logZ0 <- computevarlbmix(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
     
-    # (4b) UPDATE VARIATIONAL APPROXIMATION
+    # (5b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
     # Run a forward or backward pass of the coordinate ascent updates.
     if (iter %% 2)
@@ -232,12 +245,12 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     Xr    <- out$Xr
     rm(out)
 
-    # (4c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
+    # (5c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
     # --------------------------------------------
     # Compute the lower bound to the marginal log-likelihood.
     logZ[iter] <- computevarlbmix(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
     
-    # (4d) UPDATE RESIDUAL VARIANCE
+    # (5d) UPDATE RESIDUAL VARIANCE
     # -----------------------------
     # Compute the approximate maximum likelihood estimate of the residual
     # variable (sigma), if requested. Note that we should also
@@ -252,7 +265,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
         s[,i] <- sigma*sa[i]/(sa[i]*d + 1)
     }
 
-    # (4e) UPDATE MIXTURE WEIGHTS
+    # (5e) UPDATE MIXTURE WEIGHTS
     # ---------------------------
     # Compute the approximate penalized maximum likelihood estimate of
     # the mixture weights (w), if requested.
@@ -261,7 +274,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
       w <- w/sum(w)
     }
 
-    # (4f) CHECK CONVERGENCE
+    # (5f) CHECK CONVERGENCE
     # ----------------------
     # Print the status of the algorithm and check the convergence
     # criterion. Convergence is reached when the maximum difference
@@ -290,7 +303,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     } else if (err[iter] < tol)
       break
 
-    # (4g) ADJUST INACTIVE SET
+    # (5g) ADJUST INACTIVE SET
     # ------------------------
     # Check if any mixture components should be dropped based on
     # "drop.threshold". Note that the first mixture component (the
@@ -349,6 +362,20 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   # Declare the return value as an instance of class 'varbvsmix'.
   class(fit) <- c("varbvsmix","list")
   return(fit)
+}
+
+# ----------------------------------------------------------------------
+# Try to select a reasonable set of standard deviations that should
+# be used for the mixture model based on the values of x. This is
+# code is based on the autoselect.mixsd function from the ashr
+# package.
+selectmixsd <- function (x, k) {
+  smin <- 1/10
+  if (all(x^2 < 1))
+    smax <- 1
+  else
+    smax <- 2*sqrt(max(x^2 - 1))
+  return(c(0,logspace(smin,smax,k - 1)))
 }
 
 # ----------------------------------------------------------------------

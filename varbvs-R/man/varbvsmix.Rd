@@ -30,9 +30,16 @@
     outcome.}
 
   \item{sa}{Vector specifying the prior variance of the regression
-    coefficients (scaled by \code{sigma}) for each mixture
-    component. The variance of the first mixture component is the
-    "spike", and therefore should be exactly zero.}
+    coefficients (scaled by \code{sigma}) for each mixture component. If
+    not specified, a "reasonable" set of prior variances is
+    automatically selected based on a simple regression analysis in
+    which all variables (columns of \code{X}) are treated as
+    independent. To override this default, set \code{sa} to vector of
+    variances in which the first mixture component is the "spike", and
+    therefore should be zero. Alternatively, \code{sa} may be an integer
+    greater than 1, in which case this controls the number of mixture
+    components, and the variances of the individual mixture components
+    are automatically selected as described.}
 
   \item{sigma}{Residual variance parameter. If missing, it is
     automatically fitted to the data by computing an approximate
@@ -158,8 +165,17 @@ k    <- sample(length(w),p,replace = TRUE,prob = w)
 beta <- sd[k] * rnorm(p)
 y    <- c(X \%*\% beta + rnorm(n))
 
-# Fit the model to the data.
-fit <- varbvsmix(X,NULL,y,sd^2)
+# Fit the model to the data, in which the variances of the mixture
+# prior are automatically selected.
+fit1 <- varbvsmix(X,NULL,y)
+
+# Fit the model, but use only 3 mixture components in the prior
+# instead of the default of 20.
+fit2 <- varbvsmix(X,NULL,y,3)
+
+# Use the "ground-truth" prior variances (the ones used to simulate
+# the data).
+fit3 <- varbvsmix(X,NULL,y,sd^2)
 
 \dontrun{
 library(lattice)
