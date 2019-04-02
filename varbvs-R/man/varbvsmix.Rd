@@ -178,7 +178,7 @@ fit2 <- varbvsmix(X,NULL,y,3)
 fit3 <- varbvsmix(X,NULL,y,sd^2)
 
 # Compare predicted outcomes against observed outcomes.
-y.fit1 <- predict(fit1,X,NULL)
+y.fit1 <- predict(fit1,X)
 print(cor(y,y.fit1))
 
 \dontrun{
