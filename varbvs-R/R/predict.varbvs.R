@@ -1,6 +1,6 @@
 # Part of the varbvs package, https://github.com/pcarbo/varbvs
 #
-# Copyright (C) 2012-2018, Peter Carbonetto
+# Copyright (C) 2012-2019, Peter Carbonetto
 #
 # This program is free software: you can redistribute it under the
 # terms of the GNU General Public License; either version 3 of the
@@ -11,7 +11,7 @@
 # MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Public License for more details.
 #
-# Predict Y (outcome) given X (variables), Z (covariates) and objectted model.
+# Predict Y (outcome) given X (variables), Z (covariates) and model.
 predict.varbvs <-
   function (object, X, Z = NULL, type = c("link","response","class"),
             averaged = TRUE, ...) {

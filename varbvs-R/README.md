@@ -70,7 +70,7 @@ package:
 ```sh
 mv varbvs-R varbvs
 R CMD build varbvs
-R CMD INSTALL varbvs_2.5-16.tar.gz
+R CMD INSTALL varbvs_2.6-1.tar.gz
 ```
 
 ### Using the package
@@ -156,7 +156,7 @@ change the unordered list to an ordered list.
 The *varbvs* software package was developed by:<br>
 [Peter Carbonetto](http://pcarbo.github.io)<br>
 Dept. of Human Genetics, University of Chicago<br>
-2012-2018
+2012-2019
 
 Xiang Zhou, Xiang Zhu, Matthew Stephens and others have also
 contributed to the development of this software.

@@ -1,6 +1,6 @@
 # Part of the varbvs package, https://github.com/pcarbo/varbvs
 #
-# Copyright (C) 2012-2018, Peter Carbonetto
+# Copyright (C) 2012-2019, Peter Carbonetto
 #
 # This program is free software: you can redistribute it under the
 # terms of the GNU General Public License; either version 3 of the
@@ -220,7 +220,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.5-16")
+    cat("VARBVS version 2.6-1 ")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")

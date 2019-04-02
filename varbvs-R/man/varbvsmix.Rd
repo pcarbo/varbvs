@@ -177,6 +177,10 @@ fit2 <- varbvsmix(X,NULL,y,3)
 # the data).
 fit3 <- varbvsmix(X,NULL,y,sd^2)
 
+# Compare predicted outcomes against observed outcomes.
+y.fit1 <- predict(fit1,X,NULL)
+print(cor(y,y.fit1))
+
 \dontrun{
 library(lattice)
 print(xyplot(beta.est ~ beta.true,
