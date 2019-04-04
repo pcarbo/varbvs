@@ -24,6 +24,7 @@ Imports:
     Matrix,
     stats,
     graphics,
+    quadprog,
     lattice,
     latticeExtra,
     Rcpp,

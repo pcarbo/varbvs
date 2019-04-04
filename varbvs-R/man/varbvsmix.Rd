@@ -69,7 +69,7 @@
   \item{update.w}{If \code{TRUE}, mixture weights are fitted using an
     approximate EM algorithm, in which case argument \code{w}, if
     provided, is the initial estimate.}
-
+  
   \item{w.penalty}{Penalty term for the mixture weights. It is useful
     for "regularizing" the estimate of \code{w} when we do not have a
     lot of information. It should be a vector with one positive entry
@@ -87,6 +87,8 @@
     zero to disable this behaviour. Setting larger values for
     \code{drop.threshold} may improve computation speed at a small cost
     to numerical accuracy of the final results.}
+
+  \item{update.w.method}{TO DO: Describe this input argument.}
   
   \item{tol}{Convergence tolerance for co-ordinate ascent updates.}
 

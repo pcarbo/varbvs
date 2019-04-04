@@ -467,6 +467,48 @@ update.mixture.weights.simple <- function (alpha, penalty) {
     
 # ----------------------------------------------------------------------
 # TO DO: Explain here what this function does, and how to use it.
-update.mixture.weights.sqp <- function (alpha, penalty) {
-  # TO DO.
+update.mixture.weights.sqp <- function (mu, s, sa, penalty, w, tol = 1e-6,
+                                        maxiter = 1000, minstepsize = 1e-10,
+                                        suffdecr = 0.01) {
+ 
+  # Get the number of mixture components.
+  k <- length(w)
+    
+  # Repeat until we have satisfied the convergence criterion, or until
+  # we have reached the maximum number of allowable iterations.
+  for (i in 1:maxiter) {
+  
+    # Compute the gradient (g) and Hessian (H) at the current iterate.
+    # TO DO.
+
+    # Compute a search direction, p, by minimizing p'*H*p/2 + p'*g,
+    # where g is the gradient and H is the Hessian, subject to all
+    # elements of x + p being non-negative. Although rather than solve
+    # this problem directly, we instead minimize y'*H*y/2 + y'*(g - H*x)
+    # subject to y being non-negative, then set p = y - x.
+    ghat <- drop(g - H %*% x)
+    out  <- solve.QP(H,-ghat,diag(k))
+    p    <- out$solution - x
+  
+    # Perform backtracking line search to determine a suitable step
+    # size.
+    a <- 0.99
+    while (TRUE) {
+       y <- x + a*p
+       if (all(y >= 0)) {
+        fnew <- cost.poismix(L,w,y,e)
+        if (fnew <= f + suffdecr*a*dot(p,g))
+          break
+    }
+    if (a*beta < minstepsize)
+      break
+    a <- a * beta
+  }
+    
+    # Check convergence.
+  }
 }
+
+# ----------------------------------------------------------------------
+# TO DO: Explain here what this function does, and how to use it.
+function cost.mixture.weights <- 
