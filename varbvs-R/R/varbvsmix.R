@@ -15,7 +15,8 @@
 # variational approximation techniques. See varbvsmix.Rd for details.
 varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
                        update.sa, update.w, w.penalty, drop.threshold = 1e-8,
-                       tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
+                       update.w.method = c("simple","sqp"), tol = 1e-4,
+                       maxiter = 1e4, verbose = TRUE) {
     
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -54,6 +55,9 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   if (length(y) != n)
     stop("Inputs X and y do not match")
   y <- c(as.double(y))
+
+  # Check and process input argument "update.w.method".
+  update.w.method <- match.arg(update.w.method)
   
   # (2) PROCESS SOME OF THE OPTIONS
   # -------------------------------
@@ -270,8 +274,10 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # Compute the approximate penalized maximum likelihood estimate of
     # the mixture weights (w), if requested.
     if (update.w) {
-      w <- colSums(alpha) + w.penalty - 1
-      w <- w/sum(w)
+      if (update.w.method == "simple")
+        w <- update.mixture.weights.simple(alpha,w.penalty)
+      else if (update.w.method == "sqp")
+        w <- update.mixture.weights.sqp(alpha,w.penalty)
     }
 
     # (5f) CHECK CONVERGENCE
@@ -449,4 +455,18 @@ computelfsrmix <- function (alpha, mu, s) {
   lfsr[!b] <- p0[!b] + pn[!b]
 
   return(lfsr)
+}
+
+# ----------------------------------------------------------------------
+# This function implements the standard M-step update for the mixture
+# weights.
+update.mixture.weights.simple <- function (alpha, penalty) {
+  w <- colSums(alpha) + penalty - 1
+  return(w/sum(w))
+}
+    
+# ----------------------------------------------------------------------
+# TO DO: Explain here what this function does, and how to use it.
+update.mixture.weights.sqp <- function (alpha, penalty) {
+  # TO DO.
 }
