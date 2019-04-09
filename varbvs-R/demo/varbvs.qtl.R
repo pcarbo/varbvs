@@ -108,7 +108,7 @@ markers <- labels(fit)
 if (length(logodds) > 1) {
   beta.est <- coef(fit)[markers,"averaged"]
 } else {
-  beta.est <- coef(fit)[markers,]
+  beta.est <- coef(fit)[markers]
 }
 print(xyplot(beta.est ~ beta.true,
              data.frame(beta.true = beta,beta.est = beta.est),
