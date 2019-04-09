@@ -46,6 +46,7 @@ export(nobs.varbvs,
        case.names.varbvs,
        variable.names.varbvs,
        coef.varbvs,
+       coef.varbvsmix,
        confint.varbvs,
        fitted.varbvs,
        resid.varbvs,
@@ -63,6 +64,7 @@ S3method(labels,varbvs)
 S3method(case.names,varbvs)
 S3method(variable.names,varbvs)
 S3method(coef,varbvs)
+S3method(coef,varbvsmix)
 S3method(confint,varbvs)
 S3method(fitted,varbvs)
 S3method(resid,varbvs)

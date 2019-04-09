@@ -54,6 +54,12 @@ coef.varbvs <- function (object, ...) {
 }
 
 # ----------------------------------------------------------------------
+# Return the estimates of the regression coefficients from the fitted
+# varbvsmix model.
+coef.varbvsmix <- function (object, ...)
+  return(with(object,rbind(mu.cov,alpha*mu)))
+
+# ----------------------------------------------------------------------
 # Return the fitted values stored in an n x ns matrix, where n is the
 # number of samples and ns is the number of hyperparameter settings.
 fitted.varbvs <- function (object, ...)

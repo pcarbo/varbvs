@@ -1,10 +1,12 @@
 \name{varbvs.properties}
 \alias{varbvs.properties}
+\alias{varbvsmix.properties}
 \alias{nobs.varbvs}
 \alias{case.names.varbvs}
 \alias{variable.names.varbvs}
 \alias{labels.varbvs}
 \alias{coef.varbvs}
+\alias{coef.varbvsmix}
 \alias{confint.varbvs}
 \alias{fitted.varbvs}
 \alias{resid.varbvs}
@@ -18,6 +20,7 @@
                                 include.threshold = 0.01, \dots)
 \method{labels}{varbvs}(object, \dots)
 \method{coef}{varbvs}(object, \dots)
+\method{coef}{varbvsmix}(object, \dots)
 \method{confint}{varbvs}(object, parm, level = 0.95, ...)
 \method{fitted}{varbvs}(object, \dots)
 \method{resid}{varbvs}(object, type = c("deviance","response"), \dots)
