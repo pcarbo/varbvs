@@ -44,7 +44,7 @@ labels.varbvs <- function (object, ...)
 coef.varbvs <- function (object, ...) {
   ns <- length(object$w)
   if (ns == 1)
-    out <- with(object,drop(rbind(mu.cov,alpha*mu)))
+    out <- with(object,rbind(mu.cov,alpha*mu))
   else {
     out <- with(object,rbind(cbind(mu.cov,beta.cov),
                              cbind(alpha*mu,beta)))
