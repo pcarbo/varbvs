@@ -70,7 +70,8 @@
 
   \code{coef} returns a matrix containing the posterior estimates of the
   regression coefficients at each hyperparameter setting, as well as an
-  additional column containing "averaged" coefficient estimates.
+  additional column containing "averaged" coefficient estimates. If
+  there is only one hyperparameter setting, a vector is returned.
 
   \code{confint} returns confidence intervals (also, equivalently in
   this case, "credible intervals") for all selected variables

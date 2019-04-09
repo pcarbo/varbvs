@@ -44,7 +44,7 @@ labels.varbvs <- function (object, ...)
 coef.varbvs <- function (object, ...) {
   ns <- length(object$w)
   if (ns == 1)
-    out <- with(object,rbind(mu.cov,alpha*mu))
+    out <- with(object,drop(rbind(mu.cov,alpha*mu)))
   else {
     out <- with(object,rbind(cbind(mu.cov,beta.cov),
                              cbind(alpha*mu,beta)))
@@ -57,7 +57,7 @@ coef.varbvs <- function (object, ...) {
 # Return the estimates of the regression coefficients from the fitted
 # varbvsmix model.
 coef.varbvsmix <- function (object, ...)
-  return(with(object,rbind(mu.cov,alpha*mu)))
+  return(with(object,c(mu.cov,rowSums(alpha*mu))))
 
 # ----------------------------------------------------------------------
 # Return the fitted values stored in an n x ns matrix, where n is the
