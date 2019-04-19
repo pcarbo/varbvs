@@ -15,7 +15,8 @@
 # variational approximation techniques. See varbvsmix.Rd for details.
 varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
                        update.sa, update.w, w.penalty, drop.threshold = 1e-8,
-                       tol = 1e-4, maxiter = 1e4, verbose = TRUE) {
+                       tol = 1e-4, maxiter = 1e4, update.order = 1:ncol(X),
+                       verbose = TRUE) {
     
   # Get the number of samples (n) and variables (p).
   n <- nrow(X)
@@ -54,11 +55,17 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   if (length(y) != n)
     stop("Inputs X and y do not match")
   y <- c(as.double(y))
-  
+
   # (2) PROCESS SOME OF THE OPTIONS
   # -------------------------------
+  # Check input argument "maxiter".
   if (!is.finite(maxiter))
     stop("Input maxiter must be a finite number")
+
+  # Check input argument "update.order".
+  if (!all(sort(intersect(update.order,1:p)) == 1:p))
+    stop(paste("Argument \"update.order\" should be a vector in which each",
+               "variable index (column of X) is included at least once"))
   
   # Get initial estimate for the variance of the residual, if
   # provided.
@@ -234,7 +241,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     
     # (5b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
-    out   <- varbvsmixupdate(X,sigma,sa,w,xy,d,alpha,mu,Xr,1:p)
+    out   <- varbvsmixupdate(X,sigma,sa,w,xy,d,alpha,mu,Xr,update.order)
     alpha <- out$alpha
     mu    <- out$mu
     Xr    <- out$Xr

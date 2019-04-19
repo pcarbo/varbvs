@@ -92,6 +92,11 @@
 
   \item{maxiter}{Maximum number of co-ordinate ascent iterations.}
 
+  \item{update.order}{Order of the co-ordinate ascent updates for
+    fitting the variational approximation. The default is
+    \code{update.order = 1:p}, where \code{p} is the number of variables
+    (the number of columns of \code{X}).}
+  
   \item{verbose}{If \code{verbose = TRUE}, print progress of algorithm
     to console.}
 }
