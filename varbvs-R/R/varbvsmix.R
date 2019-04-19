@@ -234,12 +234,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     
     # (5b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
-    # Run a forward or backward pass of the coordinate ascent updates.
-    if (iter %% 2)
-      i <- 1:p
-    else
-      i <- p:1
-    out   <- varbvsmixupdate(X,sigma,sa,w,xy,d,alpha,mu,Xr,i)
+    out   <- varbvsmixupdate(X,sigma,sa,w,xy,d,alpha,mu,Xr,1:p)
     alpha <- out$alpha
     mu    <- out$mu
     Xr    <- out$Xr

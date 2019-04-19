@@ -62,11 +62,7 @@ varbvsbinz <- function (X, Z, y, sa, logodds, alpha, mu, eta, update.order,
     # (2b) UPDATE VARIATIONAL APPROXIMATION
     # -------------------------------------
     # Run a forward or backward pass of the coordinate ascent updates.
-    if (iter %% 2)
-      i <- update.order
-    else
-      i <- rev(update.order)
-    out   <- varbvsbinzupdate(X,sa,logodds,stats,alpha,mu,Xr,i)
+    out   <- varbvsbinzupdate(X,sa,logodds,stats,alpha,mu,Xr,update.order)
     alpha <- out$alpha
     mu    <- out$mu
     Xr    <- out$Xr
