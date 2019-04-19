@@ -14,7 +14,7 @@
 \usage{
   varbvsmix(X, Z, y, sa, sigma, w, alpha, mu, update.sigma, update.sa,
             update.w, w.penalty, drop.threshold = 1e-8, tol = 1e-4,
-            maxiter = 1e4, verbose = TRUE)
+            maxiter = 1e4, update.order = 1:ncol(X), verbose = TRUE)
 }
 \arguments{
   \item{X}{n x p input matrix, where n is the number of samples, and p
