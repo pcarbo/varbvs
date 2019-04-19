@@ -80,7 +80,7 @@ test_that(paste("increasing the weights in varbvs results in a",
   # Half the variance of all the observations. This should result in
   # twice as large estimates of sigma.
   fit2 <- varbvs(X,Z,y,"gaussian",logodds = logodds,weights = rep(2,n),n0 = 0)
-  expect_equal(range(fit2$sigma/fit$sigma),c(2,2),tolerance = 1e-8)
+  expect_equal(range(fit2$sigma/fit$sigma),c(2,2),tolerance = 1e-6)
 })
 
 test_that(paste("Bayes factor should support BSLMM in model comparison",
