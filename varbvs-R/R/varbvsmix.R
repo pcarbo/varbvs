@@ -15,7 +15,9 @@
 # variational approximation techniques. See varbvsmix.Rd for details.
 varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
                        update.sa, update.w, w.penalty, drop.threshold = 1e-8,
-                       tol = 1e-4, maxiter = 1e4, update.order = 1:ncol(X),
+                       tol = 1e-4, maxiter = 1e4,
+                       w.update.method = c("em","newton"),
+                       update.order = 1:ncol(X),
                        verbose = TRUE) {
     
   # Get the number of samples (n) and variables (p).
@@ -144,6 +146,14 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   else
     w.penalty <- c(w.penalty)
   
+  # Determine the method used to update the mixture
+  # weights. Currently, the "newton" update is only implemented for
+  # the case when the penalty term is a vector of ones.
+  w.update.method <- match.arg(w.update.method)
+  if (w.update.method == "newton" & any(w.penalty != 1))
+    stop(paste("w.update.method == \"newton\" is currently only",
+               "implemented for default setting of w.penalty"))
+  
   # Set initial estimates of variational parameters alpha, ensuring
   # that the smallest value is not less than the "drop threshold" for
   # the mixture components. These parameters are stored as a p x K
@@ -271,9 +281,16 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # ---------------------------
     # Compute the approximate penalized maximum likelihood estimate of
     # the mixture weights (w), if requested.
-    if (update.w) {
-      w <- colSums(alpha) + w.penalty - 1
-      w <- w/sum(w)
+    if (update.w)
+      if (w.update.method == "em") {
+
+        # Update the mixture weights using the simple M-step update.
+        w <- colSums(alpha) + w.penalty - 1
+        w <- w/sum(w)
+      } else if (w.update.method == "newton") {
+
+        # TO DO.
+      }
     }
 
     # (5f) CHECK CONVERGENCE
@@ -418,6 +435,12 @@ computevarlbmix <- function (Z, Xr, d, y, sigma, sa, w, alpha, mu, s) {
     out <- (out + (sum(alpha[,i]) + sum(alpha[,i]*log(s[,i]/(sigma*sa[i]))))/2
                 - sum(alpha[,i]*(s[,i] + mu[,i]^2))/(sigma*sa[i])/2)
   return(out)
+}
+
+# ----------------------------------------------------------------------
+# TO DO: Explain here what this function does, and how to use it.
+updateweights <- function (X, y, mu, s) {
+
 }
 
 # ----------------------------------------------------------------------
