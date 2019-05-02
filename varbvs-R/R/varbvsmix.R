@@ -464,9 +464,30 @@ mixtureweights.update.newton <- function (X, y, w, mu, s, suffdecr = 0.01,
 }
 
 # ----------------------------------------------------------------------
-# TO DO: Explain here what this function does, and how to use it.
-computealpha <- function () {
+# Update the posterior mixture assigment probabilities (alpha) given
+# the model parameters (sigma, sa, w) and estimates of the other
+# variational parameters (mu, s).
+computealpha <- function (sigma, sa, w, mu, s) {
 
+  # Get the number of variables (p) and the number of mixture
+  # components (k).
+  p <- nrow(mu)
+  k <- ncol(mu)
+
+  # Compute the log-assignment probabilities for the first mixture
+  # component (the "spike").
+  alpha <- matrix(0,p,K)
+  alpha <- log(w[1] + eps)
+
+  # Compute the log-assignment probabilities for the remaining mixture
+  # components.
+  for (i in 2:k) {
+    SSR       <- mu[,i]^2/s[,i]
+    alpha[,i] <- log(w[i] + eps) + (log(s[,i]/(sigma*sa[i])) + SSR)/2
+  }
+
+  # Return the normalized assignment probabilities.
+  # TO DO.
 }
 
 # ----------------------------------------------------------------------
