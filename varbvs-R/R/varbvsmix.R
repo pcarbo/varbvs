@@ -146,13 +146,8 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   else
     w.penalty <- c(w.penalty)
   
-  # Determine the method used to update the mixture
-  # weights. Currently, the "newton" update is only implemented for
-  # the case when the penalty term is a vector of ones.
+  # Determine the method used to update the mixture weights.
   w.update.method <- match.arg(w.update.method)
-  if (w.update.method == "newton" & any(w.penalty != 1))
-    stop(paste("w.update.method == \"newton\" is currently only",
-               "implemented for default setting of w.penalty"))
   
   # Set initial estimates of variational parameters alpha, ensuring
   # that the smallest value is not less than the "drop threshold" for
@@ -282,12 +277,9 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # Compute the approximate penalized maximum likelihood estimate of
     # the mixture weights (w), if requested.
     if (update.w)
-      if (w.update.method == "em") {
-
-        # Update the mixture weights using the simple M-step update.
-        w <- colSums(alpha) + w.penalty - 1
-        w <- w/sum(w)
-      } else if (w.update.method == "newton") {
+      if (w.update.method == "em")
+        w <- mixtureweights.update.mstep(alpha,w.penalty)
+      else if (w.update.method == "newton") {
 
         # TO DO.
       }
@@ -438,8 +430,42 @@ computevarlbmix <- function (Z, Xr, d, y, sigma, sa, w, alpha, mu, s) {
 }
 
 # ----------------------------------------------------------------------
+# Update the mixture weights using the simple M-step update. Input
+# argument "alpha" is a p x K matrix of mixture assignment probabilities;
+# input argument "w0" specifies the penalty term on the mixture weights.
+mixtureweights.update.mstep <- function (alpha, w0) {
+  w <- colSums(alpha) + w0 - 1
+  return(w/sum(w))
+}
+
+# ----------------------------------------------------------------------
 # TO DO: Explain here what this function does, and how to use it.
-updateweights <- function (X, y, mu, s) {
+mixtureweights.update.newton <- function (X, y, w, mu, s, suffdecr = 0.01,
+                                  minstepsize = 1e-10) {
+
+  # Compute the value of the objective at the current estimate.
+  
+ 
+  # Perform backtracking line search to determine a suitable step
+  # size.
+  a <- 0.99
+  while (TRUE) {
+    wnew <- w + a*p
+    if (all(y >= 0)) {
+      fnew <- cost.poismix(L,w,y,e)
+      if (fnew <= f + suffdecr*a*dot(p,g))
+        break
+    }
+    if (a*beta < minstepsize)
+      break
+    a <- a * beta
+  }
+  
+}
+
+# ----------------------------------------------------------------------
+# TO DO: Explain here what this function does, and how to use it.
+computealpha <- function () {
 
 }
 
