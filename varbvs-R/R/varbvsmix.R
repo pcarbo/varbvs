@@ -464,7 +464,7 @@ mixtureweights.update.newton <- function (X, y, w, mu, s, suffdecr = 0.01,
 }
 
 # ----------------------------------------------------------------------
-# Update the posterior mixture assigment probabilities (alpha) given
+# Compute the posterior mixture assigment probabilities (alpha) given
 # the model parameters (sigma, sa, w) and estimates of the other
 # variational parameters (mu, s).
 computealpha <- function (sigma, sa, w, mu, s) {
@@ -487,7 +487,7 @@ computealpha <- function (sigma, sa, w, mu, s) {
   }
 
   # Return the normalized assignment probabilities.
-  # TO DO.
+  return(t(apply(alpha,1,normalizelogweights)))
 }
 
 # ----------------------------------------------------------------------
