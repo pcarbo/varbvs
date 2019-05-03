@@ -11,8 +11,6 @@ varbvsproxybf <- function (X, Z, y, fit, i, vars) {
 
   # CHECK INPUTS
   # ------------
-  # TO DO: Check all inputs.
-
   # Check input "fit".
   if (fit$family != "gaussian")
     stop(paste("Function varbvsproxybf is currently only implemented for",

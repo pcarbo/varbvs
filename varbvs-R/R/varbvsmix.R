@@ -146,8 +146,13 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
   else
     w.penalty <- c(w.penalty)
   
-  # Determine the method used to update the mixture weights.
+  # Determine the method used to update the mixture
+  # weights. Currently, the "newton" update is only implemented for
+  # the case when the penalty term is a vector of ones.
   w.update.method <- match.arg(w.update.method)
+  if (w.update.method == "newton" & any(w.penalty != 1))
+    stop(paste("w.update.method == \"newton\" is currently only",
+               "implemented for default setting of w.penalty"))
   
   # Set initial estimates of variational parameters alpha, ensuring
   # that the smallest value is not less than the "drop threshold" for
@@ -280,8 +285,9 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
       if (w.update.method == "em")
         w <- mixtureweights.update.mstep(alpha,w.penalty)
       else if (w.update.method == "newton") {
-
-        # TO DO.
+        out   <- mixtureweights.update.newton(X,Z,y,d,sigma,sa,w,mu,s)
+        w     <- out$w
+        alpha <- out$alpha
       }
     }
 
@@ -440,27 +446,52 @@ mixtureweights.update.mstep <- function (alpha, w0) {
 
 # ----------------------------------------------------------------------
 # TO DO: Explain here what this function does, and how to use it.
-mixtureweights.update.newton <- function (X, y, w, mu, s, suffdecr = 0.01,
-                                  minstepsize = 1e-10) {
+mixtureweights.update.newton <-
+  function (X, Z, y, d, sigma, sa, w, mu, s, suffdecr = 0.01,
+            stepsizereduce = 0.75, minstepsize = 1e-10) {
 
-  # Compute the value of the objective at the current estimate.
-  
- 
+  # Get the number of mixture components.
+  k <- length(w)
+
+  # Compute the value of the objective (the Kullback-Leibler
+  # divergence) at the current estimate.
+  alpha <- computealpha(sigma,sa,w,mu,s)
+  Xr    <- drop(X %*% rowSums(alpha*mu))
+  f     <- -computevarlbmix(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
+
+  # Compute the gradient and Hessian at the current estimate of the
+  # mixture weights.
+  # TO DO.
+
+  # Compute a search direction, p, by minimizing p'*H*p/2 + p'*g,
+  # where g is the gradient and H is the Hessian, subject to w + p
+  # lying on the probability simplex. Although rather than solve this
+  # problem directly, we instead minimize y'*H*y/2 + y'*(g - H*x)
+  # subject to y lying on the probability simplex, then set p = y - x.
+  out <- quadprog::solve.QP(H,drop(H %*% w - g),cbind(1,diag(k)),meq = 1)
+  p   <- out$solution - w
+
   # Perform backtracking line search to determine a suitable step
   # size.
   a <- 0.99
   while (TRUE) {
-    wnew <- w + a*p
-    if (all(y >= 0)) {
-      fnew <- cost.poismix(L,w,y,e)
+    wnew  <- w + a*p
+    if (all(wnew >= 0)) {
+      alpha <- computealpha(sigma,sa,wnew,mu,s)
+      Xr    <- drop(X %*% rowSums(alpha*mu))
+      fnew  <- -computevarlbmix(Z,Xr,d,y,sigma,sa,wnew,alpha,mu,s)
       if (fnew <= f + suffdecr*a*dot(p,g))
         break
     }
-    if (a*beta < minstepsize)
+    if (a*stepsizereduce < minstepsize)
       break
-    a <- a * beta
+    a <- a * stepsizereduce
   }
-  
+
+  # Return the new estimate of the mixture weights (w) and the updated
+  # mixture assignment probabilities (alpha).
+  wnew <- w + a*p
+  return(list(w = wnew,alpha = computealpha(sigma,sa,wnew,mu,s)))
 }
 
 # ----------------------------------------------------------------------

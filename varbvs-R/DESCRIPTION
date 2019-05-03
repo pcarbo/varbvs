@@ -27,7 +27,8 @@ Imports:
     lattice,
     latticeExtra,
     Rcpp,
-    nor1mix
+    nor1mix,
+    quadprog
 Suggests:
     curl,
     glmnet,

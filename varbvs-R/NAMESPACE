@@ -25,6 +25,7 @@ importFrom(latticeExtra,as.layer)
 importFrom(Rcpp,evalCpp)
 importFrom(nor1mix,norMix)
 importFrom(nor1mix,qnorMix)
+importFrom(quadprog,solve.QP)
 export(normalizelogweights,
        cred,varbvs,
        varbvsnorm,
