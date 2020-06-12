@@ -96,10 +96,10 @@ void varbvsbinzupdate (const double* x, double xy, double xdx,
 // Execute a single coordinate ascent update to maximize the variational 
 // lower bound for the linear regression model with mixture-of-normal
 // priors.
-void varbvsmixupdate (const double* x, double xy, double d, double sigma, 
-		      const double* sa, const double* q, double* alpha,
-		      double* mu, double* Xr, double* s, double* logw,
-		      Size n, Size k, double eps) {
+double varbvsmixupdate (const double* x, double xy, double d, double sigma, 
+			const double* sa, const double* q, double* alpha,
+			double* mu, double* Xr, double* s,
+			double* logw, Size n, Size k, double eps) {
 
   // The mean and variance corresponding to the first mixture
   // component, the "spike", should always be zero.
@@ -131,4 +131,6 @@ void varbvsmixupdate (const double* x, double xy, double d, double sigma,
   // Update Xr = X*r.
   double rnew = dot(alpha,mu,k);
   add(Xr,rnew - r,x,n);
+
+  return t;
 }

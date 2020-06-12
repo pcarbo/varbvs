@@ -151,7 +151,7 @@ SEXP varbvsbinzupdate_Call (SEXP Xp, SEXP sap, SEXP logoddsp, SEXP dp,
 // It is called in R using the .Call interface.
 SEXP varbvsmixupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP wp, SEXP xyp,
 			   SEXP dp, SEXP alphap, SEXP mup, SEXP Xrp, SEXP ip, 
-			   SEXP epsp) {
+			   SEXP olsp, SEXP epsp) {
 
   // (1) GET INPUTS AND OUTPUTS
   // --------------------------
@@ -165,6 +165,7 @@ SEXP varbvsmixupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP wp, SEXP xyp,
   double* mu      = REAL(mup);      // Input and output mu.
   double* Xr      = REAL(Xrp);      // Input and output Xr.
   int*    I       = INTEGER(ip);    // Input i.
+  double* ols     = REAL(olsp);
   double  eps     = *REAL(epsp);    // Input eps.
 
   // Get the number of samples (n), the number of mixture components
@@ -186,8 +187,8 @@ SEXP varbvsmixupdate_Call (SEXP Xp, SEXP sigmap, SEXP sap, SEXP wp, SEXP xyp,
     const double* x = getConstColumn(X,i,n);
 
     // Perform the update.
-    varbvsmixupdate(x,xy[i],d[i],sigma,sa,w,getColumn(alpha,i,k),
-		    getColumn(mu,i,k),Xr,s,logw,n,k,eps);
+    ols[i] = varbvsmixupdate(x,xy[i],d[i],sigma,sa,w,getColumn(alpha,i,k),
+			     getColumn(mu,i,k),Xr,s,logw,n,k,eps);
   }
 
   return R_NilValue;

@@ -245,6 +245,7 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     alpha <- out$alpha
     mu    <- out$mu
     Xr    <- out$Xr
+    ols   <- out$ols
     rm(out)
 
     # (5c) COMPUTE UPDATED VARIATIONAL LOWER BOUND
@@ -252,28 +253,36 @@ varbvsmix <- function (X, Z, y, sa, sigma, w, alpha, mu, update.sigma,
     # Compute the lower bound to the marginal log-likelihood.
     logZ[iter] <- computevarlbmix(Z,Xr,d,y,sigma,sa,w,alpha,mu,s)
     
-    # (5d) UPDATE RESIDUAL VARIANCE
-    # -----------------------------
-    # Compute the approximate maximum likelihood estimate of the residual
-    # variable (sigma), if requested. Note that we should also
-    # recalculate the variance of the regression coefficients when this
-    # parameter is updated. 
-    if (update.sigma) {
-      sigma <-
-        (norm2(y - Xr)^2 + dot(d,betavarmix(alpha,mu,s))
-         + sum(colSums(as.matrix(alpha[,-1]*(s[,-1] + mu[,-1]^2)))/sa[-1]))/
-           (n + sum(alpha[,-1]))
-      for (i in 2:K)
-        s[,i] <- sigma*sa[i]/(sa[i]*d + 1)
-    }
-
-    # (5e) UPDATE MIXTURE WEIGHTS
+    # (5d) UPDATE MIXTURE WEIGHTS
     # ---------------------------
     # Compute the approximate penalized maximum likelihood estimate of
     # the mixture weights (w), if requested.
     if (update.w) {
       w <- colSums(alpha) + w.penalty - 1
       w <- w/sum(w)
+    }
+
+    # (5e) UPDATE RESIDUAL VARIANCE
+    # -----------------------------
+    # Compute the approximate maximum likelihood estimate of the residual
+    # variable (sigma), if requested. Note that we should also
+    # recalculate the variance of the regression coefficients when this
+    # parameter is updated. 
+    if (update.sigma) {
+        
+      # This is the old update (should give the same result):
+      #  
+      #   sigma <-
+      #     (norm2(y - Xr)^2 + dot(d,betavarmix(alpha,mu,s))
+      #      + sum(colSums(as.matrix(alpha[,-1]*(s[,-1]+mu[,-1]^2)))/sa[-1]))/
+      #     (n + sum(alpha[,-1]))
+      #  
+      b     <- rowSums(alpha * mu)
+      r     <- drop(y - X %*% b)
+      sigma <- (norm2(r)^2 + sum((ols - b)*b) +
+                    p*(1 - w[1])*sigma)/(n + p*(1 - w[1]))
+      for (i in 2:K)
+        s[,i] <- sigma*sa[i]/(sa[i]*d + 1)
     }
 
     # (5f) CHECK CONVERGENCE

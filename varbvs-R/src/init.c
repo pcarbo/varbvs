@@ -26,7 +26,7 @@ const static R_CallMethodDef R_CallDef[] = {
   CALLDEF(varbvsnormupdate_Call,10),
   CALLDEF(varbvsbinupdate_Call,11),
   CALLDEF(varbvsbinzupdate_Call,11),
-  CALLDEF(varbvsmixupdate_Call,11),
+  CALLDEF(varbvsmixupdate_Call,12),
   CALLDEF(varbvs_varbvsnormupdate_rcpp,10),
   {NULL, NULL, 0}
 };

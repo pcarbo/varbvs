@@ -56,6 +56,7 @@ varbvsmixupdate <- function (X, sigma, sa, w, xy, d, alpha0, mu0, Xr0, i) {
   alpha <- t(alpha0)
   mu    <- t(mu0)
   Xr    <- c(Xr0)
+  ols   <- rep(0,p)
 
   # Execute the C routine using the .Call interface and return the
   # updated variational parameters statistics in a list object. The
@@ -69,6 +70,6 @@ varbvsmixupdate <- function (X, sigma, sa, w, xy, d, alpha0, mu0, Xr0, i) {
   out <- .Call(C_varbvsmixupdate_Call,X = X,sigma = as.double(sigma),
                sa = as.double(sa),w = as.double(w),xy = as.double(xy),
                d = as.double(d),alpha = alpha,mu = mu,Xr = Xr,
-               i = as.integer(i-1),eps = eps)
-  return(list(alpha = t(alpha),mu = t(mu),Xr = Xr))
+               i = as.integer(i-1),ols = ols,eps = eps)
+  return(list(alpha = t(alpha),mu = t(mu),Xr = Xr,ols = ols))
 }
