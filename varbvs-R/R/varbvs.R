@@ -220,7 +220,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
   if (verbose) {
     cat("Welcome to           ")
     cat("--       *                              *               \n")
-    cat("VARBVS version 2.6-5 ")
+    cat("VARBVS version 2.6-6 ")
     cat("--       |              |               |               \n")
     cat("large-scale Bayesian ")
     cat("--       ||           | |    |          || |     |   |  \n")
@@ -228,7 +228,7 @@ varbvs <- function (X, Z, y, family = c("gaussian","binomial"), sigma, sa,
     cat("-- |     || | |    |  | ||  ||        |||| ||    |   || \n")
     cat("*********************")
     cat("*******************************************************\n")
-    cat("Copyright (C) 2012-2019 Peter Carbonetto.\n")
+    cat("Copyright (C) 2012-2023 Peter Carbonetto.\n")
     cat("See http://www.gnu.org/licenses/gpl.html for the full license.\n")
     cat("Fitting variational approximation for Bayesian variable",
         "selection model.\n")

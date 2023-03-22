@@ -14,9 +14,6 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// Return the sigmoid function at x.
-//
-// [[Rcpp::export]]
 double sigmoid_rcpp (double x) {
   return(1/(1 + exp(-x)));
 }

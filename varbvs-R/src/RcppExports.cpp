@@ -5,17 +5,6 @@
 
 using namespace Rcpp;
 
-// sigmoid_rcpp
-double sigmoid_rcpp(double x);
-RcppExport SEXP varbvs_sigmoid_rcpp(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(sigmoid_rcpp(x));
-    return rcpp_result_gen;
-END_RCPP
-}
 // varbvsnormupdate_rcpp
 void varbvsnormupdate_rcpp(const NumericMatrix& X, double sigma, double sa, const NumericVector& logodds, const NumericVector& xy, const NumericVector& d, NumericVector& alpha, NumericVector& mu, NumericVector& Xr, const IntegerVector& i);
 RcppExport SEXP varbvs_varbvsnormupdate_rcpp(SEXP XSEXP, SEXP sigmaSEXP, SEXP saSEXP, SEXP logoddsSEXP, SEXP xySEXP, SEXP dSEXP, SEXP alphaSEXP, SEXP muSEXP, SEXP XrSEXP, SEXP iSEXP) {
