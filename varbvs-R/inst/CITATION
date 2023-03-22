@@ -1,4 +1,4 @@
-citHeader("To cite the varbvs package in publications use:")
+citHeader("To cite the varbvs package in publications, please use:")
 
 bibentry(bibtype = "Article",
          title   = 
