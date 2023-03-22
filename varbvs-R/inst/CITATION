@@ -1,17 +1,18 @@
 citHeader("To cite the varbvs package in publications use:")
 
-citEntry(entry   = "Article",
+bibentry(bibtype = "Article",
          title   = 
 	 paste("Scalable variational inference for Bayesian variable",
 	       "selection in regression, and its accuracy in genetic",
                "association studies"),
-         author  = "Peter Carbonetto and Matthew Stephens",
+         author = c(person("Peter","Carbonetto"),             
+                    person("Matthew","Stephens")),
          journal = "Bayesian Analysis",
-         volume  = 7,
-         number  = 1,
+         volume  = "7",
+         number  = "1",
          pages   = "73--108",
          year    = "2012",
-
+         doi     = "10.1214/12-BA703",
          textVersion = 
          paste("Peter Carbonetto and Matthew Stephens (2012). Scalable",
                "variational inference for Bayesian variable selection",

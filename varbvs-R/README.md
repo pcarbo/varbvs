@@ -154,7 +154,7 @@ change the unordered list to an ordered list.
 ### Credits
 
 The *varbvs* software package was developed by:<br>
-[Peter Carbonetto](http://pcarbo.github.io)<br>
+[Peter Carbonetto](https://pcarbo.github.io)<br>
 Dept. of Human Genetics, University of Chicago<br>
 2012-2019
 
